@@ -1,0 +1,118 @@
+body {
+  margin: 0;
+}
+
+.video-js {
+  width: 100vw;
+  height: 100vh;
+}
+
+.video-js .vjs-control-bar {
+  display: none;
+  visibility: visible !important;
+  opacity: 1 !important;
+  transition: none !important;
+}
+
+.receiver .logo {
+  display: none;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: bottom;
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+  background-image: url("../images/ericsson-logo.svg");
+  margin-bottom: -96px;
+  margin-left: -96px;
+  width: 192px;
+  height: 192px;
+  animation: fadeOutFadeIn 4s infinite;
+}
+
+// Media info
+.receiver .media-info {
+  position: absolute;
+  bottom: $control-bar-top;
+  left: 3.6em;
+  display: none;
+  overflow: hidden;
+}
+
+.receiver .media-artwork {
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  align-self: flex-end;
+  min-height: 213px;
+  margin-right: 2.0em;
+  min-width: 96px;
+  float: left;
+}
+
+.receiver .media-text {
+  width: 100%;
+  align-self: flex-end;
+  float: left;
+  width: 400px;
+}
+
+.receiver .media-info .media-title {
+  font-family: 'Arial';
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 3.0em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.receiver .media-info .media-resolution {
+  font-family: 'Arial';
+  margin-left: 10px;
+  color: rgba(0, 0, 0, 0.8);
+  font-size: 1.0em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background-color: white;
+  padding: 4px;
+  border-radius: 3px;
+  font-weight: 600;
+  position: relative;
+  bottom: 6px;
+  display: none;
+}
+
+.receiver .media-info .media-subtitle {
+  color: rgba(203, 203, 203, 0.8);
+  font-family: 'Arial';
+  font-size: 1.5em;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.receiver .media-info .media-subtitle span:not(:first-child):before {
+  content: '\00B7';
+  padding-left: 10px;
+  padding-right: 10px;
+  font-weight: bold;
+}
+
+// Spinner
+.receiver-spinner {
+  -webkit-animation: spin 1s infinite linear;
+  height: 36px;
+  width: 32px;
+  display: block;
+  background-image: url("../images/buffering.png");
+  background-repeat: no-repeat;
+  margin-top: 1.5em;
+  margin-left: 2.0em;
+  display: none;
+}
+
+.video-js .receiver-play-control {
+  font-family: VideoJS;
+  font-weight: normal;
+  font-style: normal;
+}

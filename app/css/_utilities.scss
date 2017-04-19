@@ -1,0 +1,88 @@
+@mixin small-logo {
+    display: block;
+    bottom: $control-bar-top;
+    margin: 0;
+    left: auto;
+    right: 3em;
+    height: 75px;
+    width: 75px;
+    animation: none;
+}
+
+@mixin display-flex($alignment: '', $justification: '') {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+
+    @if $alignment != '' {
+        -webkit-box-align: $alignment;
+        -webkit-align-items: $alignment;
+        -ms-flex-align: $alignment;
+        align-items: $alignment;
+    }
+
+    @if $justification != '' {
+        -webkit-box-pack: $justification;
+        -webkit-justify-content: $justification;
+        -ms-flex-pack: $justification;
+        justify-content: $justification;
+    }
+}
+
+@mixin flex($value) {
+    -webkit-box-flex: $value;
+    -moz-box-flex: $value;
+    -webkit-flex: $value;
+    -ms-flex: $value;
+    flex: $value;
+}
+
+@mixin border-radius($radius) {
+    -webkit-border-radius: $radius;
+    -moz-border-radius: $radius;
+    border-radius: $radius;
+}
+  
+@keyframes fade-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+}
+
+// Same animation as above, using a different animation name allows us to reset the animation
+@keyframes fade-out2 {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+}
+
+@keyframes loading-bar {
+    from {
+        margin-left: -100%;
+    }
+    to {
+        margin-left: 100%;
+    }
+}
+
+@keyframes fadeOutFadeIn {
+  0%   { opacity: 1; }
+  50%  { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes spin {
+  0% { 
+    -webkit-transform: rotate(0deg); 
+  }
+  100% { 
+    -webkit-transform: rotate(360deg); 
+  }
+}

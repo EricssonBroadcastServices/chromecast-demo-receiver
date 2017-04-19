@@ -1,1 +1,1 @@
-# chromecastReferenceReceiver
+# Chromecast Demo Receiver

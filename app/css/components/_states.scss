@@ -1,0 +1,127 @@
+// launching state
+.receiver[state="launching"] {
+  .receiver-spinner {
+    display: block;
+    z-index: 1;
+    bottom: 5%;
+    left: 50%;
+    margin-left: -16px;
+    position: absolute;
+  }
+
+  .logo {
+    display: block;
+  }
+}
+
+.receiver[state="idle"] {
+  .receiver-spinner {
+    display: none;
+  }
+  .logo {
+    display: block;
+  }
+}
+
+// loading state
+// animate progressbar
+.receiver[state="loading"] {
+  .vjs-play-progress.vjs-slider-bar {
+    width: 60% !important;
+    animation: loading-bar 2s infinite linear;
+  }
+
+  .video-js .vjs-slider {
+    overflow: hidden;
+  }
+
+  .video-js .vjs-progress-holder .vjs-load-progress,
+  .video-js .receiver-play-control,
+  .video-js .vjs-current-time,
+  .video-js .vjs-time-control {
+    display: none;
+  }
+
+  .video-js .vjs-control-bar,
+  > .media-info {
+    display: flex;
+  }
+
+  > .logo {
+    @include small-logo();
+  }
+}
+
+// Paused state
+// Fade out controls after 5 seconds, leave pause button visible
+.receiver[type="video"][state="paused"] {
+  > .media-info,
+  .video-js .vjs-control-bar {
+    display: flex;
+  }
+
+  > .logo {
+    @include small-logo();
+  }
+
+  .video-js .receiver-play-control:before {
+    content: '\f103'; // paused icon
+  }
+
+  .video-js .vjs-progress-holder .vjs-load-progress,
+  .video-js .vjs-current-time,
+  .video-js .vjs-time-control,
+  .video-js .vjs-progress-control,
+  > .logo,
+  > .media-info  {
+    animation: fade-out2 0.5s 1;
+    animation-fill-mode: forwards;
+    animation-delay: 5s;
+  }
+}
+
+// playing state
+// Fade out all controls
+.receiver[type="video"][state="playing"] {
+  > .media-info,
+  .video-js .vjs-control-bar {
+    display: flex;
+  }
+
+  > .logo {
+    @include small-logo();
+  }
+
+  .video-js .receiver-play-control:before {
+    content: '\f101'; // play icon
+  }
+
+  .video-js .vjs-control-bar,
+  > .logo,
+  > .media-info  {
+    animation: fade-out 0.5s 1;
+    animation-fill-mode: forwards;
+    animation-delay: 5s;
+  }
+}
+
+// Waiting state
+.receiver[type="video"][state="buffering"] .video-js {
+  .vjs-control-bar {
+    animation: none;
+    display: flex;
+  }
+
+  .vjs-control-bar .vjs-control {
+    display: none;
+  }
+
+  .receiver-play-control {
+    @extend .receiver-spinner;
+    display: block;
+  }
+
+  .receiver-play-control:before {
+    content: '' !important;
+  }
+}
