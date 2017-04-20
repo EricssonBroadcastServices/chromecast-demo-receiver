@@ -100,12 +100,26 @@ module.exports = function(grunt) {
           'build/temp/emp-receiver.css': 'app/css/emp-receiver.scss',
         }
       }
+    },
+    ftp_push: {
+      stage: {
+        options: {
+          authKey: "chromecast-azure-stage",
+          host: "waws-prod-am2-121.ftp.azurewebsites.windows.net",
+          dest: "/site/wwwroot/chromecast-demo-receiver/stage/",
+          port: 21
+        },
+        files: [
+          { expand: true, cwd: 'dist/', src: ['**/*'] }
+        ]
+      }
     }
   });
 
   // load all the npm grunt tasks
   require('load-grunt-tasks')(grunt);
   grunt.loadNpmTasks('chg');
+  grunt.loadNpmTasks('grunt-ftp-push');
 
   grunt.registerTask('build', [
     'clean:build',
@@ -116,6 +130,9 @@ module.exports = function(grunt) {
     'copy:build'
   ]);
 
+
+
   grunt.registerTask('default', ['build']);
+  grunt.registerTask('cloud:stage', ['build', 'ftp_push']);
   grunt.loadTasks('build/tasks');
 };

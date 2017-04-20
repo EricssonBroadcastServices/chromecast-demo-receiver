@@ -25,6 +25,7 @@
     "es6-error": "^2.0.2",
     "es6-mixins": "^1.0.2",
     "grunt": "^0.4.5",
+    "grunt-ftp-push": "^1.2.0",
     "grunt-browserify": "^4.0.1",
     "grunt-cli": "^0.1.13",
     "grunt-concurrent": "^2.1.0",
