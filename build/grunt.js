@@ -44,8 +44,7 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg,
     clean: {
-        build: ['build/temp/*'],
-        dist: ['dist/*']
+      build: ['build/temp/*', 'dist/*']
     },
     browserify: {
       options: browserifyGruntOptions(),
