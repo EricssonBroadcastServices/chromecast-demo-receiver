@@ -118,7 +118,7 @@ module.exports = function(grunt) {
       build: {
         cwd: './dist',
         src: [ '**/*' ],
-        dest: 'emp-chromecast-receiver-' + version.full + '.ref.zip'
+        dest: 'dist/emp-chromecast-receiver-' + version.full + '.ref.zip'
       }
     }
   });
