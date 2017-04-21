@@ -117,7 +117,7 @@ module.exports = function(grunt) {
     zip: {
       build: {
         cwd: './dist',
-        src: [ '**/*' ],
+        src: [ 'dist/**/*' ],
         dest: 'dist/emp-chromecast-receiver-' + version.full + '.ref.zip'
       }
     }
