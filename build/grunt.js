@@ -113,6 +113,13 @@ module.exports = function(grunt) {
           { expand: true, cwd: 'dist/', src: ['**/*'] }
         ]
       }
+    },
+    zip: {
+      build: {
+        cwd: './dist',
+        src: [ '**/*' ],
+        dest: 'emp-chromecast-receiver-' + version.full + '.ref.zip'
+      }
     }
   });
 
@@ -127,7 +134,8 @@ module.exports = function(grunt) {
     'uglify:build',
     'sass:build',
     'cssmin:minify',
-    'copy:build'
+    'copy:build',
+    'zip:build'
   ]);
 
 

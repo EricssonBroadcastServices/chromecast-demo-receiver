@@ -2,8 +2,8 @@
   "name": "emp-chromecast-receiver-demo-app",
   "version": "1.58.0",
   "description": "EMP Receiver",
-  "main": "./dist/emp-receiver.js",
-  "author": "Thijs Damen <thijs@egeniq.com>",
+  "main": "./dist/js/emp-receiver-app.min.js",
+  "author": "Joao Coelho <jota.pedro.coelho@gmail.com>",
   "repository": {
     "type": "git",
     "url": "git@github.com:EricssonBroadcastServices/html5-player.git"
