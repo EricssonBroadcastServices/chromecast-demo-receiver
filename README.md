@@ -56,6 +56,7 @@ grunt cloud:stage
 An example on how to use ftp to send the app to a webserver.
 If the ftp server requires authentication, credentials should be placed in a file .ftpauth in the root of the project
 
+### Tutorial
 
 About the code
 ==============
