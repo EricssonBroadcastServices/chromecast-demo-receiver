@@ -11,15 +11,16 @@ class EMPReceiverApp {
     this.container_ = document.getElementById('receiver');
 
     let options = {
-        debug: false,
-        playerOptions: {
-            empshaka: {
-                abr: {
-                    // startBitrate 5Mbps 
-                    defaultBandwidthEstimate: 5e6
-                }
-            }
+      debug: false,
+      statusText: 'EMP Receiver App',
+      playerOptions: {
+        empshaka: {
+          abr: {
+            // startBitrate 5Mbps
+            defaultBandwidthEstimate: 5e6
+          }
         }
+      }
     };
 
     this.empReceiver_ = new empReceiver(player, options, () => {
