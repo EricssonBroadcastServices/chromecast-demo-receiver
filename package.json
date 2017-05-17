@@ -1,6 +1,6 @@
 {
   "name": "emp-chromecast-receiver-demo-app",
-  "version": "1.59.0",
+  "version": "1.60.1",
   "description": "EMP Receiver",
   "main": "./dist/js/emp-receiver-app.min.js",
   "author": "Joao Coelho <jota.pedro.coelho@gmail.com>",
