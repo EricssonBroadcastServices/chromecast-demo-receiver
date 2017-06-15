@@ -53,3 +53,7 @@
 .video-js .vjs-current-time {
   display: block;
 }
+
+.video-js.vjs-live .vjs-current-time {
+  display: none;
+}

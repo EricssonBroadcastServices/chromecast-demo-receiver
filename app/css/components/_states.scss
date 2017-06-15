@@ -1,7 +1,7 @@
 // launching state
 .receiver[state="launching"] {
   .receiver-spinner {
-    display: block;
+    display: none;
     z-index: 1;
     bottom: 5%;
     left: 50%;
@@ -106,7 +106,7 @@
 }
 
 // Waiting state
-.receiver[type="video"][state="buffering"] .video-js {
+.receiver[state="buffering"], .receiver[state="seeking"] {
   .vjs-control-bar {
     animation: none;
     display: flex;
@@ -116,12 +116,8 @@
     display: none;
   }
 
-  .receiver-play-control {
-    @extend .receiver-spinner;
-    display: block;
+  .receiver-spinner {
+      display: block;
   }
 
-  .receiver-play-control:before {
-    content: '' !important;
-  }
 }
