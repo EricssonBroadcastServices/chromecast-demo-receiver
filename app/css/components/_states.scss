@@ -107,13 +107,18 @@
 
 // Waiting state
 .receiver[state="buffering"], .receiver[state="seeking"] {
-  .vjs-control-bar {
-    animation: none;
-    display: flex;
+  .vjs-play-progress.vjs-slider-bar {
+    width: 60% !important;
+    animation: loading-bar 2s infinite linear;
   }
 
-  .vjs-control-bar .vjs-control {
-    display: none;
+  .video-js .vjs-slider {
+    overflow: hidden;
+  }
+
+  .video-js .vjs-control-bar,
+  > .media-info {
+    display: flex;
   }
 
   .receiver-spinner {
