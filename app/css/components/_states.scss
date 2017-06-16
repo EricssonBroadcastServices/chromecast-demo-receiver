@@ -92,6 +92,10 @@
     @include small-logo();
   }
 
+  .vjs-live .vjs-progress-control {
+    display: none;
+  }
+
   .video-js .receiver-play-control:before {
     content: '\f101'; // play icon
   }

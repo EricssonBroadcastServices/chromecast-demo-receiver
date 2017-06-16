@@ -54,6 +54,10 @@
   display: block;
 }
 
+.receiver .vjs-live .vjs-progress-control {
+  display: inherit;
+}
+
 .video-js.vjs-live .vjs-current-time {
   display: none;
 }
