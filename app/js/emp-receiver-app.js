@@ -81,6 +81,18 @@ class EMPReceiverApp {
     if ('ended' === event.type) {
       // You can now load the next asset...
     }
+    else if('playing' === event.type) {
+      var els = document.getElementsByClassName('vjs-current-time-display');
+      if(els && els.length > 0) {
+        var timeDisplay = els[0];
+        if(this.empReceiver_.player.isLive() === true) {
+          timeDisplay.style.visibility = 'hidden';
+        }
+        else {
+          timeDisplay.style.visibility = 'visible';
+        }
+      }
+    }
   }
 
 
