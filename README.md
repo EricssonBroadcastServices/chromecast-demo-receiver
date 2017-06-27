@@ -4,6 +4,17 @@ The receiver is compliant with the default chromecast receiver API unless otherw
 
 [Sender tutorials](https://github.com/EricssonBroadcastServices/html5-player/blob/master/sdk/tutorials/chromecast.md)
 
+# Release notes
+
+## 1.63.0
+
+### New features and Enhancements
+**EMP-9869** Hiding time display (start time) for live streams
+
+### Bug fixes
+**EMP-9819** Changing CSS so that the timeline bar shows when seeking/buffering and not after the event has finished
+**EMP-9836** Hiding pause icon if the media has not been loaded yet & showing ControlBar spinner for live asset loads.
+
 # Development
 
 Starting development
