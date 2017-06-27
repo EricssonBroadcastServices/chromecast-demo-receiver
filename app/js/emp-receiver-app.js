@@ -82,14 +82,14 @@ class EMPReceiverApp {
       // You can now load the next asset...
     }
     else if('playing' === event.type) {
-      var els = document.getElementsByClassName('vjs-current-time-display');
+      var els = document.getElementsByClassName('vjs-current-time');
       if(els && els.length > 0) {
         var timeDisplay = els[0];
         if(this.empReceiver_.player.isLive() === true) {
-          timeDisplay.style.visibility = 'hidden';
+          timeDisplay.style.display = 'none';
         }
         else {
-          timeDisplay.style.visibility = 'visible';
+          timeDisplay.style.display = 'block';
         }
       }
     }
