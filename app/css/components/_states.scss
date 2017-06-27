@@ -116,6 +116,10 @@
     animation: loading-bar 2s infinite linear;
   }
 
+  .vjs-current-time {
+    display: none;
+  }
+
   .video-js .vjs-slider {
     overflow: hidden;
   }
