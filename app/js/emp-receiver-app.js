@@ -76,7 +76,7 @@ class EMPReceiverApp {
 
 
   /** @private */
-  onPlayStateChange_(event) {
+  onPlayStateChange_(event, payload) {
     empPlayer.log('playStateChanged', event);
     if ('ended' === event.type) {
       // You can now load the next asset...
@@ -93,12 +93,34 @@ class EMPReceiverApp {
         }
       }
     }
+    else if ('error' === event.type) {
+      const error = this.empReceiver_.player.getError();
+      this.showError(error ? error.message : payload);
+    }
   }
 
 
   /** @private */
   onStateChange_(state) {
     this.container_.setAttribute('state', state);
+    if (state === 'loading') {
+      this.hideError();
+    }
+  }
+
+  showError(message) {
+    let errorDisplay = document.getElementById('emp-error-display');
+    if(errorDisplay) {
+      errorDisplay.innerHTML = '[ERROR] ' + (message ? message : '');
+      errorDisplay.style.display = 'block';
+    }
+  }
+
+  hideError() {
+    let errorDisplay = document.getElementById('emp-error-display');
+    if(errorDisplay) {
+      errorDisplay.style.display = 'none';
+    }
   }
 
 }

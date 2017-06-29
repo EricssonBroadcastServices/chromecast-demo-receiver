@@ -14,6 +14,10 @@ body {
   transition: none !important;
 }
 
+.vjs-error-display {
+  display: none;
+}
+
 .receiver .logo {
   display: none;
   background-size: contain;
@@ -81,6 +85,19 @@ body {
   position: relative;
   bottom: 6px;
   display: none;
+}
+
+.receiver .emp-error-display {
+  display: none;
+  position: absolute;
+  top: 50px;
+  width: 100%;
+  color: #f00;
+  text-align: center;
+  z-index: 99;
+  font-family: Verdana;
+  font-weight: 600;
+  letter-spacing: 1px;
 }
 
 .receiver .media-info .media-subtitle {
