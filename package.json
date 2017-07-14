@@ -1,6 +1,6 @@
 {
   "name": "emp-chromecast-receiver-demo-app",
-  "version": "1.63.0",
+  "version": "1.64.0",
   "description": "EMP Receiver",
   "main": "./dist/js/emp-receiver-app.min.js",
   "author": "Joao Coelho <jota.pedro.coelho@gmail.com>",
@@ -12,7 +12,7 @@
     "global": "^4.3.0",
     "lodash-compat": "^3.10.1",
     "object.assign": "^4.0.3",
-    "emp-chromecast-receiver": "latest"
+    "emp-chromecast-receiver-dev": "latest"
   },
   "devDependencies": {
     "babel": "^5.2.2",
