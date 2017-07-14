@@ -1,6 +1,6 @@
 ﻿import window from 'global/window';
 import document from 'global/document';
-import empReceiver from 'emp-chromecast-receiver';
+import empReceiver from 'emp-chromecast-receiver-dev';
 
 const empPlayer = empReceiver.empPlayer;
 
