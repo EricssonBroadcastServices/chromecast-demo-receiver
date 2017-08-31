@@ -1,5 +1,13 @@
 # EMP Chromecast Demo Receiver
 
+This document provides an overview of building a custom Google Cast receiver application.
+https://developers.google.com/cast/docs/custom_receiver
+Your custom receiver application have to be deployed to a web server with domain name and SSL support.
+The url to the receiver application have to be registed at Google, with a company account owning the streaming services.
+https://developers.google.com/cast/docs/registration
+Google Cast SDK Developer Console
+https://cast.google.com/u/2/publish/#/overview
+
 The receiver is compliant with the default chromecast receiver API unless otherwise stated. For information on how to build a sender and other functionality not described here. See https://developers.google.com/cast/docs/sender_apps
 
 [Sender tutorials](https://github.com/EricssonBroadcastServices/html5-player/blob/master/sdk/tutorials/chromecast.md)
