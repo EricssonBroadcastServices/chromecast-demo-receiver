@@ -4,3 +4,5 @@ dist/
 build/temp/emp-receiver.css
 npm-debug.log
 .ftpauth
+*.sln
+*.suo
