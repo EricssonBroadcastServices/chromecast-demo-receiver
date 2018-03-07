@@ -4,5 +4,18 @@ dist/
 build/temp/emp-receiver.css
 npm-debug.log
 .ftpauth
-*.sln
+# Ignore Visual Studio files
 *.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.sln
+Web.config
+applicationhost.config
+
+*.tar
+*.ftppass
+.grunt
+*.tgz
+Web.config
+applicationhost.config

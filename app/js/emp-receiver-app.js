@@ -1,8 +1,9 @@
 ﻿import window from 'global/window';
 import document from 'global/document';
-import empReceiver from 'emp-chromecast-receiver-dev';
+import empReceiver from 'emp-chromecast-receiver-2-dev';
 
 const empPlayer = empReceiver.empPlayer;
+
 
 class EMPReceiverApp {
 
@@ -16,7 +17,7 @@ class EMPReceiverApp {
       playerOptions: {
         empshaka: {
           abr: {
-            // startBitrate 5Mbps
+            // startBitrate 5Mbps 
             defaultBandwidthEstimate: 5e6
           }
         }
@@ -39,7 +40,7 @@ class EMPReceiverApp {
   }
 
   /** @private */
-  onMetadataUpdate_(metadata) {
+  onMetadataUpdate_(metadata) {  
     let mediaArtworkImg = document.getElementById('media-artwork-img');
     let mediaTitle = document.getElementById('media-title');
     let mediaSubtitle = document.getElementById('media-subtitle');
@@ -50,15 +51,33 @@ class EMPReceiverApp {
       mediaSubtitle.innerHTML = metadata.subtitle || '';
     }
     if (mediaArtworkImg && metadata.images && metadata.images.length > 0) {
-      mediaArtworkImg.src = metadata.images[0].url;
+      var image = this.imageSelector(metadata.images);
+      mediaArtworkImg.src = image.url;
+      mediaArtworkImg.height = image.height;
+      mediaArtworkImg.width = image.width;
       mediaArtworkImg.style.display = 'block';
+      mediaArtworkImg.style.position = 'absolute';
+      mediaArtworkImg.style.bottom = '0px';
     }
     else {
       mediaArtworkImg.style.display = 'none';
     }
   }
 
-
+  imageSelector(images) {
+    let image;
+    if (images.length === 1) {
+      image = images[0];
+    }
+    for (var i = 0; i < images.length; i++) {
+      if (images[i].url && images.type === 'chromecast') {
+        return images[i];
+      }
+    }
+    return image
+  }
+ 
+   
   /** @private */
   onResolutionChanged_(resolution) {
     let mediaResolutionHtml = document.getElementById('media-resolution');
@@ -81,11 +100,11 @@ class EMPReceiverApp {
     if ('ended' === event.type) {
       // You can now load the next asset...
     }
-    else if('playing' === event.type) {
+    else if ('playing' === event.type) {
       var els = document.getElementsByClassName('vjs-current-time');
-      if(els && els.length > 0) {
+      if (els && els.length > 0) {
         var timeDisplay = els[0];
-        if(this.empReceiver_.player.isLive() === true) {
+        if (this.empReceiver_.player.isLive() === true) {
           timeDisplay.style.display = 'none';
         }
         else {
@@ -110,7 +129,7 @@ class EMPReceiverApp {
 
   showError(message) {
     let errorDisplay = document.getElementById('emp-error-display');
-    if(errorDisplay) {
+    if (errorDisplay) {
       errorDisplay.innerHTML = '[ERROR] ' + (message ? message : '');
       errorDisplay.style.display = 'block';
     }
@@ -118,7 +137,7 @@ class EMPReceiverApp {
 
   hideError() {
     let errorDisplay = document.getElementById('emp-error-display');
-    if(errorDisplay) {
+    if (errorDisplay) {
       errorDisplay.style.display = 'none';
     }
   }
@@ -132,7 +151,7 @@ function receiverAppInit() {
 }
 
 if (document.readyState === 'loading' ||
-    document.readyState === 'interactive') {
+  document.readyState === 'interactive') {
   window.addEventListener('load', receiverAppInit);
 } else {
   receiverAppInit();

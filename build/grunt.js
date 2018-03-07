@@ -80,25 +80,19 @@ module.exports = function(grunt) {
         files: [
           { cwd: 'app/images/', src: ['*.*'], dest: 'dist/images', expand: true, filter: 'isFile'  },
           { cwd: 'app/', src: ['index.html'], dest: 'dist', expand: true, filter: 'isFile' },
-          { cwd: 'app/css/', src: ['video-js.css'], dest: 'dist/css', expand: true, filter: 'isFile' }
+          { cwd: 'app/css/', src: ['*.css'], dest: 'dist/css', expand: true, filter: 'isFile' }
         ]
-      }
-    },
-    cssmin: {
-      minify: {
-        expand: true,
-        cwd: 'build/temp/',
-        src: ['emp-receiver.css'],
-        dest: 'dist/css/',
-        ext: '.min.css'
       },
-    },
-    sass: {
-      build: {
-        files: {
-          'build/temp/emp-receiver.css': 'app/css/emp-receiver.scss',
-        }
-      }
+      fromNPM: {
+        files: [
+          { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/css/', src: ['*.*'], dest: 'app/css', expand: true, filter: 'isFile' },
+          { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/images/', src: ['*.*'], dest: 'app/images', expand: true, filter: 'isFile' },
+          { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/', src: ['index.html'], dest: 'app', expand: true, filter: 'isFile' },
+          { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/js/', src: ['emp-receiver-app.*'], dest: 'app/js', expand: true, filter: 'isFile' },
+          { cwd: 'node_modules/emp-chromecast-receiver-2-dev/', src: ['readme.md'], dest: '.', expand: true, filter: 'isFile' },
+          { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/tutorials', src: ['*.*'], dest: 'tutorials', expand: true, filter: 'isFile' }
+        ]
+      },
     },
     ftp_push: {
       stage: {
@@ -119,8 +113,19 @@ module.exports = function(grunt) {
         src: [ 'dist/**/*' ],
         dest: 'dist/emp-chromecast-receiver-' + version.full + '.ref.zip'
       }
+    },
+    shell: {
+      updateNPM: {
+        command: 'npm update emp-chromecast-receiver-2-dev',
+        options: {
+          preferLocal: true
+        }
+      }
     }
   });
+
+
+ 
 
   // load all the npm grunt tasks
   require('load-grunt-tasks')(grunt);
@@ -131,8 +136,6 @@ module.exports = function(grunt) {
     'clean:build',
     'browserify:build',
     'uglify:build',
-    'sass:build',
-    'cssmin:minify',
     'copy:build',
     'zip:build'
   ]);
@@ -141,5 +144,8 @@ module.exports = function(grunt) {
 
   grunt.registerTask('default', ['build']);
   grunt.registerTask('cloud:stage', ['build', 'ftp_push']);
+  grunt.registerTask('update:npm', ['shell:updateNPM']);
+  grunt.registerTask('update:copy', ['copy:fromNPM']);
+  grunt.registerTask('update', ['shell:updateNPM','copy:fromNPM']);
   grunt.loadTasks('build/tasks');
 };
