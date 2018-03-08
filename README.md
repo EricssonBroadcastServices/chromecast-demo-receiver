@@ -101,6 +101,9 @@ Receiver-app.js and index.html are samples how to implement a custom emp-receive
 
 EMP Chromecast Receiver
 =======
+
+**[See EMP-Receiver API Docs](https://github.com/EricssonBroadcastServices/chromecast-demo-receiver/blob/master/api.md)**
+
 emp-player options can be send to empReceiver constructor and emp-player events can be subscribed to.
 
 ```javascript

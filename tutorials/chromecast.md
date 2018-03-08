@@ -65,16 +65,7 @@ GCKMediaControlChannel:loadMedia (iOS)
 RemoteMediaPlayer.load (android)
 
 
-**Start Time**
 
-To start casting a media from a position other than 0, it is possible to set the currentTime attribute in the LoadRequest object (found in the Chromecast API).
-Use startTime in [Playback method 1](chromecast.md#playback-method-1) for EMP streams, insted of the startTime parameter of the load method.
-
-```javascript
-// Setting start time
-var loadRequest = new window.chrome.cast.media.LoadRequest(mediaInfo);
-loadRequest.currentTime = startTime;
-```
 
 **CustomData**
 
@@ -149,6 +140,18 @@ loadRequest.customData.source.options :{
         image: {url: '', width: '', height: ''}
   }
 }
+```
+
+
+**Start Time**
+
+To start casting a media from a position other than 0, it is possible to set the currentTime attribute in the LoadRequest object (found in the Chromecast API).
+Use startTime in [Playback method 1](chromecast.md#playback-method-1) for EMP streams, insted of the startTime parameter of the load method.
+
+```javascript
+// Setting start time
+var loadRequest = new window.chrome.cast.media.LoadRequest(mediaInfo);
+loadRequest.currentTime = startTime;
 ```
 
 <br />
