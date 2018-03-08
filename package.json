@@ -5,7 +5,7 @@
   "main": "./dist/js/emp-receiver-app.min.js",
   "author": "Patrik Carlander",
   "copyright": "Copyright Ericsson, Inc. <https://www.ericsson.com/>",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git@github.com:EricssonBroadcastServices/html5-player.git"
