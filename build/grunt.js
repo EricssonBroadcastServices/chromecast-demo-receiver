@@ -93,6 +93,7 @@ module.exports = function(grunt) {
           { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/tutorials', src: ['*.*'], dest: 'tutorials', expand: true, filter: 'isFile' }
         ]
       },
+      docs: { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/docs', src: ['**/**'], dest: 'dist/docs/', expand: true, filter: 'isFile' },
     },
     ftp_push: {
       stage: {
@@ -107,11 +108,22 @@ module.exports = function(grunt) {
         ]
       }
     },
+    ftpush: {
+      stage: {
+        auth: {
+          host: 'waws-prod-am2-121.ftp.azurewebsites.windows.net',
+          port: 21,
+          authKey: 'chromecast-azure-stage'
+        },
+        src: 'dist/',
+        dest: "/site/wwwroot/chromecast-demo-receiver/stage/"
+      }
+    },
     zip: {
       build: {
         cwd: './dist',
         src: [ 'dist/**/*' ],
-        dest: 'dist/emp-chromecast-receiver-' + version.full + '.ref.zip'
+        dest: 'dist/emp-chromecast-demo-receiver-' + version.full + '.zip'
       }
     },
     shell: {
@@ -137,13 +149,14 @@ module.exports = function(grunt) {
     'browserify:build',
     'uglify:build',
     'copy:build',
-    'zip:build'
+    'copy:docs'
   ]);
 
-
+  //TODO replace ftp-push with ftppush it's better but need change in jenkins
 
   grunt.registerTask('default', ['build']);
   grunt.registerTask('cloud:stage', ['build', 'ftp_push']);
+  grunt.registerTask('deploy', ['build', 'ftpush']);
   grunt.registerTask('update:npm', ['shell:updateNPM']);
   grunt.registerTask('update:copy', ['copy:fromNPM']);
   grunt.registerTask('update', ['shell:updateNPM','copy:fromNPM']);
