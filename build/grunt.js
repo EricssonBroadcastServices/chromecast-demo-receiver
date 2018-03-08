@@ -127,8 +127,14 @@ module.exports = function(grunt) {
       }
     },
     shell: {
+      updateNPM_dev: {
+        command: 'npm install emp-chromecast-receiver-2-dev latest',
+        options: {
+          preferLocal: true
+        }
+      },
       updateNPM: {
-        command: 'npm update emp-chromecast-receiver-2-dev',
+        command: 'npm install emp-chromecast-receiver-2 latest',
         options: {
           preferLocal: true
         }
@@ -158,7 +164,9 @@ module.exports = function(grunt) {
   grunt.registerTask('cloud:stage', ['build', 'ftp_push']);
   grunt.registerTask('deploy', ['build', 'ftpush']);
   grunt.registerTask('update:npm', ['shell:updateNPM']);
+  grunt.registerTask('update:npmdev', ['shell:updateNPM_dev']);
   grunt.registerTask('update:copy', ['copy:fromNPM']);
-  grunt.registerTask('update', ['shell:updateNPM','copy:fromNPM']);
+  grunt.registerTask('update:dev', ['shell:updateNPM_dev', 'copy:fromNPM']);
+  grunt.registerTask('update', ['shell:updateNPM', 'copy:fromNPM']);
   grunt.loadTasks('build/tasks');
 };
