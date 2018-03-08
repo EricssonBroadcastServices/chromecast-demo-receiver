@@ -10,51 +10,13 @@ https://cast.google.com/u/2/publish/#/overview
 
 The receiver is compliant with the default chromecast receiver API unless otherwise stated. For information on how to build a sender and other functionality not described here. See https://developers.google.com/cast/docs/sender_apps
 
-[See sender tutorials](tutorials/chromecast.md)
-
-# Release notes
-
-## 2.0.79
-
-### New features and Enhancements
-**Breaking changes for version 2**
-
-When casting a channel or a program, the timeline is now relative to the beginning of the program and not the beginning of the stream. This change makes the Chromecast built-in sender controls and Cloud senders to work out-of-the-box, making it easier and faster to develop a sender.
-<br />
-* CurrentTime, Duration and Seek values are based on seconds, and are now relative to the beginning of the program and not the beginning of the stream. The behaviour matches what is done when playing locally.
-* Use **channelId** & **programId** for live and catchup playback. **AssetId** should only be used for VoD.
-* ProgramChanged message broadcasted by the Receiver is now an object containing the program’s full metadata. Before, it was just a string containing the programId. Senders should handle this api change.
-* "refreshcontrols" message is deprecated. Please use "pull" instead.
-* "setabsolutetime" message is deprecated. Please use "playheadtime" instead.
-* DurationChanged has been removed, duration is now a property on the Media object that is sent on media status update. 
-  This is necessary to make the senders built-in controls to work.
-* Playback properties like default playback behaviour, startTime, etc.. were adapted so that they match the mobile client’s playback properties structure. To start casting use playbackProperties, described in [Playback method 1](chromecast.md#playback-method-1) below.  
-
-**New fetures**
-
-* Program related progress bar with seamless switching between programs for a channel.
-* Switch program by sending new playheadtime, play next, play previus or goto live messages.
-* AssetChanged event is sent when a new VOD content is playing and the message includes the asset object.
-* Support for casting external streams in MPEG-DASH or MP4 format.
-* Line up programs, assets and external streams to be played in sequence.
-* Jump to the next lineup video asset.
-* Change text track style from the senders.
-* Audio and Text kind for multiple tracks in the same language (e.g. Tracks with descriptions and comments for disabled viewers).
-* Media.empPayload and Media.customData don't need to be set by the sender, they are set by the receiver.
-* Entitlement will be returned as an object containing contract restrictions for a specific playback. Contract restrictions are enforced on the receiver but the sender might want to have the info in order to hide or show controls affected.
+* **[Upgrade Guide](https://github.com/EricssonBroadcastServices/chromecast-demo-receiver/blob/master/tutorials/upgrade-guide.md)**
+* **[Chromcast sender tutorials](https://github.com/EricssonBroadcastServices/chromecast-demo-receiver/blob/master/tutorials/chromecast.md)**
+* **[Release notes](https://github.com/EricssonBroadcastServices/chromecast-demo-receiver/blob/master/CHANGELOG.md)**
+* **[Hosted API docs](https://emps-chromecast-receiver.azurewebsites.net/chromecast-demo-receiver/stage/docs/)**
 
 
-### Bug fixes
-
-## 1.63.0
-
-### New features and Enhancements
-**EMP-9869** Hiding time display (start time) for live streams
-
-### Bug fixes
-**EMP-9819** Changing CSS so that the timeline bar shows when seeking/buffering and not after the event has finished
-**EMP-9836** Hiding pause icon if the media has not been loaded yet & showing ControlBar spinner for live asset loads.
-**EMP-9909** Handling error states on the receiver app side.
+Hosted Demo receiverAppId E5A43176 (private)
 
 
 # Development
@@ -89,9 +51,7 @@ to build a local copy of the receiver
 grunt build
 ```
 
-update from emp-chromecast-receiver-2
-
-**Warning** will overwrite images, css, index.html and emp-receiver-app.js
+pull update from emp-chromecast-receiver-2 npm package. (will overwrite images, css, index.html and emp-receiver-app.js)
 ```bash
 grunt update
 ```
@@ -118,7 +78,7 @@ grunt deploy
 An example on how to use ftp to send the app to a webserver.
 If the ftp server requires authentication, credentials should be placed in a file .ftpauth in the root of the project
 
-### Tutorial
+
 
 About the code
 ==============
@@ -141,7 +101,32 @@ Receiver-app.js and index.html are samples how to implement a custom emp-receive
 
 EMP Chromecast Receiver
 =======
-This demo app uses emp-chromecast-receiver. Check the API documentation [here](https://www.npmjs.com/package/emp-chromecast-receiver-2#api)
+emp-player options can be send to empReceiver constructor and emp-player events can be subscribed to.
+
+```javascript
+  let options = {
+      debug: false,
+      playerOptions: {
+        empshaka: {
+          abr: {
+              // startBitrate 5Mbps 
+            defaultBandwidthEstimate: 5e6
+          }
+        }
+      }
+    };
+
+    this.empReceiver_ = new empReceiver(player, options, () => {
+      this.empReceiver_.player.on(empPlayer.Events.PLAYING, this.onPlayStateChange_.bind(this));
+      this.empReceiver_.player.on(empPlayer.Events.PAUSE, this.onPlayStateChange_.bind(this));
+      this.empReceiver_.player.on(empPlayer.Events.SEEKING, this.onPlayStateChange_.bind(this));
+      this.empReceiver_.player.on(empPlayer.Events.WAITING, this.onPlayStateChange_.bind(this));
+      this.empReceiver_.player.on(empPlayer.Events.ENDED, this.onPlayStateChange_.bind(this));
+      this.empReceiver_.player.on(empPlayer.Events.ERROR, this.onPlayStateChange_.bind(this));
+    });
+```
+
+<br />
 
 EMP HTML5 Player
 =======

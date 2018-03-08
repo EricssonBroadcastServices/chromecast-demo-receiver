@@ -74,7 +74,7 @@ class EMPReceiverApp {
         return images[i];
       }
     }
-    return image
+    return image;
   }
  
    
@@ -140,6 +140,10 @@ class EMPReceiverApp {
     if (errorDisplay) {
       errorDisplay.style.display = 'none';
     }
+  }
+
+  get receiver() {
+    this.empReceiver_;
   }
 
 }
