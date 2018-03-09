@@ -1,10 +1,23 @@
 ## Classes
 
 <dl>
+<dt><a href="#EMPReceiverApp">EMPReceiverApp</a></dt>
+<dd><p>EMPReceiverApp - UIController that handle the ui-logic for the receiver.
+It instantiate the empReceiver and listen to events.</p>
+<p>You make changes in this class to build your own Receiver, with your preferred look and feel.</p>
+</dd>
 <dt><a href="#EmpReceiverEvents">EmpReceiverEvents</a></dt>
 <dd></dd>
 <dt><a href="#empReceiver">empReceiver</a></dt>
 <dd></dd>
+</dl>
+
+## Functions
+
+<dl>
+<dt><a href="#receiverAppInit">receiverAppInit()</a></dt>
+<dd><p>Initialize then receiver app</p>
+</dd>
 </dl>
 
 ## Events
@@ -21,6 +34,95 @@
 </dd>
 </dl>
 
+<a name="EMPReceiverApp"></a>
+
+## EMPReceiverApp
+EMPReceiverApp - UIController that handle the ui-logic for the receiver.It instantiate the empReceiver and listen to events. You make changes in this class to build your own Receiver, with your preferred look and feel.
+
+**Kind**: global class  
+
+* [EMPReceiverApp](#EMPReceiverApp)
+    * [.onMetadataUpdate(metadata)](#EMPReceiverApp+onMetadataUpdate)
+    * [.imageSelector(images)](#EMPReceiverApp+imageSelector)
+    * [.onResolutionChanged(resolution)](#EMPReceiverApp+onResolutionChanged)
+    * [.onPlayStateChange(event, data)](#EMPReceiverApp+onPlayStateChange)
+    * [.onStateChange(state)](#EMPReceiverApp+onStateChange)
+    * [.showError(message)](#EMPReceiverApp+showError)
+    * [.hideError()](#EMPReceiverApp+hideError)
+
+<a name="EMPReceiverApp+onMetadataUpdate"></a>
+
+### empReceiverApp.onMetadataUpdate(metadata)
+Handle metadata changed, Update the mediaArt UI here
+
+**Kind**: instance method of [<code>EMPReceiverApp</code>](#EMPReceiverApp)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| metadata | <code>object</code> | {title:'', subtitle:'', images:[]} |
+
+<a name="EMPReceiverApp+imageSelector"></a>
+
+### empReceiverApp.imageSelector(images)
+Select the image to display for the asset
+
+**Kind**: instance method of [<code>EMPReceiverApp</code>](#EMPReceiverApp)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| images | <code>Array</code> | image objects |
+
+<a name="EMPReceiverApp+onResolutionChanged"></a>
+
+### empReceiverApp.onResolutionChanged(resolution)
+Handle resolution changed, show/hide resolution text
+
+**Kind**: instance method of [<code>EMPReceiverApp</code>](#EMPReceiverApp)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| resolution | <code>string</code> | ['SD','HD','2K','4K'] |
+
+<a name="EMPReceiverApp+onPlayStateChange"></a>
+
+### empReceiverApp.onPlayStateChange(event, data)
+Handle play state change,
+
+**Kind**: instance method of [<code>EMPReceiverApp</code>](#EMPReceiverApp)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| event | <code>Event</code> | the play state event that triggered this function |
+| data | <code>object</code> | the data that was sent with the event |
+
+<a name="EMPReceiverApp+onStateChange"></a>
+
+### empReceiverApp.onStateChange(state)
+Handle empReceiver state change,
+
+**Kind**: instance method of [<code>EMPReceiverApp</code>](#EMPReceiverApp)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| state | <code>string</code> | empReceiver.ReceiverStates ['launching', 'loading','buffering', 'seeking', 'playing', 'paused', 'done', 'idle'] |
+
+<a name="EMPReceiverApp+showError"></a>
+
+### empReceiverApp.showError(message)
+show error message on screen
+
+**Kind**: instance method of [<code>EMPReceiverApp</code>](#EMPReceiverApp)  
+
+| Param | Type |
+| --- | --- |
+| message | <code>string</code> | 
+
+<a name="EMPReceiverApp+hideError"></a>
+
+### empReceiverApp.hideError()
+Hide error message on screen
+
+**Kind**: instance method of [<code>EMPReceiverApp</code>](#EMPReceiverApp)  
 <a name="EmpReceiverEvents"></a>
 
 ## EmpReceiverEvents
@@ -28,7 +130,8 @@
 <a name="new_EmpReceiverEvents_new"></a>
 
 ### new EmpReceiverEvents()
-EmpReceiverEvents - Holds all available receiver events
+EmpReceiverEvents - Holds receiver events
+METADATA_UPDATED, STATE_CHANGED, RESOLUTION_CHANGED
 
 <a name="empReceiver"></a>
 
@@ -37,146 +140,160 @@ EmpReceiverEvents - Holds all available receiver events
 
 * [empReceiver](#empReceiver)
     * [new empReceiver(element, [options], [ready])](#new_empReceiver_new)
-    * [.state](#empReceiver+state) ⇒ <code>empReceiver.ReceiverStates</code>
-    * [.version](#empReceiver+version) ⇒ <code>Number</code>
+    * [.state](#empReceiver+state) ⇒ <code>string</code>
+    * [.isChromecast](#empReceiver+isChromecast) ⇒ <code>bool</code>
+    * [.version](#empReceiver+version) ⇒ <code>string</code>
     * [.player](#empReceiver+player) ⇒ <code>EmpPlayer</code>
-    * [.mockMediaManagerEvent_()](#empReceiver+mockMediaManagerEvent_)
-    * [.onMessage()](#empReceiver+onMessage)
-    * [.hideMediaResolution()](#empReceiver+hideMediaResolution)
-    * [.displayMediaResolution()](#empReceiver+displayMediaResolution)
-    * [.loadDebug_()](#empReceiver+loadDebug_)
-    * [.sendTracks()](#empReceiver+sendTracks)
-    * [.refreshControls()](#empReceiver+refreshControls)
-    * [.getMediaInformation()](#empReceiver+getMediaInformation) ⇒ <code>MediaInformation</code>
-    * [.getAnalyticsDeviceInfo_()](#empReceiver+getAnalyticsDeviceInfo_)
-    * [.createPlayer()](#empReceiver+createPlayer)
-    * [.sendMessage_(json, id)](#empReceiver+sendMessage_)
-    * [.sendStatus_(id, id)](#empReceiver+sendStatus_)
+    * [.onMessage(event)](#empReceiver+onMessage)
+    * [.onEmpError(error)](#empReceiver+onEmpError)
+    * [.getMediaInformation()](#empReceiver+getMediaInformation) ⇒ <code>cast.receiver.media.MediaInformation</code>
+    * [.getMediaManager(safety)](#empReceiver+getMediaManager) ⇒ <code>cast.receiver.MediaManager</code>
+    * [.getCastReceiverManager(safety)](#empReceiver+getCastReceiverManager) ⇒ <code>cast.receiver.CastReceiverManager</code>
+    * [.getVideoElement(safety)](#empReceiver+getVideoElement) ⇒ <code>Element</code>
+    * [.sendMessage(message, opt_senderId)](#empReceiver+sendMessage)
+    * [.sendStatus(opt_senderId, opt_requestId)](#empReceiver+sendStatus)
 
 <a name="new_empReceiver_new"></a>
 
 ### new empReceiver(element, [options], [ready])
-empReceiver - Object that interacts with chromecast
+empReceiver - Interacts with chromecast and senders
 
 
 | Param | Type | Description |
 | --- | --- | --- |
-| element | <code>String</code> | ID or DOM element of the receiver html element |
-| [options] | <code>Object</code> | receiver options such as: controls (children), debug, messageUrn |
+| element | <code>String</code> | HTML video element id |
+| [options] | <code>Object</code> | receiver options such as: playerOptions, statusText, controls, debug, messageUrn |
 | [ready] | <code>Callback</code> | callback to be called when the receiver is reader |
 
 <a name="empReceiver+state"></a>
 
-### empReceiver.state ⇒ <code>empReceiver.ReceiverStates</code>
+### empReceiver.state ⇒ <code>string</code>
+Current receiver state. ['launching', 'loading','buffering', 'seeking', 'playing', 'paused', 'done', 'idle']
+
 **Kind**: instance property of [<code>empReceiver</code>](#empReceiver)  
-**Returns**: <code>empReceiver.ReceiverStates</code> - current receiver state.  
+**Returns**: <code>string</code> - empReceiver.ReceiverStates ['launching', 'loading','buffering', 'seeking', 'playing', 'paused', 'done', 'idle']  
+<a name="empReceiver+isChromecast"></a>
+
+### empReceiver.isChromecast ⇒ <code>bool</code>
+Check if running on Chromecast device.
+
+**Kind**: instance property of [<code>empReceiver</code>](#empReceiver)  
+**Returns**: <code>bool</code> - True if running on Chromecast device.  
 <a name="empReceiver+version"></a>
 
-### empReceiver.version ⇒ <code>Number</code>
-Player version
+### empReceiver.version ⇒ <code>string</code>
+EMPReceiver version
 
 **Kind**: instance property of [<code>empReceiver</code>](#empReceiver)  
-**Returns**: <code>Number</code> - The player version  
+**Returns**: <code>string</code> - The EMPReceiver version  
 <a name="empReceiver+player"></a>
 
 ### empReceiver.player ⇒ <code>EmpPlayer</code>
-Returns the underlying EmpPlayer object
-EmpPlayer API: https://www.npmjs.com/package/empplayer
+Returns the underlying EmpPlayer version 2 EmpPlayer API: https://www.npmjs.com/package/empplayer2
 
 **Kind**: instance property of [<code>empReceiver</code>](#empReceiver)  
 **Export**:   
-<a name="empReceiver+mockMediaManagerEvent_"></a>
-
-### empReceiver.mockMediaManagerEvent_()
-debugging the receiver UI in Chrome.
-
-**Kind**: instance method of [<code>empReceiver</code>](#empReceiver)  
 <a name="empReceiver+onMessage"></a>
 
-### empReceiver.onMessage()
-cast.receiver.CastMessageBus.Event
-public for debugging the receiver UI in Chrome.
+### empReceiver.onMessage(event)
+Handle custom message from senders
 
 **Kind**: instance method of [<code>empReceiver</code>](#empReceiver)  
 **Export**:   
-<a name="empReceiver+hideMediaResolution"></a>
 
-### empReceiver.hideMediaResolution()
-emits RESOLUTION_CHANGED event
+| Param | Type | Description |
+| --- | --- | --- |
+| event | <code>cast.receiver.CastMessageBus.Event</code> | { data:{ type:'', data:{} } } |
 
-**Kind**: instance method of [<code>empReceiver</code>](#empReceiver)  
-**Export**:   
-<a name="empReceiver+displayMediaResolution"></a>
+<a name="empReceiver+onEmpError"></a>
 
-### empReceiver.displayMediaResolution()
-gets current displayed resolution and emits RESOLUTION_CHANGED event with resolution as argument
+### empReceiver.onEmpError(error)
+Error handler for empPlayer Errors. Broadcast error message to all connected senders.
 
 **Kind**: instance method of [<code>empReceiver</code>](#empReceiver)  
-**Export**:   
-<a name="empReceiver+loadDebug_"></a>
 
-### empReceiver.loadDebug_()
-debugging the receiver UI in Chrome.
+| Param | Type | Description |
+| --- | --- | --- |
+| error | <code>string</code> \| <code>object</code> | error message to broadcast |
 
-**Kind**: instance method of [<code>empReceiver</code>](#empReceiver)  
-<a name="empReceiver+sendTracks"></a>
-
-### empReceiver.sendTracks()
-broadcasts tracks to the senders
-
-**Kind**: instance method of [<code>empReceiver</code>](#empReceiver)  
-**Export**:   
-<a name="empReceiver+refreshControls"></a>
-
-### empReceiver.refreshControls()
-updates the controls on in the senders (volume level, timeshift enabled, autplay, is live, duration)
-
-**Kind**: instance method of [<code>empReceiver</code>](#empReceiver)  
-**Export**:   
 <a name="empReceiver+getMediaInformation"></a>
 
-### empReceiver.getMediaInformation() ⇒ <code>MediaInformation</code>
-**Kind**: instance method of [<code>empReceiver</code>](#empReceiver)  
-**Returns**: <code>MediaInformation</code> - current asset metadata.  
-<a name="empReceiver+getAnalyticsDeviceInfo_"></a>
-
-### empReceiver.getAnalyticsDeviceInfo_()
-geta analytics deviceInfo, which includes emp-chromecast-receiver version
+### empReceiver.getMediaInformation() ⇒ <code>cast.receiver.media.MediaInformation</code>
+Provides information about the media currently loaded.
 
 **Kind**: instance method of [<code>empReceiver</code>](#empReceiver)  
-**Export**:   
-<a name="empReceiver+createPlayer"></a>
+**Returns**: <code>cast.receiver.media.MediaInformation</code> - [Google Cast MediaInformation](https://developers.google.com/cast/docs/reference/receiver/cast.receiver.media.MediaInformation).  
+<a name="empReceiver+getMediaManager"></a>
 
-### empReceiver.createPlayer()
-Handle initialization of a player when a new video is cast
+### empReceiver.getMediaManager(safety) ⇒ <code>cast.receiver.MediaManager</code>
+Get current media manager instanceThe MediaManager is used to send/receive media messages/eventsIt will print a warning by default about the danger of using the MediaManager directly
+but any argument that is passed in will silence the warning.
 
 **Kind**: instance method of [<code>empReceiver</code>](#empReceiver)  
-<a name="empReceiver+sendMessage_"></a>
+**Returns**: <code>cast.receiver.MediaManager</code> - [Google Cast MediaManager](https://developers.google.com/cast/docs/reference/receiver/cast.receiver.MediaManager).  
 
-### empReceiver.sendMessage_(json, id)
-sends message to the senders
+| Param | Type | Description |
+| --- | --- | --- |
+| safety | <code>any</code> | Anything passed in to silence the warning |
+
+<a name="empReceiver+getCastReceiverManager"></a>
+
+### empReceiver.getCastReceiverManager(safety) ⇒ <code>cast.receiver.CastReceiverManager</code>
+Get current cast receiver manager instanceThe receiver manager allows communication with the platform and is used to send/receive system messages/events.It will print a warning by default about the danger of using the CastReceiverManager directly
+but any argument that is passed in will silence the warning.
+
+**Kind**: instance method of [<code>empReceiver</code>](#empReceiver)  
+**Returns**: <code>cast.receiver.CastReceiverManager</code> - [Google Cast ReceiverManager](https://developers.google.com/cast/docs/reference/receiver/cast.receiver.CastReceiverManager).  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| safety | <code>any</code> | Anything passed in to silence the warning |
+
+<a name="empReceiver+getVideoElement"></a>
+
+### empReceiver.getVideoElement(safety) ⇒ <code>Element</code>
+Get current Video ElementIt will print a warning by default about the danger of using the Video Element directly
+but any argument that is passed in will silence the warning.
+
+**Kind**: instance method of [<code>empReceiver</code>](#empReceiver)  
+**Returns**: <code>Element</code> - The Video Element  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| safety | <code>any</code> | Anything passed in to silence the warning |
+
+<a name="empReceiver+sendMessage"></a>
+
+### empReceiver.sendMessage(message, opt_senderId)
+Sends a custom message to a specific sender orbroadcast custom message to all connected senders.It can be dangerous to send message directly from ReceiverApp, but if you know what you're doing it's public.
 
 **Kind**: instance method of [<code>empReceiver</code>](#empReceiver)  
 **Export**:   
 
 | Param | Type | Description |
 | --- | --- | --- |
-| json | <code>message</code> | object with message details |
-| id | <code>opt_senderId</code> | optional set if you want to send message to just one specific sender |
+| message | <code>object</code> | object with message details |
+| opt_senderId | <code>string</code> | optional set if you want to send message to just one specific sender |
 
-<a name="empReceiver+sendStatus_"></a>
+<a name="empReceiver+sendStatus"></a>
 
-### empReceiver.sendStatus_(id, id)
-sends message to the senders
+### empReceiver.sendStatus(opt_senderId, opt_requestId)
+Sends media status to a specific sender orbroadcast media status to all connected senders.
 
 **Kind**: instance method of [<code>empReceiver</code>](#empReceiver)  
 **Export**:   
 
 | Param | Type | Description |
 | --- | --- | --- |
-| id | <code>opt_senderId</code> | optional sender id |
-| id | <code>opt_requestId</code> | optional request id |
+| opt_senderId | <code>string</code> | optional sender id |
+| opt_requestId | <code>number</code> | optional request id |
 
+<a name="receiverAppInit"></a>
+
+## receiverAppInit()
+Initialize then receiver app
+
+**Kind**: global function  
 <a name="event_METADATA_UPDATED"></a>
 
 ## "METADATA_UPDATED"

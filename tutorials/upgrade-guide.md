@@ -12,3 +12,6 @@ When casting a channel or a program, the timeline is now relative to the beginni
 * DurationChanged has been removed, duration is now a property on the Media object that is sent on media status update. 
   This is necessary to make the senders built-in controls to work.
 * Playback properties like default playback behaviour, startTime, etc.. were adapted so that they match the mobile client’s playback properties structure. To start casting use playbackProperties, described in [Playback method 1](chromecast.md#playback-method-1) below.  
+
+* **[Chromcast sender tutorials](https://github.com/EricssonBroadcastServices/chromecast-demo-receiver/blob/master/tutorials/chromecast.md)**
+

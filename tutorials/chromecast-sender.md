@@ -60,7 +60,7 @@ To load media on the receiver, add data to the customData parameter of the load 
 
 Loading media is done using the following methods
 
-GCKRemoteMediaClient:loadMedia (iOS)
+GCKMediaControlChannel:loadMedia (iOS)
 
 RemoteMediaPlayer.load (android)
 

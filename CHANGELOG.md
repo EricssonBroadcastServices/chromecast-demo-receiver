@@ -1,8 +1,9 @@
-# Release notes
+# Release notes 
 
-## 2.0.79
+## 2.0.79   The first 2.0 release
 
 ### New features and Enhancements
+**Sender**
 * Program related progress bar with seamless switching between programs for a channel.
 * Switch program by sending new playheadtime, play next, play previous or goto live messages.
 * AssetChanged event is sent when a new VOD content is playing and the message includes the asset object.
@@ -14,5 +15,10 @@
 * Media.empPayload and Media.customData don't need to be set by the sender, they are set by the receiver.
 * Entitlement will be returned as an object containing contract restrictions for a specific playback. Contract restrictions are enforced on the receiver but the sender might want to have the info in order to hide or show controls affected.
 
+**Receiver**
+* Get cast.receiver.MediaManager from empReceiver *(for advanced customization)*
+* Get cast.receiver.CastReceiverManager from empReceiver *(for advanced customization)*
+* Get current Video Element from empReceiver *(for advanced customization)*
+* Send custom messages to senders *(for advanced customization)*
+* Send error messages to senders *(for advanced customization)*
 
-### Bug fixes
