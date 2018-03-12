@@ -79,11 +79,11 @@ class EMPReceiverApp {
   */
   imageSelector(images) {
     let image;
-    if (images.length === 1) {
+    if (images.length > 0) {
       image = images[0];
     }
     for (var i = 0; i < images.length; i++) {
-      if (images[i].url && images.type === 'chromecast') {
+      if (images[i].url && images[i].type === 'chromecast') {
         return images[i];
       }
     }

@@ -1,9 +1,8 @@
-# EMP Chromecast Sender version 2 Upgrade Guide
+# EMP Chromecast Sender version 2
 
 **Custom message namespace:** urn:x-cast:com.ericsson.cast.receiver
 
 **Breaking changes for version 2**
-
 When casting a channel or a program, the timeline is now relative to the beginning of the program and not the beginning of the stream. This change makes the Chromecast built-in sender controls and Cloud senders to work out-of-the-box, making it easier and faster to develop a sender.
 <br />
 * CurrentTime, Duration and Seek values are based on seconds and are now relative to the beginning of the program and not the beginning of the stream. The behaviour matches what occurs when playing locally.

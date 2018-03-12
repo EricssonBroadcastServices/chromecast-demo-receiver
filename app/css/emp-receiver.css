@@ -70,9 +70,9 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   align-self: flex-end;
-  min-height: 213px;
+  min-height: 100px;
   margin-right: 2.0em;
-  min-width: 96px;
+  min-width: 155px;
   float: left; }
 
 .receiver .media-text {
