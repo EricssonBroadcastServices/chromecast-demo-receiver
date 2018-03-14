@@ -22,3 +22,17 @@
 * Send custom messages to senders *(for advanced customization)*
 * Send error messages to senders *(for advanced customization)*
 
+## 2.0.79-11 Beta Release
+
+### New features
+**EMP-11084** Show progress and titel bar CC on programchange and assetchange.
+Show the program image with type === 'chromecast' in Chromecast demo receiver.
+
+### Bug fixes
+**EMP-11115** No ProgramChanged event in Analytic after program boundary crossing.
+**EMP-11005** HTML Player 2.0 - OffsetTime is missing for the following analytics event: Playback.ProgramChanged.
+**EMP-11060** Analytics is validate session every second when casting
+**EMP-10946** Analytic error: There is no timeout scheduled with the given id "3819903156412202"
+
+
+

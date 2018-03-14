@@ -86,15 +86,15 @@ module.exports = function(grunt) {
       },
       fromNPM: {
         files: [
-          { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/css/', src: ['*.*'], dest: 'app/css', expand: true, filter: 'isFile' },
-          { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/images/', src: ['*.*'], dest: 'app/images', expand: true, filter: 'isFile' },
-          { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/', src: ['index.html'], dest: 'app', expand: true, filter: 'isFile' },
-          { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/js/', src: ['emp-receiver-app.*'], dest: 'app/js', expand: true, filter: 'isFile' },
-          { cwd: 'node_modules/emp-chromecast-receiver-2-dev/', src: ['*.md'], dest: '.', expand: true, filter: 'isFile' },
-          { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/tutorials', src: ['*.*'], dest: 'tutorials', expand: true, filter: 'isFile' }
+          { cwd: 'node_modules/emp-chromecast-receiver-2/dist/css/', src: ['*.*'], dest: 'app/css', expand: true, filter: 'isFile' },
+          { cwd: 'node_modules/emp-chromecast-receiver-2/dist/images/', src: ['*.*'], dest: 'app/images', expand: true, filter: 'isFile' },
+          { cwd: 'node_modules/emp-chromecast-receiver-2/dist/', src: ['index.html'], dest: 'app', expand: true, filter: 'isFile' },
+          { cwd: 'node_modules/emp-chromecast-receiver-2/dist/js/', src: ['emp-receiver-app.*'], dest: 'app/js', expand: true, filter: 'isFile' },
+          { cwd: 'node_modules/emp-chromecast-receiver-2/', src: ['*.md'], dest: '.', expand: true, filter: 'isFile' },
+          { cwd: 'node_modules/emp-chromecast-receiver-2/dist/tutorials', src: ['*.*'], dest: 'tutorials', expand: true, filter: 'isFile' }
         ]
       },
-      docs: { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/docs', src: ['**/**'], dest: 'dist/docs/', expand: true, filter: 'isFile' },
+      docs: { cwd: 'node_modules/emp-chromecast-receiver-2/dist/docs', src: ['**/**'], dest: 'dist/docs/', expand: true, filter: 'isFile' },
     },
     ftp_push: {
       stage: {
@@ -128,12 +128,6 @@ module.exports = function(grunt) {
       }
     },
     shell: {
-      updateNPM_dev: {
-        command: 'npm install emp-chromecast-receiver-2-dev latest',
-        options: {
-          preferLocal: true
-        }
-      },
       updateNPM: {
         command: 'npm install emp-chromecast-receiver-2 latest',
         options: {
@@ -159,15 +153,11 @@ module.exports = function(grunt) {
     'copy:docs'
   ]);
 
-  //TODO replace ftp-push with ftppush it's better but need change in jenkins
+  //TODO remove ftp-push with ftppush it's better but need changes in jenkins
 
   grunt.registerTask('default', ['build']);
   grunt.registerTask('cloud:stage', ['build', 'ftp_push']);
   grunt.registerTask('deploy', ['build', 'ftpush']);
-  grunt.registerTask('update:npm', ['clean:npm','shell:updateNPM']);
-  grunt.registerTask('update:npmdev', ['clean:npm','shell:updateNPM_dev']);
-  grunt.registerTask('update:copy', ['copy:fromNPM']);
-  grunt.registerTask('update:dev', ['clean:npm', 'shell:updateNPM_dev', 'copy:fromNPM']);
-  grunt.registerTask('update', ['clean:npm', 'shell:updateNPM', 'copy:fromNPM']);
+  grunt.registerTask('update', ['shell:updateNPM', 'copy:fromNPM']);
   grunt.loadTasks('build/tasks');
 };

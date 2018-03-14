@@ -11,10 +11,13 @@
     "url": "git@github.com:EricssonBroadcastServices/html5-player.git"
   },
   "scripts": {
-    "clean": "grunt clean:npm"
+    "clean": "grunt clean:npm",
+    "build": "grunt build",
+    "update": "grunt update",
+    "deploy": "grunt deploy"
   },
   "dependencies": {
-    "emp-chromecast-receiver-2-dev": "latest",
+    "emp-chromecast-receiver-2": "latest",
     "global": "^4.3.0",
     "latest": "^0.2.0",
     "lodash-compat": "^3.10.1",
