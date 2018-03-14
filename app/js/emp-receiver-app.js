@@ -50,6 +50,7 @@ class EMPReceiverApp {
   * @param {object} metadata {title:'', subtitle:'', images:[]}
   */
   onMetadataUpdate(metadata) {
+    this.onStateChange('update');
     let mediaArtworkImg = document.getElementById('media-artwork-img');
     let mediaTitle = document.getElementById('media-title');
     let mediaSubtitle = document.getElementById('media-subtitle');
@@ -71,6 +72,10 @@ class EMPReceiverApp {
     else {
       mediaArtworkImg.style.display = 'none';
     }
+    //Show media info
+    setTimeout(function () {
+      this.onStateChange('playing');
+    }.bind(this), 1000);
   }
 
   /**

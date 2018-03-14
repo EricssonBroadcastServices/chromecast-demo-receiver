@@ -468,7 +468,7 @@ To update which audio track is being used on the Receiver, the following message
 ```javascript
 // Enabling an audiotrack
 {
-  type: 'enableaudiotrack',
+  type: 'selectaudiotrack',
   data: {
     language: en // language code,
     kind: [optional] // leave empty if only one track of same language

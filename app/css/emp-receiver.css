@@ -76,10 +76,9 @@ body {
   float: left; }
 
 .receiver .media-text {
-  width: 100%;
   align-self: flex-end;
   float: left;
-  width: 400px; }
+  width: 800px; }
 
 .receiver .media-info .media-title {
   font-family: 'Arial';

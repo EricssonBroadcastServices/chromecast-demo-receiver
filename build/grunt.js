@@ -44,7 +44,8 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg,
     clean: {
-      build: ['build/temp/*', 'dist/*']
+      build: ['build/temp/*', 'dist/*'],
+      npm: ['emp-chromecast-receiver-2-dev/', 'emp-chromecast-receiver-2/'],
     },
     browserify: {
       options: browserifyGruntOptions(),
@@ -163,10 +164,10 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['build']);
   grunt.registerTask('cloud:stage', ['build', 'ftp_push']);
   grunt.registerTask('deploy', ['build', 'ftpush']);
-  grunt.registerTask('update:npm', ['shell:updateNPM']);
-  grunt.registerTask('update:npmdev', ['shell:updateNPM_dev']);
+  grunt.registerTask('update:npm', ['clean:npm','shell:updateNPM']);
+  grunt.registerTask('update:npmdev', ['clean:npm','shell:updateNPM_dev']);
   grunt.registerTask('update:copy', ['copy:fromNPM']);
-  grunt.registerTask('update:dev', ['shell:updateNPM_dev', 'copy:fromNPM']);
-  grunt.registerTask('update', ['shell:updateNPM', 'copy:fromNPM']);
+  grunt.registerTask('update:dev', ['clean:npm', 'shell:updateNPM_dev', 'copy:fromNPM']);
+  grunt.registerTask('update', ['clean:npm', 'shell:updateNPM', 'copy:fromNPM']);
   grunt.loadTasks('build/tasks');
 };

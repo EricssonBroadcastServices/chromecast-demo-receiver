@@ -1,6 +1,6 @@
 {
   "name": "emp-chromecast-receiver-demo-app",
-  "version": "2.0.79-9",
+  "version": "2.0.79-11",
   "description": "EMP Receiver 2",
   "main": "./dist/js/emp-receiver-app.min.js",
   "author": "Patrik Carlander",
@@ -10,8 +10,11 @@
     "type": "git",
     "url": "git@github.com:EricssonBroadcastServices/html5-player.git"
   },
+  "scripts": {
+    "clean": "grunt clean:npm"
+  },
   "dependencies": {
-    "emp-chromecast-receiver-2-dev": "^2.0.79-3",
+    "emp-chromecast-receiver-2-dev": "latest",
     "global": "^4.3.0",
     "latest": "^0.2.0",
     "lodash-compat": "^3.10.1",
