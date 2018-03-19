@@ -2,7 +2,7 @@
   "name": "emp-chromecast-receiver-demo-app",
   "version": "2.0.79-11",
   "description": "EMP Receiver 2",
-  "main": "./dist/js/emp-receiver-app.min.js",
+  "main": "./dist/js/emp-receiver-demo-app.min.js",
   "author": "Patrik Carlander",
   "copyright": "Copyright Ericsson, Inc. <https://www.ericsson.com/>",
   "license": "Apache-2.0",

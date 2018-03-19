@@ -1,5 +1,5 @@
 node_modules/
-build/temp/emp-receiver-app.js
+build/temp/emp-receiver-demo-app.js
 dist/
 build/temp/emp-receiver.css
 npm-debug.log

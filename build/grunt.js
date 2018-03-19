@@ -17,7 +17,7 @@ module.exports = function(grunt) {
   const browserifyGruntDefaults = {
     browserifyOptions: {
       debug: true,
-      standalone: 'emp-receiver-app'
+      standalone: 'emp-receiver-demo-app'
     },
     plugin: [
       ['browserify-derequire']
@@ -51,7 +51,7 @@ module.exports = function(grunt) {
       options: browserifyGruntOptions(),
       build: {
         files: {
-          'build/temp/emp-receiver-app.js': ['app/js/emp-receiver-app.js']
+          'build/temp/emp-receiver-demo-app.js': ['app/js/emp-receiver-demo-app.js']
         }
       }
     },
@@ -72,7 +72,7 @@ module.exports = function(grunt) {
           }
         },
         files: {
-          'dist/js/emp-receiver-app.min.js': 'build/temp/emp-receiver-app.js'
+          'dist/js/emp-receiver-demo-app.min.js': 'build/temp/emp-receiver-demo-app.js'
         }
       }
     },
@@ -89,7 +89,7 @@ module.exports = function(grunt) {
           { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/css/', src: ['*.*'], dest: 'app/css', expand: true, filter: 'isFile' },
           { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/images/', src: ['*.*'], dest: 'app/images', expand: true, filter: 'isFile' },
           { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/', src: ['index.html'], dest: 'app', expand: true, filter: 'isFile' },
-          { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/js/', src: ['emp-receiver-app.*'], dest: 'app/js', expand: true, filter: 'isFile' },
+          { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/js/', src: ['emp-receiver-demo-app.*'], dest: 'app/js', expand: true, filter: 'isFile' },
           { cwd: 'node_modules/emp-chromecast-receiver-2-dev/', src: ['*.md'], dest: '.', expand: true, filter: 'isFile' },
           { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/tutorials', src: ['*.*'], dest: 'tutorials', expand: true, filter: 'isFile' }
         ]

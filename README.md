@@ -51,7 +51,7 @@ to build a local copy of the receiver
 grunt build
 ```
 
-pull update from emp-chromecast-receiver-2 npm package. (will overwrite images, css, index.html and emp-receiver-app.js)
+pull update from emp-chromecast-receiver-2 npm package. (will overwrite images, css, index.html and emp-receiver-demo-app.js)
 ```bash
 grunt update
 ```
@@ -112,7 +112,7 @@ emp-player options can be send to empReceiver constructor and emp-player events 
       playerOptions: {
         empshaka: {
           abr: {
-              // startBitrate 5Mbps 
+              // startBitrate 5Mbps
             defaultBandwidthEstimate: 5e6
           }
         }
@@ -134,6 +134,3 @@ emp-player options can be send to empReceiver constructor and emp-player events 
 EMP HTML5 Player
 =======
 The receiver makes use of emp-player.
-
-
-
