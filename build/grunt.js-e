@@ -45,7 +45,7 @@ module.exports = function(grunt) {
     pkg,
     clean: {
       build: ['build/temp/*', 'dist/*'],
-      npm: ['emp-chromecast-receiver-2/'],
+      npm: ['emp-chromecast-receiver-2-dev/'],
     },
     browserify: {
       options: browserifyGruntOptions(),
@@ -86,15 +86,15 @@ module.exports = function(grunt) {
       },
       fromNPM: {
         files: [
-          { cwd: 'node_modules/emp-chromecast-receiver-2/dist/css/', src: ['*.*'], dest: 'app/css', expand: true, filter: 'isFile' },
-          { cwd: 'node_modules/emp-chromecast-receiver-2/dist/images/', src: ['*.*'], dest: 'app/images', expand: true, filter: 'isFile' },
-          { cwd: 'node_modules/emp-chromecast-receiver-2/dist/', src: ['index.html'], dest: 'app', expand: true, filter: 'isFile' },
-          { cwd: 'node_modules/emp-chromecast-receiver-2/dist/js/', src: ['emp-receiver-demo-app.*'], dest: 'app/js', expand: true, filter: 'isFile' },
-          { cwd: 'node_modules/emp-chromecast-receiver-2/', src: ['*.md'], dest: '.', expand: true, filter: 'isFile' },
-          { cwd: 'node_modules/emp-chromecast-receiver-2/dist/tutorials', src: ['*.*'], dest: 'tutorials', expand: true, filter: 'isFile' }
+          { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/css/', src: ['*.*'], dest: 'app/css', expand: true, filter: 'isFile' },
+          { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/images/', src: ['*.*'], dest: 'app/images', expand: true, filter: 'isFile' },
+          { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/', src: ['index.html'], dest: 'app', expand: true, filter: 'isFile' },
+          { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/js/', src: ['emp-receiver-demo-app.*'], dest: 'app/js', expand: true, filter: 'isFile' },
+          { cwd: 'node_modules/emp-chromecast-receiver-2-dev/', src: ['*.md'], dest: '.', expand: true, filter: 'isFile' },
+          { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/tutorials', src: ['*.*'], dest: 'tutorials', expand: true, filter: 'isFile' }
         ]
       },
-      docs: { cwd: 'node_modules/emp-chromecast-receiver-2/dist/docs', src: ['**/**'], dest: 'dist/docs/', expand: true, filter: 'isFile' },
+      docs: { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/docs', src: ['**/**'], dest: 'dist/docs/', expand: true, filter: 'isFile' },
     },
     ftp_push: {
       stage: {
@@ -129,7 +129,7 @@ module.exports = function(grunt) {
     },
     shell: {
       updateNPM: {
-        command: 'npm install emp-chromecast-receiver-2 latest',
+        command: 'npm install emp-chromecast-receiver-2-dev latest',
         options: {
           preferLocal: true
         }
