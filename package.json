@@ -17,7 +17,7 @@
     "deploy": "grunt deploy"
   },
   "dependencies": {
-    "emp-chromecast-receiver-2": "latest",
+    "emp-chromecast-receiver-2-dev": "latest",
     "global": "^4.3.0",
     "latest": "^0.2.0",
     "lodash-compat": "^3.10.1",
