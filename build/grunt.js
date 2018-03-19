@@ -45,7 +45,7 @@ module.exports = function(grunt) {
     pkg,
     clean: {
       build: ['build/temp/*', 'dist/*'],
-      npm: ['emp-chromecast-receiver-2-dev/', 'emp-chromecast-receiver-2/'],
+      npm: ['emp-chromecast-receiver-2/'],
     },
     browserify: {
       options: browserifyGruntOptions(),
