@@ -87,9 +87,6 @@ module.exports = function(grunt) {
       fromNPM: {
         files: [
           { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/css/', src: ['*.*'], dest: 'app/css', expand: true, filter: 'isFile' },
-          { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/images/', src: ['*.*'], dest: 'app/images', expand: true, filter: 'isFile' },
-          { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/', src: ['index.html'], dest: 'app', expand: true, filter: 'isFile' },
-          { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/js/', src: ['emp-receiver-demo-app.*'], dest: 'app/js', expand: true, filter: 'isFile' },
           { cwd: 'node_modules/emp-chromecast-receiver-2-dev/', src: ['*.md'], dest: '.', expand: true, filter: 'isFile' },
           { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/tutorials', src: ['*.*'], dest: 'tutorials', expand: true, filter: 'isFile' }
         ]

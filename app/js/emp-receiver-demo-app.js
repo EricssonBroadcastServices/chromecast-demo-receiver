@@ -20,6 +20,7 @@ class EMPReceiverApp {
       debug: false,
       statusText: 'EMP Receiver App',
       playerOptions: {
+        errorDisplay: false, //error displayed with showError method in EMPReceiverApp
         empshaka: {
           abr: {
             // startBitrate 5Mbps 
@@ -36,6 +37,8 @@ class EMPReceiverApp {
       this.empReceiver_.player.on(empPlayer.Events.WAITING, this.onPlayStateChange.bind(this));
       this.empReceiver_.player.on(empPlayer.Events.ENDED, this.onPlayStateChange.bind(this));
       this.empReceiver_.player.on(empPlayer.Events.ERROR, this.onPlayStateChange.bind(this));
+      this.empReceiver_.player.on(empPlayer.Events.PROGRAM_CHANGED, this.onProgramChanged.bind(this));
+      this.empReceiver_.player.on(empPlayer.Events.ASSET_CHANGED, this.onVODAssetChanged.bind(this));
     });
 
     this.empReceiver_.on(empReceiver.Events.STATE_CHANGED, this.onStateChange.bind(this));
@@ -61,7 +64,7 @@ class EMPReceiverApp {
       mediaSubtitle.innerHTML = metadata.subtitle || '';
     }
     if (mediaArtworkImg && metadata.images && metadata.images.length > 0) {
-      var image = this.imageSelector(metadata.images);
+      let image = this.imageSelector(metadata.images, 'chromecast');
       mediaArtworkImg.src = image.url;
       mediaArtworkImg.height = image.height;
       mediaArtworkImg.width = image.width;
@@ -81,14 +84,16 @@ class EMPReceiverApp {
   /**
   * Select the image to display for the asset
   * @param {Array} images image objects
+  * @param {string} imageType image type in backend
+  * @returns {image} image object
   */
-  imageSelector(images) {
+  imageSelector(images, imageType) {
     let image;
     if (images.length > 0) {
       image = images[0];
     }
     for (var i = 0; i < images.length; i++) {
-      if (images[i].url && images[i].type === 'chromecast') {
+      if (images[i].url && images[i].type === imageType) {
         return images[i];
       }
     }
@@ -153,8 +158,12 @@ class EMPReceiverApp {
   */
   onStateChange(state) {
     this.container_.setAttribute('state', state);
-    if (state === 'loading') {
+    if (state === empReceiver.ReceiverStates.LOADING) {
       this.hideError();
+    }
+    else if (state === empReceiver.ReceiverStates.IDLE) {
+      let logo = document.getElementById('media-logo');
+      logo.style.backgroundImage = 'url("images/logo.png")';
     }
   }
 
@@ -179,6 +188,36 @@ class EMPReceiverApp {
     let errorDisplay = document.getElementById('emp-error-display');
     if (errorDisplay) {
       errorDisplay.style.display = 'none';
+    }
+  }
+
+  /**
+  *  Handle Program changed,
+  *
+  * @param {Event} event the event that triggered this function
+  * @param {object} data the data that was sent with the event, contain the program
+  */
+  onProgramChanged(event, data) {
+    if (data && data.program) {
+      if (data.program.channelInfo) {
+        let logo = document.getElementById('media-logo');
+        let channelLogo = this.imageSelector(data.program.channelInfo.images, 'thumbnail');
+        if (channelLogo && channelLogo.url) {
+          logo.style.backgroundImage = 'url("' + channelLogo.url + '")';
+        }
+      }
+    }
+  }
+
+  /**
+  *  Handle VOD Asset changed,
+  *
+  * @param {Event} event the event that triggered this function
+  * @param {object} data the data that was sent with the event, contain the asset
+  */
+  onVODAssetChanged(event, data) {
+    if (data && data.asset) {
+      //Code to handle VOD Asset Changed
     }
   }
 }

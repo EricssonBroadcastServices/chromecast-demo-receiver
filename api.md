@@ -1,6 +1,8 @@
 ## Classes
 
 <dl>
+<dt><a href="#EmpMediaPlayer">EmpMediaPlayer</a></dt>
+<dd></dd>
 <dt><a href="#EMPReceiverApp">EMPReceiverApp</a></dt>
 <dd><p>EMPReceiverApp - UIController that handle the ui-logic for the receiver.
 It instantiate the empReceiver and listen to events.</p>
@@ -34,21 +36,40 @@ It instantiate the empReceiver and listen to events.</p>
 </dd>
 </dl>
 
+<a name="EmpMediaPlayer"></a>
+
+## EmpMediaPlayer
+**Kind**: global class  
+<a name="new_EmpMediaPlayer_new"></a>
+
+### new EmpMediaPlayer(receiver)
+Implement cast.receiver.media.Player interface
+
+
+| Param | Type |
+| --- | --- |
+| receiver | [<code>empReceiver</code>](#empReceiver) | 
+
 <a name="EMPReceiverApp"></a>
 
 ## EMPReceiverApp
-EMPReceiverApp - UIController that handle the ui-logic for the receiver.It instantiate the empReceiver and listen to events. You make changes in this class to build your own Receiver, with your preferred look and feel.
+EMPReceiverApp - UIController that handle the ui-logic for the receiver.
+It instantiate the empReceiver and listen to events.
+ 
+You make changes in this class to build your own Receiver, with your preferred look and feel.
 
 **Kind**: global class  
 
 * [EMPReceiverApp](#EMPReceiverApp)
     * [.onMetadataUpdate(metadata)](#EMPReceiverApp+onMetadataUpdate)
-    * [.imageSelector(images)](#EMPReceiverApp+imageSelector)
+    * [.imageSelector(images, imageType)](#EMPReceiverApp+imageSelector) ⇒ <code>image</code>
     * [.onResolutionChanged(resolution)](#EMPReceiverApp+onResolutionChanged)
     * [.onPlayStateChange(event, data)](#EMPReceiverApp+onPlayStateChange)
     * [.onStateChange(state)](#EMPReceiverApp+onStateChange)
     * [.showError(message)](#EMPReceiverApp+showError)
     * [.hideError()](#EMPReceiverApp+hideError)
+    * [.onProgramChanged(event, data)](#EMPReceiverApp+onProgramChanged)
+    * [.onVODAssetChanged(event, data)](#EMPReceiverApp+onVODAssetChanged)
 
 <a name="EMPReceiverApp+onMetadataUpdate"></a>
 
@@ -63,14 +84,16 @@ Handle metadata changed, Update the mediaArt UI here
 
 <a name="EMPReceiverApp+imageSelector"></a>
 
-### empReceiverApp.imageSelector(images)
+### empReceiverApp.imageSelector(images, imageType) ⇒ <code>image</code>
 Select the image to display for the asset
 
 **Kind**: instance method of [<code>EMPReceiverApp</code>](#EMPReceiverApp)  
+**Returns**: <code>image</code> - image object  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | images | <code>Array</code> | image objects |
+| imageType | <code>string</code> | image type in backend |
 
 <a name="EMPReceiverApp+onResolutionChanged"></a>
 
@@ -123,6 +146,30 @@ show error message on screen
 Hide error message on screen
 
 **Kind**: instance method of [<code>EMPReceiverApp</code>](#EMPReceiverApp)  
+<a name="EMPReceiverApp+onProgramChanged"></a>
+
+### empReceiverApp.onProgramChanged(event, data)
+Handle Program changed,
+
+**Kind**: instance method of [<code>EMPReceiverApp</code>](#EMPReceiverApp)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| event | <code>Event</code> | the event that triggered this function |
+| data | <code>object</code> | the data that was sent with the event, contain the program |
+
+<a name="EMPReceiverApp+onVODAssetChanged"></a>
+
+### empReceiverApp.onVODAssetChanged(event, data)
+Handle VOD Asset changed,
+
+**Kind**: instance method of [<code>EMPReceiverApp</code>](#EMPReceiverApp)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| event | <code>Event</code> | the event that triggered this function |
+| data | <code>object</code> | the data that was sent with the event, contain the asset |
+
 <a name="EmpReceiverEvents"></a>
 
 ## EmpReceiverEvents
@@ -189,7 +236,8 @@ EMPReceiver version
 <a name="empReceiver+player"></a>
 
 ### empReceiver.player ⇒ <code>EmpPlayer</code>
-Returns the underlying EmpPlayer version 2 EmpPlayer API: https://www.npmjs.com/package/empplayer2
+Returns the underlying EmpPlayer version 2 
+EmpPlayer API: https://www.npmjs.com/package/empplayer2
 
 **Kind**: instance property of [<code>empReceiver</code>](#empReceiver)  
 **Export**:   
@@ -208,7 +256,8 @@ Handle custom message from senders
 <a name="empReceiver+onEmpError"></a>
 
 ### empReceiver.onEmpError(error)
-Error handler for empPlayer Errors. Broadcast error message to all connected senders.
+Error handler for empPlayer Errors.
+ Broadcast error message to all connected senders.
 
 **Kind**: instance method of [<code>empReceiver</code>](#empReceiver)  
 
@@ -226,7 +275,9 @@ Provides information about the media currently loaded.
 <a name="empReceiver+getMediaManager"></a>
 
 ### empReceiver.getMediaManager(safety) ⇒ <code>cast.receiver.MediaManager</code>
-Get current media manager instanceThe MediaManager is used to send/receive media messages/eventsIt will print a warning by default about the danger of using the MediaManager directly
+Get current media manager instance
+The MediaManager is used to send/receive media messages/events
+It will print a warning by default about the danger of using the MediaManager directly
 but any argument that is passed in will silence the warning.
 
 **Kind**: instance method of [<code>empReceiver</code>](#empReceiver)  
@@ -239,7 +290,10 @@ but any argument that is passed in will silence the warning.
 <a name="empReceiver+getCastReceiverManager"></a>
 
 ### empReceiver.getCastReceiverManager(safety) ⇒ <code>cast.receiver.CastReceiverManager</code>
-Get current cast receiver manager instanceThe receiver manager allows communication with the platform and is used to send/receive system messages/events.It will print a warning by default about the danger of using the CastReceiverManager directly
+Get current cast receiver manager instance
+The receiver manager allows communication with the platform and is used to send/receive system messages/events.
+
+It will print a warning by default about the danger of using the CastReceiverManager directly
 but any argument that is passed in will silence the warning.
 
 **Kind**: instance method of [<code>empReceiver</code>](#empReceiver)  
@@ -252,7 +306,9 @@ but any argument that is passed in will silence the warning.
 <a name="empReceiver+getVideoElement"></a>
 
 ### empReceiver.getVideoElement(safety) ⇒ <code>Element</code>
-Get current Video ElementIt will print a warning by default about the danger of using the Video Element directly
+Get current Video Element
+
+It will print a warning by default about the danger of using the Video Element directly
 but any argument that is passed in will silence the warning.
 
 **Kind**: instance method of [<code>empReceiver</code>](#empReceiver)  
@@ -265,7 +321,9 @@ but any argument that is passed in will silence the warning.
 <a name="empReceiver+sendMessage"></a>
 
 ### empReceiver.sendMessage(message, opt_senderId)
-Sends a custom message to a specific sender orbroadcast custom message to all connected senders.It can be dangerous to send message directly from ReceiverApp, but if you know what you're doing it's public.
+Sends a custom message to a specific sender or
+broadcast custom message to all connected senders.
+It can be dangerous to send message directly from ReceiverApp, but if you know what you're doing it's public.
 
 **Kind**: instance method of [<code>empReceiver</code>](#empReceiver)  
 **Export**:   
@@ -278,7 +336,8 @@ Sends a custom message to a specific sender orbroadcast custom message to all c
 <a name="empReceiver+sendStatus"></a>
 
 ### empReceiver.sendStatus(opt_senderId, opt_requestId)
-Sends media status to a specific sender orbroadcast media status to all connected senders.
+Sends media status to a specific sender or
+broadcast media status to all connected senders.
 
 **Kind**: instance method of [<code>empReceiver</code>](#empReceiver)  
 **Export**:   
