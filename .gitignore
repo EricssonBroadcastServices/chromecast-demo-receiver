@@ -1,7 +1,6 @@
 node_modules/
-build/temp/emp-receiver-demo-app.js
+build/temp/
 dist/
-build/temp/emp-receiver.css
 npm-debug.log
 .ftpauth
 # Ignore Visual Studio files
