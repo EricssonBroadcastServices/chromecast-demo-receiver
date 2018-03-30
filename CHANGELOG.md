@@ -34,5 +34,20 @@ Show the program image with type === 'chromecast' in Chromecast demo receiver.
 **EMP-11060** Analytics is validate session every second when casting
 **EMP-10946** Analytic error: There is no timeout scheduled with the given id "3819903156412202"
 
+## 2.0.80 Beta Release
+
+### New features
+**EMP-11161**   Add Channel information to the program object
+**EMP-11085**   Don't show title bar and buffering when it's not a real buffering, (stalling-playback)
+**EMP-11197**   Program end as duration for live program 
+
+### Bug fixes
+**EMP-11167** 	CC Receiver - Sometimes the playback just stops on the receiver 
+**EMP-10957**   HTML Player 2.0 - Wrong error message: not entitled instead of stream not available
+**EMP-10979**	Shaka - loading the stream for live channels take long time for some channels
+**EMP-11162**   Cast error, can't recover code: session_error message: INVALID_MEDIA_SESSION_ID
+**EMP-11164**   Flipping timebar - CurrentProgram remove before pre program switch to new program
+**EMP-11114**   CC Receiver - Seeking crashes the receiver
+
 
 

@@ -3,23 +3,10 @@
 <dl>
 <dt><a href="#EmpMediaPlayer">EmpMediaPlayer</a></dt>
 <dd></dd>
-<dt><a href="#EMPReceiverApp">EMPReceiverApp</a></dt>
-<dd><p>EMPReceiverApp - UIController that handle the ui-logic for the receiver.
-It instantiate the empReceiver and listen to events.</p>
-<p>You make changes in this class to build your own Receiver, with your preferred look and feel.</p>
-</dd>
 <dt><a href="#EmpReceiverEvents">EmpReceiverEvents</a></dt>
 <dd></dd>
 <dt><a href="#empReceiver">empReceiver</a></dt>
 <dd></dd>
-</dl>
-
-## Functions
-
-<dl>
-<dt><a href="#receiverAppInit">receiverAppInit()</a></dt>
-<dd><p>Initialize then receiver app</p>
-</dd>
 </dl>
 
 ## Events
@@ -49,126 +36,6 @@ Implement cast.receiver.media.Player interface
 | Param | Type |
 | --- | --- |
 | receiver | [<code>empReceiver</code>](#empReceiver) | 
-
-<a name="EMPReceiverApp"></a>
-
-## EMPReceiverApp
-EMPReceiverApp - UIController that handle the ui-logic for the receiver.
-It instantiate the empReceiver and listen to events.
- 
-You make changes in this class to build your own Receiver, with your preferred look and feel.
-
-**Kind**: global class  
-
-* [EMPReceiverApp](#EMPReceiverApp)
-    * [.onMetadataUpdate(metadata)](#EMPReceiverApp+onMetadataUpdate)
-    * [.imageSelector(images, imageType)](#EMPReceiverApp+imageSelector) ⇒ <code>image</code>
-    * [.onResolutionChanged(resolution)](#EMPReceiverApp+onResolutionChanged)
-    * [.onPlayStateChange(event, data)](#EMPReceiverApp+onPlayStateChange)
-    * [.onStateChange(state)](#EMPReceiverApp+onStateChange)
-    * [.showError(message)](#EMPReceiverApp+showError)
-    * [.hideError()](#EMPReceiverApp+hideError)
-    * [.onProgramChanged(event, data)](#EMPReceiverApp+onProgramChanged)
-    * [.onVODAssetChanged(event, data)](#EMPReceiverApp+onVODAssetChanged)
-
-<a name="EMPReceiverApp+onMetadataUpdate"></a>
-
-### empReceiverApp.onMetadataUpdate(metadata)
-Handle metadata changed, Update the mediaArt UI here
-
-**Kind**: instance method of [<code>EMPReceiverApp</code>](#EMPReceiverApp)  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| metadata | <code>object</code> | {title:'', subtitle:'', images:[]} |
-
-<a name="EMPReceiverApp+imageSelector"></a>
-
-### empReceiverApp.imageSelector(images, imageType) ⇒ <code>image</code>
-Select the image to display for the asset
-
-**Kind**: instance method of [<code>EMPReceiverApp</code>](#EMPReceiverApp)  
-**Returns**: <code>image</code> - image object  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| images | <code>Array</code> | image objects |
-| imageType | <code>string</code> | image type in backend |
-
-<a name="EMPReceiverApp+onResolutionChanged"></a>
-
-### empReceiverApp.onResolutionChanged(resolution)
-Handle resolution changed, show/hide resolution text
-
-**Kind**: instance method of [<code>EMPReceiverApp</code>](#EMPReceiverApp)  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| resolution | <code>string</code> | ['SD','HD','2K','4K'] |
-
-<a name="EMPReceiverApp+onPlayStateChange"></a>
-
-### empReceiverApp.onPlayStateChange(event, data)
-Handle play state change,
-
-**Kind**: instance method of [<code>EMPReceiverApp</code>](#EMPReceiverApp)  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| event | <code>Event</code> | the play state event that triggered this function |
-| data | <code>object</code> | the data that was sent with the event |
-
-<a name="EMPReceiverApp+onStateChange"></a>
-
-### empReceiverApp.onStateChange(state)
-Handle empReceiver state change,
-
-**Kind**: instance method of [<code>EMPReceiverApp</code>](#EMPReceiverApp)  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| state | <code>string</code> | empReceiver.ReceiverStates ['launching', 'loading','buffering', 'seeking', 'playing', 'paused', 'done', 'idle'] |
-
-<a name="EMPReceiverApp+showError"></a>
-
-### empReceiverApp.showError(message)
-show error message on screen
-
-**Kind**: instance method of [<code>EMPReceiverApp</code>](#EMPReceiverApp)  
-
-| Param | Type |
-| --- | --- |
-| message | <code>string</code> | 
-
-<a name="EMPReceiverApp+hideError"></a>
-
-### empReceiverApp.hideError()
-Hide error message on screen
-
-**Kind**: instance method of [<code>EMPReceiverApp</code>](#EMPReceiverApp)  
-<a name="EMPReceiverApp+onProgramChanged"></a>
-
-### empReceiverApp.onProgramChanged(event, data)
-Handle Program changed,
-
-**Kind**: instance method of [<code>EMPReceiverApp</code>](#EMPReceiverApp)  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| event | <code>Event</code> | the event that triggered this function |
-| data | <code>object</code> | the data that was sent with the event, contain the program |
-
-<a name="EMPReceiverApp+onVODAssetChanged"></a>
-
-### empReceiverApp.onVODAssetChanged(event, data)
-Handle VOD Asset changed,
-
-**Kind**: instance method of [<code>EMPReceiverApp</code>](#EMPReceiverApp)  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| event | <code>Event</code> | the event that triggered this function |
-| data | <code>object</code> | the data that was sent with the event, contain the asset |
 
 <a name="EmpReceiverEvents"></a>
 
@@ -347,12 +214,6 @@ broadcast media status to all connected senders.
 | opt_senderId | <code>string</code> | optional sender id |
 | opt_requestId | <code>number</code> | optional request id |
 
-<a name="receiverAppInit"></a>
-
-## receiverAppInit()
-Initialize then receiver app
-
-**Kind**: global function  
 <a name="event_METADATA_UPDATED"></a>
 
 ## "METADATA_UPDATED"
