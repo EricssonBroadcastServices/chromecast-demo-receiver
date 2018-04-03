@@ -10,7 +10,7 @@ https://cast.google.com/u/2/publish/#/overview
 
 The receiver is compliant with the default chromecast receiver API unless otherwise stated. For information on how to build a sender and other functionality not described here. See https://developers.google.com/cast/docs/sender_apps
 
-* **[Upgrade Guide](master/tutorials/upgrade-guide.md)**
+* **[Upgrade Guide](tutorials/upgrade-guide.md)**
 * **[Chromcast sender tutorials](tutorials/chromecast.md)**
 * **[Release notes](CHANGELOG.md)**
 * **[Hosted API docs](https://emps-chromecast-receiver.azurewebsites.net/chromecast-demo-receiver/stage/docs/)**
