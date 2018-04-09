@@ -1,0 +1,104 @@
+﻿.video-js .vjs-control-bar {
+    background: rgba(38, 38, 38, 0.9);
+    background-color: rgba(38, 38, 38, 0.9);
+    width: auto;
+    left: 4em;
+    right: 4em;
+    bottom: 2em;
+    height: 18em;
+    border-radius: 0.5em;
+    padding-top: 11em;
+    padding-right: 2em;
+    padding-bottom: 0.5em;
+    padding-left: 2em;
+    opacity: 1;
+}
+
+.video-js .vjs-slider {
+    background-color: #2e2e2e;
+    background-color: rgba(46, 46, 46, 0.8);
+    border-radius: 1em;
+    /*margin: 0;*/
+}
+
+.video-js .vjs-play-progress,
+.video-js .vjs-slider-bar {
+    background: #cacaca;
+    border-radius: 1em;
+}
+
+.video-js .vjs-play-progress {
+    color: #b7090b;
+    background: #b7090b;
+    font-size: 1.3em;
+}
+
+    .video-js .vjs-play-progress:before {
+        transition: width .1s ease-out, height .1s ease-out;
+        content: "";
+        top: -0.2em;
+        border: 0;
+        background: radial-gradient(#b7090b 33%, #830607);
+        width: 1em;
+        height: 1em;
+        border-radius: 50%;
+        box-shadow: #000 0 0 2px;
+    }
+
+
+.video-js .vjs-play-progress,
+.video-js .vjs-load-progress {
+    height: 0.7em !important;
+}
+
+.video-js .vjs-progress-holder {
+    height: 0.9em;
+}
+
+.video-js .vjs-load-progress {
+    background: rgba(46, 46, 46, 0.5);
+    border-radius: 1em;
+    height: 0.9em !important;
+}
+
+    .video-js .vjs-load-progress div {
+        background: rgba(46, 46, 46, 0.75);
+        border-radius: 1em;
+        height: 0.9em !important;
+    }
+
+.receiver .media-info {
+    bottom: 5.5em;
+}
+
+.receiver .logo {
+    background-position: top;
+}
+
+.receiver[type="video"][state="paused"] .video-js .vjs-progress-holder .vjs-load-progress,
+.receiver[type="video"][state="paused"] .video-js .vjs-current-time,
+.receiver[type="video"][state="paused"] .video-js .vjs-time-control,
+.receiver[type="video"][state="paused"] .video-js .vjs-progress-control,
+.receiver[type="video"][state="paused"] > .logo,
+.receiver[type="video"][state="paused"] > .media-info {
+    animation: none !important;
+    animation-fill-mode: forwards;
+    animation-delay: 0s;
+}
+
+.receiver .media-info .media-subtitle {
+    font-size: 1em;
+    max-height: 3em;
+}
+
+#media-artwork-img {
+    border-radius: 0.3em;
+}
+
+.video-js .vjs-time-control {
+    min-width: 5.8em;
+}
+
+.receiver .media-text {
+    align-self: flex-start;
+}
