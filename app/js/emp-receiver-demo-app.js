@@ -157,6 +157,10 @@ class EMPReceiverApp {
   * @param {string} state empReceiver.ReceiverStates ['launching', 'loading','buffering', 'seeking', 'playing', 'paused', 'done', 'idle']
   */
   onStateChange(state) {
+    if (state === 'buffering') {
+      //buffering is handle by videojs, vjs-waiting class
+      return;
+    }
     this.container_.setAttribute('state', state);
     if (state === empReceiver.ReceiverStates.LOADING) {
       this.hideError();
