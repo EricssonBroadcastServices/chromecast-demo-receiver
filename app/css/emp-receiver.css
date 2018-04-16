@@ -184,19 +184,8 @@ body {
 .video-js.vjs-live .vjs-current-time {
   display: none; }
 
-.receiver[state="launching"] .receiver-spinner {
-  display: none;
-  z-index: 1;
-  bottom: 5%;
-  left: 50%;
-  margin-left: -16px;
-  position: absolute; }
-
 .receiver[state="launching"] .logo {
   display: block; }
-
-.receiver[state="idle"] .receiver-spinner {
-  display: none; }
 
 .receiver[state="idle"] .logo {
   display: block; }
@@ -212,7 +201,7 @@ body {
 .receiver[state="loading"] .video-js .receiver-play-control,
 .receiver[state="loading"] .video-js .vjs-current-time,
 .receiver[state="loading"] .video-js .vjs-time-control {
-  display: none; }
+  display: none !important; }
 
 .receiver[state="loading"] .video-js .vjs-control-bar,
 .receiver[state="loading"] > .media-info {
@@ -282,20 +271,19 @@ body {
   animation-fill-mode: forwards;
   animation-delay: 5s; }
 
-.receiver[state="buffering"] .vjs-play-progress.vjs-slider-bar, .receiver[state="seeking"] .vjs-play-progress.vjs-slider-bar {
+.receiver[state="seeking"] .vjs-play-progress.vjs-slider-bar {
   width: 60% !important;
   animation: loading-bar 2s infinite linear; }
 
-.receiver[state="buffering"] .video-js .vjs-slider, .receiver[state="seeking"] .video-js .vjs-slider {
+.receiver[state="seeking"] .video-js .vjs-slider {
   overflow: hidden; }
 
-.receiver[state="buffering"] .video-js .vjs-control-bar,
-.receiver[state="buffering"] > .media-info, .receiver[state="seeking"] .video-js .vjs-control-bar,
+.receiver[state="seeking"] .video-js .vjs-control-bar,
 .receiver[state="seeking"] > .media-info {
   display: flex; }
 
-.receiver[state="buffering"] .receiver-spinner, .receiver[state="seeking"] .receiver-spinner {
-  display: block; }
+.vjs-seeking .vjs-loading-spinner {
+  display: none; }
 
 .vjs-texttrack-settings {
   display: none !important; }
