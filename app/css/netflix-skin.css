@@ -102,3 +102,38 @@
 .receiver .media-text {
     align-self: flex-start;
 }
+
+
+.vjs-loading-spinner {
+    border: none;
+    opacity: 0;
+    visibility: hidden;
+    animation: vjs-spinner-fade-out 2s linear 1;
+    animation-delay: 2s;
+}
+
+    .vjs-loading-spinner:before, .vjs-loading-spinner:after {
+        border: none;
+    }
+
+    .vjs-loading-spinner:after {
+        background-image: url(../images/site-spinner.png);
+        background-repeat: no-repeat;
+        background-position-x: 50%;
+        background-position-y: 50%;
+        -moz-background-size: 100%;
+        -o-background-size: 100%;
+        background-size: 100%;
+    }
+
+.vjs-waiting .vjs-loading-spinner:after {
+    animation: vjs-spinner-spin 1.1s linear infinite, vjs-spinner-fade 1.1s linear 1 !important;
+    animation-delay: 2s;
+}
+
+.vjs-waiting .vjs-loading-spinner {
+    opacity: 1;
+    visibility: visible;
+    animation: vjs-spinner-fade-in 2s linear 1;
+    animation-delay: 2s;
+}
