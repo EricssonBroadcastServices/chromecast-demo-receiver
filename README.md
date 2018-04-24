@@ -10,9 +10,9 @@ https://cast.google.com/u/2/publish/#/overview
 
 The receiver is compliant with the default chromecast receiver API unless otherwise stated. For information on how to build a sender and other functionality not described here. See https://developers.google.com/cast/docs/sender_apps
 
-* **[Upgrade Guide](tutorials/upgrade-guide.md)**
-* **[Chromcast sender tutorials](tutorials/chromecast.md)**
-* **[Release notes](CHANGELOG.md)**
+* **[Upgrade Guide](https://github.com/EricssonBroadcastServices/chromecast-demo-receiver/blob/master/tutorials/upgrade-guide.md)**
+* **[Chromcast sender tutorials](https://github.com/EricssonBroadcastServices/chromecast-demo-receiver/blob/master/tutorials/chromecast.md)**
+* **[Release notes](https://github.com/EricssonBroadcastServices/chromecast-demo-receiver/blob/master/CHANGELOG.md)**
 * **[Hosted API docs](https://emps-chromecast-receiver.azurewebsites.net/chromecast-demo-receiver/stage/docs/)**
 
 
@@ -112,7 +112,7 @@ emp-player options can be send to empReceiver constructor and emp-player events 
       playerOptions: {
         empshaka: {
           abr: {
-              // startBitrate 5Mbps
+              // startBitrate 5Mbps 
             defaultBandwidthEstimate: 5e6
           }
         }
@@ -133,4 +133,9 @@ emp-player options can be send to empReceiver constructor and emp-player events 
 
 EMP HTML5 Player
 =======
-The receiver makes use of emp-player.
+The receiver makes use of emp-player version 2.
+- [emp-player docs](https://emps-chromecast-receiver.azurewebsites.net/html5-player-2/reference/docs/index.html)
+- [emp-player npm](https://www.npmjs.com/package/empplayer2-dev)
+
+
+
