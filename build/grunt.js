@@ -72,7 +72,7 @@ module.exports = function(grunt) {
           }
         },
         files: {
-          'dist/js/emp-receiver-demo-app.min.js': 'build/temp/emp-receiver-demo-app.js'
+          'build/temp/emp-receiver-demo-app.min.js': 'build/temp/emp-receiver-demo-app.js'
         }
       }
     },
@@ -81,7 +81,8 @@ module.exports = function(grunt) {
         files: [
           { cwd: 'app/images/', src: ['*.*'], dest: 'dist/images', expand: true, filter: 'isFile'  },
           { cwd: 'app/', src: ['index.html'], dest: 'dist', expand: true, filter: 'isFile' },
-          { cwd: 'app/css/', src: ['*.css'], dest: 'dist/css', expand: true, filter: 'isFile' }
+          { cwd: 'app/css/', src: ['*.css'], dest: 'dist/css', expand: true, filter: 'isFile' },
+          { cwd: 'build/temp/', src: ['*.*'], dest: 'dist/js', expand: true, filter: 'isFile' }
         ]
       },
       fromNPM: {
