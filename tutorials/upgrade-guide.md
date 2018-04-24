@@ -9,9 +9,8 @@ When casting a channel or a program, the timeline is now relative to the beginni
 * ProgramChanged message broadcasted by the Receiver is now an object containing the program’s full metadata. Before, it was just a string containing the programId. Senders should handle this api change.
 * "refreshcontrols" message is deprecated. Please use "pull" instead.
 * "setabsolutetime" message is deprecated. Please use "playheadtime" instead.
-* DurationChanged has been removed, duration is now a property on the Media object that is sent on media status update. 
+* DurationChanged has been removed, duration is now a property on the Media object that is sent on media status update.
   This is necessary to make the senders built-in controls to work.
-* Playback properties like default playback behaviour, startTime, etc.. were adapted so that they match the mobile client’s playback properties structure. To start casting use playbackProperties, described in [Playback method 1](chromecast.md#playback-method-1) below.  
+* Playback properties like default playback behaviour, startTime, etc.. were adapted so that they match the mobile client’s playback properties structure. To start casting use playbackProperties, described in [Playback method 1](chromecast.md#playback-method-1).  
 
 * **[Chromcast sender tutorials](https://github.com/EricssonBroadcastServices/chromecast-demo-receiver/blob/master/tutorials/chromecast.md)**
-

@@ -10,14 +10,14 @@ When casting a channel or a program, the timeline is now relative to the beginni
 * ProgramChanged message broadcasted by the Receiver is now an object containing the program’s full metadata. Before, it was just a string containing the programId. Senders should handle this api change.
 * "refreshcontrols" message is deprecated. Please use "pull" instead.
 * "setabsolutetime" message is deprecated. Please use "playheadtime" instead.
-* DurationChanged has been removed, duration is now a property on the Media object that is sent on media status update. 
+* DurationChanged has been removed, duration is now a property on the Media object that is sent on media status update.
   This is necessary to make the senders built-in controls to work.
 * Playback properties like default playback behaviour, startTime, etc.. were adapted so that they match the mobile client’s playback properties structure. To start casting use playbackProperties, described in [Playback method 1](chromecast.md#playback-method-1) below.  
 
-**New fetures**
+**New features**
 * Program related progress bar with seamless switching between programs for a channel.
 * Switch program by sending new playheadtime, play next, play previous or goto live messages.
-* AssetChanged event is sent when a new VOD content is playing and the message includes the asset object.
+* AssetChanged event is sent when a new VOD is playing and the message includes the asset object.
 * Support for casting external streams in MPEG-DASH or MP4 format.
 * Line up programs, assets and external streams to be played in sequence.
 * Jump to next lined up video asset.
@@ -42,7 +42,7 @@ options['controlBar'] = {
 ```
 
 EMP HTML5 sender is a videojs plugin. Include the javascript emp-cast-sender.js and the Chromecast button will appear in the sender's controlbar.
-In the bundle script emp-player-all.js, the emp-cast-sender is already included. 
+In the bundle script emp-player-all.js, the emp-cast-sender is already included.
 
 The receiver is compliant with the default Chromecast Receiver API unless otherwise stated. For information on how to build a sender, please visit https://developers.google.com/cast/docs/sender_apps
 
@@ -54,7 +54,7 @@ The receiver is compliant with the default Chromecast Receiver API unless otherw
 
 ## LoadRequest ##
 
-**Loading Media**
+**Loading Media**  
 To load media on the receiver, add data to the customData parameter of the load method. Use [Playback method 1](chromecast.md#playback-method-1) for EMP streams. In order to cast EMP media, the EMP media has to be available in the DASH/CENC format.
 
 Loading media is done using the following methods
@@ -91,7 +91,7 @@ The recommended playback method for EMP streams.
 **valid playFrom values**
 * **'defaultBehaviour'** (default) Start at beginning of the program if programId is included otherwise start at live edge
 * **'startTime'** Start at a Unix startTime
-* **'beginning'** Start at the beginning of the program 
+* **'beginning'** Start at the beginning of the program
 * **'bookmark'** Start at the bookmark returned by EMP backend. If there is no bookmark, it falls back to the defaultBehaviour
 ´
 
@@ -120,10 +120,10 @@ loadRequest.customData = {
 ```
 The source **src** attribute can be a 'stream url' or 'assetId' or assetObject {assetId:'', channelId:'', programId:''}
 <br />
-The source **type** attribute can be any of these 
+The source **type** attribute can be any of these
 
-* **'video/emp'** EMP streams, src attribute should contain an 'assetId' or assetObject 
-* **'application/dash+xml'** External MPEG-DASH stream, src attribute should contain a stream url (mpd). 
+* **'video/emp'** EMP streams, src attribute should contain an 'assetId' or assetObject
+* **'application/dash+xml'** External MPEG-DASH stream, src attribute should contain a stream url (mpd).
 * **'video/mp4'** External mp4 stream, src attribute should contain a stream url.
 
 
@@ -132,7 +132,7 @@ The source **type** attribute can be any of these
 
 You have the option to add a Chromecast title, subtitle and image. This is however not relevant when using EMP streams because the data will be updated by the receiver. This option could be used when working with external streams.
 ```javascript
-loadRequest.customData.source.options :{ 
+loadRequest.customData.source.options :{
   empcast : {
         title: '',
         subtitle: '',
@@ -145,7 +145,7 @@ loadRequest.customData.source.options :{
 **Start Time**
 
 To start casting a media from a position other than 0, it is possible to set the currentTime attribute in the LoadRequest object (found in the Chromecast API).
-Use startTime in [Playback method 1](chromecast.md#playback-method-1) for EMP streams, insted of the startTime parameter of the load method.
+Use startTime in [Playback method 1](chromecast.md#playback-method-1) for EMP streams, instead of the startTime parameter of the load method.
 
 ```javascript
 // Setting start time
@@ -161,8 +161,8 @@ loadRequest.customData = {
   audioLanguage: 'en' (default is Chromecast device language) // preferred audio language,  
   subtitleLanguage: 'en' (default is Chromecast device language) // preferred subtitle language,   
   timeShiftDisabled: (default is false) //If timeShift should be enabled, overridden by contract restrictions
-  useLastViewedOffset: (default is false) (use playbackProperties instead) // Start from bookmarks, 
-  absoluteStartTime: '0' (use playbackProperties instead) // starttime milliseconds since 1970/01/01, this is not the preferred way and will cause a seek in the case of VOD.
+  useLastViewedOffset: (default is false) (use playbackProperties instead) // Start from bookmarks,
+  absoluteStartTime: '0' (use playbackProperties instead) // starttime in milliseconds since 1970/01/01, this is not the preferred way and will cause a seek in the case of VOD.
   textTrackSettings: (default is true) //  If changes to textTrackStyle can be done by senders
   textTrackStyle: '' // Initial textTrackStyle
   startTime: 0, (use playbackProperties instead) // start time in seconds since start of stream, will be override with loadRequest.currentTime
@@ -171,9 +171,9 @@ loadRequest.customData = {
 ```
 <br />
 
-HTML5 Sender will send the current textTrack-style to the reciver, it can be turned off by setting playerOptions.textTrackSettings to false.
+HTML5 Sender will send the current textTrack-style to the receiver, it can be turned off by setting playerOptions.textTrackSettings to false.
 
-**Valid options for textTrackStyle** 
+**Valid options for textTrackStyle**
 ```javascript
 textTrackStyle: {
    "backgroundColor":"#000",
@@ -255,11 +255,11 @@ media:{ "contentId":"766355-726896573_enigma", // asssetId, Note: It's not alway
 
 **Duration** is a property on the Media object, when live program is casting it will grow every second.
 
-**CurrentTime** is calculated from the last received stream information and the elapsed wall-time since that update. 
+**CurrentTime** is calculated from the last received stream information and the elapsed wall-time since that update.
 Access currentTime with Cast Sender API:
 * Web: getEstimatedTime()
 * Android: 	getApproximateStreamPosition()
-* iOS: approximateStreamPosition	
+* iOS: approximateStreamPosition
 
 <br />
 
@@ -296,7 +296,7 @@ Limitation: Don't use track and audio ids internaly becasue they can change duri
 - Use the 'activeTrackIds' property to display on the Sender which track is currently active on the Receiver.
 - If only one audiotrack is available, no audiotracks are broadcasted.
 - If no subtitle is currently active and only one audiotrack is available, the activeTrackIds array will be empty.
-- Always use the latest received message in order to display the correct information to the user. This is important because, in the case where multiple senders are connencted, they could modify the tracks at the same time. 
+- Always use the latest received message in order to display the correct information to the user. This is important because, in the case where multiple senders are connected, they could modify the tracks at the same time.
 
 
 
@@ -412,7 +412,7 @@ Audio Track Kind values
 
 **Pull state from receiver**
 
-After joining a session, it might be necessary to request state, media and asset data from the Receiver. 
+After joining a session, it might be necessary to request state, media and asset data from the Receiver.
 By sending the pull message to the Receiver, it will reply with current state, media and asset data.
 *In version 1 this was called 'refreshcontrols' that's Deprecated and replaced with 'pull'*
 
@@ -480,7 +480,7 @@ After changing audiotracks, all connected senders (including the sender that mad
 
 
 **set playheadTime**
-Was named 'setabsolutetime' (Deprecated) in version 1. 
+Was named 'setabsolutetime' (Deprecated) in version 1.
 To seek to a specific date time for the playing channel or VOD.
 
 ```javascript
@@ -539,21 +539,21 @@ Update the subtile style
    "textOpacity":"1",
    "windowColor":"#000",
    "windowOpacity":"0"
-  } 
+  }
 }
 ```
 
 
 **lineupsource**
-Update lineup programs, assets and external streams to be played in sequence. 
+Update lineup programs, assets and external streams to be played in sequence.
 Can also be  accomplished with [Playback method 2](chromecast.md#playback-method-2), See it for source description.
 
 ```javascript
 {
   type: 'texttrackstyle',
   data: {
-    src: 'url or assetObject', 
-    type: ['video/emp', 'application/dash+xml', 'video/mp4'], 
+    src: 'url or assetObject',
+    type: ['video/emp', 'application/dash+xml', 'video/mp4'],
     licenseServer: 'licUrl', [optional]
     playToken: 'Lic Authorization Bearer', [optional]
     options: {videojs playerOptions} [optional]
@@ -570,4 +570,3 @@ Plays the next source in line
   type: 'loadnextsource'
 }
 ```
-
