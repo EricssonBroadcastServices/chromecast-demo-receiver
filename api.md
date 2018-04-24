@@ -35,7 +35,7 @@ Implement cast.receiver.media.Player interface
 
 | Param | Type |
 | --- | --- |
-| receiver | [<code>empReceiver</code>](#empReceiver) | 
+| receiver | [<code>empReceiver</code>](#empReceiver) |
 
 <a name="EmpReceiverEvents"></a>
 
@@ -103,7 +103,7 @@ EMPReceiver version
 <a name="empReceiver+player"></a>
 
 ### empReceiver.player ⇒ <code>EmpPlayer</code>
-Returns the underlying EmpPlayer version 2 
+Returns the underlying EmpPlayer version 2.  
 EmpPlayer API: https://www.npmjs.com/package/empplayer2
 
 **Kind**: instance property of [<code>empReceiver</code>](#empReceiver)  
@@ -142,8 +142,8 @@ Provides information about the media currently loaded.
 <a name="empReceiver+getMediaManager"></a>
 
 ### empReceiver.getMediaManager(safety) ⇒ <code>cast.receiver.MediaManager</code>
-Get current media manager instance
-The MediaManager is used to send/receive media messages/events
+Get current media manager instance.  
+The MediaManager is used to send/receive media messages/events.  
 It will print a warning by default about the danger of using the MediaManager directly
 but any argument that is passed in will silence the warning.
 
@@ -157,7 +157,7 @@ but any argument that is passed in will silence the warning.
 <a name="empReceiver+getCastReceiverManager"></a>
 
 ### empReceiver.getCastReceiverManager(safety) ⇒ <code>cast.receiver.CastReceiverManager</code>
-Get current cast receiver manager instance
+Get current cast receiver manager instance.  
 The receiver manager allows communication with the platform and is used to send/receive system messages/events.
 
 It will print a warning by default about the danger of using the CastReceiverManager directly
