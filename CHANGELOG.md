@@ -52,8 +52,5 @@ Show the program image with type === 'chromecast' in Chromecast demo receiver.
 ## 2.0.82
 
 ### New features
-**EMP-10978** Upgrade Shaka
-              
 
 ### Bug fixes
-Reset Shaka when new asset is cast.
