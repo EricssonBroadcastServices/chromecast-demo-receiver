@@ -1,14 +1,14 @@
 # EMP Chromecast Receiver 2
 
 This document provides an overview of building a custom Google Cast receiver application.
-https://developers.google.com/cast/docs/custom_receiver
-Your custom receiver application have to be deployed to a web server with domain name and SSL support.
-The url to the receiver application have to be registed at Google, with a company account owning the streaming services.
+https://developers.google.com/cast/docs/custom_receiver.
+Your custom receiver application has to be deployed to a web server with a domain name and SSL support.
+The url to the receiver application has to be registered at Google, with a company account owning the streaming services.
 https://developers.google.com/cast/docs/registration
 Google Cast SDK Developer Console
 https://cast.google.com/u/2/publish/#/overview
 
-The receiver is compliant with the default chromecast receiver API unless otherwise stated. For information on how to build a sender and other functionality not described here. See https://developers.google.com/cast/docs/sender_apps
+The receiver is compliant with the default chromecast receiver API unless otherwise stated. For information on how to build a sender and other additional functionalities see https://developers.google.com/cast/docs/sender_apps
 
 * **[Upgrade Guide](https://github.com/EricssonBroadcastServices/chromecast-demo-receiver/blob/master/tutorials/upgrade-guide.md)**
 * **[Chromcast sender tutorials](https://github.com/EricssonBroadcastServices/chromecast-demo-receiver/blob/master/tutorials/chromecast.md)**
@@ -26,7 +26,7 @@ A demo receiver app that uses this package is available [here](https://github.co
 Starting development
 --------------------
 
-As a developer you need to add custom ui-logic to the receiver-app and customize index.html file.
+As a developer you need to add custom ui-logic to the receiver-app and customize the index.html file.
 To build the code there are a few requirements
 - Node.js -- We use Node for build and test automation. [Download and install Node.js](http://nodejs.org/download/)
 - grunt-cli
@@ -56,7 +56,10 @@ pull update from emp-chromecast-receiver-2 npm package. (will overwrite images, 
 grunt update
 ```
 
-then deploy the `dist` directory in any webserver, add the URL in chromecast console and enjoy!
+then deploy the `dist` directory in any webserver, add the webserver-URL in [Google Cast SDK Developer Console](https://cast.google.com/u/2/publish/#/overview) and enjoy!
+
+
+
 
 Grunt commands
 ==============
@@ -70,34 +73,34 @@ grunt
 ```bash
 grunt build
 ```
-Builds the code and and places the final app in `dist` folder.
+Builds the code and and places the final app in the `dist` folder.
 
 ```bash
 grunt deploy
 ```
 An example on how to use ftp to send the app to a webserver.
-If the ftp server requires authentication, credentials should be placed in a file .ftpauth in the root of the project
+If the ftp server requires authentication, credentials should be placed in a .ftpauth file in the root of the project
 
 
 
 About the code
 ==============
-Javascript for the Receiver will be written using the new ES6 standard. Using grunt tasks this is then re-written to the ES5 standard where available. To learn more about Es6 see [babel](https://babeljs.io/).
+Javascript for the receiver is written using the new ES6 standard. Using grunt tasks this is then re-written into the ES5 standard. To learn more about Es6 see [babel](https://babeljs.io/).
 To keep our code clean and separated, we uses [Browserify](http://browserify.org/). This allows us to use require statements to import javascript code from other files.
 
 All of the above is done automatically using the grunt build system, but during development one should be aware of the power, and the limitations of both systems.
 
 Separate UI-logic
 ==============
-The Receiver has separate ui-logic and playback-logic.
+The receiver has separated ui-logic and playback-logic.
 emp-receiver playback-logic is installed from a npm package.
 Run npm install to get all depending npm packages.
-As a developer you need to add custom ui-logic to the receiver-app and customize index.html file.
-Receiver-app should implement event listener for
-METADATA_UPDATED: fire when program changed, should be used to display title and images about the current program.
-STATE_CHANGED: fire when playback state changed, should be used to display play icon, buffer spinner etc.
-emp-receiver expose the inner emp-player, other playback event can be handle directly on the emp-player.
-Receiver-app.js and index.html are samples how to implement a custom emp-receiver.
+As a developer you need to add custom ui-logic to the receiver-app and customize the index.html file.
+Receiver-app should implement an event listener for
+METADATA_UPDATED: fired when a program change occurs, should be used to display title and images about the current program.
+STATE_CHANGED: fired when playback state has changed, should be used to display a play icon, buffer spinner etc.
+emp-receiver exposes the inner emp-player, other playback events can be handled directly on the emp-player.
+Receiver-app.js and index.html are samples of how to implement a custom emp-receiver.
 
 EMP Chromecast Receiver
 =======
@@ -112,7 +115,7 @@ emp-player options can be send to empReceiver constructor and emp-player events 
       playerOptions: {
         empshaka: {
           abr: {
-              // startBitrate 5Mbps 
+              // startBitrate 5Mbps
             defaultBandwidthEstimate: 5e6
           }
         }
@@ -136,6 +139,3 @@ EMP HTML5 Player
 The receiver makes use of emp-player version 2.
 - [emp-player docs](https://emps-chromecast-receiver.azurewebsites.net/html5-player-2/reference/docs/index.html)
 - [emp-player npm](https://www.npmjs.com/package/empplayer2-dev)
-
-
-
