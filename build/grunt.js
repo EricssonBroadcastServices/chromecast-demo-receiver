@@ -148,6 +148,7 @@ module.exports = function(grunt) {
     'browserify:build',
     'uglify:build',
     'copy:build',
+    'copy:fromNPM',
     'copy:docs'
   ]);
 
@@ -156,6 +157,6 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['build']);
   grunt.registerTask('cloud:stage', ['build', 'ftp_push']);
   grunt.registerTask('deploy', ['build', 'ftpush']);
-  grunt.registerTask('update', ['shell:updateNPM', 'copy:fromNPM']);
+  grunt.registerTask('update', ['shell:updateNPM']);
   grunt.loadTasks('build/tasks');
 };
