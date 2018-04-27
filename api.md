@@ -103,8 +103,7 @@ EMPReceiver version
 <a name="empReceiver+player"></a>
 
 ### empReceiver.player ⇒ <code>EmpPlayer</code>
-Returns the underlying EmpPlayer version 2 
-EmpPlayer API: https://www.npmjs.com/package/empplayer2
+Returns the underlying EmpPlayer version 2 EmpPlayer API: https://www.npmjs.com/package/empplayer2
 
 **Kind**: instance property of [<code>empReceiver</code>](#empReceiver)  
 **Export**:   
@@ -123,8 +122,7 @@ Handle custom message from senders
 <a name="empReceiver+onEmpError"></a>
 
 ### empReceiver.onEmpError(error)
-Error handler for empPlayer Errors.
- Broadcast error message to all connected senders.
+Error handler for empPlayer Errors. Broadcast error message to all connected senders.
 
 **Kind**: instance method of [<code>empReceiver</code>](#empReceiver)  
 
@@ -142,10 +140,7 @@ Provides information about the media currently loaded.
 <a name="empReceiver+getMediaManager"></a>
 
 ### empReceiver.getMediaManager(safety) ⇒ <code>cast.receiver.MediaManager</code>
-Get current media manager instance
-The MediaManager is used to send/receive media messages/events
-It will print a warning by default about the danger of using the MediaManager directly
-but any argument that is passed in will silence the warning.
+Get current media manager instanceThe MediaManager is used to send/receive media messages/eventsIt will print a warning by default about the danger of using the MediaManager directlybut any argument that is passed in will silence the warning.
 
 **Kind**: instance method of [<code>empReceiver</code>](#empReceiver)  
 **Returns**: <code>cast.receiver.MediaManager</code> - [Google Cast MediaManager](https://developers.google.com/cast/docs/reference/receiver/cast.receiver.MediaManager).  
@@ -157,11 +152,7 @@ but any argument that is passed in will silence the warning.
 <a name="empReceiver+getCastReceiverManager"></a>
 
 ### empReceiver.getCastReceiverManager(safety) ⇒ <code>cast.receiver.CastReceiverManager</code>
-Get current cast receiver manager instance
-The receiver manager allows communication with the platform and is used to send/receive system messages/events.
-
-It will print a warning by default about the danger of using the CastReceiverManager directly
-but any argument that is passed in will silence the warning.
+Get current cast receiver manager instanceThe receiver manager allows communication with the platform and is used to send/receive system messages/events.It will print a warning by default about the danger of using the CastReceiverManager directlybut any argument that is passed in will silence the warning.
 
 **Kind**: instance method of [<code>empReceiver</code>](#empReceiver)  
 **Returns**: <code>cast.receiver.CastReceiverManager</code> - [Google Cast ReceiverManager](https://developers.google.com/cast/docs/reference/receiver/cast.receiver.CastReceiverManager).  
@@ -173,10 +164,7 @@ but any argument that is passed in will silence the warning.
 <a name="empReceiver+getVideoElement"></a>
 
 ### empReceiver.getVideoElement(safety) ⇒ <code>Element</code>
-Get current Video Element
-
-It will print a warning by default about the danger of using the Video Element directly
-but any argument that is passed in will silence the warning.
+Get current Video ElementIt will print a warning by default about the danger of using the Video Element directlybut any argument that is passed in will silence the warning.
 
 **Kind**: instance method of [<code>empReceiver</code>](#empReceiver)  
 **Returns**: <code>Element</code> - The Video Element  
@@ -188,9 +176,7 @@ but any argument that is passed in will silence the warning.
 <a name="empReceiver+sendMessage"></a>
 
 ### empReceiver.sendMessage(message, opt_senderId)
-Sends a custom message to a specific sender or
-broadcast custom message to all connected senders.
-It can be dangerous to send message directly from ReceiverApp, but if you know what you're doing it's public.
+Sends a custom message to a specific sender orbroadcast custom message to all connected senders.It can be dangerous to send message directly from ReceiverApp, but if you know what you're doing it's public.
 
 **Kind**: instance method of [<code>empReceiver</code>](#empReceiver)  
 **Export**:   
@@ -203,8 +189,7 @@ It can be dangerous to send message directly from ReceiverApp, but if you know w
 <a name="empReceiver+sendStatus"></a>
 
 ### empReceiver.sendStatus(opt_senderId, opt_requestId)
-Sends media status to a specific sender or
-broadcast media status to all connected senders.
+Sends media status to a specific sender orbroadcast media status to all connected senders.
 
 **Kind**: instance method of [<code>empReceiver</code>](#empReceiver)  
 **Export**:   

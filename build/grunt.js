@@ -82,11 +82,17 @@ module.exports = function(grunt) {
           { cwd: 'app/images/', src: ['*.*'], dest: 'dist/images', expand: true, filter: 'isFile'  },
           { cwd: 'app/', src: ['index.html'], dest: 'dist', expand: true, filter: 'isFile' },
           { cwd: 'app/css/', src: ['*.css'], dest: 'dist/css', expand: true, filter: 'isFile' },
+          { cwd: 'app/js/', src: ['emp-player.*'], dest: 'dist/js', expand: true, filter: 'isFile' },
+          { cwd: 'app/js/', src: ['video.*'], dest: 'dist/js', expand: true, filter: 'isFile' },
+          { cwd: 'app/js/', src: ['emp-shaka.*'], dest: 'dist/js', expand: true, filter: 'isFile' },
           { cwd: 'build/temp/', src: ['*.*'], dest: 'dist/js', expand: true, filter: 'isFile' }
         ]
       },
       fromNPM: {
         files: [
+          { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/', src: ['!emp-receiver*.*', 'emp-player*.*', 'emp-shaka*.*'], dest: 'app/js', expand: true, filter: 'isFile' },
+          { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/video-js/', src: ['video*.js'], dest: 'app/js', expand: true, filter: 'isFile' },
+          { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/video-js/', src: ['video*.css'], dest: 'app/css', expand: true, filter: 'isFile' },
           { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/css/', src: ['*.*'], dest: 'app/css', expand: true, filter: 'isFile' },
           { cwd: 'node_modules/emp-chromecast-receiver-2-dev/', src: ['*.md'], dest: '.', expand: true, filter: 'isFile' },
           { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/tutorials', src: ['*.*'], dest: 'tutorials', expand: true, filter: 'isFile' }
