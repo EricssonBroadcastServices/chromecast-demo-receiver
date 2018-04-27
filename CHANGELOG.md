@@ -57,3 +57,13 @@ https://github.com/google/shaka-player/releases
               
 ### Bug fixes
 Reset Shaka when new asset is cast.
+
+## 2.0.83
+
+### New features
+              
+### Bug fixes
+Can't casting to Chromecast v1, Unbundle libraries fix this issue.
+emp-receiver don't include videojs, emp-player and emp-shaka theses have to be added to the index.html
+
+
