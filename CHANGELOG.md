@@ -63,6 +63,7 @@ Reset Shaka when new asset is cast.
 ### New features
               
 ### Bug fixes
+EMP-11300 Chromecast version 1 not working
 Can't casting to Chromecast v1, Unbundle libraries fix this issue.
 emp-receiver don't include videojs, emp-player and emp-shaka theses have to be added to the index.html
 
