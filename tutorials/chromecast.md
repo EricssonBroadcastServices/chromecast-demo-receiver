@@ -13,6 +13,15 @@ When casting a channel or a program, the timeline is now relative to the beginni
 * DurationChanged has been removed, duration is now a property on the Media object that is sent on media status update.
   This is necessary to make the senders built-in controls to work.
 * Playback properties like default playback behaviour, startTime, etc.. were adapted so that they match the mobile client’s playback properties structure. To start casting use playbackProperties, described in [Playback method 1](chromecast.md#playback-method-1) below.  
+* Slow embedded devices like Chromecast version 1 have problem to start casting with big bundle javascript, link script separately in index.html like this instead:
+```javascript
+ <script type="text/javascript" src="//www.gstatic.com/cast/sdk/libs/receiver/2.0.0/cast_receiver.js"></script>
+ <script type="text/javascript" src="//www.gstatic.com/cast/sdk/libs/mediaplayer/1.0.0/media_player.js"></script>
+ <script type="text/javascript" src="js/video.min.js"></script>
+ <script type="text/javascript" src="js/emp-player.min.js"></script>
+ <script type="text/javascript" src="js/emp-shaka.min.js"></script>
+ <script type="text/javascript" src="js/emp-receiver-your-app.min.js"></script>
+```
 
 **New features**
 * Program related progress bar with seamless switching between programs for a channel.

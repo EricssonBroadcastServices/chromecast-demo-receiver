@@ -105,6 +105,18 @@ Receiver-app.js and index.html are samples of how to implement a custom emp-rece
 EMP Chromecast Receiver
 =======
 
+*Note: Slow embedded devices like Chromecast version 1 have problem to start casting with big bundle javascript, link script separately in index.html like this instead:*
+```javascript
+ <script type="text/javascript" src="//www.gstatic.com/cast/sdk/libs/receiver/2.0.0/cast_receiver.js"></script>
+ <script type="text/javascript" src="//www.gstatic.com/cast/sdk/libs/mediaplayer/1.0.0/media_player.js"></script>
+ <script type="text/javascript" src="js/video.min.js"></script>
+ <script type="text/javascript" src="js/emp-player.min.js"></script>
+ <script type="text/javascript" src="js/emp-shaka.min.js"></script>
+ <script type="text/javascript" src="js/emp-receiver-your-app.min.js"></script>
+```
+
+[See this demo index.html](https://github.com/EricssonBroadcastServices/chromecast-demo-receiver/blob/master/app/index.html)
+
 **[See EMP-Receiver API Docs](https://github.com/EricssonBroadcastServices/chromecast-demo-receiver/blob/master/api.md)**
 
 emp-player options can be send to empReceiver constructor and emp-player events can be subscribed to.
