@@ -9,6 +9,7 @@ npm-debug.log
 *.userosscache
 *.sln.docstates
 *.sln
+/.vs
 Web.config
 applicationhost.config
 

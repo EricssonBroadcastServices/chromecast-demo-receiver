@@ -90,7 +90,7 @@ module.exports = function(grunt) {
       },
       fromNPM: {
         files: [
-          { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/', src: ['!emp-receiver*.*', 'emp-player*.*', 'emp-shaka*.*'], dest: 'app/js', expand: true, filter: 'isFile' },
+          { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/js/', src: ['!emp-receiver*.*', 'emp-player*.*', 'emp-shaka*.*'], dest: 'app/js', expand: true, filter: 'isFile' },
           { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/video-js/', src: ['video*.js'], dest: 'app/js', expand: true, filter: 'isFile' },
           { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/video-js/', src: ['video*.css'], dest: 'app/css', expand: true, filter: 'isFile' },
           { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/css/', src: ['*.*'], dest: 'app/css', expand: true, filter: 'isFile' },
@@ -154,7 +154,6 @@ module.exports = function(grunt) {
     'browserify:build',
     'uglify:build',
     'copy:build',
-    'copy:fromNPM',
     'copy:docs'
   ]);
 
@@ -163,6 +162,6 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['build']);
   grunt.registerTask('cloud:stage', ['build', 'ftp_push']);
   grunt.registerTask('deploy', ['build', 'ftpush']);
-  grunt.registerTask('update', ['shell:updateNPM']);
+  grunt.registerTask('update', ['shell:updateNPM', 'copy:fromNPM']);
   grunt.loadTasks('build/tasks');
 };
