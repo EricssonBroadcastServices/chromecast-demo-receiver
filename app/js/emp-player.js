@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.81-44 
+ * EMP-Player 2.0.82-78 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -2454,6 +2454,8 @@ var webkitVersionMap = /AppleWebKit\/([\d.]+)/i.exec(USER_AGENT);
  */
 var IS_IPAD = /iPad/i.test(USER_AGENT);
 
+var IS_CHROMECAST = window_1.navigator.userAgent.indexOf('CrKey') >= 0;
+
 // The Facebook app's UIWebView identifies as both an iPhone and iPad, so
 // to identify iPhones, we need to exclude iPads.
 // http://artsy.github.io/blog/2012/10/18/the-perils-of-ios-user-agent-sniffing/
@@ -2562,7 +2564,7 @@ var PlayProgressBar = videojs$1.getComponent('PlayProgressBar');
 var STEP_SECONDS = 5;
 
 // The interval at which the bar should update as it progresses.
-var UPDATE_REFRESH_INTERVAL = 30;
+var UPDATE_REFRESH_INTERVAL = !IS_CHROMECAST && !window_1.EMP_DEBUG_CHROMECAST ? 30 : 1000;
 
 /**
  * Seek bar and container for the progress bars. Uses {@link PlayProgressBar}
@@ -2600,17 +2602,24 @@ var SeekBar = function (_Slider) {
     _this.updateInterval = null;
 
     _this.on(player, ['playing'], function () {
-      _this.clearInterval(_this.updateInterval);
-
-      _this.updateInterval = _this.setInterval(function () {
-        _this.requestAnimationFrame(function () {
-          _this.update();
-        });
-      }, UPDATE_REFRESH_INTERVAL);
+      if (_this.updateInterval) {
+        _this.clearInterval(_this.updateInterval);
+        _this.updateInterval = null;
+      }
+      if (!IS_CHROMECAST && !window_1.EMP_DEBUG_CHROMECAST) {
+        _this.updateInterval = _this.setInterval(function () {
+          _this.requestAnimationFrame(function () {
+            _this.update();
+          });
+        }, UPDATE_REFRESH_INTERVAL);
+      }
     });
 
     _this.on(player, ['ended', 'pause', 'waiting'], function () {
-      _this.clearInterval(_this.updateInterval);
+      if (_this.updateInterval) {
+        _this.clearInterval(_this.updateInterval);
+        _this.updateInterval = null;
+      }
     });
 
     _this.on(player, ['timeupdate', 'ended'], _this.update);
@@ -2657,7 +2666,9 @@ var SeekBar = function (_Slider) {
     this.el_.setAttribute('aria-valuetext', this.localize('progress bar timing: currentTime={1} duration={2}', [formatTime(currentTime, duration), formatTime(duration, duration)], '{1} of {2}'));
 
     // Update the `PlayProgressBar`.
-    this.bar.update(getBoundingClientRect(this.el_), percent);
+    if (!IS_CHROMECAST && !window_1.EMP_DEBUG_CHROMECAST) {
+      this.bar.update(getBoundingClientRect(this.el_), percent);
+    }
   };
 
   /**
@@ -3278,6 +3289,8 @@ Component$10.registerComponent('EmpReloadButton', EmpReloadButton);
 var RemainingTimeDisplay = videojs$1.getComponent('RemainingTimeDisplay');
 var Component$11 = videojs$1.getComponent('Component');
 
+var UPDATE_REFRESH_INTERVAL$1 = !IS_CHROMECAST && !window.EMP_DEBUG_CHROMECAST ? 30 : 1000;
+
 /**
  * Displays the time left or the current time in the video
  *
@@ -3299,7 +3312,8 @@ var EmpTimeDisplay = function (_Component) {
     var _this = possibleConstructorReturn(this, _Component.call(this, player, options));
 
     _this.mode_ = options.mode || 'remainingTime';
-    _this.on(player, empPlayerEvents.TIME_UPDATE, _this.updateContent);
+    _this.throttledUpdateContent = throttle(bind(_this, _this.updateContent), UPDATE_REFRESH_INTERVAL$1);
+    _this.on(player, empPlayerEvents.TIME_UPDATE, _this.throttledUpdateContent);
     _this.on(player, empPlayerEvents.DURATION_CHANGE, _this.updateContent);
     player.on(empPlayerEvents.ENDED, function () {
       _this.hide();
@@ -3384,6 +3398,7 @@ var EmpTimeDisplay = function (_Component) {
 }(Component$11);
 
 Component$11.registerComponent('EmpTimeDisplay', EmpTimeDisplay);
+Component$11.registerComponent('EmpTimeDisplay2', EmpTimeDisplay);
 
 var Button$5 = videojs$1.getComponent('Button');
 var Component$12 = videojs$1.getComponent('Component');
@@ -3822,12 +3837,14 @@ EmpControlBar.prototype.options_ = {
     'volumePanel': {
       'inline': false
     },
-    'currentTimeDisplay': {},
+    'empTimeDisplay': {
+      'mode': 'currentTime'
+    },
     'timeDivider': {},
     'durationDisplay': {},
     'empLiveDisplay': {},
     'progressControl': {},
-    'empTimeDisplay': {
+    'empTimeDisplay2': {
       'mode': 'remainingTime'
     },
     'customControlSpacer': {},
@@ -3901,9 +3918,6 @@ function rangeCheck(fnName, index, maxIndex) {
   }
 }
 
-/**
- * @file text-track-display.js
- */
 var Component$17 = videojs$1.getComponent('Component');
 
 var darkGray = '#222';
@@ -4386,9 +4400,6 @@ var TextTrackDisplay = function (_Component) {
 
 Component$17.registerComponent('TextTrackDisplay', TextTrackDisplay);
 
-/**
- * @file text-track-settings.js
- */
 var Component$18 = videojs$1.getComponent('Component');
 var ModalDialog = videojs$1.getComponent('ModalDialog');
 
@@ -6722,7 +6733,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.0.81-44';
+      return '2.0.82-78';
     }
 
     /**
@@ -7176,8 +7187,37 @@ var EntitlementEngine = function () {
     throw new EntitlementError('EntitlementEngine: getServerTime should be implemented in subclass.');
   };
 
+  /**
+   * getCachedServerTime
+   * @returns {number}
+   */
+
+
   EntitlementEngine.prototype.getCachedServerTime = function getCachedServerTime() {
     return EntitlementEngine.ServerTimeDiff_ !== undefined ? Date.now() + EntitlementEngine.ServerTimeDiff_ : Date.now();
+  };
+
+  /**
+   * Get user preferences key/value pair of (audioLang, subtitlesLang)
+   *
+   * @param {EntitlementEngine~getPreferences}  callback  Callback with user Preferences
+   */
+
+
+  EntitlementEngine.prototype.getPreferences = function getPreferences(callback) {
+    throw new EntitlementError('EntitlementEngine: getPreferences should be implemented in subclass.');
+  };
+
+  /**
+  * Save user preferences (audioLang, subtitlesLang)
+  *
+  * @param {any} preferences key/value pair of (audioLang, subtitlesLang)
+  * @param {function} callback
+  */
+
+
+  EntitlementEngine.prototype.savePreferences = function savePreferences(preferences, callback) {
+    throw new EntitlementError('EntitlementEngine: savePreferences should be implemented in subclass.');
   };
 
   /**
@@ -7246,6 +7286,18 @@ var EntitlementEngine = function () {
 
   EntitlementEngine.prototype.verifySession = function verifySession(okFn, nokFn) {
     throw new EntitlementError('EntitlementEngine: verifySession should be implemented in subclass.');
+  };
+
+  /**
+  * verify the entitlement
+  * @param {string} assetId
+  * @param {any} entitlement playRequest
+  * @param {function} callback
+  */
+
+
+  EntitlementEngine.prototype.verifyEntitlement = function verifyEntitlement(assetId, playRequest, callback) {
+    throw new EntitlementError('EntitlementEngine: verifyEntitlement should be implemented in subclass.');
   };
 
   /**
@@ -7344,8 +7396,6 @@ var EntitlementEngine = function () {
 
   return EntitlementEngine;
 }();
-
-//TODO: check all sub methods are here
 
 EntitlementEngine.ServerTimeDiff_ = undefined;
 
@@ -8083,11 +8133,11 @@ var EricssonExposure = function (_EntitlementEngine) {
    */
 
   /**
-     * 
-     * @param {Object} response xhr response object
-     * @returns {EntitlementError} EntitlementError
-     * @private
-     */
+  * 
+  * @param {Object} response xhr response object
+  * @returns {EntitlementError} EntitlementError
+  * @private
+  */
 
 
   EricssonExposure.prototype.getErrorForResponse = function getErrorForResponse(response) {
@@ -8208,7 +8258,15 @@ var EricssonExposure = function (_EntitlementEngine) {
     });
   };
 
-  EricssonExposure.prototype.setStreamReferenceTime = function setStreamReferenceTime(entitlement) {
+  /**
+   * Add StreamReferenceTime to entitlement
+   *
+   * @param {object} entitlement
+   * @private
+   */
+
+
+  EricssonExposure.prototype.setStreamReferenceTime_ = function setStreamReferenceTime_(entitlement) {
     if (entitlement.isDynamicCachupAsLive || entitlement.isStaticCachupAsLive) {
       if (entitlement.mimeType === 'application/dash+xml') {
         if (entitlement.isStaticCachupAsLive) {
@@ -8304,7 +8362,7 @@ var EricssonExposure = function (_EntitlementEngine) {
       }
       entitlement.playRequest = playRequest;
       entitlement.mimeType = playRequest.type;
-      _this6.setStreamReferenceTime(entitlement);
+      _this6.setStreamReferenceTime_(entitlement);
       if (entitlement.mdnRequestRouterUrl) {
         EricssonMDN.getBaseUrl(entitlement, callback);
       } else {
@@ -8346,9 +8404,8 @@ var EricssonExposure = function (_EntitlementEngine) {
   };
 
   /**
-   * Get user Preferences
+   * Get user preferences key/value pair of (audioLang, subtitlesLang)
    * @param {function} callback
-   * @returns {*}
    */
 
 
@@ -8368,9 +8425,10 @@ var EricssonExposure = function (_EntitlementEngine) {
   };
 
   /**
-   * Save user preferences
-   * @param {any} preferences
-   * @param {any} callback
+   * Save user preferences (audioLang, subtitlesLang)
+   *
+   * @param {any} preferences key/value pair of (audioLang, subtitlesLang)
+   * @param {function} callback
    */
 
 
@@ -8512,9 +8570,10 @@ var EricssonExposure = function (_EntitlementEngine) {
   };
 
   /**
-   * verifyEntitlement
-   * @param {any} playRequest
-   * @param {any} callback
+   * verify the entitlement
+   * @param {string} assetId
+   * @param {any} entitlement playRequest
+   * @param {function} callback
    */
 
 
@@ -8582,6 +8641,7 @@ var EricssonExposure = function (_EntitlementEngine) {
   /**
    * Get Play request headers. Including apiKey if set
    * @return {Object}
+   * @private
    */
 
 
@@ -9074,7 +9134,7 @@ var ProgramService = function (_Plugin) {
       if (this.entitlement().isStaticCachupAsLive || this.entitlement().isDynamicCachupAsLive) {
         var playHeadTime = extplayer.getPlayheadTime(this.player);
         if (!playHeadTime) {
-          log$1.error('updateCurrentProgram', 'no playHeadTime');
+          log$1('updateCurrentProgram', 'no playHeadTime', playHeadTime);
           return;
         }
         date = new Date(playHeadTime);
@@ -9098,7 +9158,7 @@ var ProgramService = function (_Plugin) {
       this.programChangeTimeout_ = setTimeout(function () {
         _this5.checkForProgramChange_({ type: 'programend' });
         _this5.programChangeTimeout_ = null;
-      }, timediff);
+      }, timediff > 0x7FFFFFFF ? 0x7FFFFFFF : timediff);
     }
 
     this.player.off(empPlayerEvents.SEEKED, this.checkForProgramChangeBind);
@@ -9348,7 +9408,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin);
 
-ProgramService.VERSION = '2.0.81-44';
+ProgramService.VERSION = '2.0.82-78';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -9524,7 +9584,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$1);
 
-EntitlementExpirationService.VERSION = '2.0.81-44';
+EntitlementExpirationService.VERSION = '2.0.82-78';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -9593,6 +9653,7 @@ var Tech$1 = videojs$1.getComponent('Tech');
 /**
  * Inject a Source handler for EMP streams
  * @param player
+ * @class EntitlementMiddleware
  */
 var EntitlementMiddleware = function EntitlementMiddleware(player) {
   return {
@@ -9905,6 +9966,12 @@ EntitlementMiddleware.isExposure = function (object) {
   return EntitlementEngine.isEntitlementEngine(object);
 };
 
+/**
+* Return EntitlementClass
+*
+* @static
+* @return {Class}  EntitlementClass
+*/
 EntitlementMiddleware.EntitlementClass = Entitlement;
 
 /**
@@ -9944,7 +10011,7 @@ EntitlementMiddleware.getLog = function () {
   return log$1;
 };
 
-EntitlementMiddleware.VERSION = '2.0.81-44';
+EntitlementMiddleware.VERSION = '2.0.82-78';
 
 // Register the plugin with video.js.
 videojs$1.use('video/emp', EntitlementMiddleware);
@@ -10677,6 +10744,13 @@ var empAnalyticsTmp = unwrapExports(empAnalytics_min);
 var EMPAnalytics = window_1.empAnalytics ? window_1.empAnalytics : empAnalyticsTmp;
 var Plugin$2 = videojs$1.getPlugin('plugin');
 
+/**
+ * 
+ * @param {Player} player The `Player` that this class should be attached to.
+ * @param {Object=} options The key/value store of player options.
+ * @class AnalyticsPlugin
+ */
+
 var AnalyticsPlugin = function (_Plugin) {
   inherits(AnalyticsPlugin, _Plugin);
 
@@ -10693,12 +10767,22 @@ var AnalyticsPlugin = function (_Plugin) {
     return _this;
   }
 
+  /**
+   *  stop Analytics
+   */
+
+
   AnalyticsPlugin.prototype.stop = function stop() {
     if (this.analyticsConnector_ && this.analyticsConnector_.dispose) {
       this.analyticsConnector_.dispose();
       this.analyticsConnector_ = null;
     }
   };
+
+  /**
+   * dispose Analytics
+   */
+
 
   AnalyticsPlugin.prototype.dispose = function dispose() {
     log$1('AnalyticsPlugin', 'dispose');
@@ -10707,12 +10791,26 @@ var AnalyticsPlugin = function (_Plugin) {
     _Plugin.prototype.dispose.call(this);
   };
 
+  /**
+   * Set or get the key/value store of analytics options.
+   *
+   * @param {Object=} obj options
+   * @returns {Object=} options
+   */
+
+
   AnalyticsPlugin.prototype.options = function options(obj) {
     if (!obj) {
       return this.options_;
     }
     this.options_ = obj;
   };
+
+  /**
+   * Create a new Analytics session
+   * @param {Object=} obj options
+   */
+
 
   AnalyticsPlugin.prototype.newAnalytics = function newAnalytics(opt) {
     log$1('new EMPAnalytics');
@@ -10729,17 +10827,38 @@ var AnalyticsPlugin = function (_Plugin) {
    */
 
 
+  /**
+   * Call onEntitlementLoadStart
+   */
   AnalyticsPlugin.prototype.onEntitlementLoadStart = function onEntitlementLoadStart() {
     this.analyticsConnector_ && this.analyticsConnector_.onEntitlementLoadStart();
   };
+
+  /**
+   * Call onError
+   * @param {Error} e
+   */
+
 
   AnalyticsPlugin.prototype.onError = function onError(e) {
     this.analyticsConnector_ && this.analyticsConnector_.onError(e);
   };
 
+  /**
+   * Call onWindowUnload
+   */
+
+
   AnalyticsPlugin.prototype.onWindowUnload = function onWindowUnload() {
     this.analyticsConnector_ && this.analyticsConnector_.onWindowUnload();
   };
+
+  /**
+   *  Handle onLoadStart event 
+   * @param {object} event
+   * @private
+   */
+
 
   AnalyticsPlugin.prototype.onLoadStart_ = function onLoadStart_(event) {
     //if no entitlement stop analytics
@@ -10757,7 +10876,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin$2);
 
-AnalyticsPlugin.VERSION = '2.0.81-44';
+AnalyticsPlugin.VERSION = '2.0.82-78';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -10768,6 +10887,11 @@ if (videojs$1.getPlugin('analytics')) {
 /**
  * @file emp-player.js
  * @module empPlayer
+ */
+/**
+ * empPlayer - Extend videojs class
+ *
+ * @class empPlayer
  */
 var empPlayer = videojs$1;
 
@@ -10788,23 +10912,76 @@ empPlayer.canPlayUnencrypted = canPlayUnencrypted;
 empPlayer.canPlayEncrypted = canPlayEncrypted;
 
 /**
- * Get an entitlement engine by name
- *
- * @param {String} name Name of the entitlement engine
- * @static
- * @returns {EntitlementEngine}
- */
+* Get an Exposure Service by name
+*
+* @param {String} name Name of the entitlement engine
+* @static
+* @returns {EntitlementEngine}
+*/
+empPlayer.getExposure = EntitlementMiddleware.getExposure;
+
+/**
+* Get an entitlement engine by name
+*
+* @param {String} name Name of the entitlement engine
+* @static
+* @returns {EntitlementEngine}
+*/
 empPlayer.getEntitlementEngine = EntitlementMiddleware.getEntitlementEngine;
+
+/**
+* Register an Exposure Service
+*
+* @param {String} name     Name of the entitlement engine
+* @param entitlementEngine The entitlement engine to register
+* @throws Error
+* @static
+*/
 empPlayer.registerEntitlementEngine = EntitlementMiddleware.registerEntitlementEngine;
+
+/**
+* Return whether the past argument is an Exposure Service or not
+*
+* @param {Object} object An item to check
+* @static
+* @return {Boolean}      Wheter it is a entitlement engine or not
+*/
 empPlayer.isEntitlementEngine = EntitlementMiddleware.isEntitlementEngine;
+
+/**
+* Return EntitlementClass
+*
+* @static
+* @return {Class}  EntitlementClass
+*/
 empPlayer.EntitlementClass = EntitlementMiddleware.EntitlementClass;
 
+/**
+* get the EMP log object
+* @static
+* @returns {*|log}
+*/
 empPlayer.log = log$1;
 
+/**
+* get plugin
+* @static
+* @returns {*}
+*/
 empPlayer.plugin = videojs$1.plugin;
 
+/**
+* get videojs
+* @static
+* @returns {*}
+*/
 empPlayer.videojs = videojs$1;
 
+/**
+* get EntitlementMiddleware
+* @static
+* @returns {*} EntitlementMiddleware
+*/
 empPlayer.EntitlementMiddleware = EntitlementMiddleware;
 
 /**
@@ -10824,7 +11001,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.0.81-44';
+empPlayer.VERSION = '2.0.82-78';
 
 /*
  * Universal Module Definition (UMD)
