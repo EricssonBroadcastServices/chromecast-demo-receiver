@@ -20,14 +20,7 @@ class EMPReceiverApp {
       debug: false,
       statusText: 'EMP Receiver App',
         playerOptions: {
-        errorDisplay: false, //error displayed with showError method in EMPReceiverApp
-        empshaka: {
-          'liveDelay': 30,
-          //abr: {
-          //  // startBitrate 5Mbps 
-          //  defaultBandwidthEstimate: 5e6
-          //}
-        }
+        errorDisplay: false //error displayed with showError method in EMPReceiverApp
       }
     };
 
