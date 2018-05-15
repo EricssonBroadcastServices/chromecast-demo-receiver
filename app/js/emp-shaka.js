@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.83-81 
+ * EMP-Player 2.0.83-83 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -3033,10 +3033,13 @@ var EmpShaka = function (_Html) {
         if (event.buffering) {
           _this3.trigger(empPlayerEvents.WAITING);
         } else {
-          if (_this3.paused()) {
-            _this3.trigger({ type: empPlayerEvents.PAUSE, bubbles: true });
-          } else {
-            _this3.trigger({ type: empPlayerEvents.PLAYING, bubbles: true });
+          if (_this3.el_ && _this3.el_.paused) {
+            //Needed for not get Promise rejected error
+            if (_this3.paused()) {
+              _this3.trigger({ type: empPlayerEvents.PAUSE, bubbles: true });
+            } else {
+              _this3.trigger({ type: empPlayerEvents.PLAYING, bubbles: true });
+            }
           }
         }
       }
@@ -4168,7 +4171,7 @@ EmpShaka.prototype['featuresNativeTextTracks'] = false;
 
 Tech.withSourceHandlers(EmpShaka);
 
-EmpShaka.VERSION = '2.0.83-81';
+EmpShaka.VERSION = '2.0.83-83';
 
 // Unset source handlers set by Html5 super class.
 // We do not intent to support any sources other then sources allowed by nativeSourceHandler
