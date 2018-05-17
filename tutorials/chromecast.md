@@ -352,7 +352,6 @@ Audio Track Kind values
 }
 ```
 
-
 **startTimeLive** - returns start time of the live stream.
 ```javascript
 {
@@ -360,6 +359,23 @@ Audio Track Kind values
   data: (milliseconds since 1970/01/01)
 }
 ```
+
+**isLive** - If stream is dynamic (even catchup can be live).
+```javascript
+{
+  type: 'isLive',
+  data: (boolean)
+}
+```
+
+**liveDelay** - returns live delay in seconds.
+```javascript
+{
+  type: 'liveDelay',
+  data: (seconds)
+}
+```
+
 
 **programchanged** - signals a change of program for a given channel.
 <br />
@@ -439,6 +455,7 @@ Response message from the receiver after a pull request
 * timeShiftEnabled
 * autoplay
 * isLive
+* liveDelay
 * startTimeLive
 * programchanged
 * assetchanged
