@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.84-85 
+ * EMP-Player 2.0.84-86 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -1932,19 +1932,26 @@ var extplayer = {
   },
   timeBehindLive: function timeBehindLive(player) {
     if (!player.tech_ || player.tech_['timeBehindLive'] === undefined) return 0;
+    var value = 0;
     var nowdate = this.getServerTime(player);
     var entitlement = this.getEntitlement(player);
     if (entitlement && entitlement.isStaticCachupAsLive) {
-      return nowdate - this.getPlayheadTime(player);
+      value = (nowdate - this.getPlayheadTime(player)) / 1000;
+    } else {
+      value = player.tech_.timeBehindLive(nowdate);
     }
-    var value = player.tech_.timeBehindLive(nowdate);
-    return value === Infinity || !value ? 0 : value;
+    return value === Infinity || !value ? 0 : Math.round(value);
   },
   liveDelay: function liveDelay(player) {
+    var liveDelay = 0;
     if (this.isLive(player)) {
-      return (this.getServerTime(player) - this.getSeekTimerange(player).end) / 1000;
+      if (player.tech_ && player.tech_['liveDelay'] !== undefined) {
+        liveDelay = player.tech_.liveDelay();
+      } else {
+        liveDelay = (this.getServerTime(player) - this.getSeekTimerange(player).end) / 1000;
+      }
     }
-    return 0;
+    return Math.round(liveDelay);
   },
   stop: function stop(player, afterStopCallback) {
     if (player.stopProgramService) {
@@ -2219,8 +2226,11 @@ var extplayer = {
     if (seekable && seekable.length > 0) {
       result.start = (seekable.start(seekable.length - 1) + this.startTimeLive(player) / 1000) * 1000;
       result.end = (seekable.end(seekable.length - 1) + this.startTimeLive(player) / 1000) * 1000;
-      if (player.techName_ === 'EmpCast' && result.end > this.getServerTime(player) - 30000) {
-        result.end = this.getServerTime(player) - 30000; //TODO: Send livedelay from the receiver 
+      if (player.techName_ === 'EmpCast') {
+        var liveDelay = this.liveDelay(player);
+        if (result.end > this.getServerTime(player) - liveDelay * 1000) {
+          result.end = this.getServerTime(player) - liveDelay * 1000;
+        }
       }
     }
     return result;
@@ -2316,7 +2326,7 @@ var EmpLiveDisplay = function (_Button) {
   EmpLiveDisplay.prototype.timeUpdate = function timeUpdate() {
     var currentTime = this.player().currentTime();
     var duration = this.player().duration();
-    var edgeMargin = 30; // margin for what is considered the live edge
+    var edgeMargin = 20; // margin for what is considered the live edge
     var timeBehindLive = this.player().timeBehindLive();
     if (this.player().isLive() && timeBehindLive < edgeMargin) {
       this.addClass('emp-live-edge');
@@ -6737,7 +6747,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.0.84-85';
+      return '2.0.84-86';
     }
 
     /**
@@ -9402,7 +9412,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin);
 
-ProgramService.VERSION = '2.0.84-85';
+ProgramService.VERSION = '2.0.84-86';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -9578,7 +9588,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$1);
 
-EntitlementExpirationService.VERSION = '2.0.84-85';
+EntitlementExpirationService.VERSION = '2.0.84-86';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -10006,7 +10016,7 @@ EntitlementMiddleware.getLog = function () {
   return log$1;
 };
 
-EntitlementMiddleware.VERSION = '2.0.84-85';
+EntitlementMiddleware.VERSION = '2.0.84-86';
 
 // Register the plugin with video.js.
 videojs$1.use('video/emp', EntitlementMiddleware);
@@ -10871,7 +10881,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin$2);
 
-AnalyticsPlugin.VERSION = '2.0.84-85';
+AnalyticsPlugin.VERSION = '2.0.84-86';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -10996,7 +11006,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.0.84-85';
+empPlayer.VERSION = '2.0.84-86';
 
 /*
  * Universal Module Definition (UMD)
