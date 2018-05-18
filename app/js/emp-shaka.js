@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.84-88 
+ * EMP-Player 2.0.84-89 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -4172,7 +4172,7 @@ EmpShaka.prototype['featuresNativeTextTracks'] = false;
 
 Tech.withSourceHandlers(EmpShaka);
 
-EmpShaka.VERSION = '2.0.84-88';
+EmpShaka.VERSION = '2.0.84-89';
 
 // Unset source handlers set by Html5 super class.
 // We do not intent to support any sources other then sources allowed by nativeSourceHandler
