@@ -74,5 +74,7 @@ https://github.com/google/shaka-player/releases
 - Shaka 2.3.6-3: Only add new segment references for SegmentTimeline.
 - Shaka 2.3.6-4: Calculate liveEdge from last segment starttime for SegmentTimeline.
 - **EMP-11330** Send livedelay from CC receiver
+- Optimize start casting, reduce media status update.
+-  Close receiver when sendersCount <= 1 and DisconnectReason == REQUESTED_BY_SENDER
 
 
