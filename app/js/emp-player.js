@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.84-95 
+ * EMP-Player 2.0.84-97 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -6272,6 +6272,7 @@ var Player = function (_VjsPlayer) {
       return this.cache_.currentTime;
     } else {
       if (typeof seconds !== 'undefined') {
+        seconds = seconds < 0 ? 0 : seconds;
         this.techCall_('setCurrentTime', seconds);
         return;
       } else {
@@ -6747,7 +6748,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.0.84-95';
+      return '2.0.84-97';
     }
 
     /**
@@ -9419,7 +9420,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin);
 
-ProgramService.VERSION = '2.0.84-95';
+ProgramService.VERSION = '2.0.84-97';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -9595,7 +9596,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$1);
 
-EntitlementExpirationService.VERSION = '2.0.84-95';
+EntitlementExpirationService.VERSION = '2.0.84-97';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -10023,7 +10024,7 @@ EntitlementMiddleware.getLog = function () {
   return log$1;
 };
 
-EntitlementMiddleware.VERSION = '2.0.84-95';
+EntitlementMiddleware.VERSION = '2.0.84-97';
 
 // Register the plugin with video.js.
 videojs$1.use('video/emp', EntitlementMiddleware);
@@ -10888,7 +10889,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin$2);
 
-AnalyticsPlugin.VERSION = '2.0.84-95';
+AnalyticsPlugin.VERSION = '2.0.84-97';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -11013,7 +11014,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.0.84-95';
+empPlayer.VERSION = '2.0.84-97';
 
 /*
  * Universal Module Definition (UMD)
