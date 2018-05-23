@@ -56,25 +56,25 @@
 https://github.com/google/shaka-player/releases
               
 ### Bug fixes
-- Reset Shaka when new asset is cast.
+- **EMP-11340** Reset Shaka when new asset is cast.
 
 ## 2.0.83
              
 ### Bug fixes
-- EMP-11300 Chromecast version 1 not working
-- Can't casting to Chromecast v1, Unbundle libraries fix this issue.
-- emp-receiver don't include videojs, emp-player and emp-shaka theses have to be added to the index.html
+- **EMP-11300** Chromecast version 1 not working
+- **EMP-11341** Can't casting to Chromecast v1, Unbundle libraries fix this issue.
+- **EMP-11342** emp-receiver don't include videojs, emp-player and emp-shaka theses have to be added to the index.html
 
 ## 2.0.84
 
 ### Bug fixes
-- Event memory leak when cast new asset or program
+- **EMP-11343** Event memory leak when cast new asset or program.
 
 ### New features
-- Shaka 2.3.6-3: Only add new segment references for SegmentTimeline.
-- Shaka 2.3.6-4: Calculate liveEdge from last segment starttime for SegmentTimeline.
+- **EMP-11344** Shaka 2.3.6-3: Only add new segment references for SegmentTimeline.
+- **EMP-11345** Shaka 2.3.6-4: Calculate liveEdge from last segment starttime for SegmentTimeline.
 - **EMP-11330** Send livedelay from CC receiver
-- Optimize start casting, reduce media status update.
--  Close receiver when sendersCount <= 1 and DisconnectReason == REQUESTED_BY_SENDER
+- **EMP-11346** Optimize start casting, reduce media status update.
+- **EMP-11347** Receiver do not close when last sender dissconect.
 
 
