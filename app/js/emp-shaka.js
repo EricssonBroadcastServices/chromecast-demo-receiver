@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.84-97 
+ * EMP-Player 2.0.84-98 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -2970,7 +2970,7 @@ var EmpShaka = function (_Html) {
 
     this.shakaPlayer_.addEventListener('texttrackvisibility', function (event) {
       log$1('texttrackvisibility', _this3.hasMetadata_, _this3.shakaPlayer_.isTextTrackVisible());
-      if (_this3.hasMetadata_) {
+      if (_this3.hasMetadata_ && !_this3.blockLocalTrackChange) {
         _this3.syncVideojsTexttrackVisibility();
       }
     });
@@ -3959,7 +3959,7 @@ var EmpShaka = function (_Html) {
 
       this.selectShakaTextLanguage(languageCode);
       this.stopBlockLocalTrackChange('deferredSelectTextTrack exit');
-    }.bind(this), 1000); // 1 sec
+    }.bind(this), 2000); // 1 sec
   };
 
   /**
@@ -3972,13 +3972,13 @@ var EmpShaka = function (_Html) {
   EmpShaka.prototype.selectShakaTextLanguage = function selectShakaTextLanguage(languageCode) {
     if (languageCode) {
       // Show text track
+      if (!this.shakaPlayer_.isTextTrackVisible()) {
+        log$1('Shaka texttrack', 'show', this.getSelectedShakaTextLanguage());
+        this.shakaPlayer_.setTextTrackVisibility(true);
+      }
       if (this.getSelectedShakaTextLanguage() !== languageCode) {
         log$1('select Shaka texttrack', languageCode);
         this.shakaPlayer_.selectTextLanguage(languageCode);
-      }
-      if (!this.shakaPlayer_.isTextTrackVisible()) {
-        log$1('Shaka texttrack', 'show');
-        this.shakaPlayer_.setTextTrackVisibility(true);
       }
     } else {
       // Hide text track
@@ -4022,11 +4022,11 @@ var EmpShaka = function (_Html) {
         try {
           clearTimeout(this.blockLocalTrackChangeTimeOut);
           this.blockLocalTrackChangeTimeOut = null;
-          log$1(caller + ' TRACK_CHANGE');
+          log$1(caller, 'stopBlockLocalTrackChange', ' TRACK_CHANGE');
           this.trigger(empPlayerEvents.TRACK_CHANGE);
           this.blockLocalTrackChange = false;
         } catch (e) {} //Crash when navigate away
-      }.bind(this), 1000); //Stop block LocalTrackChange after 1 sec
+      }.bind(this), 2000); //Stop block LocalTrackChange after 1 sec
     }
   };
 
@@ -4172,7 +4172,7 @@ EmpShaka.prototype['featuresNativeTextTracks'] = false;
 
 Tech.withSourceHandlers(EmpShaka);
 
-EmpShaka.VERSION = '2.0.84-97';
+EmpShaka.VERSION = '2.0.84-98';
 
 // Unset source handlers set by Html5 super class.
 // We do not intent to support any sources other then sources allowed by nativeSourceHandler
