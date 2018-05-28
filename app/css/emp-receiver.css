@@ -293,13 +293,13 @@ body {
 
 .video-js.vjs-user-inactive.vjs-playing video::-webkit-media-text-track-display {
   overflow: visible !important;
-  transform: none;
+  transform: translateY(1.5em);
   line-height: 0.5; }
 
 /*The following webkit-media-text-track-display overflow is allow for more padding around Chrome's caption text:*/
 video::-webkit-media-text-track-display {
   overflow: visible !important;
-  transform: none;
+  transform: translateY(1.5em);
   line-height: 0.5; }
 
 video::cue {

@@ -76,5 +76,6 @@ https://github.com/google/shaka-player/releases
 - **EMP-11330** Send livedelay from CC receiver
 - **EMP-11346** Optimize start casting, reduce media status update.
 - **EMP-11347** Receiver do not close when last sender dissconect.
+- **EMP-11353** Don't try recover from error by try other tech on receiver.
 
 
