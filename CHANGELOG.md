@@ -78,4 +78,10 @@ https://github.com/google/shaka-player/releases
 - **EMP-11347** Receiver do not close when last sender dissconect.
 - **EMP-11353** Don't try recover from error by try other tech on receiver.
 
+## 2.0.85
+
+### Bug fixes
+
+### New features
+
 

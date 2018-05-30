@@ -150,4 +150,4 @@ EMP HTML5 Player
 =======
 The receiver makes use of emp-player version 2.
 - [emp-player docs](https://emps-chromecast-receiver.azurewebsites.net/html5-player-2/reference/docs/index.html)
-- [emp-player npm](https://www.npmjs.com/package/empplayer2-dev)
+- [emp-player npm](https://www.npmjs.com/package/empplayer2)
