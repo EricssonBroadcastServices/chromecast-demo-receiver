@@ -73,6 +73,10 @@ GCKRemoteMediaClient:loadMedia (iOS)
 RemoteMediaPlayer.load (android)
 
 
+**Note contentID**
+-  *contentID* should be set to programId (if you cast only a channel then it should be set to channelId).
+-  If you cast a VOD it should be set to assetId.
+-  If you cast a external stream it should be set to stream url.  
 
 
 **CustomData**
@@ -174,8 +178,9 @@ loadRequest.customData = {
   absoluteStartTime: '0' (use playbackProperties instead) // starttime in milliseconds since 1970/01/01, this is not the preferred way and will cause a seek in the case of VOD.
   textTrackSettings: (default is true) //  If changes to textTrackStyle can be done by senders
   textTrackStyle: '' // Initial textTrackStyle
-  startTime: 0, (use playbackProperties instead) // start time in seconds since start of stream, will be override with loadRequest.currentTime
+  startTime: 0 (use playbackProperties instead) // start time in seconds since start of stream, will be override with loadRequest.currentTime
   autoplay: (default is true) // will be override with loadRequest.autoplay
+  volume: {level: 0-1, muted: true} //initiate volume level.
 }
 ```
 <br />
@@ -231,7 +236,7 @@ idleReason [FINISHED, CANCELLED and ERROR]
 
 **Media Object** is received with the Media Status Update event
 ```javascript
-media:{ "contentId":"766355-726896573_enigma", // asssetId, Note: It's not alway same as programId
+media:{ "contentId":"766355-726896573_enigma", // programId or asssetId for VOD
   "streamType":"BUFFERED",  // StreamType will be BUFFERED even for live streams, to make live streams
                             // working with CC build-in controls, if timeshift is disabled it will be "LIVE" to hide progress bar.
   "contentType":"video/emp",
