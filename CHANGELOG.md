@@ -82,7 +82,7 @@ https://github.com/google/shaka-player/releases
 
 ### Bug fixes
 - **EMP-11346** Optimize start casting, reduce more media status update and send them not to early.
-- **EMP-11389** **contentID** Should be set to programId, see documentation for Chromecast senders. *(This fix build-in minicontrol show up as it should)*.
+- **EMP-11389** **contentID** Should be set to assetId, see documentation for Chromecast senders. *(This fix build-in minicontrol show up as it should)*.
 
 
 ### New features

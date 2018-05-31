@@ -73,8 +73,9 @@ GCKRemoteMediaClient:loadMedia (iOS)
 RemoteMediaPlayer.load (android)
 
 
-**Note contentID**
--  *contentID* should be set to programId (if you cast only a channel then it should be set to channelId).
+**contentID**
+-  *contentID* should be set to assetId (or programId if you don't have access to it).
+-  if you cast only a channelId then contentID should be set to channelId.
 -  If you cast a VOD it should be set to assetId.
 -  If you cast a external stream it should be set to stream url.  
 
