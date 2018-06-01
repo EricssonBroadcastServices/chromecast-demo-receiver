@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.85-105 
+ * EMP-Player 2.0.85-106 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -758,6 +758,22 @@ function _log(type, args) {
 }
 
 /**
+ * Get the keys of an Object
+ *
+ * @param {Object}
+ *        The Object to get the keys from
+ *
+ * @return {string[]}
+ *         An array of the keys from the object. Returns an empty array if the
+ *         object passed in was invalid or had no keys.
+ *
+ * @private
+ */
+var keys = function keys(object) {
+  return isObject(object) ? Object.keys(object) : [];
+};
+
+/**
  * Array-like iteration for objects.
  *
  * @param {Object} object
@@ -766,7 +782,11 @@ function _log(type, args) {
  * @param {obj:EachCallback} fn
  *        The callback function which is called for each key in the object.
  */
-
+function each(object, fn) {
+  keys(object).forEach(function (key) {
+    return fn(object[key], key);
+  });
+}
 
 /**
  * Array-like reduce for objects.
@@ -794,7 +814,27 @@ function _log(type, args) {
  * @param  {Object} ...sources
  * @return {Object}
  */
+function assign(target) {
+  for (var _len = arguments.length, sources = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+    sources[_key - 1] = arguments[_key];
+  }
 
+  if (Object.assign) {
+    return Object.assign.apply(Object, [target].concat(sources));
+  }
+
+  sources.forEach(function (source) {
+    if (!source) {
+      return;
+    }
+
+    each(source, function (value, key) {
+      target[key] = value;
+    });
+  });
+
+  return target;
+}
 
 /**
  * Returns whether a value is an object of any kind - including DOM nodes,
@@ -806,7 +846,9 @@ function _log(type, args) {
  * @param  {Object} value
  * @return {Boolean}
  */
-
+function isObject(value) {
+  return !!value && (typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object';
+}
 
 /**
  * Returns whether an object appears to be a "plain" object - that is, a
@@ -2766,7 +2808,7 @@ var EmpShaka = function (_Html) {
     this.preActiveTextTrack = null;
     var options = this.options_;
     options.source = source;
-    this.options_ = Object.assign(this.options_, source.options);
+    this.options_ = assign(this.options_, source.options);
     this.currentProgram_ = null;
 
     var manifestSource = void 0;
@@ -4172,7 +4214,7 @@ EmpShaka.prototype['featuresNativeTextTracks'] = false;
 
 Tech.withSourceHandlers(EmpShaka);
 
-EmpShaka.VERSION = '2.0.85-105';
+EmpShaka.VERSION = '2.0.85-106';
 
 // Unset source handlers set by Html5 super class.
 // We do not intent to support any sources other then sources allowed by nativeSourceHandler

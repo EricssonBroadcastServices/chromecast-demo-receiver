@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.85-105 
+ * EMP-Player 2.0.85-106 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -707,7 +707,27 @@ function reduce(object, fn) {
  * @param  {Object} ...sources
  * @return {Object}
  */
+function assign(target) {
+  for (var _len = arguments.length, sources = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+    sources[_key - 1] = arguments[_key];
+  }
 
+  if (Object.assign) {
+    return Object.assign.apply(Object, [target].concat(sources));
+  }
+
+  sources.forEach(function (source) {
+    if (!source) {
+      return;
+    }
+
+    each(source, function (value, key) {
+      target[key] = value;
+    });
+  });
+
+  return target;
+}
 
 /**
  * Returns whether a value is an object of any kind - including DOM nodes,
@@ -3049,7 +3069,7 @@ var EmpForwardButton = function (_Button) {
   function EmpForwardButton(player, options) {
     classCallCheck(this, EmpForwardButton);
 
-    options = Object.assign({
+    options = assign({
       'seconds': 30
     }, options);
 
@@ -3159,7 +3179,7 @@ var EmpRewindButton = function (_Button) {
   function EmpRewindButton(player, options) {
     classCallCheck(this, EmpRewindButton);
 
-    options = Object.assign({
+    options = assign({
       'seconds': 30
     }, options);
 
@@ -4973,7 +4993,7 @@ var Player = function (_VjsPlayer) {
 
     //absoluteStartTime override startTime
     options.startTime = options.absoluteStartTime ? 0 : options.startTime;
-    options = Object.assign({
+    options = assign({
       children: ['mediaLoader', 'PosterImage', 'textTrackDisplay', 'loadingSpinner', 'controlBar', 'errorDisplay', 'textTrackSettings', 'BigPlayButton']
     }, options);
 
@@ -6748,7 +6768,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.0.85-105';
+      return '2.0.85-106';
     }
 
     /**
@@ -6763,7 +6783,7 @@ var Player = function (_VjsPlayer) {
       var entitlement = extplayer.getEntitlement(this);
       //Clone entitlement
       if (entitlement) {
-        entitlement = Object.assign({}, entitlement);
+        entitlement = assign({}, entitlement);
         entitlement.options = undefined;
       }
       return entitlement;
@@ -7854,7 +7874,7 @@ var EricssonExposure = function (_EntitlementEngine) {
     var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     classCallCheck(this, EricssonExposure);
 
-    options = Object.assign({
+    options = assign({
       'exposureApiURL': 'https://exposure.emps.ebsd.ericsson.net',
       'exposureApiVersion': 'v1'
     }, options);
@@ -8670,7 +8690,7 @@ var EricssonExposure = function (_EntitlementEngine) {
     get: function get$$1() {
       var headers = { Authorization: 'Bearer ' + this.sessionToken };
       if (this.options_['apiKey']) {
-        headers = Object.assign({
+        headers = assign({
           'EMP-Auth': this.options_['apiKey']
         }, headers);
       }
@@ -8852,7 +8872,7 @@ var ProgramService = function (_Plugin) {
       if (!(entitlement instanceof Entitlement)) {
         //From entitlement CC establish Entitlement object
         this.stop();
-        entitlement = Object.assign(new Entitlement({}), entitlement);
+        entitlement = assign(new Entitlement({}), entitlement);
       }
       this.entitlement(entitlement);
     }
@@ -9419,7 +9439,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin);
 
-ProgramService.VERSION = '2.0.85-105';
+ProgramService.VERSION = '2.0.85-106';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -9595,7 +9615,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$1);
 
-EntitlementExpirationService.VERSION = '2.0.85-105';
+EntitlementExpirationService.VERSION = '2.0.85-106';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -9939,7 +9959,7 @@ var EntitlementMiddleware = function EntitlementMiddleware(player) {
         }
         player.trigger(empPlayerEvents.ENTITLEMENT_CHANGE, { 'entitlement': entitlement });
 
-        entitlement = Object.assign(new Entitlement({}), entitlement);
+        entitlement = assign(new Entitlement({}), entitlement);
         entitlement.type = entitlement.mimeType;
         // Grab tech-specific options from player options and add source.
         // Will be send to handleSource
@@ -10023,7 +10043,7 @@ EntitlementMiddleware.getLog = function () {
   return log$1;
 };
 
-EntitlementMiddleware.VERSION = '2.0.85-105';
+EntitlementMiddleware.VERSION = '2.0.85-106';
 
 // Register the plugin with video.js.
 videojs$1.use('video/emp', EntitlementMiddleware);
@@ -10888,7 +10908,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin$2);
 
-AnalyticsPlugin.VERSION = '2.0.85-105';
+AnalyticsPlugin.VERSION = '2.0.85-106';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -11013,7 +11033,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.0.85-105';
+empPlayer.VERSION = '2.0.85-106';
 
 /*
  * Universal Module Definition (UMD)
