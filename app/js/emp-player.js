@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.85-106 
+ * EMP-Player 2.0.86-107 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -4992,7 +4992,9 @@ var Player = function (_VjsPlayer) {
 
 
     //absoluteStartTime override startTime
-    options.startTime = options.absoluteStartTime ? 0 : options.startTime;
+    if (options.absoluteStartTime) {
+      options.startTime = 0;
+    }
     options = assign({
       children: ['mediaLoader', 'PosterImage', 'textTrackDisplay', 'loadingSpinner', 'controlBar', 'errorDisplay', 'textTrackSettings', 'BigPlayButton']
     }, options);
@@ -5001,18 +5003,21 @@ var Player = function (_VjsPlayer) {
       options.techOrder = Player.AutoTechArray();
     }
 
+    //element data-setup
+    var tagOptions = Player.getTagSettings(tag);
+
     // Add default options for every player instance
     // default options are overidden by options set in the options parameter
     options = videojs$1.mergeOptions({
       'entitlement-engine': 'EricssonExposure',
-      'techOrder': Player.AutoTechArray(),
-      'maxBitrate': 0,
-      'timeShiftDisabled': false,
-      'useLastViewedOffset': false,
-      'startTime': 0,
-      'absoluteStartTime': undefined,
-      'persistTextTrackSettings': true,
-      'textTrackSettings': true
+      'techOrder': tagOptions.techOrder ? tagOptions.techOrder : Player.AutoTechArray(),
+      'maxBitrate': tagOptions.maxBitrate ? tagOptions.maxBitrate : 0,
+      'timeShiftDisabled': tagOptions.timeShiftDisabled ? tagOptions.timeShiftDisabled : false,
+      'useLastViewedOffset': tagOptions.useLastViewedOffset ? tagOptions.useLastViewedOffset : false,
+      'startTime': tagOptions.startTime ? tagOptions.startTime : 0,
+      'absoluteStartTime': tagOptions.absoluteStartTime ? tagOptions.absoluteStartTime : undefined,
+      'persistTextTrackSettings': tagOptions.persistTextTrackSettings ? tagOptions.persistTextTrackSettings : true,
+      'textTrackSettings': tagOptions.textTrackSettings ? tagOptions.textTrackSettings : true
     }, options);
 
     var _this = possibleConstructorReturn(this, _VjsPlayer.call(this, tag, options, ready));
@@ -6768,7 +6773,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.0.85-106';
+      return '2.0.86-107';
     }
 
     /**
@@ -9439,7 +9444,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin);
 
-ProgramService.VERSION = '2.0.85-106';
+ProgramService.VERSION = '2.0.86-107';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -9615,7 +9620,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$1);
 
-EntitlementExpirationService.VERSION = '2.0.85-106';
+EntitlementExpirationService.VERSION = '2.0.86-107';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -10043,7 +10048,7 @@ EntitlementMiddleware.getLog = function () {
   return log$1;
 };
 
-EntitlementMiddleware.VERSION = '2.0.85-106';
+EntitlementMiddleware.VERSION = '2.0.86-107';
 
 // Register the plugin with video.js.
 videojs$1.use('video/emp', EntitlementMiddleware);
@@ -10908,7 +10913,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin$2);
 
-AnalyticsPlugin.VERSION = '2.0.85-106';
+AnalyticsPlugin.VERSION = '2.0.86-107';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -11033,7 +11038,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.0.85-106';
+empPlayer.VERSION = '2.0.86-107';
 
 /*
  * Universal Module Definition (UMD)
