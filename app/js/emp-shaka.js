@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.86-110 
+ * EMP-Player 2.0.86-111 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -4081,8 +4081,12 @@ var EmpShaka = function (_Html) {
   EmpShaka.prototype.play = function play() {
     if (this.stopped_ || this.ended_) {
       this.trigger({ type: empPlayerEvents.REPLAY, bubbles: true });
-    } else if (!this.options_.autoplay && this.el_.networkState > this.el_.HAVE_METADATA || this.hasStarted_ && this.el_.networkState > this.el_.HAVE_METADATA) {
+    } else {
+      //Don't working! do we still need it? Can't press play button  with sll and autoplay
+      //if ((!this.options_.autoplay && this.el_.networkState > this.el_.HAVE_METADATA) ||
+      //(this.hasStarted_ && this.el_.networkState > this.el_.HAVE_METADATA)) {
       //this.trigger('play'); not needed
+      //return this.el_.play();
       return _Html.prototype.play.call(this);
     }
   };
@@ -4214,7 +4218,7 @@ EmpShaka.prototype['featuresNativeTextTracks'] = false;
 
 Tech.withSourceHandlers(EmpShaka);
 
-EmpShaka.VERSION = '2.0.86-110';
+EmpShaka.VERSION = '2.0.86-111';
 
 // Unset source handlers set by Html5 super class.
 // We do not intent to support any sources other then sources allowed by nativeSourceHandler
