@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.86-107 
+ * EMP-Player 2.0.86-108 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -6773,7 +6773,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.0.86-107';
+      return '2.0.86-108';
     }
 
     /**
@@ -9444,7 +9444,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin);
 
-ProgramService.VERSION = '2.0.86-107';
+ProgramService.VERSION = '2.0.86-108';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -9620,7 +9620,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$1);
 
-EntitlementExpirationService.VERSION = '2.0.86-107';
+EntitlementExpirationService.VERSION = '2.0.86-108';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -9722,6 +9722,20 @@ var EntitlementMiddleware = function EntitlementMiddleware(player) {
       }
 
       var exposure = EntitlementMiddleware.getExposure(entitlementOptions, exposureServiceName);
+      if (!entitlementOptions.sessionToken) {
+        //Try Anonymous login
+        exposure.login("", "", function (response) {
+          if (response.success) {
+            entitlementOptions.sessionToken = response.session.sessionToken;
+            player.trigger(empPlayerEvents.REPLAY);
+          } else {
+            log$1.error("Anonymous login fail", response.message);
+            var error = new EmpPlayerError('Anonymous login fail', EmpPlayerErrorCodes.ENTITLEMENT);
+            player.error(error);
+          }
+        }, "");
+        return;
+      }
       if (!options.analytics || !options.analytics.disable) {
         startAnalytics_(player, options, entitlementOptions, exposure);
       }
@@ -10048,7 +10062,7 @@ EntitlementMiddleware.getLog = function () {
   return log$1;
 };
 
-EntitlementMiddleware.VERSION = '2.0.86-107';
+EntitlementMiddleware.VERSION = '2.0.86-108';
 
 // Register the plugin with video.js.
 videojs$1.use('video/emp', EntitlementMiddleware);
@@ -10913,7 +10927,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin$2);
 
-AnalyticsPlugin.VERSION = '2.0.86-107';
+AnalyticsPlugin.VERSION = '2.0.86-108';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -11038,7 +11052,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.0.86-107';
+empPlayer.VERSION = '2.0.86-108';
 
 /*
  * Universal Module Definition (UMD)
