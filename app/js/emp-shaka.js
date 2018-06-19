@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.86-111 
+ * EMP-Player 2.0.86-112 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -2791,6 +2791,7 @@ var EmpShaka = function (_Html) {
       if (this.shakaPlayer_) {
         this.shakaPlayer_.destroy();
         this.shakaPlayer_ = null;
+        this.wrapper_ = null;
       }
     }
     //For testing fallback
@@ -2971,6 +2972,16 @@ var EmpShaka = function (_Html) {
     }
     log$1('before load stream');
     this.loading_ = true; //Block load call if loading 
+
+    if (window_1.ShakaPlayerDnaWrapper && options.streamrootkey) {
+      if (this.wrapper_) {
+        this.wrapper_.stop();
+        this.wrapper_.destroy();
+      }
+      var dnaConfig = {};
+      this.wrapper_ = new ShakaPlayerDnaWrapper(this.shakaPlayer_, options.streamrootkey, dnaConfig);
+    }
+
     this.shakaPlayer_.load(manifestSource, startTime).then(function () {
       log$1('after load stream');
       _this2.loading_ = false;
@@ -4118,6 +4129,8 @@ var EmpShaka = function (_Html) {
 
     if (this.shakaPlayer_) {
       this.shakaPlayer_.destroy();
+      this.shakaPlayer_ = null;
+      this.wrapper_ = null;
     }
 
     _Html.prototype.dispose.call(this);
@@ -4218,7 +4231,7 @@ EmpShaka.prototype['featuresNativeTextTracks'] = false;
 
 Tech.withSourceHandlers(EmpShaka);
 
-EmpShaka.VERSION = '2.0.86-111';
+EmpShaka.VERSION = '2.0.86-112';
 
 // Unset source handlers set by Html5 super class.
 // We do not intent to support any sources other then sources allowed by nativeSourceHandler
