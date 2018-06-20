@@ -84,7 +84,12 @@ https://github.com/google/shaka-player/releases
 - **EMP-11346** Optimize start casting, reduce more media status update and send them not to early.
 - **EMP-11389** **contentID** Should be set to assetId, see documentation for Chromecast senders. *(This fix build-in minicontrol show up as it should)*.
 
-
 ### New features
 -  **EMP-11388** Set initiate volume level and muted when start casting.
+
+## 2.0.86
+
+### New features
+- Upgrade HTML5 Player to 2.0.86
+
 
