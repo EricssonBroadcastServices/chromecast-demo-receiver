@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.86-115 
+ * EMP-Player 2.0.87-116 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -642,13 +642,18 @@ var EmpPlayerEvents = function EmpPlayerEvents() {
   * Fired when replay
   */
   this.REPLAY = 'replay';
+
+  /**
+  * Fired during download
+  */
+  this.DOWNLOAD_PROGRESS = 'downloadprogress';
 };
 
 var empPlayerEvents = new EmpPlayerEvents();
 
 //TODO Remove this maybe not good for treeshaking
 var videojsTmp = window_1.videojs;
-var videojs = videojsTmp;
+var videojs$1 = videojsTmp;
 
 var logToBrowserConsole = false;
 
@@ -875,13 +880,57 @@ function isString(val) {
   return typeof val === 'string' || !!val && (typeof val === 'undefined' ? 'undefined' : _typeof(val)) === 'object' && Object.prototype.toString.call(val) === '[object String]';
 }
 
-
+function parseSrc(src) {
+  var asset = {
+    assetId: undefined,
+    programId: undefined,
+    channelId: undefined
+  };
+  try {
+    asset = JSON.parse(src);
+  } catch (e) {
+    asset.assetId = src;
+  }
+  if (asset.channelId) {
+    asset.assetId = asset.channelId;
+  }
+  return asset;
+}
 
 /**
  * Filter out single bad source objects or multiple source objects in an
  * array.Also flattens nested source object arrays into a 1 dimensional
  * array of source objects.
  */
+function filterSource(src) {
+  // traverse array
+  if (Array.isArray(src)) {
+    var newsrc = [];
+
+    src.forEach(function (srcobj) {
+      srcobj = filterSource(srcobj);
+
+      if (Array.isArray(srcobj)) {
+        newsrc = newsrc.concat(srcobj);
+      } else if (isObject(srcobj)) {
+        newsrc.push(srcobj);
+      }
+    });
+
+    src = newsrc;
+  } else if (typeof src === 'string' && src.trim()) {
+    // convert string into object
+    src = [{ src: src }];
+  } else if (isObject(src) && typeof src.src === 'string' && src.src && src.src.trim()) {
+    // src is already valid
+    src = [src];
+  } else {
+    // invalid source, turn it into an empty array
+    src = [];
+  }
+
+  return src;
+}
 
 /**
  * EmpPlayerErrorCodes - Holds all available error codes
@@ -953,7 +1002,7 @@ var EmpTech = function () {
     var enabled = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
 
     // Add the track to the player's audio track list.
-    var track = new videojs.AudioTrack({
+    var track = new videojs$1.AudioTrack({
       enabled: enabled,
       kind: kind || 'main',
       label: label,
@@ -2675,14 +2724,857 @@ function getLanguageName(value) {
   return lang ? lang.name : value; //Return value if no hit
 }
 
+var EntitlementRequest = function () {
+  function EntitlementRequest(options) {
+    classCallCheck(this, EntitlementRequest);
+
+    this.assetId = options.assetId || null;
+    this.programId = options.programId || null;
+    this.channelId = options.channelId || null;
+  }
+
+  createClass(EntitlementRequest, [{
+    key: "assetId",
+    get: function get$$1() {
+      return this.assetId_;
+    },
+    set: function set$$1(assetId) {
+      this.assetId_ = assetId;
+    }
+  }, {
+    key: "programId",
+    get: function get$$1() {
+      return this.programId_;
+    },
+    set: function set$$1(programId) {
+      this.programId_ = programId;
+    }
+  }, {
+    key: "channelId",
+    get: function get$$1() {
+      return this.channelId_;
+    },
+    set: function set$$1(channelId) {
+      this.channelId_ = channelId;
+    }
+  }]);
+  return EntitlementRequest;
+}();
+
+var extplayer = {
+  bitrates: function bitrates(player) {
+    if (!player.tech_ || player.tech_['bitrates'] === undefined) return [];
+
+    return player.techGet_('bitrates');
+  },
+  bitrate: function bitrate(player, value) {
+    if (!player.tech_ || player.tech_['bitrate'] === undefined) return 0;
+
+    if (value !== undefined) {
+      player.techCall_('bitrate', value);
+    }
+    return player.techGet_('bitrate');
+  },
+  canRestart: function canRestart(player) {
+    if (!player.tech_ || player.tech_['canRestart'] === undefined) return true;
+
+    return player.techGet_('canRestart');
+  },
+  restart: function restart(player, useLastViewedOffset) {
+    if (player.currentSource()) {
+      player.options_.startTime = 0;
+      player.options_.absoluteStartTime = undefined;
+      player.previousAbsoluteStartTime = undefined;
+
+      if (!player.options_.autoplay) {
+        // User-action to restart, enforce autoplay
+        player.options_.autoplay = true;
+        player.one('play', function () {
+          player.options_.autoplay = false;
+        });
+      }
+      player.trigger(empPlayerEvents.RESTARTING);
+      player.options_.useLastViewedOffset = useLastViewedOffset;
+      player.trigger(empPlayerEvents.REPLAY);
+    }
+  },
+  getSelectedAudioTrack: function getSelectedAudioTrack(player) {
+    var audioTracks = player.audioTracks();
+    var i = audioTracks.length;
+    while (i--) {
+      var track = audioTracks[i];
+      if (track.enabled) {
+        return track.language;
+      }
+    }
+    return null;
+  },
+  getSelectedTextTrack: function getSelectedTextTrack(player) {
+    var textTracks = player.textTracks();
+    var i = textTracks.length;
+    while (i--) {
+      var track = textTracks[i];
+      if (track.mode === 'showing') {
+        return track.language;
+      }
+    }
+    return null;
+  },
+  loadAsset: function loadAsset(player, assetId, programId, channelId) {
+    var callback = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : function () {};
+
+    var asset = { 'assetId': assetId ? assetId : channelId, 'programId': programId, 'channelId': channelId };
+    player.on(empPlayerEvents.LOADED_DATA, function () {
+      //Clone of entitlement
+      callback(player.entitlement);
+    });
+    player.src({ 'type': 'video/emp', 'src': JSON.stringify(asset) });
+  },
+  currentAsset: function currentAsset(player, assetId, programId, channelId) {
+    if (!assetId && !programId && !channelId) {
+      var srcObj = player.cache_.source;
+      if (srcObj && srcObj.src && srcObj.type === 'video/emp') {
+        var asset = parseSrc(srcObj.src);
+        return asset;
+      } else if (srcObj && srcObj.assetId) {
+        return {
+          assetId: srcObj.channelId ? srcObj.channelId : srcObj.assetId,
+          programId: srcObj.programId,
+          channelId: srcObj.channelId
+        };
+      }
+      return null;
+    }
+    log$1('Update currentAsset', assetId, programId, channelId);
+    if (player.cache_.source && player.cache_.source.type === 'video/emp') {
+      player.cache_.source.src = JSON.stringify({ 'assetId': assetId, 'programId': programId, 'channelId': channelId });
+    } else if (player.cache_.source && player.cache_.source.assetId) {
+      player.cache_.source.assetId = assetId;
+      player.cache_.source.programId = programId;
+      player.cache_.source.channelId = channelId;
+    } else {
+      var _asset = { 'assetId': assetId, 'programId': programId, 'channelId': channelId };
+      player.cache_.source = { 'type': 'video/emp', 'src': JSON.stringify(_asset) };
+    }
+    player.cache_.sources = [player.cache_.source];
+  },
+  getAbsoluteTime: function getAbsoluteTime(player) {
+    if (!player.tech_ || player.tech_['getAbsoluteTime'] === undefined) return new Date(player.currentTime() * 1000);
+    var nowDate = this.getServerTime(player);
+    var value = player.tech_.getAbsoluteTime(nowDate);
+    if (player.techName_ !== 'EmpCast') {
+      var entitlement = this.getEntitlement(player);
+      if (value && entitlement && entitlement.isStaticCachupAsLive) {
+        value = new Date(value.getTime() + entitlement.streamInfo.start.getTime());
+      } else if (entitlement && entitlement.isDynamicCachupAsLive && player.techName_ === 'EmpHLS') {
+        value = new Date(player.tech_.baseCurrentTime() * 1000 + entitlement.streamInfo.start.getTime());
+      }
+    }
+    return value;
+  },
+  getPlayheadTime: function getPlayheadTime(player) {
+    var value = this.getAbsoluteTime(player);
+    if (value) {
+      return value.getTime();
+    } else return 0;
+  },
+  timeBehindLive: function timeBehindLive(player) {
+    if (!player.tech_ || player.tech_['timeBehindLive'] === undefined) return 0;
+    var value = 0;
+    var nowdate = this.getServerTime(player);
+    var entitlement = this.getEntitlement(player);
+    if (entitlement && entitlement.isStaticCachupAsLive) {
+      value = (nowdate - this.getPlayheadTime(player)) / 1000;
+    } else {
+      value = player.tech_.timeBehindLive(nowdate);
+    }
+    return value === Infinity || !value ? 0 : Math.round(value);
+  },
+  liveDelay: function liveDelay(player) {
+    var liveDelay = 0;
+    if (this.isLive(player)) {
+      if (player.tech_ && player.tech_['liveDelay'] !== undefined) {
+        liveDelay = player.tech_.liveDelay();
+      } else {
+        liveDelay = (this.getServerTime(player) - this.getSeekTimerange(player).end) / 1000;
+      }
+    }
+    return Math.round(liveDelay);
+  },
+  stop: function stop(player, afterStopCallback) {
+    if (player.stopProgramService) {
+      player.stopProgramService();
+    }
+    player.sourceChanging_ = false;
+    player.cache_.sources = [];
+    if (!player.tech_ || player.tech_['stop'] === undefined) {
+      player.techCall_('stopTrackingCurrentTime');
+      if (afterStopCallback) {
+        afterStopCallback();
+      }
+    } else {
+      player.techCall_('stop', afterStopCallback);
+      player.techCall_('stopTrackingCurrentTime');
+    }
+  },
+  timeShiftEnabled: function timeShiftEnabled(player) {
+    if (!player.tech_ || player.tech_['timeShiftEnabled'] === undefined) return true;
+
+    return player.techGet_('timeShiftEnabled');
+  },
+  baseCurrentTime: function baseCurrentTime(player) {
+    if (!player.tech_ || player.tech_['baseCurrentTime'] === undefined) return player.currentTime();else return player.techGet_('baseCurrentTime');
+  },
+  baseDuration: function baseDuration(player) {
+    if (!player.tech_ || player.tech_['duration'] === undefined) return 0;else return player.techGet_('duration');
+  },
+  startTimeLive: function startTimeLive(player) {
+    if (!player.tech_ || player.tech_['startTimeLive'] === undefined) return 0;
+    var nowdate = this.getServerTime(player);
+    var value = player.tech_.startTimeLive(nowdate);
+    var entitlement = this.getEntitlement(player);
+    if (entitlement && entitlement.isDynamicCachupAsLive && player.techName_ === 'EmpHLS') {
+      value = entitlement.streamInfo.referenceTime;
+    }
+    if (entitlement && entitlement.isStaticCachupAsLive && player.techName_ !== 'EmpCast') {
+      value = entitlement.streamInfo.referenceTime;
+    }
+    return value;
+  },
+  isLive: function isLive(player) {
+    if (!player.tech_ || player.tech_['live'] === undefined) return false;
+
+    return player.techGet_('live');
+  },
+  isCatchupAsLive: function isCatchupAsLive(player) {
+    var entitlement = this.getEntitlement(player);
+    return !this.isLive(player) && entitlement && entitlement.live;
+  },
+  getBitrate: function getBitrate(player) {
+    if (!player.tech_ || player.tech_['getBitrate'] === undefined) return 0;
+
+    return player.techGet_('getBitrate');
+  },
+  duration: function duration(player, seconds) {
+    if (!player.tech_ || player.tech_['duration'] === undefined) {
+      return player.duration(seconds);
+    } else {
+      player.duration(seconds);
+      return player.techGet_('duration');
+    }
+  },
+  techVersion: function techVersion(player) {
+    if (!player.tech_ || player.tech_['techVersion'] === undefined) return '2.x.x';
+
+    return player.techGet_('techVersion');
+  },
+  canSeekTo: function canSeekTo(player, position) {
+    if (this.timeShiftEnabled(player) === false || !player.hasStarted()) {
+      return false;
+    }
+    var entitlement = this.getEntitlement(player);
+    if (entitlement && player.cache_ && entitlement.ffEnabled === false) {
+      if (player.cache_.currentTime <= position) return false;
+    }
+    if (entitlement && player.cache_ && entitlement.rwEnabled === false) {
+      if (player.cache_.currentTime >= position) return false;
+    }
+    return true;
+  },
+  remainingTime: function remainingTime(player) {
+    if (!player.tech_ || player.tech_['remainingTime'] === undefined) {
+      var duration = player.duration();
+      if (duration === Infinity || duration === 0) {
+        return Infinity;
+      } else {
+        return duration - player.currentTime();
+      }
+    }
+    return player.techGet_('remainingTime');
+  },
+  casting: function casting(player, sources) {
+    if (player.castPlugin && player.castPlugin().canOverride('Cast')) {
+      // intial sources
+      player.cache_.sources = sources;
+      // intial source
+      player.cache_.source = sources[0];
+      player.castPlugin().cast();
+      return true;
+    }
+    return false;
+  },
+  setAbsoluteTime: function setAbsoluteTime(player, date) {
+    if (!player.tech_ || player.tech_['setAbsoluteTime'] === undefined) {
+      var seconds = (date.getTime() - new Date(0)) / 1000;
+      player.currentTime(seconds);
+      return;
+    }
+    var nowDate = this.getServerTime(player);
+    if (player.techName_ !== 'EmpCast') {
+      var entitlement = this.getEntitlement(player);
+      if (entitlement && entitlement.isStaticCachupAsLive) {
+        if (date.getTime() < entitlement.streamInfo.start.getTime()) {
+          log$1('setAbsoluteTime', 'playPreviousProgram');
+          this.playProgram(player, date);
+          date = 0;
+        } else if (date.getTime() >= entitlement.streamInfo.end.getTime()) {
+          log$1('setAbsoluteTime', 'playNextProgram');
+          this.playProgram(player, date);
+          return;
+        } else {
+          date = date.getTime() - entitlement.streamInfo.start.getTime();
+        }
+        player.techCall_('setCurrentTime', date / 1000);
+        return;
+      } else if (entitlement && entitlement.isDynamicCachupAsLive) {
+        if (date.getTime() < entitlement.streamInfo.start.getTime()) {
+          log$1('setAbsoluteTime', 'playPreviousProgram');
+          this.playProgram(player, date);
+          //Go to start of stream as a fallback
+          if (player.techName_ === 'EmpHLS') {
+            player.techCall_('setCurrentTime', 0);
+            return;
+          } else {
+            //EmpShaka
+            date = new Date(entitlement.streamInfo.start.getTime());
+          }
+        } else if (player.techName_ === 'EmpHLS') {
+          date = date - entitlement.streamInfo.start.getTime();
+          player.techCall_('setCurrentTime', date / 1000);
+          return;
+        }
+      }
+    }
+    player.techCall_('setAbsoluteTime', { 'date': date, 'nowDate': nowDate });
+  },
+  gotoLive: function gotoLive(player) {
+    if (player.sourceChanging_) {
+      log$1('gotoLive ignore sourceChanging');
+      return;
+    }
+    if (player.tech_['gotoLive']) {
+      player.techCall_('gotoLive');
+    } else {
+      var entitlement = this.getEntitlement(player);
+      if (entitlement && entitlement.isDynamicCachupAsLive) {
+        this.setAbsoluteTime(player, new Date(player.getServerTime()));
+      } else if (entitlement && entitlement.isStaticCachupAsLive) {
+        var asset = this.currentAsset(player);
+        if (asset && asset.channelId) {
+          player.startPlayback(null, asset.channelId, null);
+        }
+      } else if (this.isLive(player)) {
+        var duration = player.duration();
+        player.currentTime(duration);
+      } else {
+        log$1.warn('Not suppoted for VOD');
+      }
+    }
+  },
+  setPlayheadTime: function setPlayheadTime(player, unixTime) {
+    this.setAbsoluteTime(player, new Date(unixTime));
+  },
+  supportsEpgProgramChange: function supportsEpgProgramChange(player) {
+    if (!player.tech_ || player.tech_['supportsEpgProgramChange'] === undefined) return;
+
+    return player.techGet_('supportsEpgProgramChange');
+  },
+  program: function program(player) {
+    if (!player.tech_ || player.tech_['program'] === undefined) return null;
+    return player.techGet_('program');
+  },
+  playPreviousProgram: function playPreviousProgram(player, theEnd) {
+    if (player.sourceChanging_) {
+      log$1('playPreviousProgram ignore sourceChanging');
+      return;
+    }
+    if (player.programService) {
+      player.sourceChanging_ = true;
+      player.programService().getPreviousProgram(function (program, error) {
+        if (error) {
+          player.sourceChanging_ = false;
+          log$1.error('playPreviousProgram', error);
+        } else {
+          var playbackProperties = {};
+          if (theEnd) {
+            playbackProperties.playFrom = 'startTime';
+            var dateTime = new Date(program.endTime);
+            dateTime.setSeconds(dateTime.getSeconds() - 30);
+            playbackProperties.startTime = dateTime;
+          } else {
+            playbackProperties.playFrom = 'beginning';
+          }
+          player.startPlayback(null, program.channelId, program.programId, playbackProperties);
+        }
+      });
+    }
+  },
+  playNextProgram: function playNextProgram(player) {
+    if (player.sourceChanging_) {
+      log$1('playNextProgram ignore sourceChanging');
+      return;
+    }
+    if (player.programService && player.programService().currentProgram) {
+      if (this.getServerTime(player) > player.programService().currentProgram.end.getTime()) {
+        player.sourceChanging_ = true;
+        player.programService().getNextProgram(function (program, error) {
+          if (error) {
+            player.sourceChanging_ = false;
+            log$1.error('playNextProgram', error);
+          } else {
+            var playbackProperties = {};
+            playbackProperties.playFrom = 'beginning';
+            player.startPlayback(null, program.channelId, program.programId, playbackProperties);
+          }
+        });
+      }
+    }
+  },
+  playProgram: function playProgram(player, startTime) {
+    if (player.sourceChanging_) {
+      log$1('playProgram ignore sourceChanging');
+      return;
+    }
+    if (player.programService) {
+      player.sourceChanging_ = true;
+      player.programService().getProgram(startTime, function (program, error) {
+        if (error) {
+          log$1.error('getProgram', error);
+        } else {
+          var playbackProperties = {};
+          playbackProperties.playFrom = 'startTime';
+          playbackProperties.startTime = startTime;
+          player.startPlayback(null, program.channelId, program.programId, playbackProperties);
+        }
+      });
+    }
+  },
+  getServerTime: function getServerTime(player) {
+    if (player.programService && player.programService() && player.programService().exposure) {
+      return player.programService().exposure.getCachedServerTime();
+    }
+    return Date.now();
+  },
+  getEntitlement: function getEntitlement(player) {
+    if (player.programService) {
+      return player.programService().entitlement();
+    } else if (player.tech_) {
+      var opt = player.tech_.options_;
+      if (opt && opt.source && opt.source.playSessionId) {
+        return opt.source;
+      }
+    }
+    return null;
+  },
+  getSeekTimerange: function getSeekTimerange(player) {
+    var result = { start: 0, end: 0 };
+    if (!player.tech_ || player.tech_['seekable'] === undefined || player.seeking()) return result;
+
+    seekable = player.techGet_('seekable');
+    if (seekable && seekable.length > 0) {
+      result.start = (seekable.start(seekable.length - 1) + this.startTimeLive(player) / 1000) * 1000;
+      result.end = (seekable.end(seekable.length - 1) + this.startTimeLive(player) / 1000) * 1000;
+      if (player.techName_ === 'EmpCast') {
+        var liveDelay = this.liveDelay(player);
+        if (result.end > this.getServerTime(player) - liveDelay * 1000) {
+          result.end = this.getServerTime(player) - liveDelay * 1000;
+        }
+      }
+    }
+    return result;
+  },
+  getBufferedTimerange: function getBufferedTimerange(player) {
+    var result = { start: 0, end: 0 };
+    if (!player.tech_ || player.tech_['buffered'] === undefined || player.seeking()) return result;
+
+    buffered = player.techGet_('buffered');
+    if (buffered && buffered.length > 0) {
+      result.start = Math.round((buffered.start(buffered.length - 1) + this.startTimeLive(player) / 1000) * 1000);
+      result.end = Math.round((buffered.end(buffered.length - 1) + this.startTimeLive(player) / 1000) * 1000);
+    }
+    return result;
+  },
+  setTechProgram: function setTechProgram(player, program) {
+    if (player.tech_ || player.tech_['program'] !== undefined) {
+      player.techCall_('program', program);
+    }
+  }
+};
+
+//Override npm shaka if external defined for debug
+var shaka$1 = window_1.shaka ? window_1.shaka : shakaPlayer_compiled;
+var Plugin = videojs.getPlugin('plugin');
+var Tech$1 = videojs.getComponent('Tech');
+
+/**
+ *  DownloadService
+ *  This manages persistent offline data including storage, listing, and deleting stored manifests. 
+ *  Playback of offline manifests are done through the Player using a special URI (see shaka.offline.OfflineUri). 
+ *  First, check isSupported to see if offline is supported by the platform. 
+ *  Second, listen to EmpPlayerEvents.DOWNLOAD_PROGRESS on the download plugin
+ *  Third, call startDownload(), remove(), or list() as needed.
+ *  Start playback with load().
+ *    
+ * @param player
+ * @param options
+ */
+
+var DownloadService = function (_Plugin) {
+  inherits(DownloadService, _Plugin);
+
+  function DownloadService(player, options) {
+    classCallCheck(this, DownloadService);
+
+    var _this = possibleConstructorReturn(this, _Plugin.call(this, player, options));
+
+    log$1('DownloadService', 'create');
+    _this.options_ = options ? options : {};
+    _this.offlineOperationInProgress_ = false;
+    return _this;
+  }
+
+  /**
+   * if offline is supported by the platform
+   * @returns {boolean}
+   */
+
+
+  /**
+   * Delete all
+   *  
+   * @returns {Promise}
+   */
+  DownloadService.prototype.deleteAll = function deleteAll() {
+    return shaka$1.offline.Storage.deleteAll();
+  };
+
+  /**
+   * start download of asset or program
+   *  
+   * @param {any} assetId   Identifier of the asset to load
+   * @param {any} channelId Identifier of the channel to load
+   * @param {any} programId Identifier of the program to load
+   * @param {?object} metadata (optional) An arbitrary object from the application that will be stored along-side the offline content. Use this for any application-specific metadata you need associated with the stored content. For details on the data types that can be stored here, please refer to https://goo.gl/h62coS
+   * @param {?boolean} usePersistentLicense (optional) use PersistentLicense default=true
+   * @returns {Promise}
+   */
+
+
+  DownloadService.prototype.startDownload = function startDownload(assetId, channelId, programId, metadata, usePersistentLicense) {
+    var _this2 = this;
+
+    var errorMsg = void 0;
+    if (this.offlineOperationInProgress_) {
+      errorMsg = 'Offline Operation In Progress';
+      log$1.error(errorMsg);
+      return Promise.reject(errorMsg);
+    }
+
+    if (!assetId && !channelId) {
+      errorMsg = 'assetId or channelId is undefined';
+      log$1.error(errorMsg);
+      return Promise.reject(errorMsg);
+    }
+    if (!programId && channelId) {
+      errorMsg = 'programId is undefined';
+      log$1.error(errorMsg);
+      return Promise.reject(errorMsg);
+    }
+    this.offlineOperationInProgress_ = true;
+
+    var entitlementRequest = new EntitlementRequest({
+      'assetId': assetId,
+      'programId': programId,
+      'channelId': channelId
+    });
+    if (this.player.programService) {
+      exposure = this.player.programService().exposure;
+    } else {
+      errorMsg = 'No programService';
+      log$1.error(errorMsg);
+      return Promise.reject(errorMsg);
+    }
+    var entitlementPlayRequest = Tech$1.getTech('EmpShaka').entitlementPlayRequest;
+
+    return new Promise(function (resolve, reject) {
+      exposure.getEntitlement(entitlementRequest, entitlementPlayRequest, function (entitlement, error) {
+        // If we have an fatal error during playcall break out of the loop else try next tech
+        if (error) {
+          if (error.fatal) {
+            _this2.offlineOperationInProgress_ = false;
+            var error = new EmpPlayerError(error, EmpPlayerErrorCodes.ENTITLEMENT);
+            _this2.player.error(error);
+            extplayer.stop(_this2.player);
+            reject(error);
+          }
+        } else {
+          //TODO fetch program info
+          if (!metadata) {
+            metadata = { 'name': entitlement.assetId ? entitlement.assetId : entitlement.programId };
+          }
+          _this2.startDownloadSource(entitlement, metadata, usePersistentLicense).then(function (content) {
+            this.offlineOperationInProgress_ = false;
+            resolve(content);
+          })['catch'](function (error) {
+            this.offlineOperationInProgress_ = false;
+            log$1.error(error.message);
+            reject(error);
+          });
+        }
+      });
+    });
+  };
+
+  /**
+   * start download of a source
+   * 
+   * @param {string|object} source The Source element of a video element
+   * @param {?object} metadata (optional) An arbitrary object from the application that will be stored along-side the offline content. Use this for any application-specific metadata you need associated with the stored content. For details on the data types that can be stored here, please refer to https://goo.gl/h62coS
+   * @param {?boolean} usePersistentLicense (optional) use PersistentLicense default=true
+   * @returns {Promise}
+   */
+
+
+  DownloadService.prototype.startDownloadSource = function startDownloadSource(source, metadata, usePersistentLicense) {
+    if (typeof source === 'undefined') {
+      errorMsg = 'source is undefined';
+      log$1.error(errorMsg);
+      return Promise.reject(errorMsg);
+    }
+
+    // filter out invalid sources and turn our source into
+    // an array of source objects
+    var sources = filterSource(source);
+    if (!sources.length) {
+      errorMsg = 'source is undefined';
+      log$1.error(errorMsg);
+      return Promise.reject(errorMsg);
+    }
+
+    this.destroy();
+    if (!this.storage_) {
+      this.initStorage_(usePersistentLicense === false);
+    }
+
+    var config = {};
+    if (window_1.navigator.userAgent.indexOf('Android') === -1) {
+      config.drm = {
+        advanced: {
+          'com.widevine.alpha': {
+            'videoRobustness': 'SW_SECURE_DECODE',
+            'audioRobustness': 'SW_SECURE_CRYPTO'
+          }
+        }
+      };
+    } else {
+      //Android
+      config.drm = {
+        advanced: {
+          'com.widevine.alpha': {
+            'videoRobustness': 'SW_SECURE_CRYPTO',
+            'audioRobustness': 'SW_SECURE_CRYPTO'
+          }
+        }
+      };
+    }
+
+    if (source.licenseServer) {
+      config.drm.servers = {
+        'com.widevine.alpha': source.licenseServer,
+        'com.microsoft.playready': source.licenseServer,
+        'com.adobe.primetime': source.licenseServer
+      };
+    } else if (source.licenseServers) {
+      config.drm.servers = source.licenseServers;
+    }
+
+    this.player.tech_.shakaPlayer_.configure(config);
+
+    if (metadata) {
+      metadata.downloaded = new Date();
+    }
+
+    return this.storage_.store(sources[0].src, metadata);
+  };
+
+  /**
+   * selectTracks
+   *  
+   * @param {object[]} tracks
+   * @returns {object[]}
+   * @private
+   */
+
+
+  DownloadService.prototype.selectTracks_ = function selectTracks_(tracks) {
+    // TODO select diffrent bandwidth. Don't working with drm, Why?
+    // Store the highest bandwidth variant.
+    var found = tracks.filter(function (track) {
+      return track.type == 'variant';
+    }).sort(function (a, b) {
+      return a.bandwidth > b.bandwidth;
+    }).pop();
+    console.log('Offline Track: ' + found);
+    return [found];
+  };
+
+  /**
+   * initStorage
+   * 
+   * @param {?boolean} useNoPersistentLicense
+   * @private
+   */
+
+
+  DownloadService.prototype.initStorage_ = function initStorage_(useNoPersistentLicense) {
+    if (this.storage_) {
+      this.storage_.destroy();
+      this.storage_ = null;
+    }
+
+    if (this.player.techName_ !== 'EmpShaka' || !this.player.tech_) {
+      this.player.loadTech_('EmpShaka');
+    }
+
+    if (!this.player.tech_.shakaPlayer_) {
+      this.player.tech_.createPlayer_();
+    }
+    this.storage_ = new shaka$1.offline.Storage(this.player.tech_.shakaPlayer_);
+    this.storage_.configure({
+      'progressCallback': this.setDownloadProgress_.bind(this),
+      //'trackSelectionCallback': this.selectTracks_.bind(this),
+      'usePersistentLicense': !useNoPersistentLicense
+    });
+  };
+
+  /**
+   * setDownloadProgress
+   * 
+   * @param {?object} content
+   * @param {number} progress
+   *  
+   * @private
+   */
+
+
+  DownloadService.prototype.setDownloadProgress_ = function setDownloadProgress_(content, progress) {
+    this.trigger(empPlayerEvents.DOWNLOAD_PROGRESS, { 'content': content, 'progress': progress });
+  };
+
+  /**
+   * List all downloaded assests
+   * @returns {Promise}
+   */
+
+
+  DownloadService.prototype.list = function list() {
+    if (!this.storage_) {
+      this.initStorage_();
+    }
+    return this.storage_.list();
+  };
+
+  /**
+   * Remove downloaded assest
+   * @param {string} offlineUri
+   * @returns {Promise}
+   */
+
+
+  DownloadService.prototype.remove = function remove(offlineUri) {
+    if (!this.storage_) {
+      this.initStorage_();
+    }
+    return this.storage_.remove(offlineUri);
+  };
+
+  /**
+   * Play downloaded assest
+   * @param {string} 
+   * @param {Object=} options Player Options
+   */
+
+
+  DownloadService.prototype.load = function load(offlineUri) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : { 'autoplay': true };
+
+    if (!offlineUri) {
+      log$1.error('offlineUri is undefined');
+      return;
+    }
+
+    if (options) {
+      this.player.options(options);
+      if (options.autoplay) {
+        this.player.autoplay(true);
+      }
+    }
+
+    this.player.src({ 'type': 'application/dash+xml', 'src': offlineUri });
+  };
+
+  /**
+   * destroy current download
+   */
+
+
+  DownloadService.prototype.destroy = function destroy() {
+    if (this.storage_) {
+      this.storage_.destroy();
+      this.storage_ = null;
+    }
+    this.offlineOperationInProgress_ = false;
+  };
+
+  /**
+   * dispose DownloadService
+   */
+
+
+  DownloadService.prototype.dispose = function dispose() {
+    log$1('DownloadService is being disposed');
+    if (this.storage_) {
+      this.storage_.destroy();
+      this.storage_ = null;
+    }
+    this.offlineOperationInProgress_ = false;
+    _Plugin.prototype.dispose.call(this);
+  };
+
+  createClass(DownloadService, [{
+    key: 'isSupported',
+    get: function get$$1() {
+      if (shaka$1.offline.Storage) {
+        return shaka$1.offline.Storage.support();
+      } else {
+        false;
+      }
+    }
+  }, {
+    key: 'offlineOperationInProgress',
+    get: function get$$1() {
+      return this.offlineOperationInProgress_;
+    }
+  }]);
+  return DownloadService;
+}(Plugin);
+
+DownloadService.VERSION = '2.0.87-116';
+
+if (videojs.getPlugin('DownloadService')) {
+  videojs.log.warn('A plugin named "DownloadService" already exists.');
+} else {
+  videojs.registerPlugin('download', DownloadService);
+}
+
 /**
  * @file emp-shaka.js
  * @module empShaka
  */
 //Override npm shaka if external defined for debug
 var shaka = window_1.shaka ? window_1.shaka : shakaPlayer_compiled;
-var Html5 = videojs.getTech('Html5');
-var Tech = videojs.getComponent('Tech');
+var Html5 = videojs$1.getTech('Html5');
+var Tech = videojs$1.getComponent('Tech');
 var TechName = 'EmpShaka';
 /**
  * HTML5 Dash Media Controller - Wrapper for HTML5 Media API using MPEG-Dash playback
@@ -3493,7 +4385,7 @@ var EmpShaka = function (_Html) {
   EmpShaka.isSupported = function isSupported() {
 
     // Dash is definitely not supported if HTML5 video isn't
-    if (!videojs.getTech('Html5').isSupported()) {
+    if (!videojs$1.getTech('Html5').isSupported()) {
       return false;
     }
 
@@ -4231,15 +5123,15 @@ EmpShaka.prototype['featuresNativeTextTracks'] = false;
 
 Tech.withSourceHandlers(EmpShaka);
 
-EmpShaka.VERSION = '2.0.86-115';
+EmpShaka.VERSION = '2.0.87-116';
 
 // Unset source handlers set by Html5 super class.
 // We do not intent to support any sources other then sources allowed by nativeSourceHandler
 EmpShaka.sourceHandlers = [];
 EmpShaka.registerSourceHandler(EmpShaka.nativeSourceHandler);
 if (Tech.getTech(TechName)) {
-  videojs.log.warn('Not using ' + TechName + ' as it appears to already be registered');
-  videojs.log.warn(TechName + ' should only be used with emp-player@2 and above');
+  videojs$1.log.warn('Not using ' + TechName + ' as it appears to already be registered');
+  videojs$1.log.warn(TechName + ' should only be used with emp-player@2 and above');
 } else {
   Tech.registerTech(TechName, EmpShaka);
 }
