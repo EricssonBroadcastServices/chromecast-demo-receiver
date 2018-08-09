@@ -92,4 +92,14 @@ https://github.com/google/shaka-player/releases
 ### New features
 - Upgrade HTML5 Player to 2.0.86
 
+## 2.0.88
+
+### Bug fixes
+- **EMP-11134** Error event is sent on a closed session causes a lot of unnecessary errors
+- **EMP-11383** Device.Info event should always be send when an error occur
+- **EMP-11622** MediaLocator sent in Playback.Started does not include the t params
+
+### New features
+- Upgrade HTML5 Player to 2.0.88
+
 
