@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.88-128 
+ * EMP-Player 2.0.89-129 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -6778,7 +6778,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.0.88-128';
+      return '2.0.89-129';
     }
 
     /**
@@ -8440,6 +8440,11 @@ var EricssonExposure = function (_EntitlementEngine) {
       return;
     }
 
+    if (window.navigator.onLine === false) {
+      log$1('getServerTime offline');
+      callback(new Date());
+      return;
+    }
     var requestURL = this.options_['exposureApiURL'] + '/' + this.options_['exposureApiVersion'] + '/customer/' + customer + '/businessunit/' + businessUnit + '/time';
     return xhr.get(requestURL, null, function (error, response, body) {
       if (error) {
@@ -9449,7 +9454,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin);
 
-ProgramService.VERSION = '2.0.88-128';
+ProgramService.VERSION = '2.0.89-129';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -9625,7 +9630,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$1);
 
-EntitlementExpirationService.VERSION = '2.0.88-128';
+EntitlementExpirationService.VERSION = '2.0.89-129';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -10067,7 +10072,7 @@ EntitlementMiddleware.getLog = function () {
   return log$1;
 };
 
-EntitlementMiddleware.VERSION = '2.0.88-128';
+EntitlementMiddleware.VERSION = '2.0.89-129';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -10942,7 +10947,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin$2);
 
-AnalyticsPlugin.VERSION = '2.0.88-128';
+AnalyticsPlugin.VERSION = '2.0.89-129';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -11067,7 +11072,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.0.88-128';
+empPlayer.VERSION = '2.0.89-129';
 
 /*
  * Universal Module Definition (UMD)
