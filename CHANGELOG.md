@@ -102,4 +102,13 @@ https://github.com/google/shaka-player/releases
 ### New features
 - Upgrade HTML5 Player to 2.0.88
 
+## 2.0.89
+
+### Bug fixes
+- **EMP-11480** Consol error from HTML5 player
+
+### New features
+- **EMP-11616** Upgrade Shaka to 2.4.3 (latest)
+- **EMP-11448** Tracking license requests to Irdeto through analytics trace
+
 

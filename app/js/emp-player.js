@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.89-131 
+ * EMP-Player 2.0.89-133 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -4982,6 +4982,220 @@ var TextTrackSettings = function (_ModalDialog) {
 
 Component$18.registerComponent('TextTrackSettings', TextTrackSettings);
 
+var Component$19 = videojs$1.getComponent('Component');
+
+/**
+ * EmpMediaInfoBar Show media-title, media-artwork, media-resolution and media-subtitle
+ *
+ * @param {Player|Object} player
+ * @param {Object=} options
+ * @extends Component
+ * @class EmpMediaInfoBar
+ */
+
+var EmpMediaInfoBar = function (_Component) {
+  inherits(EmpMediaInfoBar, _Component);
+
+  function EmpMediaInfoBar(player, options) {
+    classCallCheck(this, EmpMediaInfoBar);
+
+    var _this = possibleConstructorReturn(this, _Component.call(this, player, options));
+
+    _this.assetMetadata = null;
+    _this.on(_this.player(), empPlayerEvents.ENDED, function () {
+      _this.hide();
+      _this.clearEl();
+      _this.assetMetadata = null;
+    });
+
+    _this.on(_this.player(), empPlayerEvents.ABORT, function () {
+      _this.hide();
+      _this.clearEl();
+      _this.assetMetadata = null;
+    });
+
+    _this.on(_this.player(), empPlayerEvents.PLAYING, function () {
+      _this.show();
+      if (!_this.assetMetadata) {
+        var opt = _this.player().options();
+        if (opt.mediaInfo) {
+          _this.updateMediaInformation_({
+            'title': opt.mediaInfo.title,
+            'subtitle': opt.mediaInfo.subtitle,
+            'images': opt.mediaInfo.artworkUrl ? [{ 'url': opt.mediaInfo.artworkUrl }] : [],
+            'channelInfo': {
+              'images': opt.mediaInfo.logoUrl ? [{ 'url': opt.mediaInfo.logoUrl }] : []
+            }
+          });
+        }
+      }
+    });
+
+    _this.on(_this.player(), empPlayerEvents.PROGRAM_CHANGED, function (event, data) {
+      var programId = data && data.program ? data.program.programId : null;
+      if (programId) {
+        _this.assetMetadata = _this.player().programService().extractAssetMetadata(data.program.asset);
+        _this.assetMetadata.channelInfo = data.program.channelInfo;
+        _this.updateMediaInformation_(_this.assetMetadata);
+      }
+    });
+
+    _this.on(_this.player(), empPlayerEvents.ASSET_CHANGED, function (event, data) {
+      if (data && data.asset) {
+        _this.assetMetadata = _this.player().programService().extractAssetMetadata(data.asset);
+        _this.updateMediaInformation_(_this.assetMetadata);
+      }
+    });
+
+    _this.on(_this.player(), empPlayerEvents.DISPOSE, function () {
+      _this.hide();
+      _this.clearEl();
+    });
+
+    _this.fillEl();
+    return _this;
+  }
+
+  /**
+   * Allow sub components to stack CSS class names
+   *
+   * @return {String} The constructed class name
+   * @method buildCSSClass
+   */
+
+
+  EmpMediaInfoBar.prototype.buildCSSClass = function buildCSSClass() {
+    return 'emp-mediainfo-bar ' + _Component.prototype.buildCSSClass.call(this);
+  };
+
+  /**
+  * Create the component's DOM element
+  *
+  * @return {Element}
+  * @method createEl
+  */
+
+
+  EmpMediaInfoBar.prototype.createEl = function createEl() {
+    var el = _Component.prototype.createEl.call(this, 'div', {
+      className: 'emp-mediainfo-bar'
+    });
+    return el;
+  };
+
+  /**
+  * Select the image to display for the asset
+  * @param {Array} images image objects
+  * @param {string} imageType image type in backend
+  * @returns {image} image object
+  */
+
+
+  EmpMediaInfoBar.prototype.imageSelector = function imageSelector(images, imageType) {
+    var image = void 0;
+    if (images.length > 0) {
+      image = images[0];
+    }
+    for (var i = 0; i < images.length; i++) {
+      if (images[i].url && images[i].type === imageType) {
+        return images[i];
+      }
+    }
+    return image;
+  };
+
+  EmpMediaInfoBar.prototype.updateMediaInformation_ = function updateMediaInformation_(assetMetadata) {
+    if (!this.el_) {
+      return;
+    }
+
+    var opt = this.player().options();
+    if (!opt.mediaInfo) {
+      return;
+    }
+    this.fillEl();
+
+    var mediaArtworkElCollection = this.el_.getElementsByClassName('emp-media-artwork');
+    var mediaLogoElCollection = this.el_.getElementsByClassName('emp-media-logo');
+    var mediaTitleElCollection = this.el_.getElementsByClassName('emp-media-title');
+    var mediaSubtitleElCollection = this.el_.getElementsByClassName('emp-media-subtitle');
+
+    var mediaArtworkEl = mediaArtworkElCollection.length ? mediaArtworkElCollection[0] : null;
+    var mediaLogoEl = mediaLogoElCollection.length ? mediaLogoElCollection[0] : null;
+    var mediaTitleEl = mediaTitleElCollection.length ? mediaTitleElCollection[0] : null;
+    var mediaSubtitleEl = mediaSubtitleElCollection.length ? mediaSubtitleElCollection[0] : null;
+
+    if (mediaTitleEl) {
+      mediaTitleEl.innerHTML = assetMetadata.title || '';
+    }
+    if (mediaSubtitleEl) {
+      mediaSubtitleEl.innerHTML = assetMetadata.subtitle || '';
+    }
+
+    if (mediaArtworkEl && assetMetadata.images && assetMetadata.images.length > 0) {
+      var image = this.imageSelector(assetMetadata.images, 'chromecast');
+      mediaArtworkEl.style.backgroundImage = 'url("' + image.url + '")';
+      mediaArtworkEl.style.display = 'block';
+    } else if (mediaArtworkEl) {
+      mediaArtworkEl.style.display = 'none';
+      mediaArtworkEl.style.backgroundImage = 'none';
+    }
+
+    if (mediaLogoEl && assetMetadata.channelInfo) {
+      var channelLogo = this.imageSelector(assetMetadata.channelInfo.images, 'thumbnail');
+      if (channelLogo && channelLogo.url) {
+        mediaLogoEl.style.backgroundImage = 'url("' + channelLogo.url + '")';
+        mediaLogoEl.style.display = 'block';
+      } else {
+        mediaLogoEl.style.display = 'none';
+        mediaLogoEl.style.backgroundImage = 'none';
+      }
+    }
+  };
+
+  EmpMediaInfoBar.prototype.clearEl = function clearEl() {
+    if (!this.el_) {
+      return;
+    }
+    this.el_.innerHTML = '';
+  };
+
+  EmpMediaInfoBar.prototype.fillEl = function fillEl() {
+    var opt = this.player().options();
+    if (opt.mediaInfo) {
+      var html = '';
+      if (opt.mediaInfo.artworkEnable) {
+        html += '<div class="emp-media-artwork"></div>';
+      }
+      if (opt.mediaInfo.titleEnable || opt.mediaInfo.subtitleEnable) {
+        html += '<div class="emp-media-text">';
+      }
+      if (opt.mediaInfo.titleEnable) {
+        html += '<div class="emp-media-title"></div>';
+      }
+      if (opt.mediaInfo.subtitleEnable) {
+        html += '<div class="emp-media-subtitle"></div>';
+      }
+      if (opt.mediaInfo.titleEnable || opt.mediaInfo.subtitleEnable) {
+        html += '</div>';
+      }
+      if (opt.mediaInfo.logoEnable) {
+        html += '<div class="emp-media-logo"></div>';
+      }
+
+      this.el_.innerHTML = html;
+    } else {
+      this.el_.innerHTML = '';
+    }
+  };
+
+  return EmpMediaInfoBar;
+}(Component$19);
+
+EmpMediaInfoBar.prototype.controlText_ = 'MediaInfo';
+
+Component$19.registerComponent('EmpMediaInfoBar', EmpMediaInfoBar);
+
 var VjsPlayer = videojs$1.getComponent('Player');
 var Tech = videojs$1.getComponent('Tech');
 var CaptionSettingsMenuItem = videojs$1.getComponent('CaptionSettingsMenuItem');
@@ -5010,7 +5224,7 @@ var Player = function (_VjsPlayer) {
       options.startTime = 0;
     }
     options = assign({
-      children: ['mediaLoader', 'PosterImage', 'textTrackDisplay', 'loadingSpinner', 'controlBar', 'errorDisplay', 'textTrackSettings', 'BigPlayButton']
+      children: ['mediaLoader', 'PosterImage', 'textTrackDisplay', 'loadingSpinner', 'empMediaInfoBar', 'controlBar', 'errorDisplay', 'textTrackSettings', 'BigPlayButton']
     }, options);
 
     if (options.techOrder === 'auto' || Array.isArray(options.techOrder) && options.techOrder.length === 1 && options.techOrder[0] === 'auto') {
@@ -6787,7 +7001,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.0.89-131';
+      return '2.0.89-133';
     }
 
     /**
@@ -8939,6 +9153,8 @@ var ProgramService = function (_Plugin) {
       this.player.off(empPlayerEvents.PAUSE, this.clearProgramChangeTimeoutBind);
       this.player.off(empPlayerEvents.PLAY, this.checkForProgramChangeBind);
     }
+    this.currentProgram_ = null;
+    this.currentVOD_ = null;
   };
 
   ProgramService.prototype.reset = function reset() {
@@ -9467,7 +9683,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin);
 
-ProgramService.VERSION = '2.0.89-131';
+ProgramService.VERSION = '2.0.89-133';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -9643,7 +9859,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$1);
 
-EntitlementExpirationService.VERSION = '2.0.89-131';
+EntitlementExpirationService.VERSION = '2.0.89-133';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -10085,7 +10301,7 @@ EntitlementMiddleware.getLog = function () {
   return log$1;
 };
 
-EntitlementMiddleware.VERSION = '2.0.89-131';
+EntitlementMiddleware.VERSION = '2.0.89-133';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -10976,7 +11192,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin$2);
 
-AnalyticsPlugin.VERSION = '2.0.89-131';
+AnalyticsPlugin.VERSION = '2.0.89-133';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -11101,7 +11317,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.0.89-131';
+empPlayer.VERSION = '2.0.89-133';
 
 /*
  * Universal Module Definition (UMD)
