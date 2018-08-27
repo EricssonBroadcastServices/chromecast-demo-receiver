@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.90-137 
+ * EMP-Player 2.0.90-138 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -2774,7 +2774,7 @@ var DownloadService = function (_Plugin) {
    * @returns {Promise}
    */
   DownloadService.prototype.deleteAll = function deleteAll() {
-    shaka$1.offline.Storage.doNotReleaseLicense(true);
+    shaka$1.offline.Storage.doNotReleaseLicense(false);
     return shaka$1.offline.Storage.deleteAll(this.player.tech_.shakaPlayer_);
   };
 
@@ -3054,7 +3054,7 @@ var DownloadService = function (_Plugin) {
     if (!this.storage_) {
       this.initStorage_();
     }
-    shaka$1.offline.Storage.doNotReleaseLicense(true);
+    shaka$1.offline.Storage.doNotReleaseLicense(false);
     return this.storage_.remove(offlineUri);
   };
 
@@ -3136,7 +3136,7 @@ var DownloadService = function (_Plugin) {
   return DownloadService;
 }(Plugin);
 
-DownloadService.VERSION = '2.0.90-137';
+DownloadService.VERSION = '2.0.90-138';
 
 if (videojs.getPlugin('DownloadService')) {
   videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -4741,7 +4741,7 @@ EmpShaka.prototype['featuresNativeTextTracks'] = false;
 
 Tech.withSourceHandlers(EmpShaka);
 
-EmpShaka.VERSION = '2.0.90-137';
+EmpShaka.VERSION = '2.0.90-138';
 
 // Unset source handlers set by Html5 super class.
 // We do not intent to support any sources other then sources allowed by nativeSourceHandler
