@@ -111,4 +111,14 @@ https://github.com/google/shaka-player/releases
 - **EMP-11616** Upgrade Shaka to 2.4.3 (latest)
 - **EMP-11448** Tracking license requests to Irdeto through analytics trace
 
+## 2.0.90
+
+### Bug fixes
+- **EMP-11674** Shaka memory leak in Chromecast v1
+- **EMP-11686** Analytics send synchronous call's to backend
+
+### New features
+- **EMP-11669** HTML5/CC 2.x - Send EE requestID in Playback.Created
+- **EMP-11692** The clients need to handle the http 410 response from backend
+
 
