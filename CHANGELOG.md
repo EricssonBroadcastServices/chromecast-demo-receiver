@@ -116,6 +116,7 @@ https://github.com/google/shaka-player/releases
 ### Bug fixes
 - **EMP-11674** Shaka memory leak in Chromecast v1
 - **EMP-11686** Analytics send synchronous call's to backend
+- **EMP-11693** CC timeline not working after jump to previous program
 
 ### New features
 - **EMP-11669** HTML5/CC 2.x - Send EE requestID in Playback.Created
