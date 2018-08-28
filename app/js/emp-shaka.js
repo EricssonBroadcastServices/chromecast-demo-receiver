@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.90-141 
+ * EMP-Player 2.0.90-142 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -3136,7 +3136,7 @@ var DownloadService = function (_Plugin) {
   return DownloadService;
 }(Plugin);
 
-DownloadService.VERSION = '2.0.90-141';
+DownloadService.VERSION = '2.0.90-142';
 
 if (videojs.getPlugin('DownloadService')) {
   videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -3302,7 +3302,11 @@ var EmpShaka = function (_Html) {
         //If playing, pause first before load new asset
         this.el_.pause();
       }
-
+    if (this.wrapper_) {
+      this.wrapper_.stop();
+      this.wrapper_.destroy();
+      this.wrapper_ = null;
+    }
     this.shakaPlayer_.resetConfiguration();
 
     // Default language is defined (in descending order)
@@ -3443,12 +3447,7 @@ var EmpShaka = function (_Html) {
     this.loading_ = true; //Block load call if loading 
 
     if (window_1.ShakaPlayerDnaWrapper && options.streamrootkey) {
-      if (this.wrapper_) {
-        this.wrapper_.stop();
-        this.wrapper_.destroy();
-      }
-      var dnaConfig = {};
-      this.wrapper_ = new ShakaPlayerDnaWrapper(this.shakaPlayer_, options.streamrootkey, dnaConfig);
+      this.createWrapper_(options.streamrootkey);
     }
 
     this.shakaPlayer_.load(manifestSource, startTime).then(function () {
@@ -3463,6 +3462,15 @@ var EmpShaka = function (_Html) {
         _this2.checkForRecoverableErrors(error);
       }
     });
+  };
+
+  EmpShaka.prototype.createWrapper_ = function createWrapper_(streamrootkey) {
+    var dnaConfig = {};
+    var wrapperConfig = {
+      shakaNamespace: shaka
+    };
+    this.wrapper_ = new ShakaPlayerDnaWrapper(this.shakaPlayer_, streamrootkey, dnaConfig, wrapperConfig);
+    return this.wrapper_;
   };
 
   EmpShaka.prototype.streamingFailureCallback = function streamingFailureCallback(error) {
@@ -3670,7 +3678,7 @@ var EmpShaka = function (_Html) {
         this.triggerRecoverableError(error);
         break;
       default:
-        this.trigger(empPlayerEvents.ERROR, error);
+        this.triggerRecoverableError(error);
         break;
     }
   };
@@ -4638,10 +4646,12 @@ var EmpShaka = function (_Html) {
     this.off(empPlayerEvents.LOAD_START, this.onLoadStartBind);
 
     if (this.shakaPlayer_) {
-      this.shakaPlayer_.destroy();
-      this.shakaPlayer_ = null;
-      this.wrapper_ = null;
+      try {
+        this.shakaPlayer_.destroy();
+      } catch (e) {}
     }
+    this.shakaPlayer_ = null;
+    this.wrapper_ = null;
 
     _Html.prototype.dispose.call(this);
     this.isDispose_ = true;
@@ -4741,7 +4751,7 @@ EmpShaka.prototype['featuresNativeTextTracks'] = false;
 
 Tech.withSourceHandlers(EmpShaka);
 
-EmpShaka.VERSION = '2.0.90-141';
+EmpShaka.VERSION = '2.0.90-142';
 
 // Unset source handlers set by Html5 super class.
 // We do not intent to support any sources other then sources allowed by nativeSourceHandler
