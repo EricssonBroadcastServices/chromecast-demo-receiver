@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.90-144 
+ * EMP-Player 2.0.90-145 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -3136,7 +3136,7 @@ var DownloadService = function (_Plugin) {
   return DownloadService;
 }(Plugin);
 
-DownloadService.VERSION = '2.0.90-144';
+DownloadService.VERSION = '2.0.90-145';
 
 if (videojs.getPlugin('DownloadService')) {
   videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -3260,7 +3260,7 @@ var EmpShaka = function (_Html) {
       if (this.shakaPlayer_) {
         this.shakaPlayer_.destroy();
         this.shakaPlayer_ = null;
-        this.wrapper_ = null;
+        this.streamrootWrapper_ = null;
       }
     }
     //For testing fallback
@@ -3302,11 +3302,7 @@ var EmpShaka = function (_Html) {
         //If playing, pause first before load new asset
         this.el_.pause();
       }
-    if (this.wrapper_) {
-      this.wrapper_.stop();
-      this.wrapper_.destroy();
-      this.wrapper_ = null;
-    }
+
     this.shakaPlayer_.resetConfiguration();
 
     // Default language is defined (in descending order)
@@ -3426,14 +3422,15 @@ var EmpShaka = function (_Html) {
 
     // Configure network filters
     var networkingEngine = this.shakaPlayer_.getNetworkingEngine();
-    networkingEngine.clearAllRequestFilters();
-    networkingEngine.clearAllResponseFilters();
 
     // Filter requests and set auth header
     if (this.playToken) {
       var header = { 'Authorization': 'Bearer ' + this.playToken };
-      var filter = this.addLicenseRequestHeaders.bind(null, header);
-      networkingEngine.registerRequestFilter(filter);
+      if (this.requestFilter) {
+        networkingEngine.unregisterRequestFilter(this.requestFilter);
+      }
+      this.requestFilter = this.addLicenseRequestHeaders.bind(null, header);
+      networkingEngine.registerRequestFilter(this.requestFilter);
     }
 
     var startTime;
@@ -3446,8 +3443,8 @@ var EmpShaka = function (_Html) {
     log$1('before load stream');
     this.loading_ = true; //Block load call if loading 
 
-    if (window_1.ShakaPlayerDnaWrapper && options.streamrootkey) {
-      this.createWrapper_(options.streamrootkey);
+    if (window_1.ShakaPlayerDnaWrapper && options.streamrootkey && !this.streamrootWrapper_) {
+      this.createStreamrootWrapper_(options.streamrootkey);
     }
 
     this.shakaPlayer_.load(manifestSource, startTime).then(function () {
@@ -3464,13 +3461,13 @@ var EmpShaka = function (_Html) {
     });
   };
 
-  EmpShaka.prototype.createWrapper_ = function createWrapper_(streamrootkey) {
+  EmpShaka.prototype.createStreamrootWrapper_ = function createStreamrootWrapper_(streamrootkey) {
     var dnaConfig = {};
     var wrapperConfig = {
       shakaNamespace: shaka
     };
-    this.wrapper_ = new ShakaPlayerDnaWrapper(this.shakaPlayer_, streamrootkey, dnaConfig, wrapperConfig);
-    return this.wrapper_;
+    this.streamrootWrapper_ = new ShakaPlayerDnaWrapper(this.shakaPlayer_, streamrootkey, dnaConfig, wrapperConfig);
+    return this.streamrootWrapper_;
   };
 
   EmpShaka.prototype.streamingFailureCallback = function streamingFailureCallback(error) {
@@ -3613,6 +3610,7 @@ var EmpShaka = function (_Html) {
         }
       }
     });
+    return this.shakaPlayer_;
   };
 
   EmpShaka.prototype.addErrorMessage = function addErrorMessage(error) {
@@ -4651,7 +4649,7 @@ var EmpShaka = function (_Html) {
       } catch (e) {}
     }
     this.shakaPlayer_ = null;
-    this.wrapper_ = null;
+    this.streamrootWrapper_ = null;
 
     _Html.prototype.dispose.call(this);
     this.isDispose_ = true;
@@ -4751,7 +4749,7 @@ EmpShaka.prototype['featuresNativeTextTracks'] = false;
 
 Tech.withSourceHandlers(EmpShaka);
 
-EmpShaka.VERSION = '2.0.90-144';
+EmpShaka.VERSION = '2.0.90-145';
 
 // Unset source handlers set by Html5 super class.
 // We do not intent to support any sources other then sources allowed by nativeSourceHandler
