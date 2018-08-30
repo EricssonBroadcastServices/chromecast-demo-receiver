@@ -121,5 +121,6 @@ https://github.com/google/shaka-player/releases
 ### New features
 - **EMP-11669** HTML5/CC 2.x - Send EE requestID in Playback.Created
 - **EMP-11692** The clients need to handle the http 410 response from backend
+- **EMP-11705** Timeout in hours when a "Are You Still Watching?" message will be displayed.
 
 
