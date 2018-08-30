@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.90-145 
+ * EMP-Player 2.0.90-146 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -3136,7 +3136,7 @@ var DownloadService = function (_Plugin) {
   return DownloadService;
 }(Plugin);
 
-DownloadService.VERSION = '2.0.90-145';
+DownloadService.VERSION = '2.0.90-146';
 
 if (videojs.getPlugin('DownloadService')) {
   videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -3181,6 +3181,7 @@ var EmpShaka = function (_Html) {
 
     _this.isDispose_ = false;
     _this.loading_ = false;
+    _this.certificate_ = null;
 
     // Shaka polyfills, fullscreen has been excluded because VideoJS handles this api
     shaka.polyfill.installAll();
@@ -3263,6 +3264,20 @@ var EmpShaka = function (_Html) {
         this.streamrootWrapper_ = null;
       }
     }
+
+    if (source.certificateServer && !this.certificate_) {
+      this.fetchCertificate(source.certificateServer, function (cert, error) {
+        if (cert) {
+          _this2.certificate_ = cert;
+          _this2.handleSource(source);
+        } else {
+          //this.triggerReady();
+          _this2.checkForRecoverableErrors(error ? error : { message: 'no certificate', category: 6 });
+        }
+      });
+      return;
+    }
+
     //For testing fallback
     //setTimeout(() => {
     //   this.triggerRecoverableError({ code: 1, message: 'test fallback' });
@@ -3415,6 +3430,10 @@ var EmpShaka = function (_Html) {
       };
     } else if (source.licenseServers) {
       config.drm.servers = source.licenseServers;
+    }
+
+    if (this.certificate_) {
+      config.drm.advanced['com.widevine.alpha']['serverCertificate'] = this.certificate_;
     }
 
     this.shakaPlayer_.configure(config);
@@ -4650,6 +4669,7 @@ var EmpShaka = function (_Html) {
     }
     this.shakaPlayer_ = null;
     this.streamrootWrapper_ = null;
+    this.certificate_ = null;
 
     _Html.prototype.dispose.call(this);
     this.isDispose_ = true;
@@ -4677,6 +4697,48 @@ var EmpShaka = function (_Html) {
 
   EmpShaka.prototype.triggerRecoverableError = function triggerRecoverableError(error) {
     this.triggerRecoverableTechError(error, TechName);
+  };
+
+  EmpShaka.prototype.fetchCertificate = function fetchCertificate(certificateUrl, callback) {
+    var _this7 = this;
+
+    log$1('fetchCertificate()');
+    this.trigger({ type: empPlayerEvents.DRM_SESSION_UPDATE, bubbles: true }, { 'messageType': 'WIDEVINE_CERTIFICATE_REQUEST', 'code': undefined, 'info': certificateUrl });
+    var request = new XMLHttpRequest();
+    request.addEventListener('error', this.checkForRecoverableErrors, false);
+    //'irdeto'
+    request.responseType = 'arraybuffer';
+    request.addEventListener('load', function (event) {
+      _this7.onCertificateLoad(event, {
+        callback: callback
+      });
+    }, false);
+
+    request.open('GET', certificateUrl, true);
+    request.send();
+  };
+
+  EmpShaka.prototype.onCertificateLoad = function onCertificateLoad(event, _ref) {
+    var callback = _ref.callback;
+
+    log$1('onCertificateLoad()');
+    var request = event.target;
+    if (request.status < 300 && request.readyState === 4) {
+      var certificate = new Uint8Array(event.target.response);
+      this.trigger({ type: empPlayerEvents.DRM_SESSION_UPDATE, bubbles: true }, { 'messageType': 'WIDEVINE_CERTIFICATE_RESPONSE', 'code': undefined, 'info': 'onCertificateLoad' });
+      callback(certificate);
+    } else {
+      var error = {
+        message: 'onLicensonCertificateLoadeLoadBin',
+        code: request.status
+      };
+      if (request.responseType === "arraybuffer") {
+        var enc = new TextDecoder('utf-8');
+        error.message = enc.decode(request.response);
+      }
+      error.category = 6;
+      callback(null, error);
+    }
   };
 
   createClass(EmpShaka, null, [{
@@ -4749,7 +4811,7 @@ EmpShaka.prototype['featuresNativeTextTracks'] = false;
 
 Tech.withSourceHandlers(EmpShaka);
 
-EmpShaka.VERSION = '2.0.90-145';
+EmpShaka.VERSION = '2.0.90-146';
 
 // Unset source handlers set by Html5 super class.
 // We do not intent to support any sources other then sources allowed by nativeSourceHandler
