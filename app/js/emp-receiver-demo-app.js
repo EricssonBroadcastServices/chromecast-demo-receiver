@@ -15,6 +15,13 @@ class EMPReceiverApp {
   constructor() {
     let player = document.getElementById('player');
     this.container_ = document.getElementById('receiver');
+    /**
+    * Timeout in hours when a "Are You Still Watching?" message will be displayed.
+    * Playback will be paused and Chromecast PAUSED IdleTimeout will be trigger.
+    * If sender not send PLAY before PAUSED IdleTimeout (20 min) the cast session will stop.
+    * If value is zero, this feature will be disabled and casting will continue forever when live streaming.
+    */
+    this.Still_Watching_Timeout = 10;
 
     let options = {
       debug: false,
@@ -137,6 +144,9 @@ class EMPReceiverApp {
           timeDisplay.style.display = 'block';
         }
       }
+      if (!this.stillWatchingTimeout_) {
+        this.restartStillWatchingTimeout();
+      }
     }
     else if ('error' === event.type) {
       const error = this.empReceiver_.player.getError();
@@ -151,19 +161,50 @@ class EMPReceiverApp {
   * @param {string} state empReceiver.ReceiverStates ['launching', 'loading','buffering', 'seeking', 'playing', 'paused', 'done', 'idle']
   */
   onStateChange(state) {
-    if (state === 'buffering') {
+    if (state === empReceiver.ReceiverStates.BUFFERING) {
       //buffering is handle by videojs, vjs-waiting class
       return;
     }
     this.container_.setAttribute('state', state);
     if (state === empReceiver.ReceiverStates.LOADING) {
       this.hideError();
+      this.restartStillWatchingTimeout();
     }
     else if (state === empReceiver.ReceiverStates.IDLE) {
       let logo = document.getElementById('media-logo');
       logo.style.backgroundImage = 'url("images/logo.png")';
     }
   }
+
+  /**
+  * Restart Still Watching Timeout
+  */
+  restartStillWatchingTimeout() {
+    if (this.stillWatchingTimeout_) {
+      clearTimeout(this.stillWatchingTimeout_);
+      this.stillWatchingTimeout_ = null;
+    }
+    if (!this.Still_Watching_Timeout)
+      return;
+
+    var stillWatchingEl = document.getElementById('still-watching');
+    if (stillWatchingEl) {
+      stillWatchingEl.style.display = 'none';
+    }
+    this.stillWatchingTimeout_ = setTimeout(() => {
+      if (this.stillWatchingTimeout_) {
+        clearTimeout(this.stillWatchingTimeout_);
+        this.stillWatchingTimeout_ = null;
+      }
+
+      this.empReceiver_.player.pause();
+      if (stillWatchingEl) {
+        stillWatchingEl.innerHTML = 'Are You Still Watching?';
+        stillWatchingEl.style.display = 'block';
+      }
+    }, this.Still_Watching_Timeout * 1000 * 3600);
+  }
+
 
   /**
   * show error message on screen
