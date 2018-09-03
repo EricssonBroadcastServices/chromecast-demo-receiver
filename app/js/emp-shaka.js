@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.90-147 
+ * EMP-Player 2.0.90-148 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -3136,7 +3136,7 @@ var DownloadService = function (_Plugin) {
   return DownloadService;
 }(Plugin);
 
-DownloadService.VERSION = '2.0.90-147';
+DownloadService.VERSION = '2.0.90-148';
 
 if (videojs.getPlugin('DownloadService')) {
   videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -3264,18 +3264,21 @@ var EmpShaka = function (_Html) {
         this.streamrootWrapper_ = null;
       }
     }
-
-    if (source.certificateServer && !this.certificate_) {
-      this.fetchCertificate(source.certificateServer, function (cert, error) {
-        if (cert) {
-          _this2.certificate_ = cert;
-          _this2.handleSource(source);
-        } else {
-          //this.triggerReady();
-          _this2.checkForRecoverableErrors(error ? error : { message: 'no certificate', category: 6 });
-        }
-      });
-      return;
+    // Don't fetch certificate if IE or Edge
+    if (window_1.document.documentMode || /Edge/.test(window_1.navigator.userAgent)) {
+      this.certificate_ = null;
+    } else {
+      if (source.certificateServer && !this.certificate_) {
+        this.fetchCertificate(source.certificateServer, function (cert, error) {
+          if (cert) {
+            _this2.certificate_ = cert;
+            _this2.handleSource(source);
+          } else {
+            _this2.checkForRecoverableErrors(error ? error : { message: 'no certificate', category: 6 });
+          }
+        });
+        return;
+      }
     }
 
     //For testing fallback
@@ -4811,7 +4814,7 @@ EmpShaka.prototype['featuresNativeTextTracks'] = false;
 
 Tech.withSourceHandlers(EmpShaka);
 
-EmpShaka.VERSION = '2.0.90-147';
+EmpShaka.VERSION = '2.0.90-148';
 
 // Unset source handlers set by Html5 super class.
 // We do not intent to support any sources other then sources allowed by nativeSourceHandler
