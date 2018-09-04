@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.90-148 
+ * EMP-Player 2.0.90-149 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -58,6 +58,8 @@ if (typeof document !== 'undefined') {
         doccy = topLevel['__GLOBAL_DOCUMENT_CACHE@4'] = minDoc;
     }
 }
+
+var document_1 = doccy;
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
   return typeof obj;
@@ -139,6 +141,21 @@ var possibleConstructorReturn = function (self, call) {
   }
 
   return call && (typeof call === "object" || typeof call === "function") ? call : self;
+};
+
+
+
+
+
+
+
+
+
+
+
+var taggedTemplateLiteralLoose = function (strings, raw) {
+  strings.raw = raw;
+  return strings;
 };
 
 /**
@@ -3136,13 +3153,538 @@ var DownloadService = function (_Plugin) {
   return DownloadService;
 }(Plugin);
 
-DownloadService.VERSION = '2.0.90-148';
+DownloadService.VERSION = '2.0.90-149';
 
 if (videojs.getPlugin('DownloadService')) {
   videojs.log.warn('A plugin named "DownloadService" already exists.');
 } else {
   videojs.registerPlugin('download', DownloadService);
 }
+
+/**
+ * Unique ID for an element or function
+ * @type {Number}
+ * @private
+ */
+/**
+ * Get the next unique ID
+ *
+ * @return {String}
+ * @function newGUID
+ */
+
+var _templateObject = taggedTemplateLiteralLoose(['Setting attributes in the second argument of createEl()\n                has been deprecated. Use the third argument instead.\n                createEl(type, properties, attributes). Attempting to set ', ' to ', '.'], ['Setting attributes in the second argument of createEl()\n                has been deprecated. Use the third argument instead.\n                createEl(type, properties, attributes). Attempting to set ', ' to ', '.']);
+
+/**
+ * Whether the current DOM interface appears to be real.
+ *
+ * @return {Boolean}
+ */
+function isReal() {
+  return (
+
+    // Both document and window will never be undefined thanks to `global`.
+    document_1 === window_1.document &&
+
+    // In IE < 9, DOM methods return "object" as their type, so all we can
+    // confidently check is that it exists.
+    typeof document_1.createElement !== 'undefined'
+  );
+}
+
+/**
+ * Determines, via duck typing, whether or not a value is a DOM element.
+ *
+ * @param {Mixed} value
+ *        The thing to check
+ *
+ * @return {boolean}
+ *         - True if it is a DOM element
+ *         - False otherwise
+ */
+
+
+/**
+ * Determines if the current DOM is embedded in an iframe.
+ *
+ * @return {boolean}
+ *
+ */
+
+
+/**
+ * Creates an element and applies properties.
+ *
+ * @param {string} [tagName='div']
+ *         Name of tag to be created.
+ *
+ * @param {Object} [properties={}]
+ *         Element properties to be applied.
+ *
+ * @param {Object} [attributes={}]
+ *         Element attributes to be applied.
+ *
+ * @param {String|Element|TextNode|Array|Function} [content]
+ *         Contents for the element (see: {@link dom:normalizeContent})
+ *
+ * @return {Element}
+ *         The element that was created.
+ */
+
+
+/**
+ * Injects text into an element, replacing any existing contents entirely.
+ *
+ * @param {Element} el
+ *        The element to add text content into
+ *
+ * @param {string} text
+ *        The text content to add.
+ *
+ * @return {Element}
+ *         The element with added text content.
+ */
+
+
+/**
+ * Insert an element as the first child node of another
+ *
+ * @param {Element} child
+ *        Element to insert
+ *
+ * @param {Element} parent
+ *        Element to insert child into
+ */
+
+
+/**
+ * Check if an element has a CSS class
+ *
+ * @param {Element} element
+ *        Element to check
+ *
+ * @param {string} classToCheck
+ *        Class name to check for
+ *
+ * @return {boolean}
+ *         - True if the element had the class
+ *         - False otherwise.
+ *
+ * @throws {Error}
+ *         Throws an error if `classToCheck` has white space.
+ */
+
+
+/**
+ * Add a CSS class name to an element
+ *
+ * @param {Element} element
+ *        Element to add class name to.
+ *
+ * @param {string} classToAdd
+ *        Class name to add.
+ *
+ * @return {Element}
+ *         The dom element with the added class name.
+ */
+
+
+/**
+ * Remove a CSS class name from an element
+ *
+ * @param {Element} element
+ *        Element to remove a class name from.
+ *
+ * @param {string} classToRemove
+ *        Class name to remove
+ *
+ * @return {Element}
+ *         The dom element with class name removed.
+ */
+
+
+/**
+ * The callback definition for toggleElClass.
+ *
+ * @callback Dom~PredicateCallback
+ * @param {Element} element
+ *        The DOM element of the Component.
+ *
+ * @param {string} classToToggle
+ *        The `className` that wants to be toggled
+ *
+ * @return {boolean|undefined}
+ *         - If true the `classToToggle` will get added to `element`.
+ *         - If false the `classToToggle` will get removed from `element`.
+ *         - If undefined this callback will be ignored
+ */
+
+/**
+ * Adds or removes a CSS class name on an element depending on an optional
+ * condition or the presence/absence of the class name.
+ *
+ * @param {Element} element
+ *        The element to toggle a class name on.
+ *
+ * @param {string} classToToggle
+ *        The class that should be toggled
+ *
+ * @param {boolean|PredicateCallback} [predicate]
+ *        See the return value for {@link Dom~PredicateCallback}
+ *
+ * @return {Element}
+ *         The element with a class that has been toggled.
+ */
+
+
+/**
+ * Apply attributes to an HTML element.
+ *
+ * @param {Element} el
+ *        Element to add attributes to.
+ *
+ * @param {Object} [attributes]
+ *        Attributes to be applied.
+ */
+
+
+/**
+ * Get an element's attribute values, as defined on the HTML tag
+ * Attributes are not the same as properties. They're defined on the tag
+ * or with setAttribute (which shouldn't be used with HTML)
+ * This will return true or false for boolean attributes.
+ *
+ * @param {Element} tag
+ *        Element from which to get tag attributes.
+ *
+ * @return {Object}
+ *         All attributes of the element.
+ */
+
+
+/**
+ * Get the value of an element's attribute
+ *
+ * @param {Element} el
+ *        A DOM element
+ *
+ * @param {string} attribute
+ *        Attribute to get the value of
+ *
+ * @return {string}
+ *         value of the attribute
+ */
+
+
+/**
+ * Set the value of an element's attribute
+ *
+ * @param {Element} el
+ *        A DOM element
+ *
+ * @param {string} attribute
+ *        Attribute to set
+ *
+ * @param {string} value
+ *        Value to set the attribute to
+ */
+
+
+/**
+ * Remove an element's attribute
+ *
+ * @param {Element} el
+ *        A DOM element
+ *
+ * @param {string} attribute
+ *        Attribute to remove
+ */
+
+
+/**
+ * Attempt to block the ability to select text while dragging controls
+ */
+
+
+/**
+ * Turn off text selection blocking
+ */
+
+
+/**
+ * Identical to the native `getBoundingClientRect` function, but ensures that
+ * the method is supported at all (it is in all browsers we claim to support)
+ * and that the element is in the DOM before continuing.
+ *
+ * This wrapper function also shims properties which are not provided by some
+ * older browsers (namely, IE8).
+ *
+ * Additionally, some browsers do not support adding properties to a
+ * `ClientRect`/`DOMRect` object; so, we shallow-copy it with the standard
+ * properties (except `x` and `y` which are not widely supported). This helps
+ * avoid implementations where keys are non-enumerable.
+ *
+ * @param  {Element} el
+ *         Element whose `ClientRect` we want to calculate.
+ *
+ * @return {Object|undefined}
+ *         Always returns a plain
+ */
+
+
+/**
+ * The postion of a DOM element on the page.
+ *
+ * @typedef {Object} module:dom~Position
+ *
+ * @property {number} left
+ *           Pixels to the left
+ *
+ * @property {number} top
+ *           Pixels on top
+ */
+
+/**
+ * Offset Left.
+ * getBoundingClientRect technique from
+ * John Resig
+ *
+ * @see http://ejohn.org/blog/getboundingclientrect-is-awesome/
+ *
+ * @param {Element} el
+ *        Element from which to get offset
+ *
+ * @return {module:dom~Position}
+ *         The position of the element that was passed in.
+ */
+
+
+/**
+ * x and y coordinates for a dom element or mouse pointer
+ *
+ * @typedef {Object} Dom~Coordinates
+ *
+ * @property {number} x
+ *           x coordinate in pixels
+ *
+ * @property {number} y
+ *           y coordinate in pixels
+ */
+
+/**
+ * Get pointer position in element
+ * Returns an object with x and y coordinates.
+ * The base on the coordinates are the bottom left of the element.
+ *
+ * @param {Element} el
+ *        Element on which to get the pointer position on
+ *
+ * @param {EventTarget~Event} event
+ *        Event object
+ *
+ * @return {Dom~Coordinates}
+ *         A Coordinates object corresponding to the mouse position.
+ *
+ */
+
+
+/**
+ * Determines, via duck typing, whether or not a value is a text node.
+ *
+ * @param {Mixed} value
+ *        Check if this value is a text node.
+ *
+ * @return {boolean}
+ *         - True if it is a text node
+ *         - False otherwise
+ */
+
+
+/**
+ * Empties the contents of an element.
+ *
+ * @param {Element} el
+ *        The element to empty children from
+ *
+ * @return {Element}
+ *         The element with no children
+ */
+
+
+/**
+ * Normalizes content for eventual insertion into the DOM.
+ *
+ * This allows a wide range of content definition methods, but protects
+ * from falling into the trap of simply writing to `innerHTML`, which is
+ * an XSS concern.
+ *
+ * The content for an element can be passed in multiple types and
+ * combinations, whose behavior is as follows:
+ *
+ * @param {String|Element|TextNode|Array|Function} content
+ *        - String: Normalized into a text node.
+ *        - Element/TextNode: Passed through.
+ *        - Array: A one-dimensional array of strings, elements, nodes, or functions
+ *          (which return single strings, elements, or nodes).
+ *        - Function: If the sole argument, is expected to produce a string, element,
+ *          node, or array as defined above.
+ *
+ * @return {Array}
+ *         All of the content that was passed in normalized.
+ */
+
+
+/**
+ * Normalizes and appends content to an element.
+ *
+ * @param {Element} el
+ *        Element to append normalized content to.
+ *
+ *
+ * @param {String|Element|TextNode|Array|Function} content
+ *        See the `content` argument of {@link dom:normalizeContent}
+ *
+ * @return {Element}
+ *         The element with appended normalized content.
+ */
+
+
+/**
+ * Normalizes and inserts content into an element; this is identical to
+ * `appendContent()`, except it empties the element first.
+ *
+ * @param {Element} el
+ *        Element to insert normalized content into.
+ *
+ * @param {String|Element|TextNode|Array|Function} content
+ *        See the `content` argument of {@link dom:normalizeContent}
+ *
+ * @return {Element}
+ *         The element with inserted normalized content.
+ *
+ */
+
+
+/**
+ * Finds a single DOM element matching `selector` within the optional
+ * `context` of another DOM element (defaulting to `document`).
+ *
+ * @param {string} selector
+ *        A valid CSS selector, which will be passed to `querySelector`.
+ *
+ * @param {Element|String} [context=document]
+ *        A DOM element within which to query. Can also be a selector
+ *        string in which case the first matching element will be used
+ *        as context. If missing (or no element matches selector), falls
+ *        back to `document`.
+ *
+ * @return {Element|null}
+ *         The element that was found or null.
+ */
+
+
+/**
+ * Finds a all DOM elements matching `selector` within the optional
+ * `context` of another DOM element (defaulting to `document`).
+ *
+ * @param {string} selector
+ *           A valid CSS selector, which will be passed to `querySelectorAll`.
+ *
+ * @param {Element|String} [context=document]
+ *           A DOM element within which to query. Can also be a selector
+ *           string in which case the first matching element will be used
+ *           as context. If missing (or no element matches selector), falls
+ *           back to `document`.
+ *
+ * @return {NodeList}
+ *         A element list of elements that were found. Will be empty if none were found.
+ *
+ */
+
+var USER_AGENT = window_1.navigator && window_1.navigator.userAgent || '';
+var webkitVersionMap = /AppleWebKit\/([\d.]+)/i.exec(USER_AGENT);
+/*
+ * Device is an iPhone
+ *
+ * @type {Boolean}
+ * @constant
+ * @private
+ */
+var IS_IPAD = /iPad/i.test(USER_AGENT);
+
+var IS_CHROMECAST = window_1.navigator.userAgent.indexOf('CrKey') >= 0;
+
+// The Facebook app's UIWebView identifies as both an iPhone and iPad, so
+// to identify iPhones, we need to exclude iPads.
+// http://artsy.github.io/blog/2012/10/18/the-perils-of-ios-user-agent-sniffing/
+var IS_IPHONE = /iPhone/i.test(USER_AGENT) && !IS_IPAD;
+var IS_IPOD = /iPod/i.test(USER_AGENT);
+
+
+var IOS_VERSION = function () {
+  var match = USER_AGENT.match(/OS (\d+)_/i);
+
+  if (match && match[1]) {
+    return match[1];
+  }
+  return null;
+}();
+
+var IS_ANDROID = /Android/i.test(USER_AGENT);
+var ANDROID_VERSION = function () {
+  // This matches Android Major.Minor.Patch versions
+  // ANDROID_VERSION is Major.Minor as a Number, if Minor isn't available, then only Major is returned
+  var match = USER_AGENT.match(/Android (\d+)(?:\.(\d+))?(?:\.(\d+))*/i);
+
+  if (!match) {
+    return null;
+  }
+
+  var major = match[1] && parseFloat(match[1]);
+  var minor = match[2] && parseFloat(match[2]);
+
+  if (major && minor) {
+    return parseFloat(match[1] + '.' + match[2]);
+  } else if (major) {
+    return major;
+  }
+  return null;
+}();
+
+// Old Android is defined as Version older than 2.3, and requiring a webkit version of the android browser
+var IS_OLD_ANDROID = IS_ANDROID && /webkit/i.test(USER_AGENT) && ANDROID_VERSION < 2.3;
+
+
+var IS_FIREFOX = /Firefox/i.test(USER_AGENT);
+var IS_EDGE = /Edge/i.test(USER_AGENT);
+var IS_CHROME = !IS_EDGE && /Chrome/i.test(USER_AGENT);
+var CHROME_VERSION = function () {
+  var match = USER_AGENT.match(/Chrome\/(\d+)/);
+
+  if (match && match[1]) {
+    return parseFloat(match[1]);
+  }
+  return null;
+}();
+var IS_IE8 = /MSIE\s8\.0/.test(USER_AGENT);
+var IE_VERSION = function () {
+  var result = /MSIE\s(\d+)\.\d/.exec(USER_AGENT);
+  var version = result && parseFloat(result[1]);
+
+  if (!version && /Trident\/7.0/i.test(USER_AGENT) && /rv:11.0/.test(USER_AGENT)) {
+    // IE 11 has a different user agent string than other IE versions
+    version = 11.0;
+  }
+
+  return version;
+}();
+
+var IS_SAFARI = /Safari/i.test(USER_AGENT) && !IS_CHROME && !IS_ANDROID && !IS_EDGE;
+
+
+
+
+var BACKGROUND_SIZE_SUPPORTED = isReal() && 'backgroundSize' in window_1.document.createElement('video').style;
 
 /**
  * @file emp-shaka.js
@@ -3153,6 +3695,7 @@ var shaka = window_1.shaka ? window_1.shaka : shakaPlayer_compiled;
 var Html5 = videojs$1.getTech('Html5');
 var Tech = videojs$1.getComponent('Tech');
 var TechName = 'EmpShaka';
+
 /**
  * HTML5 Dash Media Controller - Wrapper for HTML5 Media API using MPEG-Dash playback
  *
@@ -3264,8 +3807,8 @@ var EmpShaka = function (_Html) {
         this.streamrootWrapper_ = null;
       }
     }
-    // Don't fetch certificate if IE or Edge
-    if (window_1.document.documentMode || /Edge/.test(window_1.navigator.userAgent)) {
+    // Don't fetch certificate if IE or Edge or CC
+    if (window_1.document.documentMode || /Edge/.test(window_1.navigator.userAgent || IS_CHROMECAST)) {
       this.certificate_ = null;
     } else {
       if (source.certificateServer && !this.certificate_) {
@@ -4814,7 +5357,7 @@ EmpShaka.prototype['featuresNativeTextTracks'] = false;
 
 Tech.withSourceHandlers(EmpShaka);
 
-EmpShaka.VERSION = '2.0.90-148';
+EmpShaka.VERSION = '2.0.90-149';
 
 // Unset source handlers set by Html5 super class.
 // We do not intent to support any sources other then sources allowed by nativeSourceHandler
