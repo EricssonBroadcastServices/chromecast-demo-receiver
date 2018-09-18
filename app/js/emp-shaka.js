@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.91-157 
+ * EMP-Player 2.0.91-158 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -3153,7 +3153,7 @@ var DownloadService = function (_Plugin) {
   return DownloadService;
 }(Plugin);
 
-DownloadService.VERSION = '2.0.91-157';
+DownloadService.VERSION = '2.0.91-158';
 
 if (videojs.getPlugin('DownloadService')) {
   videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -3749,6 +3749,11 @@ var EmpShaka = function (_Html) {
 
     _this.onLoadStartBind = _this.onLoadStart.bind(_this);
     _this.on(_this, empPlayerEvents.LOAD_START, _this.onLoadStartBind);
+    //Workaround for Firefox bug 
+    //https://bugzilla.mozilla.org/show_bug.cgi?id=1491365
+    if (IS_FIREFOX) {
+      window_1.VTTRegion = null;
+    }
     return _this;
   }
 
@@ -5357,7 +5362,7 @@ EmpShaka.prototype['featuresNativeTextTracks'] = false;
 
 Tech.withSourceHandlers(EmpShaka);
 
-EmpShaka.VERSION = '2.0.91-157';
+EmpShaka.VERSION = '2.0.91-158';
 
 // Unset source handlers set by Html5 super class.
 // We do not intent to support any sources other then sources allowed by nativeSourceHandler
