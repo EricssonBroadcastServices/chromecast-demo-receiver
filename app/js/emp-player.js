@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.91-159 
+ * EMP-Player 2.0.92-160 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -2576,6 +2576,7 @@ var IE_VERSION = function () {
 
 var IS_SAFARI = /Safari/i.test(USER_AGENT) && !IS_CHROME && !IS_ANDROID && !IS_EDGE;
 
+var IS_IE_OR_EDGE = IS_EDGE || IE_VERSION !== null;
 
 
 
@@ -4325,7 +4326,13 @@ var TextTrackDisplay = function (_Component) {
       } else {
         this.removeStyles(styleName);
       }
+    } else {
+      // remove texttrack settings dialogs
+      this.writeStyles('style_no_texttrack_settings', '.vjs-texttrack-settings {display: none;}');
     }
+
+    //Shaka and HLS handle text tracks
+    return;
 
     var tracks = this.player_.textTracks();
 
@@ -4373,6 +4380,9 @@ var TextTrackDisplay = function (_Component) {
 
 
   TextTrackDisplay.prototype.updateForTrack = function updateForTrack(track) {
+    //Shaka and HLS handle text tracks
+    return;
+
     if (typeof window_1.WebVTT !== 'function' || !track.activeCues) {
       return;
     }
@@ -5212,6 +5222,11 @@ var VjsPlayer = videojs$1.getComponent('Player');
 var Tech = videojs$1.getComponent('Tech');
 var CaptionSettingsMenuItem = videojs$1.getComponent('CaptionSettingsMenuItem');
 
+// Shaka polyfill this
+if (window_1.vttjs) {
+  window_1.vttjs.restore();
+}
+
 /**
  * Player class, inherits from videojs Player class.
  *
@@ -5230,7 +5245,8 @@ var Player = function (_VjsPlayer) {
     var ready = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
     classCallCheck(this, Player);
 
-
+    //options.nativeTextTracks = true;
+    //options.empshaka.nativeTextTracks = true; 
     //absoluteStartTime override startTime
     if (options.absoluteStartTime) {
       options.startTime = 0;
@@ -5256,8 +5272,8 @@ var Player = function (_VjsPlayer) {
       'useLastViewedOffset': tagOptions.useLastViewedOffset ? tagOptions.useLastViewedOffset : false,
       'startTime': tagOptions.startTime ? tagOptions.startTime : 0,
       'absoluteStartTime': tagOptions.absoluteStartTime ? tagOptions.absoluteStartTime : undefined,
-      'persistTextTrackSettings': tagOptions.persistTextTrackSettings ? tagOptions.persistTextTrackSettings : true,
-      'textTrackSettings': tagOptions.textTrackSettings ? tagOptions.textTrackSettings : true
+      'persistTextTrackSettings': tagOptions.persistTextTrackSettings ? tagOptions.persistTextTrackSettings : !IS_IE_OR_EDGE,
+      'textTrackSettings': tagOptions.textTrackSettings ? tagOptions.textTrackSettings : !IS_IE_OR_EDGE
     }, options);
 
     var _this = possibleConstructorReturn(this, _VjsPlayer.call(this, tag, options, ready));
@@ -7125,7 +7141,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.0.91-159';
+      return '2.0.92-160';
     }
 
     /**
@@ -9817,7 +9833,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin);
 
-ProgramService.VERSION = '2.0.91-159';
+ProgramService.VERSION = '2.0.92-160';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -9993,7 +10009,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$1);
 
-EntitlementExpirationService.VERSION = '2.0.91-159';
+EntitlementExpirationService.VERSION = '2.0.92-160';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -10437,7 +10453,7 @@ EntitlementMiddleware.getLog = function () {
   return log$1;
 };
 
-EntitlementMiddleware.VERSION = '2.0.91-159';
+EntitlementMiddleware.VERSION = '2.0.92-160';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -11331,7 +11347,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin$2);
 
-AnalyticsPlugin.VERSION = '2.0.91-159';
+AnalyticsPlugin.VERSION = '2.0.92-160';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -11456,7 +11472,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.0.91-159';
+empPlayer.VERSION = '2.0.92-160';
 
 /*
  * Universal Module Definition (UMD)
