@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.92-160 
+ * EMP-Player 2.0.92-161 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -7141,7 +7141,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.0.92-160';
+      return '2.0.92-161';
     }
 
     /**
@@ -9833,7 +9833,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin);
 
-ProgramService.VERSION = '2.0.92-160';
+ProgramService.VERSION = '2.0.92-161';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -10009,7 +10009,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$1);
 
-EntitlementExpirationService.VERSION = '2.0.92-160';
+EntitlementExpirationService.VERSION = '2.0.92-161';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -10174,7 +10174,9 @@ var EntitlementMiddleware = function EntitlementMiddleware(player) {
             loop['break']();
             return;
           } else {
-            exposure.getEntitlement(entitlementRequest, tech.entitlementPlayRequest, function (entitlement, error) {
+            var techOptions = options[tech.name.toLowerCase()];
+            var playRequest = techOptions && techOptions.videoType && tech.entitlementPlayRequests ? tech.entitlementPlayRequests[techOptions.videoType] : tech.entitlementPlayRequest;
+            exposure.getEntitlement(entitlementRequest, playRequest, function (entitlement, error) {
               // If we have an fatal error during playcall break out of the loop else try next tech
               if (error) {
                 if (error.fatal) {
@@ -10453,7 +10455,7 @@ EntitlementMiddleware.getLog = function () {
   return log$1;
 };
 
-EntitlementMiddleware.VERSION = '2.0.92-160';
+EntitlementMiddleware.VERSION = '2.0.92-161';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -11347,7 +11349,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin$2);
 
-AnalyticsPlugin.VERSION = '2.0.92-160';
+AnalyticsPlugin.VERSION = '2.0.92-161';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -11472,7 +11474,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.0.92-160';
+empPlayer.VERSION = '2.0.92-161';
 
 /*
  * Universal Module Definition (UMD)

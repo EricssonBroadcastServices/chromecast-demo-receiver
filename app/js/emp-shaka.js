@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.92-160 
+ * EMP-Player 2.0.92-161 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -3153,7 +3153,7 @@ var DownloadService = function (_Plugin) {
   return DownloadService;
 }(Plugin);
 
-DownloadService.VERSION = '2.0.92-160';
+DownloadService.VERSION = '2.0.92-161';
 
 if (videojs.getPlugin('DownloadService')) {
   videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -5337,6 +5337,15 @@ var EmpShaka = function (_Html) {
             return 'probably';
           }
 
+          if (window_1.muxjs) {
+            var xMpegRE = /^application\/x-mpegurl/i;
+            var vndMpegRE = /^application\/x-vnd.apple.mpegurl/i;
+
+            if (xMpegRE.test(type) || vndMpegRE.test(type)) {
+              return 'probably';
+            }
+          }
+
           return '';
         }
       };
@@ -5348,6 +5357,22 @@ var EmpShaka = function (_Html) {
         drm: 'CENC',
         format: 'DASH',
         type: 'application/dash+xml'
+      };
+    }
+  }, {
+    key: 'entitlementPlayRequests',
+    get: function get$$1() {
+      return {
+        'DASH': {
+          drm: 'CENC',
+          format: 'DASH',
+          type: 'application/dash+xml'
+        },
+        'HLS': {
+          drm: 'UNENCRYPTED',
+          format: 'HLS',
+          type: 'application/x-mpegurl'
+        }
       };
     }
   }, {
@@ -5363,7 +5388,7 @@ EmpShaka.prototype['featuresNativeTextTracks'] = false;
 
 Tech.withSourceHandlers(EmpShaka);
 
-EmpShaka.VERSION = '2.0.92-160';
+EmpShaka.VERSION = '2.0.92-161';
 
 // Unset source handlers set by Html5 super class.
 // We do not intent to support any sources other then sources allowed by nativeSourceHandler
