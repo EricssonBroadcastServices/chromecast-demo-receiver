@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.92-163 
+ * EMP-Player 2.0.92-164 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -1065,7 +1065,7 @@ var EmpTech = function () {
       //Hide DRM error for Safari with Shaka-Dash
       log$1.error(message);
     }
-    this.trigger(empPlayerEvents.RECOVERABLE_ASSET_ERROR, { source: this.options_.source, techName: techName, message: message, code: error.code });
+    this.trigger(empPlayerEvents.RECOVERABLE_ASSET_ERROR, { source: this.options_.source, techName: techName, message: message, error: error });
   };
 
   /**
@@ -2850,7 +2850,7 @@ var DownloadService = function (_Plugin) {
           if (error.fatal) {
             _this2.offlineOperationInProgress_ = false;
             var error = new EmpPlayerError(error, EmpPlayerErrorCodes.ENTITLEMENT);
-            _this2.player.analytics && _this2.player.analytics().onError({ code: error.code, message: error.message });
+            _this2.player.analytics && _this2.player.analytics().onError({ code: error.code, message: error.message, stack: error.stack });
             reject(error);
           }
         } else {
@@ -2900,7 +2900,7 @@ var DownloadService = function (_Plugin) {
         resolve(null);
       } else {
         self.offlineOperationInProgress_ = false;
-        self.player.analytics && self.player.analytics().onError({ code: error.code, message: error.message });
+        self.player.analytics && self.player.analytics().onError({ code: error.code, message: error.message, stack: error.stack });
         log$1.error(error.message);
         reject(error);
       }
@@ -3153,7 +3153,7 @@ var DownloadService = function (_Plugin) {
   return DownloadService;
 }(Plugin);
 
-DownloadService.VERSION = '2.0.92-163';
+DownloadService.VERSION = '2.0.92-164';
 
 if (videojs.getPlugin('DownloadService')) {
   videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -5388,7 +5388,7 @@ EmpShaka.prototype['featuresNativeTextTracks'] = false;
 
 Tech.withSourceHandlers(EmpShaka);
 
-EmpShaka.VERSION = '2.0.92-163';
+EmpShaka.VERSION = '2.0.92-164';
 
 // Unset source handlers set by Html5 super class.
 // We do not intent to support any sources other then sources allowed by nativeSourceHandler
