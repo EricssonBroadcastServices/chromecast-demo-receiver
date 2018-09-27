@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.92-165 
+ * EMP-Player 2.0.92-166 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -852,6 +852,8 @@ var EmpPlayerErrorCodes = {
   LOAD_ASSET: 101,
 
   ENTITLEMENT: 102,
+
+  ENTITLEMENT2: 103,
 
   SHAKA_TECH: 200,
 
@@ -7227,7 +7229,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.0.92-165';
+      return '2.0.92-166';
     }
 
     /**
@@ -7602,19 +7604,23 @@ var EntitlementError = function (_ExtendableError) {
     // Parse whatever we get
     var message = void 0;
     var fatal = true;
+    var code = EmpPlayerErrorCodes.ENTITLEMENT2;
     if (typeof error === 'string') {
       message = error;
     } else if (error instanceof Object) {
       message = error.message;
-
       if (error.fatal === false) {
         fatal = error.fatal;
+      }
+      if (error.code) {
+        code = error.code;
       }
     }
 
     var _this = possibleConstructorReturn(this, _ExtendableError.call(this, message));
 
     _this.fatal = fatal;
+    _this.code = code;
     return _this;
   }
 
@@ -9919,7 +9925,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin);
 
-ProgramService.VERSION = '2.0.92-165';
+ProgramService.VERSION = '2.0.92-166';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -10095,7 +10101,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$1);
 
-EntitlementExpirationService.VERSION = '2.0.92-165';
+EntitlementExpirationService.VERSION = '2.0.92-166';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -10236,7 +10242,7 @@ var EntitlementMiddleware = function EntitlementMiddleware(player) {
         next(error);
         return;
       }
-
+      var entitlementRequestError;
       //Start the tech selecting loop
       asyncLoop(techs.length, function (loop) {
         var i = loop.iteration();
@@ -10265,11 +10271,11 @@ var EntitlementMiddleware = function EntitlementMiddleware(player) {
             exposure.getEntitlement(entitlementRequest, playRequest, function (entitlement, error) {
               // If we have an fatal error during playcall break out of the loop else try next tech
               if (error) {
+                entitlementRequestError = new EmpPlayerError(error.message + '  ' + JSON.stringify(playRequest) + JSON.stringify(entitlementRequest), error.code, error.stack);
                 if (error.fatal) {
-                  var error = new EmpPlayerError(error, EmpPlayerErrorCodes.ENTITLEMENT);
-                  player.error(error);
+                  player.error(entitlementRequestError);
                   extplayer.stop(player);
-                  next(error);
+                  next(entitlementRequestError);
                   return;
                 }
                 loop.next();
@@ -10292,10 +10298,12 @@ var EntitlementMiddleware = function EntitlementMiddleware(player) {
         }
       }, function () {
         if (srcEntitlement === null) {
-          var error = new EmpPlayerError('Unable to load asset: None of the playback technologies are supported', EmpPlayerErrorCodes.ENTITLEMENT);
-          player.error(error);
+          if (!entitlementRequestError) {
+            entitlementRequestError = new EmpPlayerError('Unable to load asset: None of the playback technologies are supported', EmpPlayerErrorCodes.ENTITLEMENT);
+          }
+          player.error(entitlementRequestError);
           extplayer.stop(player);
-          next(error);
+          next(entitlementRequestError);
           return;
         }
       });
@@ -10541,7 +10549,7 @@ EntitlementMiddleware.getLog = function () {
   return log$1;
 };
 
-EntitlementMiddleware.VERSION = '2.0.92-165';
+EntitlementMiddleware.VERSION = '2.0.92-166';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -11182,9 +11190,13 @@ var EMPAnalyticsConnector = function () {
       if (err && err.message) {
         params.errorMessage = err.message;
       }
-      if (err && err.stack) {
-        params.errorDetails = err.stack.toString();
+      if (err && err.status) {
+        params.errorDetails = err.status + '';
       }
+      if (err && err.stack) {
+        params.errorDetails = params.errorDetails ? params.errorDetails + '\n' + err.stack.toString() : err.stack.toString();
+      }
+
       var options = _this19.player_.options();
       if (_this19.player_.tech_) {
         var videoType = _this19.player_.techName_ === 'EmpShaka' && options && options.empshaka ? options.empshaka.videoType : '';
@@ -11195,8 +11207,11 @@ var EMPAnalyticsConnector = function () {
       if (!err && errorEvent) {
         params.errorCode = errorEvent.code;
         params.errorMessage = errorEvent.message ? errorEvent.message : 'Browser Error';
+        if (errorEvent.status) {
+          params.errorDetails = errorEvent.status + '';
+        }
         if (errorEvent.stack) {
-          params.errorDetails = errorEvent.stack.toString();
+          params.errorDetails = params.errorDetails ? params.errorDetails + '\n' + errorEvent.stack.toString() : errorEvent.stack.toString();
         }
       }
       var currentSessId = _this19.SessionId();
@@ -11455,7 +11470,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin$2);
 
-AnalyticsPlugin.VERSION = '2.0.92-165';
+AnalyticsPlugin.VERSION = '2.0.92-166';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -11580,7 +11595,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.0.92-165';
+empPlayer.VERSION = '2.0.92-166';
 
 /*
  * Universal Module Definition (UMD)
