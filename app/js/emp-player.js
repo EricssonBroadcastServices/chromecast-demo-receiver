@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.92-164 
+ * EMP-Player 2.0.92-165 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -7227,7 +7227,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.0.92-164';
+      return '2.0.92-165';
     }
 
     /**
@@ -9919,7 +9919,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin);
 
-ProgramService.VERSION = '2.0.92-164';
+ProgramService.VERSION = '2.0.92-165';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -10095,7 +10095,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$1);
 
-EntitlementExpirationService.VERSION = '2.0.92-164';
+EntitlementExpirationService.VERSION = '2.0.92-165';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -10541,7 +10541,7 @@ EntitlementMiddleware.getLog = function () {
   return log$1;
 };
 
-EntitlementMiddleware.VERSION = '2.0.92-164';
+EntitlementMiddleware.VERSION = '2.0.92-165';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -11186,8 +11186,12 @@ var EMPAnalyticsConnector = function () {
         params.errorDetails = err.stack.toString();
       }
       var options = _this19.player_.options();
-      var videoType = _this19.player_.techName_ === 'EmpShaka' && options && options.empshaka ? options.empshaka.videoType : '';
-      params.errorInfo = _this19.player_.techName_ + (videoType ? '  ' + videoType : '');
+      if (_this19.player_.tech_) {
+        var videoType = _this19.player_.techName_ === 'EmpShaka' && options && options.empshaka ? options.empshaka.videoType : '';
+        params.errorInfo = _this19.player_.techName_ + (videoType ? '-' + videoType : '');
+      } else {
+        params.errorInfo = 'Unknown tech, techOrder: ' + options.techOrder.toString();
+      }
       if (!err && errorEvent) {
         params.errorCode = errorEvent.code;
         params.errorMessage = errorEvent.message ? errorEvent.message : 'Browser Error';
@@ -11451,7 +11455,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin$2);
 
-AnalyticsPlugin.VERSION = '2.0.92-164';
+AnalyticsPlugin.VERSION = '2.0.92-165';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -11576,7 +11580,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.0.92-164';
+empPlayer.VERSION = '2.0.92-165';
 
 /*
  * Universal Module Definition (UMD)
