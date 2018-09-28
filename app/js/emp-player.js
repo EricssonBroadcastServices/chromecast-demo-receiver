@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.92-169 
+ * EMP-Player 2.0.92-170 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -5220,6 +5220,122 @@ EmpMediaInfoBar.prototype.controlText_ = 'MediaInfo';
 
 Component$19.registerComponent('EmpMediaInfoBar', EmpMediaInfoBar);
 
+/**
+ * A Custom `MediaError` class which mimics the standard HTML5 `MediaError` class.
+ *
+ * @param {number|string|Object|MediaError} value
+ *        This can be of multiple types:
+ *        - number: should be a standard error code
+ *        - string: an error message (the code will be 0)
+ *        - Object: arbitrary properties
+ *        - `MediaError` (native): used to populate a video.js `MediaError` object
+ *        - `MediaError` (video.js): will return itself if it's already a
+ *          video.js `MediaError` object.
+ *
+ * @see [MediaError Spec]{@link https://dev.w3.org/html5/spec-author-view/video.html#mediaerror}
+ * @see [Encrypted MediaError Spec]{@link https://www.w3.org/TR/2013/WD-encrypted-media-20130510/#error-codes}
+ *
+ * @class MediaError
+ */
+function MediaError(value) {
+
+  // Allow redundant calls to this constructor to avoid having `instanceof`
+  // checks peppered around the code.
+  if (value instanceof MediaError) {
+    return value;
+  }
+
+  if (typeof value === 'number') {
+    this.code = value;
+  } else if (typeof value === 'string') {
+    // default code is zero, so this is a custom error
+    this.message = value;
+  } else if (isObject(value)) {
+
+    // We assign the `code` property manually because native `MediaError` objects
+    // do not expose it as an own/enumerable property of the object.
+    if (typeof value.code === 'number') {
+      this.code = value.code;
+    }
+    //Videojs bug fix message and status be removed
+    if (value.message) {
+      this.message = value.message;
+    }
+    if (value.status) {
+      this.status = value.status;
+    }
+
+    assign(this, value);
+  }
+
+  if (!this.message) {
+    this.message = MediaError.defaultMessages[this.code] || '';
+  }
+}
+
+/**
+ * The error code that refers two one of the defined `MediaError` types
+ *
+ * @type {Number}
+ */
+MediaError.prototype.code = 0;
+
+/**
+ * An optional message that to show with the error. Message is not part of the HTML5
+ * video spec but allows for more informative custom errors.
+ *
+ * @type {String}
+ */
+MediaError.prototype.message = '';
+
+/**
+ * An optional status code that can be set by plugins to allow even more detail about
+ * the error. For example a plugin might provide a specific HTTP status code and an
+ * error message for that code. Then when the plugin gets that error this class will
+ * know how to display an error message for it. This allows a custom message to show
+ * up on the `Player` error overlay.
+ *
+ * @type {Array}
+ */
+MediaError.prototype.status = null;
+
+/**
+ * Errors indexed by the W3C standard. The order **CANNOT CHANGE**! See the
+ * specification listed under {@link MediaError} for more information.
+ *
+ * @enum {array}
+ * @readonly
+ * @property {string} 0 - MEDIA_ERR_CUSTOM
+ * @property {string} 1 - MEDIA_ERR_CUSTOM
+ * @property {string} 2 - MEDIA_ERR_ABORTED
+ * @property {string} 3 - MEDIA_ERR_NETWORK
+ * @property {string} 4 - MEDIA_ERR_SRC_NOT_SUPPORTED
+ * @property {string} 5 - MEDIA_ERR_ENCRYPTED
+ */
+MediaError.errorTypes = ['MEDIA_ERR_CUSTOM', 'MEDIA_ERR_ABORTED', 'MEDIA_ERR_NETWORK', 'MEDIA_ERR_DECODE', 'MEDIA_ERR_SRC_NOT_SUPPORTED', 'MEDIA_ERR_ENCRYPTED'];
+
+/**
+ * The default `MediaError` messages based on the {@link MediaError.errorTypes}.
+ *
+ * @type {Array}
+ * @constant
+ */
+MediaError.defaultMessages = {
+  1: 'You aborted the media playback',
+  2: 'A network error caused the media download to fail part-way.',
+  3: 'The media playback was aborted due to a corruption problem or because the media used features your browser did not support.',
+  4: 'The media could not be loaded, either because the server or network failed or because the format is not supported.',
+  5: 'The media is encrypted and we do not have the keys to decrypt it.'
+};
+
+// Add types as properties on MediaError
+// e.g. MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED = 4;
+for (var errNum = 0; errNum < MediaError.errorTypes.length; errNum++) {
+  MediaError[MediaError.errorTypes[errNum]] = errNum;
+  // values should be accessible on both the class and instance
+  MediaError.prototype[MediaError.errorTypes[errNum]] = errNum;
+}
+
 var VjsPlayer = videojs$1.getComponent('Player');
 var Tech = videojs$1.getComponent('Tech');
 var CaptionSettingsMenuItem = videojs$1.getComponent('CaptionSettingsMenuItem');
@@ -6356,8 +6472,55 @@ var Player = function (_VjsPlayer) {
       this.loadNextSource();
       return err;
     } else {
-      return _VjsPlayer.prototype.error.call(this, err);
+      return this.videojsError_(err);
     }
+  };
+
+  /**
+   * videojs base error patched
+   *
+   * @param {object | string} err The error or null for clear error
+   * @returns {object | string} The current Error
+   * 
+   * @private
+   */
+
+
+  Player.prototype.videojsError_ = function videojsError_(err) {
+    if (err === undefined) {
+      return this.error_ || null;
+    }
+
+    // restoring to default
+    if (err === null) {
+      this.error_ = err;
+      this.removeClass('vjs-error');
+      if (this.errorDisplay) {
+        this.errorDisplay.close();
+      }
+      return;
+    }
+
+    this.error_ = new MediaError(err);
+
+    // add the vjs-error classname to the player
+    this.addClass('vjs-error');
+
+    // log the name of the error type and any message
+    // ie8 just logs "[object object]" if you just log the error object
+    var errorTypes = '';
+    if (MediaError.errorTypes.hasOwnProperty(this.error_.code)) {
+      errorTypes = MediaError.errorTypes.errorTypes[this.error_.code];
+    }
+    log$1.error('(CODE:' + this.error_.code + ' ' + errorTypes + ')', this.error_.message, this.error_);
+
+    /**
+     * @event Player#error
+     * @type {EventTarget~Event}
+     */
+    this.trigger('error');
+
+    return;
   };
 
   /**
@@ -6365,8 +6528,6 @@ var Player = function (_VjsPlayer) {
    *
    * @returns {object} Error object
    */
-
-
   Player.prototype.getError = function getError() {
     return this.error_;
   };
@@ -7225,7 +7386,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.0.92-169';
+      return '2.0.92-170';
     }
 
     /**
@@ -9935,7 +10096,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin);
 
-ProgramService.VERSION = '2.0.92-169';
+ProgramService.VERSION = '2.0.92-170';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -10111,7 +10272,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$1);
 
-EntitlementExpirationService.VERSION = '2.0.92-169';
+EntitlementExpirationService.VERSION = '2.0.92-170';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -10559,7 +10720,7 @@ EntitlementMiddleware.getLog = function () {
   return log$1;
 };
 
-EntitlementMiddleware.VERSION = '2.0.92-169';
+EntitlementMiddleware.VERSION = '2.0.92-170';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -11480,7 +11641,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin$2);
 
-AnalyticsPlugin.VERSION = '2.0.92-169';
+AnalyticsPlugin.VERSION = '2.0.92-170';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -11605,7 +11766,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.0.92-169';
+empPlayer.VERSION = '2.0.92-170';
 
 /*
  * Universal Module Definition (UMD)
