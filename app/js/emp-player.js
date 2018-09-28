@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.92-167 
+ * EMP-Player 2.0.92-168 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -6462,12 +6462,8 @@ var Player = function (_VjsPlayer) {
     if (!playbackProperties) {
       playbackProperties = {};
     }
-    if (!assetId && !channelId) {
-      log$1.error('assetId or channelId is undefined');
-      return;
-    }
-    if (programId && !channelId) {
-      log$1.error('channelId is undefined');
+    if (!assetId && !channelId && !programId) {
+      log$1.error('assetId or channelId or programId is undefined');
       return;
     }
     if (!playbackProperties.playFrom) {
@@ -7229,7 +7225,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.0.92-167';
+      return '2.0.92-168';
     }
 
     /**
@@ -8861,8 +8857,12 @@ var EricssonExposure = function (_EntitlementEngine) {
     if (programId) {
       programUrl = '/program/' + programId;
     }
+    var channelUrl = '';
+    if (channelId) {
+      channelUrl = '/channel/' + channelId;
+    }
 
-    var requestURL = this.options_['exposureApiURL'] + '/' + this.options_['exposureApiVersion'] + '/customer/' + customer + '/businessunit/' + businessUnit + '/entitlement/channel/' + channelId + programUrl + '/play';
+    var requestURL = this.options_['exposureApiURL'] + '/' + this.options_['exposureApiVersion'] + '/customer/' + customer + '/businessunit/' + businessUnit + '/entitlement' + channelUrl + programUrl + '/play';
     return xhr.post(requestURL, { json: playRequest, headers: this.requestHeaders }, function (error, response, body) {
       // Check and handles error
       if (_this6.checkForError(error, response, callback)) {
@@ -8870,8 +8870,10 @@ var EricssonExposure = function (_EntitlementEngine) {
       }
 
       var entitlement = new Entitlement(body);
-      entitlement.assetId = channelId;
-      entitlement.channelId = channelId;
+      if (channelId) {
+        entitlement.assetId = channelId;
+        entitlement.channelId = channelId;
+      }
       if (programId) {
         entitlement.programId = programId;
       }
@@ -9632,6 +9634,14 @@ var ProgramService = function (_Plugin) {
         this.verifyEntitlement();
       }
       this.updateChannelInfo_(program, function () {
+        var asset = extplayer.currentAsset(_this5.player);
+        //Add channelId if played without channelId
+        if (!asset.channelId) {
+          extplayer.currentAsset(_this5.player, program.channelId, program.programId, program.channelId);
+          if (_this5.entitlement_ && !_this5.entitlement_.channelId) {
+            _this5.entitlement_.channelId = program.channelId;
+          }
+        }
         extplayer.setTechProgram(_this5.player, program);
         _this5.player.trigger(empPlayerEvents.PROGRAM_CHANGED, { 'program': program });
         _this5.player.trigger(empPlayerEvents.DURATION_CHANGE); //Update progressbar
@@ -9925,7 +9935,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin);
 
-ProgramService.VERSION = '2.0.92-167';
+ProgramService.VERSION = '2.0.92-168';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -10101,7 +10111,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$1);
 
-EntitlementExpirationService.VERSION = '2.0.92-167';
+EntitlementExpirationService.VERSION = '2.0.92-168';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -10549,7 +10559,7 @@ EntitlementMiddleware.getLog = function () {
   return log$1;
 };
 
-EntitlementMiddleware.VERSION = '2.0.92-167';
+EntitlementMiddleware.VERSION = '2.0.92-168';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -10817,7 +10827,7 @@ var EMPAnalyticsConnector = function () {
         params.programId = entitlement.programId;
       }
       if (!entitlement) {
-        var asset = _this6.player_.currentAsset();
+        var asset = extplayer.currentAsset(_this6.player_);
         if (asset) {
           params.assetId = asset.assetId;
           params.programId = asset.programId;
@@ -11470,7 +11480,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin$2);
 
-AnalyticsPlugin.VERSION = '2.0.92-167';
+AnalyticsPlugin.VERSION = '2.0.92-168';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -11595,7 +11605,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.0.92-167';
+empPlayer.VERSION = '2.0.92-168';
 
 /*
  * Universal Module Definition (UMD)
