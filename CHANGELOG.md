@@ -123,4 +123,14 @@ https://github.com/google/shaka-player/releases
 - **EMP-11692** The clients need to handle the http 410 response from backend
 - **EMP-11705** Timeout in hours when a "Are You Still Watching?" message will be displayed.
 
+## 2.0.92
+
+### Bug fixes
+- **EMP-11770** HTML5 and CC - Improve error logging in analytics, several error-sessions without any info about the asset/channel/program
+- **EMP-11222** Unnecessary error-sessions sent to analytics from the web player
+
+### New features
+- **EMP-11768** HTML5 and CC should log errors in analytics according to the standard
+- **EMP-11785** Html5 and CC Start playback with only programId.
+
 
