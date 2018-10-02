@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.92-172 
+ * EMP-Player 2.0.92-173 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -7386,7 +7386,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.0.92-172';
+      return '2.0.92-173';
     }
 
     /**
@@ -7590,7 +7590,7 @@ function canPlayEncrypted() {
  */
 
 var Entitlement = function () {
-  function Entitlement(options) {
+  function Entitlement(options, serverTime) {
     classCallCheck(this, Entitlement);
 
     this.assetId = options.assetId || 0;
@@ -7605,7 +7605,7 @@ var Entitlement = function () {
     if (options.streamInfo) {
       this.streamInfo = options.streamInfo;
     } else {
-      this.setupStreamInfo(options.mediaLocator || '');
+      this.setupStreamInfo(serverTime);
     }
     this.mimeType = options.mimeType || '';
     this.entitlementType = options.entitlementType || '';
@@ -7650,12 +7650,17 @@ var Entitlement = function () {
     this.requestId = options.requestId || '';
   }
 
-  Entitlement.prototype.setupStreamInfo = function setupStreamInfo() {
+  Entitlement.prototype.setupStreamInfo = function setupStreamInfo(serverTime) {
     this.streamInfo = { referenceTime: 0 };
     this.isDynamicCachupAsLive = false;
     this.isStaticCachupAsLive = false;
     if (this.mediaLocator) {
       var t = getParameterByName('t', this.mediaLocator);
+      if (!t) {
+        var dvr_window_length = getParameterByName('dvr_window_length', this.mediaLocator);
+        var nowDate = serverTime ? new Date(serverTime) : new Date();
+        t = new Date(nowDate.getTime() - dvr_window_length * 1000).toISOString().replace(/Z/g, "");
+      }
       if (t) {
         try {
           if (t && t.length === 47) {
@@ -8916,7 +8921,7 @@ var EricssonExposure = function (_EntitlementEngine) {
         return;
       }
 
-      var entitlement = new Entitlement(body);
+      var entitlement = new Entitlement(body, response.headers.date);
       entitlement.assetId = assetId;
       entitlement.playRequest = playRequest;
       entitlement.mimeType = playRequest.type;
@@ -9030,7 +9035,7 @@ var EricssonExposure = function (_EntitlementEngine) {
         return;
       }
 
-      var entitlement = new Entitlement(body);
+      var entitlement = new Entitlement(body, response.headers.date);
       if (channelId) {
         entitlement.assetId = channelId;
         entitlement.channelId = channelId;
@@ -9704,7 +9709,7 @@ var ProgramService = function (_Plugin) {
     this.exposure.getProgramInfo(assetId, dateTime, function (program, error) {
       _this2.currentVOD_ = null;
       if (error) {
-        log$1.warn('getProgramInfo', 'No EPG found.', error);
+        log$1('getProgramInfo', 'No EPG found.', error);
         _this2.pollingForEPG_();
         return;
       }
@@ -10096,7 +10101,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin);
 
-ProgramService.VERSION = '2.0.92-172';
+ProgramService.VERSION = '2.0.92-173';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -10272,7 +10277,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$1);
 
-EntitlementExpirationService.VERSION = '2.0.92-172';
+EntitlementExpirationService.VERSION = '2.0.92-173';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -10720,7 +10725,7 @@ EntitlementMiddleware.getLog = function () {
   return log$1;
 };
 
-EntitlementMiddleware.VERSION = '2.0.92-172';
+EntitlementMiddleware.VERSION = '2.0.92-173';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -11641,7 +11646,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin$2);
 
-AnalyticsPlugin.VERSION = '2.0.92-172';
+AnalyticsPlugin.VERSION = '2.0.92-173';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -11766,7 +11771,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.0.92-172';
+empPlayer.VERSION = '2.0.92-173';
 
 /*
  * Universal Module Definition (UMD)
