@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.92-173 
+ * EMP-Player 2.0.93-174 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -7386,7 +7386,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.0.92-173';
+      return '2.0.93-174';
     }
 
     /**
@@ -7658,8 +7658,10 @@ var Entitlement = function () {
       var t = getParameterByName('t', this.mediaLocator);
       if (!t) {
         var dvr_window_length = getParameterByName('dvr_window_length', this.mediaLocator);
-        var nowDate = serverTime ? new Date(serverTime) : new Date();
-        t = new Date(nowDate.getTime() - dvr_window_length * 1000).toISOString().replace(/Z/g, "");
+        if (dvr_window_length) {
+          var nowDate = serverTime ? new Date(serverTime) : new Date();
+          t = new Date(nowDate.getTime() - dvr_window_length * 1000).toISOString().replace(/Z/g, "");
+        }
       }
       if (t) {
         try {
@@ -10101,7 +10103,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin);
 
-ProgramService.VERSION = '2.0.92-173';
+ProgramService.VERSION = '2.0.93-174';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -10277,7 +10279,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$1);
 
-EntitlementExpirationService.VERSION = '2.0.92-173';
+EntitlementExpirationService.VERSION = '2.0.93-174';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -10725,7 +10727,7 @@ EntitlementMiddleware.getLog = function () {
   return log$1;
 };
 
-EntitlementMiddleware.VERSION = '2.0.92-173';
+EntitlementMiddleware.VERSION = '2.0.93-174';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -11167,7 +11169,7 @@ var EMPAnalyticsConnector = function () {
    */
 
 
-  EMPAnalyticsConnector.prototype.onDispose = function onDispose() {
+  EMPAnalyticsConnector.prototype.onDispose = function onDispose(event, data) {
     var _this12 = this;
 
     this.onGeneric('Dispose', this.analytics_.dispose, function () {
@@ -11646,7 +11648,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin$2);
 
-AnalyticsPlugin.VERSION = '2.0.92-173';
+AnalyticsPlugin.VERSION = '2.0.93-174';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -11771,7 +11773,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.0.92-173';
+empPlayer.VERSION = '2.0.93-174';
 
 /*
  * Universal Module Definition (UMD)
