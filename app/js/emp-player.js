@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.93-177 
+ * EMP-Player 2.0.93-178 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -7397,7 +7397,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.0.93-177';
+      return '2.0.93-178';
     }
 
     /**
@@ -10114,7 +10114,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin);
 
-ProgramService.VERSION = '2.0.93-177';
+ProgramService.VERSION = '2.0.93-178';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -10290,7 +10290,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$1);
 
-EntitlementExpirationService.VERSION = '2.0.93-177';
+EntitlementExpirationService.VERSION = '2.0.93-178';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -10738,7 +10738,7 @@ EntitlementMiddleware.getLog = function () {
   return log$1;
 };
 
-EntitlementMiddleware.VERSION = '2.0.93-177';
+EntitlementMiddleware.VERSION = '2.0.93-178';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -10938,7 +10938,7 @@ var EMPAnalyticsConnector = function () {
       }
       var sId = _this3.SessionId();
       if (sId) {
-        _this3.analytics_.startCasting(_this3.SessionId(), _this3.OffsetTime());
+        _this3.analytics_.startCasting(_this3.SessionId(), _this3.getCachedCurrentTime());
       }
       _this3.clearTimers();
     }, false);
@@ -11673,7 +11673,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin$2);
 
-AnalyticsPlugin.VERSION = '2.0.93-177';
+AnalyticsPlugin.VERSION = '2.0.93-178';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -11798,7 +11798,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.0.93-177';
+empPlayer.VERSION = '2.0.93-178';
 
 /*
  * Universal Module Definition (UMD)
