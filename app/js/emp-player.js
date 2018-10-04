@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.93-174 
+ * EMP-Player 2.0.93-0 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -145,511 +145,511 @@ var taggedTemplateLiteralLoose = function (strings, raw) {
  * @class EmpPlayerEvents
  */
 var EmpPlayerEvents = function EmpPlayerEvents() {
-  classCallCheck(this, EmpPlayerEvents);
-
-  /**
-  * Fired when video playback ends
-  * @event ENDED
-  */
-  this.ENDED = 'ended';
-
-  /**
-  * Fired when an error occurs
-  * @event ERROR
-  */
-  this.ERROR = 'error';
-
-  /**
-  * Fired when the player has downloaded data at the current playback position
-  * @event LOADED_DATA
-  */
-  this.LOADED_DATA = 'loadeddata';
-
-  /**
-  * Fired when the timeshift changes
-  * @event TIMESHIFT_CHANGE
-  */
-  this.TIMESHIFT_CHANGE = 'timeshiftchange';
-
-  /**
-  * Fired when the video duration changes
-  * @event DURATION_CHANGE
-  */
-  this.DURATION_CHANGE = 'durationchange';
-
-  /**
-  * Fired when the player has initial duration and dimension information
-  * @event LOADED_METADATA
-  */
-  this.LOADED_METADATA = 'loadedmetadata';
-
-  /**
-  * Fired when the player started seeking
-  * @event SEEKING
-  */
-  this.SEEKING = 'seeking';
-
-  /**
-  * Fired when the current playback position has changed
-  * @event TIME_UPDATE
-  */
-  this.TIME_UPDATE = 'timeupdate';
-
-  /**
-  * Fired when the user is active
-  * @event USER_ACTIVE
-  */
-  this.USER_ACTIVE = 'useractive';
-
-  /**
-  * Fired when the user is inactive
-  * @event USERIN_ACTIVE
-  */
-  this.USERIN_ACTIVE = 'userinactive';
-
-  /**
-  * Fired when the volume changes
-  * @event VOLUME_CHANGE
-  */
-  this.VOLUME_CHANGE = 'volumechange';
-
-  /**
-  * Fired when the video is starting to load
-  * @event LOAD_START
-  */
-  this.LOAD_START = 'loadstart';
-
-  /**
-  * Fired when the player can start playback
-  * @event CAN_PLAY
-  */
-  this.CAN_PLAY = 'canplay';
-
-  /**
-  * Fired when the player has starting playback
-  * @event PLAYING
-  */
-  this.PLAYING = 'playing';
-
-  /**
-  * Fired when the player starts buffering
-  * @event WAITING
-  */
-  this.WAITING = 'waiting';
-
-  /**
-  * Fired when the player seeked to a different point in time
-  * @event SEEKED
-  */
-  this.SEEKED = 'seeked';
-
-  /**
-  * Fired when playback is aborted
-  * @event ABORT
-  */
-  this.ABORT = 'abort';
-
-  /**
-  * Fired when the player will start playing
-  * @event PLAY
-  */
-  this.PLAY = 'play';
-
-  /**
-  * Fired when the player is paused
-  * @event PAUSE
-  */
-  this.PAUSE = 'pause';
-
-  /**
-  * Fired when the player is destroyed.
-  * @event DISPOSE
-  */
-  this.DISPOSE = 'dispose';
-
-  /**
-  * Fired when an AudioTrack object changes its enabled value
-  * @event MODE_CHANGE
-  */
-  this.MODE_CHANGE = 'modechange';
-
-  /**
-  * Fired when a state changes. Used for example when an AudioTrack changes its enabled value
-  * @event CHANGE
-  */
-  this.CHANGE = 'change';
-
-  /**
-  * Fired when an AudioTrack object has been added to an AudioTrackList object.
-  * @event ADD_TRACK
-  */
-  this.ADD_TRACK = 'addtrack';
-
-  /**
-  * Fired when an AudioTrack object has been removed from an AudioTrackList object.
-  * @event REMOVE_TRACK
-  */
-  this.REMOVE_TRACK = 'removetrack';
-
-  /**
-  * Fired by Dash.js when a metric changes
-  * @event METRIC_CHANGED
-  */
-  this.METRIC_CHANGED = 'metricchanged';
-
-  /**
-  * Fired when a recoverable asset error occurs
-  * @event RECOVERABLE_ASSET_ERROR
-  */
-  this.RECOVERABLE_ASSET_ERROR = 'recoverableasseterror';
-
-  /**
-  * Fired when the video bitrate changes
-  * @event BITRATE_CHANGED
-  */
-  this.BITRATE_CHANGED = 'bitratechanged';
-
-  /**
-  * Used when something closes. Fired by VideoJS when the CloseButton closes
-  * @event CLOSE
-  */
-  this.CLOSE = 'close';
-
-  /**
-  * Used when something is ready. Fired when the tech is ready
-  * @event READY
-  */
-  this.READY = 'ready';
-
-  /**
-  * Used when an html element resizes. Fired when the video element changes size
-  * @event RESIZE
-  */
-  this.RESIZE = 'resize';
-
-  /**
-  * Used when an html element is tapped. Fired by VideoJS on components
-  * @event TAP
-  */
-  this.TAP = 'tap';
-
-  /**
-  * Used when an html element is clicked. Fired by VideoJS on components
-  * @event CLICK
-  */
-  this.CLICK = 'click';
-
-  /**
-  * Used when an html element gains focus. Fired by VideoJS on components
-  * @event FOCUS
-  */
-  this.FOCUS = 'focus';
-
-  /**
-  * Used when an html element loses focus. Fired by VideoJS on components
-  * @event BLUR
-  */
-  this.BLUR = 'blur';
-
-  /**
-  * Used when a modal html view is about to be opened. Fired by VideoJS on the ModalDialog
-  * @event BEFORE_MODAL_OPEN
-  */
-  this.BEFORE_MODAL_OPEN = 'beforemodalopen';
-
-  /**
-  * Used when a modal html view has been opened. Fired by VideoJS on the ModalDialog
-  * @event MODAL_OPEN
-  */
-  this.MODAL_OPEN = 'modalopen';
-
-  /**
-  * Used when a modal html view will be closed. Fired by VideoJS on the ModalDialog
-  * @event BEFORE_MODAL_CLOSE
-  */
-  this.BEFORE_MODAL_CLOSE = 'beforemodalclose';
-
-  /**
-  * Used when a modal html view has been closed. Fired by VideoJS on the ModalDialog
-  * @event MODAL_CLOSE
-  */
-  this.MODAL_CLOSE = 'modalclose';
-
-  /**
-  * Used when a modal html view will be populated with html content. Fired by VideoJS on the ModalDialog
-  * @event BEFORE_MODAL_FILL
-  */
-  this.BEFORE_MODAL_FILL = 'beforemodalfill';
-
-  /**
-  * Used when a modal html view has been populated with html content. Fired by VideoJS on the ModalDialog
-  * @event MODAL_FILL
-  */
-  this.MODAL_FILL = 'modalfill';
-
-  /**
-  * Used when a modal html view will clear its content. Fired by VideoJS on the ModalDialog
-  * @event BEFORE_MODAL_EMPTY
-  */
-  this.BEFORE_MODAL_EMPTY = 'beforemodalempty';
-
-  /**
-  * Used when a modal html view has cleared its content. Fired by VideoJS on the ModalDialog
-  * @event MODAL_EMPTY
-  */
-  this.MODAL_EMPTY = 'modalempty';
-
-  /**
-  * Enough data has been loaded to play the media up to its end
-  * @event CAN_PLAY_THROUGH
-  */
-  this.CAN_PLAY_THROUGH = 'canplaythrough';
-
-  /**
-  * Video is played for the first time
-  * @event FIRST_PLAY
-  */
-  this.FIRST_PLAY = 'firstplay';
-
-  /**
-  * When the user agent is downloading media data
-  * @event PROGRESS
-  */
-  this.PROGRESS = 'progress';
-
-  /**
-  * When the player is suspended from downloading media data
-  * @event SUSPEND
-  */
-  this.SUSPEND = 'suspend';
-
-  /**
-  * When the current playlist is empty
-  * @event EMPTIED
-  */
-  this.EMPTIED = 'emptied';
-
-  /**
-  * When the player is trying to get media data, but data is not available
-  * @event STALLED
-  */
-  this.STALLED = 'stalled';
-
-  /**
-  * When the playing speed of the audio/video is changed
-  * @event RATE_CHANGE
-  */
-  this.RATE_CHANGE = 'ratechange';
-
-  /**
-  * When the text track has been changed
-  * @event TEXT_TRACK_CHANGE
-  */
-  this.TEXT_TRACK_CHANGE = 'texttrackchange';
-
-  /**
-  * When the track has been changed
-  * @event TRACK_CHANGE
-  */
-  this.TRACK_CHANGE = 'trackchanged';
-
-  /**
-  * When the video poster changes
-  * @event POSTER_CHANGE
-  */
-  this.POSTER_CHANGE = 'posterchange';
-
-  /**
-  * When a key is down
-  * @event KEY_DOWN
-  */
-  this.KEY_DOWN = 'keydown';
-
-  /**
-  * When a key is up
-  * @event KEY_UP
-  */
-  this.KEY_UP = 'keyup';
-
-  /**
-  * When the mouse is down
-  * @event MOUSE_DOWN
-  */
-  this.MOUSE_DOWN = 'mousedown';
-
-  /**
-  * When the mouse is moved
-  * @event MOUSE_MOVE
-  */
-  this.MOUSE_MOVE = 'mousemove';
-
-  /**
-  * When the mouse is up
-  * @event MOUSE_UP
-  */
-  this.MOUSE_UP = 'mouseup';
-
-  /**
-  * When touch started
-  * @event TOUCH_START
-  */
-  this.TOUCH_START = 'touchstart';
-
-  /**
-  * When touch moved
-  * @event TOUCH_MOVE
-  */
-  this.TOUCH_MOVE = 'touchmove';
-
-  /**
-  * When touch ended
-  * @event TOUCH_END
-  */
-  this.TOUCH_END = 'touchend';
-
-  /**
-  * When a touch point is moved off the interactive area of an element
-  * @event TOUCH_LEAVE
-  */
-  this.TOUCH_LEAVE = 'touchleave';
-
-  /**
-  * When a touch point has been disrupted
-  * @event TOUCH_CANCEL
-  */
-  this.TOUCH_CANCEL = 'touchcancel';
-
-  /**
-  * When the fullscreen state changes
-  * @event FULLSCREEN_CHANGE
-  */
-  this.FULLSCREEN_CHANGE = 'fullscreenchange';
-
-  /**
-  * When fullscreen isn't supported and the video will resize to the window
-  * @event ENTER_FULL_WINDOW
-  */
-  this.ENTER_FULL_WINDOW = 'enterFullWindow';
-
-  /**
-  * When exiting full window
-  * @event EXIT_FULL_WINDOW
-  */
-  this.EXIT_FULL_WINDOW = 'exitFullWindow';
-
-  /**
-  * When controls are enabled
-  * @event CONTROLS_ENABLED
-  */
-  this.CONTROLS_ENABLED = 'controlsenabled';
-
-  /**
-  * When controls are disabled
-  * @event CONTROLS_DISABLED
-  */
-  this.CONTROLS_DISABLED = 'controlsdisabled';
-
-  /**
-  * When native tech or device controls are being used
-  * @event USING_NATIVE_CONTROLS
-  */
-  this.USING_NATIVE_CONTROLS = 'usingnativecontrols';
-
-  /**
-  * When custom controls are being used
-  * @event USING_CUSTOM_CONTROLS
-  */
-  this.USING_CUSTOM_CONTROLS = 'usingcustomcontrols';
-
-  /**
-  * Fired when a VideoJS slider is active
-  * @event SLIDER_ACTIVE
-  */
-  this.SLIDER_ACTIVE = 'slideractive';
-
-  /**
-  * Fired when a VideoJS slider is inactive
-  * @event SLIDER_INACTIVE
-  */
-  this.SLIDER_INACTIVE = 'sliderinactive';
-
-  /**
-   * Fired when a new entitlement is used to start playback
-   */
-  this.ENTITLEMENT_CHANGE = 'entitlementchange';
-
-  /**
-   * Fired when the entitlement loading starts
-   */
-  this.ENTITLEMENT_LOAD_START = 'entitlementloadstart';
-
-  /**
-   * Fired when the player is initalized
-   */
-  this.PLAYER_CREATED = 'playercreated';
-
-  /**
-   * Fired when playback is restarted
-   */
-  this.RESTARTING = 'restarting';
-
-  this.SEGMENTS_UPDATED = 'segmentsupdated';
-  this.SEGMENT_CHANGED = 'segmentchanged';
-
-  /**
-   * Fired when chromecast begins casting
-   */
-  this.CHROMECAST_CASTING = 'chromecastcasting';
-
-  /**
-   * Fired when chromecast has stopped casting
-   */
-  this.CHROMECAST_STOPPED = 'chromecaststopped';
-
-  /**
-   * Fired when playback is stopped
-   */
-  this.STOPPED = 'stopped';
-
-  /**
-   * Fired when the video is ready to be played
-   */
-  this.READY_TO_PLAY = 'readytoplay';
-
-  /**
-   * Fired when program changes in a live or catchUp stream
+    classCallCheck(this, EmpPlayerEvents);
+
+    /**
+    * Fired when video playback ends
+    * @event ENDED
     */
-  this.PROGRAM_CHANGED = 'programchanged';
+    this.ENDED = 'ended';
 
-  /**
-  * Fired when vod/asset changes
-   */
-  this.ASSET_CHANGED = 'assetchanged';
+    /**
+    * Fired when an error occurs
+    * @event ERROR
+    */
+    this.ERROR = 'error';
 
-  /**
-   * Fired when prefetch segment before seek in a vod/catchup stream
-  */
-  this.SEGMENT_MISSING = 'segmentmissing';
+    /**
+    * Fired when the player has downloaded data at the current playback position
+    * @event LOADED_DATA
+    */
+    this.LOADED_DATA = 'loadeddata';
 
-  /**
-  * Fired when airplayStart
-  */
-  this.AIRPLAY_START = 'airplayStart';
+    /**
+    * Fired when the timeshift changes
+    * @event TIMESHIFT_CHANGE
+    */
+    this.TIMESHIFT_CHANGE = 'timeshiftchange';
 
-  /**
-  * Fired when replay
-  */
-  this.REPLAY = 'replay';
+    /**
+    * Fired when the video duration changes
+    * @event DURATION_CHANGE
+    */
+    this.DURATION_CHANGE = 'durationchange';
 
-  /**
-  * Fired during download
-  */
-  this.DOWNLOAD_PROGRESS = 'downloadprogress';
+    /**
+    * Fired when the player has initial duration and dimension information
+    * @event LOADED_METADATA
+    */
+    this.LOADED_METADATA = 'loadedmetadata';
 
-  /**
-  * Fired when drm session try to update
-  */
-  this.DRM_SESSION_UPDATE = 'drmsessionupdate';
+    /**
+    * Fired when the player started seeking
+    * @event SEEKING
+    */
+    this.SEEKING = 'seeking';
+
+    /**
+    * Fired when the current playback position has changed
+    * @event TIME_UPDATE
+    */
+    this.TIME_UPDATE = 'timeupdate';
+
+    /**
+    * Fired when the user is active
+    * @event USER_ACTIVE
+    */
+    this.USER_ACTIVE = 'useractive';
+
+    /**
+    * Fired when the user is inactive
+    * @event USERIN_ACTIVE
+    */
+    this.USERIN_ACTIVE = 'userinactive';
+
+    /**
+    * Fired when the volume changes
+    * @event VOLUME_CHANGE
+    */
+    this.VOLUME_CHANGE = 'volumechange';
+
+    /**
+    * Fired when the video is starting to load
+    * @event LOAD_START
+    */
+    this.LOAD_START = 'loadstart';
+
+    /**
+    * Fired when the player can start playback
+    * @event CAN_PLAY
+    */
+    this.CAN_PLAY = 'canplay';
+
+    /**
+    * Fired when the player has starting playback
+    * @event PLAYING
+    */
+    this.PLAYING = 'playing';
+
+    /**
+    * Fired when the player starts buffering
+    * @event WAITING
+    */
+    this.WAITING = 'waiting';
+
+    /**
+    * Fired when the player seeked to a different point in time
+    * @event SEEKED
+    */
+    this.SEEKED = 'seeked';
+
+    /**
+    * Fired when playback is aborted
+    * @event ABORT
+    */
+    this.ABORT = 'abort';
+
+    /**
+    * Fired when the player will start playing
+    * @event PLAY
+    */
+    this.PLAY = 'play';
+
+    /**
+    * Fired when the player is paused
+    * @event PAUSE
+    */
+    this.PAUSE = 'pause';
+
+    /**
+    * Fired when the player is destroyed.
+    * @event DISPOSE
+    */
+    this.DISPOSE = 'dispose';
+
+    /**
+    * Fired when an AudioTrack object changes its enabled value
+    * @event MODE_CHANGE
+    */
+    this.MODE_CHANGE = 'modechange';
+
+    /**
+    * Fired when a state changes. Used for example when an AudioTrack changes its enabled value
+    * @event CHANGE
+    */
+    this.CHANGE = 'change';
+
+    /**
+    * Fired when an AudioTrack object has been added to an AudioTrackList object.
+    * @event ADD_TRACK
+    */
+    this.ADD_TRACK = 'addtrack';
+
+    /**
+    * Fired when an AudioTrack object has been removed from an AudioTrackList object.
+    * @event REMOVE_TRACK
+    */
+    this.REMOVE_TRACK = 'removetrack';
+
+    /**
+    * Fired by Dash.js when a metric changes
+    * @event METRIC_CHANGED
+    */
+    this.METRIC_CHANGED = 'metricchanged';
+
+    /**
+    * Fired when a recoverable asset error occurs
+    * @event RECOVERABLE_ASSET_ERROR
+    */
+    this.RECOVERABLE_ASSET_ERROR = 'recoverableasseterror';
+
+    /**
+    * Fired when the video bitrate changes
+    * @event BITRATE_CHANGED
+    */
+    this.BITRATE_CHANGED = 'bitratechanged';
+
+    /**
+    * Used when something closes. Fired by VideoJS when the CloseButton closes
+    * @event CLOSE
+    */
+    this.CLOSE = 'close';
+
+    /**
+    * Used when something is ready. Fired when the tech is ready
+    * @event READY
+    */
+    this.READY = 'ready';
+
+    /**
+    * Used when an html element resizes. Fired when the video element changes size
+    * @event RESIZE
+    */
+    this.RESIZE = 'resize';
+
+    /**
+    * Used when an html element is tapped. Fired by VideoJS on components
+    * @event TAP
+    */
+    this.TAP = 'tap';
+
+    /**
+    * Used when an html element is clicked. Fired by VideoJS on components
+    * @event CLICK
+    */
+    this.CLICK = 'click';
+
+    /**
+    * Used when an html element gains focus. Fired by VideoJS on components
+    * @event FOCUS
+    */
+    this.FOCUS = 'focus';
+
+    /**
+    * Used when an html element loses focus. Fired by VideoJS on components
+    * @event BLUR
+    */
+    this.BLUR = 'blur';
+
+    /**
+    * Used when a modal html view is about to be opened. Fired by VideoJS on the ModalDialog
+    * @event BEFORE_MODAL_OPEN
+    */
+    this.BEFORE_MODAL_OPEN = 'beforemodalopen';
+
+    /**
+    * Used when a modal html view has been opened. Fired by VideoJS on the ModalDialog
+    * @event MODAL_OPEN
+    */
+    this.MODAL_OPEN = 'modalopen';
+
+    /**
+    * Used when a modal html view will be closed. Fired by VideoJS on the ModalDialog
+    * @event BEFORE_MODAL_CLOSE
+    */
+    this.BEFORE_MODAL_CLOSE = 'beforemodalclose';
+
+    /**
+    * Used when a modal html view has been closed. Fired by VideoJS on the ModalDialog
+    * @event MODAL_CLOSE
+    */
+    this.MODAL_CLOSE = 'modalclose';
+
+    /**
+    * Used when a modal html view will be populated with html content. Fired by VideoJS on the ModalDialog
+    * @event BEFORE_MODAL_FILL
+    */
+    this.BEFORE_MODAL_FILL = 'beforemodalfill';
+
+    /**
+    * Used when a modal html view has been populated with html content. Fired by VideoJS on the ModalDialog
+    * @event MODAL_FILL
+    */
+    this.MODAL_FILL = 'modalfill';
+
+    /**
+    * Used when a modal html view will clear its content. Fired by VideoJS on the ModalDialog
+    * @event BEFORE_MODAL_EMPTY
+    */
+    this.BEFORE_MODAL_EMPTY = 'beforemodalempty';
+
+    /**
+    * Used when a modal html view has cleared its content. Fired by VideoJS on the ModalDialog
+    * @event MODAL_EMPTY
+    */
+    this.MODAL_EMPTY = 'modalempty';
+
+    /**
+    * Enough data has been loaded to play the media up to its end
+    * @event CAN_PLAY_THROUGH
+    */
+    this.CAN_PLAY_THROUGH = 'canplaythrough';
+
+    /**
+    * Video is played for the first time
+    * @event FIRST_PLAY
+    */
+    this.FIRST_PLAY = 'firstplay';
+
+    /**
+    * When the user agent is downloading media data
+    * @event PROGRESS
+    */
+    this.PROGRESS = 'progress';
+
+    /**
+    * When the player is suspended from downloading media data
+    * @event SUSPEND
+    */
+    this.SUSPEND = 'suspend';
+
+    /**
+    * When the current playlist is empty
+    * @event EMPTIED
+    */
+    this.EMPTIED = 'emptied';
+
+    /**
+    * When the player is trying to get media data, but data is not available
+    * @event STALLED
+    */
+    this.STALLED = 'stalled';
+
+    /**
+    * When the playing speed of the audio/video is changed
+    * @event RATE_CHANGE
+    */
+    this.RATE_CHANGE = 'ratechange';
+
+    /**
+    * When the text track has been changed
+    * @event TEXT_TRACK_CHANGE
+    */
+    this.TEXT_TRACK_CHANGE = 'texttrackchange';
+
+    /**
+    * When the track has been changed
+    * @event TRACK_CHANGE
+    */
+    this.TRACK_CHANGE = 'trackchanged';
+
+    /**
+    * When the video poster changes
+    * @event POSTER_CHANGE
+    */
+    this.POSTER_CHANGE = 'posterchange';
+
+    /**
+    * When a key is down
+    * @event KEY_DOWN
+    */
+    this.KEY_DOWN = 'keydown';
+
+    /**
+    * When a key is up
+    * @event KEY_UP
+    */
+    this.KEY_UP = 'keyup';
+
+    /**
+    * When the mouse is down
+    * @event MOUSE_DOWN
+    */
+    this.MOUSE_DOWN = 'mousedown';
+
+    /**
+    * When the mouse is moved
+    * @event MOUSE_MOVE
+    */
+    this.MOUSE_MOVE = 'mousemove';
+
+    /**
+    * When the mouse is up
+    * @event MOUSE_UP
+    */
+    this.MOUSE_UP = 'mouseup';
+
+    /**
+    * When touch started
+    * @event TOUCH_START
+    */
+    this.TOUCH_START = 'touchstart';
+
+    /**
+    * When touch moved
+    * @event TOUCH_MOVE
+    */
+    this.TOUCH_MOVE = 'touchmove';
+
+    /**
+    * When touch ended
+    * @event TOUCH_END
+    */
+    this.TOUCH_END = 'touchend';
+
+    /**
+    * When a touch point is moved off the interactive area of an element
+    * @event TOUCH_LEAVE
+    */
+    this.TOUCH_LEAVE = 'touchleave';
+
+    /**
+    * When a touch point has been disrupted
+    * @event TOUCH_CANCEL
+    */
+    this.TOUCH_CANCEL = 'touchcancel';
+
+    /**
+    * When the fullscreen state changes
+    * @event FULLSCREEN_CHANGE
+    */
+    this.FULLSCREEN_CHANGE = 'fullscreenchange';
+
+    /**
+    * When fullscreen isn't supported and the video will resize to the window
+    * @event ENTER_FULL_WINDOW
+    */
+    this.ENTER_FULL_WINDOW = 'enterFullWindow';
+
+    /**
+    * When exiting full window
+    * @event EXIT_FULL_WINDOW
+    */
+    this.EXIT_FULL_WINDOW = 'exitFullWindow';
+
+    /**
+    * When controls are enabled
+    * @event CONTROLS_ENABLED
+    */
+    this.CONTROLS_ENABLED = 'controlsenabled';
+
+    /**
+    * When controls are disabled
+    * @event CONTROLS_DISABLED
+    */
+    this.CONTROLS_DISABLED = 'controlsdisabled';
+
+    /**
+    * When native tech or device controls are being used
+    * @event USING_NATIVE_CONTROLS
+    */
+    this.USING_NATIVE_CONTROLS = 'usingnativecontrols';
+
+    /**
+    * When custom controls are being used
+    * @event USING_CUSTOM_CONTROLS
+    */
+    this.USING_CUSTOM_CONTROLS = 'usingcustomcontrols';
+
+    /**
+    * Fired when a VideoJS slider is active
+    * @event SLIDER_ACTIVE
+    */
+    this.SLIDER_ACTIVE = 'slideractive';
+
+    /**
+    * Fired when a VideoJS slider is inactive
+    * @event SLIDER_INACTIVE
+    */
+    this.SLIDER_INACTIVE = 'sliderinactive';
+
+    /**
+     * Fired when a new entitlement is used to start playback
+     */
+    this.ENTITLEMENT_CHANGE = 'entitlementchange';
+
+    /**
+     * Fired when the entitlement loading starts
+     */
+    this.ENTITLEMENT_LOAD_START = 'entitlementloadstart';
+
+    /**
+     * Fired when the player is initalized
+     */
+    this.PLAYER_CREATED = 'playercreated';
+
+    /**
+     * Fired when playback is restarted
+     */
+    this.RESTARTING = 'restarting';
+
+    this.SEGMENTS_UPDATED = 'segmentsupdated';
+    this.SEGMENT_CHANGED = 'segmentchanged';
+
+    /**
+     * Fired when chromecast begins casting
+     */
+    this.CHROMECAST_CASTING = 'chromecastcasting';
+
+    /**
+     * Fired when chromecast has stopped casting
+     */
+    this.CHROMECAST_STOPPED = 'chromecaststopped';
+
+    /**
+     * Fired when playback is stopped
+     */
+    this.STOPPED = 'stopped';
+
+    /**
+     * Fired when the video is ready to be played
+     */
+    this.READY_TO_PLAY = 'readytoplay';
+
+    /**
+     * Fired when program changes in a live or catchUp stream
+      */
+    this.PROGRAM_CHANGED = 'programchanged';
+
+    /**
+    * Fired when vod/asset changes
+     */
+    this.ASSET_CHANGED = 'assetchanged';
+
+    /**
+     * Fired when prefetch segment before seek in a vod/catchup stream
+    */
+    this.SEGMENT_MISSING = 'segmentmissing';
+
+    /**
+    * Fired when airplayStart
+    */
+    this.AIRPLAY_START = 'airplayStart';
+
+    /**
+    * Fired when replay
+    */
+    this.REPLAY = 'replay';
+
+    /**
+    * Fired during download
+    */
+    this.DOWNLOAD_PROGRESS = 'downloadprogress';
+
+    /**
+    * Fired when drm session try to update
+    */
+    this.DRM_SESSION_UPDATE = 'drmsessionupdate';
 };
 
 var empPlayerEvents = new EmpPlayerEvents();
@@ -760,6 +760,16 @@ function isObject(value) {
  * @param  {Object} value
  * @return {Boolean}
  */
+
+
+/**
+ * Check is Object is isEmpty
+ * @param {Object} value
+ * @returns {Boolean}
+ */
+function isEmpty(value) {
+  return keys(value).length === 0;
+}
 
 /*global
   document, atob
@@ -5685,6 +5695,7 @@ var Player = function (_VjsPlayer) {
 
 
   Player.prototype.stop = function stop(afterStopCallback) {
+    this.analytics && this.analytics().stop();
     extplayer.stop(this, afterStopCallback);
   };
 
@@ -5763,7 +5774,7 @@ var Player = function (_VjsPlayer) {
 
     //TODO: Fix reset for hls
     //Not for CHROMECAST and not for encrypted streams and tech left to try
-    if (data.source && !data.source.licenseServer && !data.source.licenseServers && !data.source.protection && !IS_CHROMECAST && techs.length > 0) {
+    if (data.source && !data.source.licenseServer && (!data.source.licenseServers || isEmpty(data.source.licenseServers)) && !data.source.protection && !IS_CHROMECAST && techs.length > 0) {
 
       if (data.error.code !== 6001) {
         log$1.error('handleRecoverableError', data.techName, data.message);
@@ -7386,7 +7397,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.0.93-174';
+      return '2.0.93-0';
     }
 
     /**
@@ -8111,50 +8122,100 @@ exports.right = function(str){
 };
 });
 
-var forEach_1 = forEach;
+var fnToStr = Function.prototype.toString;
 
-var toString$2 = Object.prototype.toString;
+var constructorRegex = /^\s*class\b/;
+var isES6ClassFn = function isES6ClassFunction(value) {
+	try {
+		var fnStr = fnToStr.call(value);
+		return constructorRegex.test(fnStr);
+	} catch (e) {
+		return false; // not a function
+	}
+};
+
+var tryFunctionObject = function tryFunctionToStr(value) {
+	try {
+		if (isES6ClassFn(value)) { return false; }
+		fnToStr.call(value);
+		return true;
+	} catch (e) {
+		return false;
+	}
+};
+var toStr$1 = Object.prototype.toString;
+var fnClass = '[object Function]';
+var genClass = '[object GeneratorFunction]';
+var hasToStringTag = typeof Symbol === 'function' && typeof Symbol.toStringTag === 'symbol';
+
+var isCallable = function isCallable(value) {
+	if (!value) { return false; }
+	if (typeof value !== 'function' && typeof value !== 'object') { return false; }
+	if (typeof value === 'function' && !value.prototype) { return true; }
+	if (hasToStringTag) { return tryFunctionObject(value); }
+	if (isES6ClassFn(value)) { return false; }
+	var strClass = toStr$1.call(value);
+	return strClass === fnClass || strClass === genClass;
+};
+
+var toStr = Object.prototype.toString;
 var hasOwnProperty = Object.prototype.hasOwnProperty;
 
-function forEach(list, iterator, context) {
-    if (!isFunction_1(iterator)) {
-        throw new TypeError('iterator must be a function')
-    }
-
-    if (arguments.length < 3) {
-        context = this;
-    }
-    
-    if (toString$2.call(list) === '[object Array]')
-        forEachArray$1(list, iterator, context);
-    else if (typeof list === 'string')
-        forEachString(list, iterator, context);
-    else
-        forEachObject(list, iterator, context);
-}
-
-function forEachArray$1(array, iterator, context) {
+var forEachArray$1 = function forEachArray(array, iterator, receiver) {
     for (var i = 0, len = array.length; i < len; i++) {
         if (hasOwnProperty.call(array, i)) {
-            iterator.call(context, array[i], i, array);
+            if (receiver == null) {
+                iterator(array[i], i, array);
+            } else {
+                iterator.call(receiver, array[i], i, array);
+            }
         }
     }
-}
+};
 
-function forEachString(string, iterator, context) {
+var forEachString = function forEachString(string, iterator, receiver) {
     for (var i = 0, len = string.length; i < len; i++) {
         // no such thing as a sparse string.
-        iterator.call(context, string.charAt(i), i, string);
-    }
-}
-
-function forEachObject(object, iterator, context) {
-    for (var k in object) {
-        if (hasOwnProperty.call(object, k)) {
-            iterator.call(context, object[k], k, object);
+        if (receiver == null) {
+            iterator(string.charAt(i), i, string);
+        } else {
+            iterator.call(receiver, string.charAt(i), i, string);
         }
     }
-}
+};
+
+var forEachObject = function forEachObject(object, iterator, receiver) {
+    for (var k in object) {
+        if (hasOwnProperty.call(object, k)) {
+            if (receiver == null) {
+                iterator(object[k], k, object);
+            } else {
+                iterator.call(receiver, object[k], k, object);
+            }
+        }
+    }
+};
+
+var forEach = function forEach(list, iterator, thisArg) {
+    if (!isCallable(iterator)) {
+        throw new TypeError('iterator must be a function');
+    }
+
+    var receiver;
+    if (arguments.length >= 3) {
+        receiver = thisArg;
+    }
+
+    if (toStr.call(list) === '[object Array]') {
+        forEachArray$1(list, iterator, receiver);
+    } else if (typeof list === 'string') {
+        forEachString(list, iterator, receiver);
+    } else {
+        forEachObject(list, iterator, receiver);
+    }
+};
+
+var forEach_1 = forEach;
 
 var isArray = function(arg) {
       return Object.prototype.toString.call(arg) === '[object Array]';
@@ -8224,7 +8285,7 @@ function forEachArray(array, iterator) {
     }
 }
 
-function isEmpty(obj){
+function isEmpty$1(obj){
     for(var i in obj){
         if(obj.hasOwnProperty(i)) return false
     }
@@ -8404,7 +8465,7 @@ function _createXHR(options) {
                 xhr.setRequestHeader(key, headers[key]);
             }
         }
-    } else if (options.headers && !isEmpty(options.headers)) {
+    } else if (options.headers && !isEmpty$1(options.headers)) {
         throw new Error("Headers cannot be set on an XDomainRequest object")
     }
 
@@ -10103,7 +10164,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin);
 
-ProgramService.VERSION = '2.0.93-174';
+ProgramService.VERSION = '2.0.93-0';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -10279,7 +10340,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$1);
 
-EntitlementExpirationService.VERSION = '2.0.93-174';
+EntitlementExpirationService.VERSION = '2.0.93-0';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -10727,7 +10788,7 @@ EntitlementMiddleware.getLog = function () {
   return log$1;
 };
 
-EntitlementMiddleware.VERSION = '2.0.93-174';
+EntitlementMiddleware.VERSION = '2.0.93-0';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -10940,16 +11001,18 @@ var EMPAnalyticsConnector = function () {
    */
 
 
-  EMPAnalyticsConnector.prototype.onChromeCastingStop = function onChromeCastingStop() {
+  EMPAnalyticsConnector.prototype.onChromeCastingStop = function onChromeCastingStop(isChromecast) {
     var _this4 = this;
 
     this.disabled_ = false;
-    this.onGeneric('StopCasting', this.analytics_.stopCasting, function () {
-      if (_this4.hasSessionId() === false) {
-        return;
-      }
-      _this4.analytics_.stopCasting(_this4.SessionId(), _this4.OffsetTime());
-    }, false);
+    if (isChromecast) {
+      this.onGeneric('StopCasting', this.analytics_.stopCasting, function () {
+        if (_this4.hasSessionId() === false) {
+          return;
+        }
+        _this4.analytics_.stopCasting(_this4.SessionId(), _this4.OffsetTime());
+      }, false);
+    }
   };
 
   /**
@@ -11502,8 +11565,8 @@ var EMPAnalyticsConnector = function () {
 }();
 
 var empAnalytics_min = createCommonjsModule(function (module, exports) {
-!function(a){module.exports=a();}(function(){var a;return function b(a,c,d){function e(g,h){if(!c[g]){if(!a[g]){var i="function"==typeof commonjsRequire&&commonjsRequire;if(!h&&i)return i(g,!0);if(f)return f(g,!0);var j=new Error("Cannot find module '"+g+"'");throw j.code="MODULE_NOT_FOUND",j}var k=c[g]={exports:{}};a[g][0].call(k.exports,function(b){var c=a[g][1][b];return e(c?c:b)},k,k.exports,b,a,c,d);}return c[g].exports}for(var f="function"==typeof commonjsRequire&&commonjsRequire,g=0;g<d.length;g++)e(d[g]);return e}({1:[function(a,b,c){(function(a){"undefined"!=typeof window?b.exports=window:"undefined"!=typeof a?b.exports=a:"undefined"!=typeof self?b.exports=self:b.exports={};}).call(this,"undefined"!=typeof commonjsGlobal?commonjsGlobal:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{});},{}],2:[function(b,c,d){!function(b,e){"object"==typeof d&&"undefined"!=typeof c?e(d):"function"==typeof a&&a.amd?a(["exports"],e):e(b.workerTimersBroker=b.workerTimersBroker||{});}(this,function(a){"use strict";var b=function(a){return void 0!==a.method&&"call"===a.method},c=function(a){return null===a.error&&"number"==typeof a.id},d=Number.MAX_SAFE_INTEGER||Math.pow(2,53)-1,e=function(a){for(var b=Math.round(Math.random()*d);a.has(b);)b=Math.round(Math.random()*d);return b},f=function(a){var d=new Map,f=new Map,g=new Map,h=new Worker(a);h.addEventListener("message",function(a){var e=a.data;if(b(e)){var h=e.params,i=h.timerId,j=h.timerType;if("interval"===j){var k=d.get(i);if("number"==typeof k){var l=g.get(k);if(void 0===l||l.timerId!==i||l.timerType!==j)throw new Error("The timer is in an undefined state.")}else{if("undefined"==typeof k)throw new Error("The timer is in an undefined state.");k();}}else if("timeout"===j){var m=f.get(i);if("number"==typeof m){var n=g.get(m);if(void 0===n||n.timerId!==i||n.timerType!==j)throw new Error("The timer is in an undefined state.")}else{if("undefined"==typeof m)throw new Error("The timer is in an undefined state.");m(),f["delete"](i);}}}else{if(!c(e)){var o=e.error.message;throw new Error(o)}var p=e.id,q=g.get(p);if(void 0===q)throw new Error("The timer is in an undefined state.");var r=q.timerId,s=q.timerType;g["delete"](p),"interval"===s?d["delete"](r):f["delete"](r);}});var i=function(a){var b=e(g);g.set(b,{timerId:a,timerType:"interval"}),d.set(a,b),h.postMessage({id:b,method:"clear",params:{timerId:a,timerType:"interval"}});},j=function(a){var b=e(g);g.set(b,{timerId:a,timerType:"timeout"}),f.set(a,b),h.postMessage({id:b,method:"clear",params:{timerId:a,timerType:"timeout"}});},k=function(a,b){var c=e(d);return d.set(c,function(){a(),"function"==typeof d.get(c)&&h.postMessage({id:null,method:"set",params:{delay:b,now:performance.now(),timerId:c,timerType:"interval"}});}),h.postMessage({id:null,method:"set",params:{delay:b,now:performance.now(),timerId:c,timerType:"interval"}}),c},l=function(a,b){var c=e(f);return f.set(c,a),h.postMessage({id:null,method:"set",params:{delay:b,now:performance.now(),timerId:c,timerType:"timeout"}}),c};return{clearInterval:i,clearTimeout:j,setInterval:k,setTimeout:l}};a.load=f,Object.defineProperty(a,"__esModule",{value:!0});});},{}],3:[function(b,c,d){!function(e,f){"object"==typeof d&&"undefined"!=typeof c?f(d,b("worker-timers-broker")):"function"==typeof a&&a.amd?a(["exports","worker-timers-broker"],f):f(e.workerTimers=e.workerTimers||{},e.workerTimersBroker);}(this,function(a,b){"use strict";var c='!function(){"use strict";var e=new Map,t=new Map,r=function(t){var r=e.get(t);if(void 0===r)throw new Error(\'There is no interval scheduled with the given id "\'+t+\'".\');clearTimeout(r),e.delete(t)},i=function(e){var r=t.get(e);if(void 0===r)throw new Error(\'There is no timeout scheduled with the given id "\'+e+\'".\');clearTimeout(r),t.delete(e)},o=function(e,t){var r=void 0;if("performance"in self){var i=performance.now();e-=Math.max(0,i-t),r=i}else r=Date.now();return{delay:e,expected:r+e}},n=function e(t,r,i,o){var n="performance"in self?performance.now():Date.now();n>i?postMessage({id:null,method:"call",params:{timerId:r,timerType:o}}):t.set(r,setTimeout(e,i-n,t,r,i,o))},a=function(t,r,i){var a=void 0,s=o(t,i);t=s.delay,a=s.expected,e.set(r,setTimeout(n,t,e,r,a,"interval"))},s=function(e,r,i){var a=void 0,s=o(e,i);e=s.delay,a=s.expected,t.set(r,setTimeout(n,e,t,r,a,"timeout"))};addEventListener("message",function(e){var t=e.data;try{if("clear"===t.method){var o=t.id,n=t.params,d=n.timerId,l=n.timerType;if("interval"===l)r(d),postMessage({error:null,id:o});else{if("timeout"!==l)throw new Error(\'The given type "\'+l+\'" is not supported\');i(d),postMessage({error:null,id:o})}}else{if("set"!==t.method)throw new Error(\'The given method "\'+t.method+\'" is not supported\');var m=t.params,u=m.delay,p=m.now,v=m.timerId,c=m.timerType;if("interval"===c)a(u,v,p);else{if("timeout"!==c)throw new Error(\'The given type "\'+c+\'" is not supported\');s(u,v,p)}}}catch(e){postMessage({error:{message:e.message},id:t.id,result:null})}})}();',d=new Blob([c],{type:"application/javascript"}),e=URL.createObjectURL(d),f=b.load(e),g=f.clearInterval,h=f.clearTimeout,i=f.setInterval,j=f.setTimeout;a.clearInterval=g,a.clearTimeout=h,a.setInterval=i,a.setTimeout=j,Object.defineProperty(a,"__esModule",{value:!0});});},{"worker-timers-broker":2}],4:[function(a,b,c){"use strict";function d(a){if(a&&a.__esModule)return a;var b={};if(null!=a)for(var c in a)Object.prototype.hasOwnProperty.call(a,c)&&(b[c]=a[c]);return b["default"]=a,b}function e(a){return a&&a.__esModule?a:{"default":a}}function f(a,b){if(!(a instanceof b))throw new TypeError("Cannot call a class as a function")}c.__esModule=!0;var g=function(){function a(a,b){for(var c=0;c<b.length;c++){var d=b[c];d.enumerable=d.enumerable||!1,d.configurable=!0,"value"in d&&(d.writable=!0),Object.defineProperty(a,d.key,d);}}return function(b,c,d){return c&&a(b.prototype,c),d&&a(b,d),b}}(),h=a("global/window"),i=e(h),j=a("./platform"),k=e(j),l=a("worker-timers"),m=d(l),n=function(){function a(b,c,d,e,g){var h=arguments.length<=5||void 0===arguments[5]?{}:arguments[5],i=arguments.length<=6||void 0===arguments[6]?{}:arguments[6];f(this,a),this.CYCLE_TIME=1e3,this.EVENT_PURGE_TIME_DEFAULT=3*this.CYCLE_TIME,this.TIME_WITHOUT_BEAT_DEFAULT=60*this.CYCLE_TIME,this.SERVER_URL_DEFAULT="",this.CUSTOMER_DEFAULT="",this.BUSINESS_UNIT_DEFAULT="",this.INCLUDE_DEVICE_METRICS_DEFAULT=!0,this.SESSION_TOKEN_DEFAULT="",this.SESSION_ID_DEFAULT="",this.DEBUG_DEFAULT=!1,this.MAX_RETRIES=20,this.DEVICE_CLOCK_CHECK_THRESHOLD=3e5,this.eventsSkeleton=this.initEventSkeleton(),this.customer_=c,this.businessUnit_=d,this.sessionToken_=e,this.serverURL_=b,this.includeDeviceMetrics_=!1,this.userId_=g,this.deviceInfoData_=h,this.props_=i||{},this.pendingRequest_=!1;}return a.prototype.init=function(){var a=this;this.cycleTimer&&("undefined"!=typeof Worker&&this.props_.disableWebWorkers!==!0?m.clearInterval(this.cycleTimer):clearInterval(this.cycleTimer)),"undefined"!=typeof Worker&&this.props_.disableWebWorkers!==!0?this.cycleTimer=m.setInterval(function(){return a.cycle()},this.CYCLE_TIME):this.cycleTimer=setInterval(function(){return a.cycle()},this.CYCLE_TIME),this.communicationCurrentTime=0,this.lastCommunicationTime=0,this.eventPool={};},a.prototype.clear=function(){this.eventPool={};},a.prototype.ok=function(a){var b=this.eventPool[a];return!!b&&(b.forbidden===!1&&b.retries<this.MAX_RETRIES)},a.prototype.created=function(a){var b=arguments.length<=1||void 0===arguments[1]?{}:arguments[1],c={type:"Created"};this.addEventToPool(a,c,b);},a.prototype.play=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"PlayerReady",currentTime:b};this.deviceAppInfo&&(c.deviceAppInfo=this.deviceAppInfo),this.addEventToPool(a,d,c);},a.prototype.playing=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"Started",currentTime:b};if(this.customAttributes){var e=Object.keys(this.customAttributes);e.length&&e.length>0&&(c.attributes=this.customAttributes);}this.addEventToPool(a,d,c),this.changeSessionState(a,"PLAYING");},a.prototype.paused=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"Paused",currentTime:b};this.addEventToPool(a,d,c,!0);},a.prototype.seek=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"ScrubbedTo",currentTime:b};this.addEventToPool(a,d,c,!0);},a.prototype.programChanged=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"ProgramChanged",currentTime:b};this.addEventToPool(a,d,c,!0);},a.prototype.startCasting=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"StartCasting",currentTime:b};this.addEventToPool(a,d,c,!0),this.changeSessionState(a,"DIRTY");},a.prototype.stopCasting=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"StopCasting",currentTime:b};this.addEventToPool(a,d,c,!0);},a.prototype.setCurrentTime=function(a,b){this.eventPool[a]&&(this.eventPool[a].currentTime=b);},a.prototype.handshake=function(a){var b=arguments.length<=1||void 0===arguments[1]?{}:arguments[1],c={type:"HandshakeStarted"};this.addEventToPool(a,c,b);},a.prototype.resume=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"Resumed",currentTime:b};this.addEventToPool(a,d,c,!0);},a.prototype.bitrateChanged=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"BitrateChanged",currentTime:b};this.addEventToPool(a,d,c,!0);},a.prototype.drmSessionUpdate=function(a){var b=arguments.length<=1||void 0===arguments[1]?{}:arguments[1],c={type:"DRM"};this.addEventToPool(a,c,b,!0);},a.prototype.endOfStream=function(a){var b=arguments.length<=1||void 0===arguments[1]?{}:arguments[1],c={type:"Completed"};this.addEventToPool(a,c,b,!0),this.changeSessionState(a,"FINISHED");},a.prototype.error=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"Error",currentTime:b};this.changeSessionState(a,"DIRTY"),this.addEventToPool(a,d,c);},a.prototype.dispose=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"Aborted"};b&&(d.currentTime=b),this.addEventToPool(a,d,c,!0),this.changeSessionState(a,"FINISHED");},a.prototype.waiting=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"BufferingStarted",currentTime:b};this.addEventToPool(a,d,c);},a.prototype.waitingEnded=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"BufferingEnded",currentTime:b};this.addEventToPool(a,d,c);},a.prototype.getSessionState=function(a){return this.eventPool[a]?this.eventPool[a].currentState||"IDLE":"IDLE"},a.prototype.dispatchNow=function(){var a=arguments.length<=0||void 0===arguments[0]||arguments[0];this.cycle(a,!0);},a.prototype.exitOngoingSession=function(a){var b=this,c=Object.keys(this.eventPool);c.map(function(c){b.eventPool[c]&&b.dispose(c,a);});},a.prototype.setCustomAttribute=function(a,b){this.customAttributes||this.resetAnalyticsCustomAttributes(),this.customAttributes[a]=b;},a.prototype.clearCustomAttributes=function(){this.customAttributes={};},a.prototype.removeSession=function(a){var b=!(arguments.length<=1||void 0===arguments[1])&&arguments[1];if(b===!0)delete this.eventPool[a];else{var c=this.eventPool[a];c&&(c.currentState="REMOVED");}},a.prototype.hasDataToSend=function(){for(var a=Object.keys(this.eventPool),b=0;b<a.length;++b)if(this.eventPool[a[b]].events.length>0)return!0;return!1},a.prototype.sendData=function(){var a=this,b=arguments.length<=0||void 0===arguments[0]||arguments[0],c=!(arguments.length<=1||void 0===arguments[1])&&arguments[1];if(!this.pendingRequest_){var d=!1;this.pendingRequest_=!0;var e=void 0;e="undefined"!=typeof Worker&&this.props_.disableWebWorkers!==!0?m.setTimeout(function(){a.pendingRequest_=!1,e=void 0;},2*this.EVENT_PURGE_TIME_DEFAULT):setTimeout(function(){a.pendingRequest_=!1,e=void 0;},2*this.EVENT_PURGE_TIME_DEFAULT);var f=Object.keys(this.eventPool);f.map(function(f){var g=a.eventPool[f];if(g){if(!f)return g.events=[],void a.removeSession(f,!0);if("PLAYING"===g.currentState&&0===g.events.length&&c&&g.events.push({EventType:"Playback.Heartbeat",Timestamp:(new Date).getTime(),OffsetTime:Math.floor(1e3*g.currentTime)}),"IDLE"!==g.currentState&&"REMOVED"!==g.currentState){if(0===g.events.length)return void("FINISHED"===g.currentState&&a.removeSession(f));var h={DispatchTime:(new Date).getTime(),Customer:a.customer_,BusinessUnit:a.businessUnit_,Payload:g.events,SessionId:f,ClockOffset:g.clockOffset};if(a.debugLog("Sending analytics - sessionId: "+f+" and params: ",h),g.retries>a.MAX_RETRIES||g.forbidden===!0)return void(g.events=[]);Math.abs(a.communicationCurrentDate-a.lastCommunicationDate)>a.DEVICE_CLOCK_CHECK_THRESHOLD&&a.initRequest(f),d=!0,a.sendRequest(b,h,function(b,c){if(e)try{"undefined"!=typeof Worker&&a.props_.disableWebWorkers!==!0?(m.clearTimeout(e),e=void 0):(clearTimeout(e),e=void 0);}catch(d){}a.pendingRequest_=!1;var h=b&&b.httpCode?b.httpCode:200;"undefined"!=typeof c||200!==h?(401===h&&(g.forbidden=!0),a.debugLog("Error sending request to backend",c),g.retries++):(g.events=[],g.retries=0,"FINISHED"===g.currentState&&a.removeSession(f));});}}}),d||(this.pendingRequest_=!1);}},a.prototype.cycle=function(){var a=arguments.length<=0||void 0===arguments[0]||arguments[0],b=!(arguments.length<=1||void 0===arguments[1])&&arguments[1];this.communicationCurrentDate=new Date,this.communicationCurrentTime+=this.CYCLE_TIME,this.hasDataToSend()?(b||this.lastCommunicationTime+this.EVENT_PURGE_TIME_DEFAULT<this.communicationCurrentTime)&&(this.sendData(a),this.lastCommunicationTime=this.communicationCurrentTime,this.lastCommunicationDate=this.communicationCurrentDate):(b||this.lastCommunicationTime+this.TIME_WITHOUT_BEAT_DEFAULT<this.communicationCurrentTime)&&(this.sendData(a,!0),this.lastCommunicationTime=this.communicationCurrentTime,this.lastCommunicationDate=this.communicationCurrentDate);},a.prototype.sendRequest=function(a,b,c){var d=new XMLHttpRequest;d.open("POST",this.serverURL_+"/eventsink/send",!0),d.setRequestHeader("Content-type","application/json"),d.setRequestHeader("Authorization","Bearer "+this.sessionToken_),d.onload=function(){var a=JSON.parse(this.responseText);c(a);},d.onerror=function(a){c(null,a);},d.send(JSON.stringify(b));},a.prototype.initRequest=function(a,b,c){var d=this,e=(new Date).getTime(),f=new XMLHttpRequest;f.open("POST",this.serverURL_+"/eventsink/init",!0),f.setRequestHeader("Content-type","application/json"),f.setRequestHeader("Authorization","Bearer "+this.sessionToken_),f.onload=function(){var c=(new Date).getTime(),g=JSON.parse(f.responseText);if(d.determineClockOffset(a,g,e,c),g&&g.settings){g.settings;g.settings.includeDeviceMetrics&&(d.includeDeviceMetrics_=!!g.settings.includeDeviceMetrics);}b&&b();},f.onerror=function(a){d.debugLog("Unable to init. Aborting."),c&&c();};var g={Customer:this.customer_,BusinessUnit:this.businessUnit_,SessionId:a};f.send(JSON.stringify(g));},a.prototype.debugLog=function(a,b){b=b||"",this.debug_;},a.prototype.addDeviceInfoEvent=function(a){var b=this.eventPool[a];if(this.includeDeviceMetrics_&&b&&b.events&&b.events.length){var c={Timestamp:(new Date).getTime(),EventType:"Device.Info",DeviceModel:this.deviceInfoData_.deviceModel||"Desktop",UserAgent:this.deviceInfoData_.userAgent||i["default"].navigator.userAgent,Height:this.deviceInfoData_.screenHeight||i["default"].screen.height,Width:this.deviceInfoData_.screenWidth||i["default"].screen.width,Model:this.deviceInfoData_.model||i["default"].navigator.appName,Name:this.deviceInfoData_.deviceName||i["default"].navigator.product,OS:this.deviceInfoData_.deviceOS||k["default"].os.family,OSVersion:this.deviceInfoData_.deviceOSVersion||k["default"].os.version,Type:this.deviceInfoData_.type||"WEB"};(this.deviceInfoData_.deviceManufacturer||k["default"].manufacturer)&&(c.Manufacturer=this.deviceInfoData_.deviceManufacturer||k["default"].manufacturer),this.deviceInfoData_.deviceId&&(c.DeviceId=this.deviceInfoData_.deviceId),b.events.push(c);}},a.prototype.determineClockOffset=function(a,b,c,d){var e=this.eventPool[a];e&&(e.clockOffset=Math.floor((d-b.repliedTime+c-b.receivedTime)/2));},a.prototype.createPool=function(a){var b=this;this.eventPool[a]={currentState:"IDLE",currentTime:0,clockOffset:0,events:[],retries:0,forbidden:!1},this.initRequest(a,function(){return b.addDeviceInfoEvent(a)});},a.prototype.addEventToPool=function(a,b,c){var d=!(arguments.length<=3||void 0===arguments[3])&&arguments[3];if(!d||!this.eventPool[a]||"FINISHED"!==this.eventPool[a].currentState&&"REMOVED"!==this.eventPool[a].currentState){this.eventPool[a]||this.createPool(a);var e=this.eventsSkeleton[b.type];if(!e)return void this.debugLog("Unknown playback event: ",b);var f={Timestamp:(new Date).getTime(),EventType:"Playback."+e.event};e.includeOffset&&(f.OffsetTime=Math.floor(1e3*b.currentTime)),e.attributes&&"function"==typeof e.attributes&&(f=this.objectAssign(f,e.attributes(c))),this.eventPool[a].events.push(f),this.debugLog("added "+e.event+" to queue");}},a.prototype.changeSessionState=function(a,b){this.eventPool[a]||this.createPool(a),this.eventPool[a].currentState=b;},a.prototype.initEventSkeleton=function(){var a={};return a.Completed={event:"Completed",autoListener:!1},a.PlayerReady={event:"PlayerReady",autoListener:!1,attributes:function(a){var b={Technology:a.techName,PlayerVersion:a.version};return a.techVersion&&(b.TechVersion=a.techVersion),a.deviceAppInfo&&(b.DeviceAppInfo=a.deviceAppInfo),a.playMode&&(b.PlayMode=a.playMode),b}},a.Resumed={event:"Resumed",autoListener:!1,includeOffset:!0},a.BufferingStarted={event:"BufferingStarted",includeOffset:!0},a.BufferingEnded={event:"BufferingEnded",includeOffset:!0},a.ScrubbedTo={event:"ScrubbedTo",includeOffset:!0},a.Created={event:"Created",attributes:function(a){var b={};return"undefined"!=typeof a.autoplay&&(b.AutoPlay=a.autoplay),a.techName&&(b.Technology=a.techName),a.player&&(b.Player=a.player),a.version&&(b.Version=a.version),a.requestId&&(b.RequestId=a.requestId),a.techVersion&&(b.TechVersion=a.techVersion),a.deviceAppInfo&&(b.DeviceAppInfo=a.deviceAppInfo),a.playMode&&(b.PlayMode=a.playMode),b}},a.StartCasting={event:"StartCasting",includeOffset:!0},a.StopCasting={event:"StopCasting",includeOffset:!0},a.Paused={event:"Paused",includeOffset:!0},a.BitrateChanged={event:"BitrateChanged",includeOffset:!0,attributes:function(a){return{Bitrate:a.bitrate}}},a.DRM={event:"DRM",includeOffset:!1,attributes:function b(a){var b={};return a.message&&(b.Message=a.message),a.code&&(b.Code=a.code),a.info&&(b.Info=a.info),b}},a.Error={event:"Error",includeOffset:!0,attributes:function c(a){var c={};return a.errorCode&&(c.Code=a.errorCode),a.errorMessage?c.Message=a.errorMessage:c.Message="Unknown Error",a.errorInfo&&(c.Info=a.errorInfo),a.errorDetails&&(c.Details=a.errorDetails),c}},a.HandshakeStarted={event:"HandshakeStarted",autoListener:!1,attributes:function d(a){if(!a.assetId)return{};var d={AssetId:a.assetId};return a.programId&&(d.ProgramId=a.programId),d}},a.ProgramChanged={event:"ProgramChanged",includeOffset:!0,autoListener:!1,attributes:function(a){return a.programId?{ProgramId:a.programId}:{}}},a.Aborted={event:"Aborted",autoListener:!1,includeOffset:!0},a.Started={event:"Started",autoListener:!1,includeOffset:!0,attributes:function e(a){var e={};return a.bitrate&&(e.Bitrate=a.bitrate),a.duration&&(e.VideoLength=1e3*a.duration),a.mediaLocator&&(e.MediaLocator=a.mediaLocator),a.attributes&&(e.Attributes=a.attributes),a.referenceTime&&(e.ReferenceTime=a.referenceTime),a.playMode&&(e.PlayMode=a.playMode),e}},a},a.prototype.objectAssign=function(a,b){for(var c,d,e=1;e<arguments.length;++e){d=arguments[e];for(c in d)Object.prototype.hasOwnProperty.call(d,c)&&(a[c]=d[c]);}return a},g(a,[{key:"debug",get:function(){return this.debug_},set:function(a){this.debug_=a;}},{key:"deviceAppInfo",get:function(){return this.deviceInfoData_?this.deviceInfoData_.deviceAppInfo:null}}]),a}();c["default"]=n,b.exports=c["default"];},{"./platform":5,"global/window":1,"worker-timers":3}],5:[function(b,c,d){(function(b){"use strict";(function(){function e(a){return a=String(a),a.charAt(0).toUpperCase()+a.slice(1)}function f(a,b,c){var d={"10.0":"10",6.4:"10 Technical Preview",6.3:"8.1",6.2:"8",6.1:"7 / Server 2008 R2","6.0":"Vista / Server 2008",5.2:"XP 64-bit / Server 2003",5.1:"XP",5.01:"2000 SP1","5.0":"2000","4.0":"NT","4.90":"ME"};return b&&c&&/^Win/i.test(a)&&!/^Windows Phone /i.test(a)&&(d=d[/[\d.]+$/.exec(a)])&&(a="Windows "+d),a=String(a),b&&c&&(a=a.replace(RegExp(b,"i"),c)),a=h(a.replace(/ ce$/i," CE").replace(/\bhpw/i,"web").replace(/\bMacintosh\b/,"Mac OS").replace(/_PowerPC\b/i," OS").replace(/\b(OS X) [^ \d]+/i,"$1").replace(/\bMac (OS X)\b/,"$1").replace(/\/(\d)/," $1").replace(/_/g,".").replace(/(?: BePC|[ .]*fc[ \d.]+)$/i,"").replace(/\bx86\.64\b/gi,"x86_64").replace(/\b(Windows Phone) OS\b/,"$1").replace(/\b(Chrome OS \w+) [\d.]+\b/,"$1").split(" on ")[0])}function g(a,b){var c=-1,d=a?a.length:0;if("number"==typeof d&&d>-1&&d<=v)for(;++c<d;)b(a[c],c,a);else i(a,b);}function h(a){return a=n(a),/^(?:webOS|i(?:OS|P))/.test(a)?a:e(a)}function i(a,b){for(var c in a)z.call(a,c)&&b(a[c],c,a);}function j(a){return null==a?e(a):A.call(a).slice(8,-1)}function k(a,b){var c=null!=a?typeof a[b]:"number";return!(/^(?:boolean|number|string|undefined)$/.test(c)||"object"==c&&!a[b])}function l(a){return String(a).replace(/([ -])(?!$)/g,"$1?")}function m(a,b){var c=null;return g(a,function(d,e){c=b(c,d,e,a);}),c}function n(a){return String(a).replace(/^ +| +$/g,"")}function o(a){function b(b){return m(b,function(b,c){return b||RegExp("\\b"+(c.pattern||l(c))+"\\b","i").exec(a)&&(c.label||c)})}function c(b){return m(b,function(b,c,d){return b||(c[X]||c[/^[a-z]+(?: +[a-z]+\b)*/i.exec(X)]||RegExp("\\b"+l(d)+"(?:\\b|\\w*\\d)","i").exec(a))&&d})}function d(b){return m(b,function(b,c){return b||RegExp("\\b"+(c.pattern||l(c))+"\\b","i").exec(a)&&(c.label||c)})}function e(b){return m(b,function(b,c){var d=c.pattern||l(c);return!b&&(b=RegExp("\\b"+d+"(?:/[\\d.]+|[ \\w.]*)","i").exec(a))&&(b=f(b,d,c.label||c)),b})}function g(b){return m(b,function(b,c){var d=c.pattern||l(c);return!b&&(b=RegExp("\\b"+d+" *\\d+[.\\w_]*","i").exec(a)||RegExp("\\b"+d+"(?:; *(?:[a-z]+[_-])?[a-z]+\\d+|[^ ();-]*)","i").exec(a))&&((b=String(c.label&&!RegExp(d,"i").test(c.label)?c.label:b).split("/"))[1]&&!/[\d.]+/.test(b[0])&&(b[0]+=" "+b[1]),c=c.label||c,b=h(b[0].replace(RegExp(d,"i"),c).replace(RegExp("; *(?:"+c+"[_-])?","i")," ").replace(RegExp("("+c+")[-_.]?(\\w)","i"),"$1 $2"))),b})}function p(b){return m(b,function(b,c){return b||(RegExp(c+"(?:-[\\d.]+/|(?: for [\\w-]+)?[ /-])([\\d.]+[^ ();/_-]*)","i").exec(a)||0)[1]||null})}function s(){return this.description||""}var t=q,u=a&&"object"==typeof a&&"String"!=j(a);u&&(t=a,a=null);var v=t.navigator||{},y=v.userAgent||"";a||(a=y);var z,B,C=u||x==r,D=u?!!v.likeChrome:/\bChrome\b/.test(a)&&!/internal|\n/i.test(A.toString()),E="Object",F=u?E:"ScriptBridgingProxyObject",G=u?E:"Environment",H=u&&t.java?"JavaPackage":j(t.java),I=u?E:"RuntimeObject",J=/\bJava/.test(H)&&t.java,K=J&&j(t.environment)==G,L=J?"a":"α",M=J?"b":"β",N=t.document||{},O=t.operamini||t.opera,P=w.test(P=u&&O?O["[[Class]]"]:j(O))?P:O=null,Q=a,R=[],S=null,T=a==y,U=T&&O&&"function"==typeof O.version&&O.version(),V=b([{label:"EdgeHTML",pattern:"Edge"},"Trident",{label:"WebKit",pattern:"AppleWebKit"},"iCab","Presto","NetFront","Tasman","KHTML","Gecko"]),W=d(["Adobe AIR","Arora","Avant Browser","Breach","Camino","Epiphany","Fennec","Flock","Galeon","GreenBrowser","iCab","Iceweasel","K-Meleon","Konqueror","Lunascape","Maxthon",{label:"Microsoft Edge",pattern:"Edge"},"Midori","Nook Browser","PaleMoon","PhantomJS","Raven","Rekonq","RockMelt","SeaMonkey",{label:"Silk",pattern:"(?:Cloud9|Silk-Accelerated)"},"Sleipnir","SlimBrowser",{label:"SRWare Iron",pattern:"Iron"},"Sunrise","Swiftfox","WebPositive","Opera Mini",{label:"Opera Mini",pattern:"OPiOS"},"Opera",{label:"Opera",pattern:"OPR"},"Chrome",{label:"Chrome Mobile",pattern:"(?:CriOS|CrMo)"},{label:"Firefox",pattern:"(?:Firefox|Minefield)"},{label:"Firefox Mobile",pattern:"FxiOS"},{label:"IE",pattern:"IEMobile"},{label:"IE",pattern:"MSIE"},"Safari"]),X=g([{label:"BlackBerry",pattern:"BB10"},"BlackBerry",{label:"Galaxy S",pattern:"GT-I9000"},{label:"Galaxy S2",pattern:"GT-I9100"},{label:"Galaxy S3",pattern:"GT-I9300"},{label:"Galaxy S4",pattern:"GT-I9500"},"Google TV","Lumia","iPad","iPod","iPhone","Kindle",{label:"Kindle Fire",pattern:"(?:Cloud9|Silk-Accelerated)"},"Nexus","Nook","PlayBook","PlayStation 3","PlayStation 4","PlayStation Vita","TouchPad","Transformer",{label:"Wii U",pattern:"WiiU"},"Wii","Xbox One",{label:"Xbox 360",pattern:"Xbox"},"Xoom"]),Y=c({Apple:{iPad:1,iPhone:1,iPod:1},Amazon:{Kindle:1,"Kindle Fire":1},Asus:{Transformer:1},"Barnes & Noble":{Nook:1},BlackBerry:{PlayBook:1},Google:{"Google TV":1,Nexus:1},HP:{TouchPad:1},HTC:{},LG:{},Microsoft:{Xbox:1,"Xbox One":1},Motorola:{Xoom:1},Nintendo:{"Wii U":1,Wii:1},Nokia:{Lumia:1},Samsung:{"Galaxy S":1,"Galaxy S2":1,"Galaxy S3":1,"Galaxy S4":1},Sony:{"PlayStation 4":1,"PlayStation 3":1,"PlayStation Vita":1}}),Z=e(["Windows Phone ","Android","CentOS",{label:"Chrome OS",pattern:"CrOS"},"Debian","Fedora","FreeBSD","Gentoo","Haiku","Kubuntu","Linux Mint","OpenBSD","Red Hat","SuSE","Ubuntu","Xubuntu","Cygwin","Symbian OS","hpwOS","webOS ","webOS","Tablet OS","Linux","Mac OS X","Macintosh","Mac","Windows 98;","Windows "]);if(V&&(V=[V]),Y&&!X&&(X=g([Y])),(z=/\bGoogle TV\b/.exec(X))&&(X=z[0]),/\bSimulator\b/i.test(a)&&(X=(X?X+" ":"")+"Simulator"),"Opera Mini"==W&&/\bOPiOS\b/.test(a)&&R.push("running in Turbo/Uncompressed mode"),/^iP/.test(X)?(W||(W="Safari"),Z="iOS"+((z=/ OS ([\d_]+)/i.exec(a))?" "+z[1].replace(/_/g,"."):"")):"Konqueror"!=W||/buntu/i.test(Z)?Y&&"Google"!=Y&&(/Chrome/.test(W)&&!/\bMobile Safari\b/i.test(a)||/\bVita\b/.test(X))?(W="Android Browser",Z=/\bAndroid\b/.test(Z)?Z:"Android"):"Silk"==W?(/\bMobi/i.test(a)||(Z="Android",R.unshift("desktop mode")),/Accelerated *= *true/i.test(a)&&R.unshift("accelerated")):"PaleMoon"==W&&(z=/\bFirefox\/([\d.]+)\b/.exec(a))?R.push("identifying as Firefox "+z[1]):"Firefox"==W&&(z=/\b(Mobile|Tablet|TV)\b/i.exec(a))?(Z||(Z="Firefox OS"),X||(X=z[1])):W&&!(z=!/\bMinefield\b/i.test(a)&&/\b(?:Firefox|Safari)\b/.exec(W))||(W&&!X&&/[\/,]|^[^(]+?\)/.test(a.slice(a.indexOf(z+"/")+8))&&(W=null),(z=X||Y||Z)&&(X||Y||/\b(?:Android|Symbian OS|Tablet OS|webOS)\b/.test(Z))&&(W=/[a-z]+(?: Hat)?/i.exec(/\bAndroid\b/.test(Z)?Z:z)+" Browser")):Z="Kubuntu",U||(U=p(["(?:Cloud9|CriOS|CrMo|Edge|FxiOS|IEMobile|Iron|Opera ?Mini|OPiOS|OPR|Raven|Silk(?!/[\\d.]+$))","Version",l(W),"(?:Firefox|Minefield|NetFront)"])),(z="iCab"==V&&parseFloat(U)>3&&"WebKit"||/\bOpera\b/.test(W)&&(/\bOPR\b/.test(a)?"Blink":"Presto")||/\b(?:Midori|Nook|Safari)\b/i.test(a)&&!/^(?:Trident|EdgeHTML)$/.test(V)&&"WebKit"||!V&&/\bMSIE\b/i.test(a)&&("Mac OS"==Z?"Tasman":"Trident")||"WebKit"==V&&/\bPlayStation\b(?! Vita\b)/i.test(W)&&"NetFront")&&(V=[z]),"IE"==W&&(z=(/; *(?:XBLWP|ZuneWP)(\d+)/i.exec(a)||0)[1])?(W+=" Mobile",Z="Windows Phone "+(/\+$/.test(z)?z:z+".x"),R.unshift("desktop mode")):/\bWPDesktop\b/i.test(a)?(W="IE Mobile",Z="Windows Phone 8.x",R.unshift("desktop mode"),U||(U=(/\brv:([\d.]+)/.exec(a)||0)[1])):"IE"!=W&&"Trident"==V&&(z=/\brv:([\d.]+)/.exec(a))&&(W&&R.push("identifying as "+W+(U?" "+U:"")),W="IE",U=z[1]),T){if(k(t,"global"))if(J&&(z=J.lang.System,Q=z.getProperty("os.arch"),Z=Z||z.getProperty("os.name")+" "+z.getProperty("os.version")),C&&k(t,"system")&&(z=[t.system])[0]){Z||(Z=z[0].os||null);try{z[1]=t.require("ringo/engine").version,U=z[1].join("."),W="RingoJS";}catch($){z[0].global.system==t.system&&(W="Narwhal");}}else"object"==typeof t.process&&(z=t.process)?(W="Node.js",Q=z.arch,Z=z.platform,U=/[\d.]+/.exec(z.version)[0]):K&&(W="Rhino");else j(z=t.runtime)==F?(W="Adobe AIR",Z=z.flash.system.Capabilities.os):j(z=t.phantom)==I?(W="PhantomJS",U=(z=z.version||null)&&z.major+"."+z.minor+"."+z.patch):"number"==typeof N.documentMode&&(z=/\bTrident\/(\d+)/i.exec(a))&&(U=[U,N.documentMode],(z=+z[1]+4)!=U[1]&&(R.push("IE "+U[1]+" mode"),V&&(V[1]=""),U[1]=z),U="IE"==W?String(U[1].toFixed(1)):U[0]);Z=Z&&h(Z);}U&&(z=/(?:[ab]|dp|pre|[ab]\d+pre)(?:\d+\+?)?$/i.exec(U)||/(?:alpha|beta)(?: ?\d)?/i.exec(a+";"+(T&&v.appMinorVersion))||/\bMinefield\b/i.test(a)&&"a")&&(S=/b/i.test(z)?"beta":"alpha",U=U.replace(RegExp(z+"\\+?$"),"")+("beta"==S?M:L)+(/\d+\+?/.exec(z)||"")),"Fennec"==W||"Firefox"==W&&/\b(?:Android|Firefox OS)\b/.test(Z)?W="Firefox Mobile":"Maxthon"==W&&U?U=U.replace(/\.[\d.]+/,".x"):/\bXbox\b/i.test(X)?(Z=null,"Xbox 360"==X&&/\bIEMobile\b/.test(a)&&R.unshift("mobile mode")):!/^(?:Chrome|IE|Opera)$/.test(W)&&(!W||X||/Browser|Mobi/.test(W))||"Windows CE"!=Z&&!/Mobi/i.test(a)?"IE"==W&&T&&null===t.external?R.unshift("platform preview"):(/\bBlackBerry\b/.test(X)||/\bBB10\b/.test(a))&&(z=(RegExp(X.replace(/ +/g," *")+"/([.\\d]+)","i").exec(a)||0)[1]||U)?(z=[z,/BB10/.test(a)],Z=(z[1]?(X=null,Y="BlackBerry"):"Device Software")+" "+z[0],U=null):this!=i&&"Wii"!=X&&(T&&O||/Opera/.test(W)&&/\b(?:MSIE|Firefox)\b/i.test(a)||"Firefox"==W&&/\bOS X (?:\d+\.){2,}/.test(Z)||"IE"==W&&(Z&&!/^Win/.test(Z)&&U>5.5||/\bWindows XP\b/.test(Z)&&U>8||8==U&&!/\bTrident\b/.test(a)))&&!w.test(z=o.call(i,a.replace(w,"")+";"))&&z.name&&(z="ing as "+z.name+((z=z.version)?" "+z:""),w.test(W)?(/\bIE\b/.test(z)&&"Mac OS"==Z&&(Z=null),z="identify"+z):(z="mask"+z,W=P?h(P.replace(/([a-z])([A-Z])/g,"$1 $2")):"Opera",/\bIE\b/.test(z)&&(Z=null),T||(U=null)),V=["Presto"],R.push(z)):W+=" Mobile",(z=(/\bAppleWebKit\/([\d.]+\+?)/i.exec(a)||0)[1])&&(z=[parseFloat(z.replace(/\.(\d)$/,".0$1")),z],"Safari"==W&&"+"==z[1].slice(-1)?(W="WebKit Nightly",S="alpha",U=z[1].slice(0,-1)):U!=z[1]&&U!=(z[2]=(/\bSafari\/([\d.]+\+?)/i.exec(a)||0)[1])||(U=null),z[1]=(/\bChrome\/([\d.]+)/i.exec(a)||0)[1],537.36==z[0]&&537.36==z[2]&&parseFloat(z[1])>=28&&"WebKit"==V&&(V=["Blink"]),T&&(D||z[1])?(V&&(V[1]="like Chrome"),z=z[1]||(z=z[0],z<530?1:z<532?2:z<532.05?3:z<533?4:z<534.03?5:z<534.07?6:z<534.1?7:z<534.13?8:z<534.16?9:z<534.24?10:z<534.3?11:z<535.01?12:z<535.02?"13+":z<535.07?15:z<535.11?16:z<535.19?17:z<536.05?18:z<536.1?19:z<537.01?20:z<537.11?"21+":z<537.13?23:z<537.18?24:z<537.24?25:z<537.36?26:"Blink"!=V?"27":"28")):(V&&(V[1]="like Safari"),z=z[0],z=z<400?1:z<500?2:z<526?3:z<533?4:z<534?"4+":z<535?5:z<537?6:z<538?7:z<601?8:"8"),V&&(V[1]+=" "+(z+="number"==typeof z?".x":/[.+]/.test(z)?"":"+")),"Safari"==W&&(!U||parseInt(U)>45)&&(U=z)),"Opera"==W&&(z=/\bzbov|zvav$/.exec(Z))?(W+=" ",R.unshift("desktop mode"),"zvav"==z?(W+="Mini",U=null):W+="Mobile",Z=Z.replace(RegExp(" *"+z+"$"),"")):"Safari"==W&&/\bChrome\b/.exec(V&&V[1])&&(R.unshift("desktop mode"),W="Chrome Mobile",U=null,/\bOS X\b/.test(Z)?(Y="Apple",Z="iOS 4.3+"):Z=null),U&&0==U.indexOf(z=/[\d.]+$/.exec(Z))&&a.indexOf("/"+z+"-")>-1&&(Z=n(Z.replace(z,""))),V&&!/\b(?:Avant|Nook)\b/.test(W)&&(/Browser|Lunascape|Maxthon/.test(W)||"Safari"!=W&&/^iOS/.test(Z)&&/\bSafari\b/.test(V[1])||/^(?:Adobe|Arora|Breach|Midori|Opera|Phantom|Rekonq|Rock|Sleipnir|Web)/.test(W)&&V[1])&&(z=V[V.length-1])&&R.push(z),R.length&&(R=["("+R.join("; ")+")"]),Y&&X&&X.indexOf(Y)<0&&R.push("on "+Y),X&&R.push((/^on /.test(R[R.length-1])?"":"on ")+X),Z&&(z=/ ([\d.+]+)$/.exec(Z)||(B=/^[a-z]+ ([\d.+]+) \//i.exec(Z)),Z={architecture:32,family:z&&!B?Z.replace(z[0],""):Z,version:z?z[1]:null,toString:function(){var a=this.version;return this.family+(a&&!B?" "+a:"")+(64==this.architecture?" 64-bit":"")}}),(z=/\b(?:AMD|IA|Win|WOW|x86_|x)64\b/i.exec(Q))&&!/\bi686\b/i.test(Q)&&(Z&&(Z.architecture=64,Z.family=Z.family.replace(RegExp(" *"+z),"")),W&&(/\bWOW64\b/i.test(a)||T&&/\w(?:86|32)$/.test(v.cpuClass||v.platform)&&!/\bWin64; x64\b/i.test(a))&&R.unshift("32-bit")),
-a||(a=null);var _={};return _.description=a,_.layout=V&&V[0],_.manufacturer=Y,_.name=W,_.prerelease=S,_.product=X,_.ua=a,_.version=W&&U,_.os=Z||{architecture:null,family:null,version:null,toString:function(){return"null"}},_.parse=o,_.toString=s,_.version&&R.unshift(U),_.name&&R.unshift(W),Z&&W&&(Z!=String(Z).split(" ")[0]||Z!=W.split(" ")[0]&&!X)&&R.push(X?"("+Z+")":"on "+Z),R.length&&(_.description=R.join(" ")),_}var p={"function":!0,object:!0},q=p[typeof window]&&window||this,r=q,s=p[typeof d]&&d,t=p[typeof c]&&c&&!c.nodeType&&c,u=s&&t&&"object"==typeof b&&b;!u||u.global!==u&&u.window!==u&&u.self!==u||(q=u);var v=Math.pow(2,53)-1,w=/\bOpera/,x=this,y=Object.prototype,z=y.hasOwnProperty,A=y.toString;"function"==typeof a&&"object"==typeof a.amd&&a.amd?a(function(){return o()}):s&&t?i(o(),function(a,b){s[b]=a;}):q.platform=o();}).call(void 0);}).call(this,"undefined"!=typeof commonjsGlobal?commonjsGlobal:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{});},{}]},{},[4])(4)});
+!function(a){module.exports=a();}(function(){var a;return function b(a,c,d){function e(g,h){if(!c[g]){if(!a[g]){var i="function"==typeof commonjsRequire&&commonjsRequire;if(!h&&i)return i(g,!0);if(f)return f(g,!0);var j=new Error("Cannot find module '"+g+"'");throw j.code="MODULE_NOT_FOUND",j}var k=c[g]={exports:{}};a[g][0].call(k.exports,function(b){var c=a[g][1][b];return e(c?c:b)},k,k.exports,b,a,c,d);}return c[g].exports}for(var f="function"==typeof commonjsRequire&&commonjsRequire,g=0;g<d.length;g++)e(d[g]);return e}({1:[function(a,b,c){(function(a){var c;c="undefined"!=typeof window?window:"undefined"!=typeof a?a:"undefined"!=typeof self?self:{},b.exports=c;}).call(this,"undefined"!=typeof commonjsGlobal?commonjsGlobal:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{});},{}],2:[function(b,c,d){!function(e,f){"object"==typeof d&&"undefined"!=typeof c?f(d,b("worker-timers-broker")):"function"==typeof a&&a.amd?a(["exports","worker-timers-broker"],f):f(e.workerTimers={},e.workerTimersBroker);}(this,function(a,b){"use strict";var c='!function(r){var n={};function o(e){if(n[e])return n[e].exports;var t=n[e]={i:e,l:!1,exports:{}};return r[e].call(t.exports,t,t.exports,o),t.l=!0,t.exports}o.m=r,o.c=n,o.d=function(e,t,r){o.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:r})},o.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},o.t=function(t,e){if(1&e&&(t=o(t)),8&e)return t;if(4&e&&"object"==typeof t&&t&&t.__esModule)return t;var r=Object.create(null);if(o.r(r),Object.defineProperty(r,"default",{enumerable:!0,value:t}),2&e&&"string"!=typeof t)for(var n in t)o.d(r,n,function(e){return t[e]}.bind(null,n));return r},o.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return o.d(t,"a",t),t},o.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},o.p="",o(o.s=0)}([function(e,t,r){"use strict";r.r(t);r(1)},function(e,t,r){!function(){"use strict";var w=new Map,T=new Map,b=function(e,t){var r,n;if("performance"in self){var o=performance.now(),i=Math.max(0,o-t);r=o,n=e-i}else r=Date.now(),n=e;var a=r+n;return{expected:a,remainingDelay:n}},M=function e(t,r,n,o){var i="performance"in self?performance.now():Date.now();n<i?postMessage({id:null,method:"call",params:{timerId:r,timerType:o}}):t.set(r,setTimeout(e,n-i,t,r,n,o))};addEventListener("message",function(e){var t,r,n,o,i,a,u,s,c=e.data;try{if("clear"===c.method){var l=c.id,d=c.params,f=d.timerId,p=d.timerType;if("interval"===p)!function(e){var t=w.get(e);if(void 0===t)throw new Error(\'There is no interval scheduled with the given id "\'.concat(e,\'".\'));clearTimeout(t),w.delete(e)}(f),postMessage({error:null,id:l});else{if("timeout"!==p)throw new Error(\'The given type "\'.concat(p,\'" is not supported\'));!function(e){var t=T.get(e);if(void 0===t)throw new Error(\'There is no timeout scheduled with the given id "\'.concat(e,\'".\'));clearTimeout(t),T.delete(e)}(f),postMessage({error:null,id:l})}}else{if("set"!==c.method)throw new Error(\'The given method "\'.concat(c.method,\'" is not supported\'));var m=c.params,v=m.delay,h=m.now,g=m.timerId,y=m.timerType;if("interval"===y)i=g,a=b(v,h),u=a.expected,s=a.remainingDelay,w.set(i,setTimeout(M,s,w,i,u,"interval"));else{if("timeout"!==y)throw new Error(\'The given type "\'.concat(y,\'" is not supported\'));t=g,r=b(v,h),n=r.expected,o=r.remainingDelay,T.set(t,setTimeout(M,o,T,t,n,"timeout"))}}}catch(e){postMessage({error:{message:e.message},id:c.id,result:null})}})}()}]);',d=new Blob([c],{type:"application/javascript; charset=utf-8"}),e=URL.createObjectURL(d),f=b.load(e),g=f.clearInterval,h=f.clearTimeout,i=f.setInterval,j=f.setTimeout;URL.revokeObjectURL(e),a.clearInterval=g,a.clearTimeout=h,a.setInterval=i,a.setTimeout=j,Object.defineProperty(a,"__esModule",{value:!0});});},{"worker-timers-broker":3}],3:[function(b,c,d){!function(e,f){"object"==typeof d&&"undefined"!=typeof c?f(d,b("fast-unique-numbers")):"function"==typeof a&&a.amd?a(["exports","fast-unique-numbers"],f):f(e.workerTimersBroker={},e.fastUniqueNumbers);}(this,function(a,b){"use strict";var c=function(a){return void 0!==a.method&&"call"===a.method},d=function(a){return null===a.error&&"number"==typeof a.id},e=function(a){var e=new Map,f=new Map,g=new Map,h=new Worker(a);h.addEventListener("message",function(a){var b=a.data;if(c(b)){var h=b.params,i=h.timerId,j=h.timerType;if("interval"===j){var k=e.get(i);if("number"==typeof k){var l=g.get(k);if(void 0===l||l.timerId!==i||l.timerType!==j)throw new Error("The timer is in an undefined state.")}else{if("undefined"==typeof k)throw new Error("The timer is in an undefined state.");k();}}else if("timeout"===j){var m=f.get(i);if("number"==typeof m){var n=g.get(m);if(void 0===n||n.timerId!==i||n.timerType!==j)throw new Error("The timer is in an undefined state.")}else{if("undefined"==typeof m)throw new Error("The timer is in an undefined state.");m(),f["delete"](i);}}}else{if(!d(b)){var o=b.error.message;throw new Error(o)}var p=b.id,q=g.get(p);if(void 0===q)throw new Error("The timer is in an undefined state.");var r=q.timerId,s=q.timerType;g["delete"](p),"interval"===s?e["delete"](r):f["delete"](r);}});var i=function(a){var c=b.generateUniqueNumber(g);g.set(c,{timerId:a,timerType:"interval"}),e.set(a,c),h.postMessage({id:c,method:"clear",params:{timerId:a,timerType:"interval"}});},j=function(a){var c=b.generateUniqueNumber(g);g.set(c,{timerId:a,timerType:"timeout"}),f.set(a,c),h.postMessage({id:c,method:"clear",params:{timerId:a,timerType:"timeout"}});},k=function(a,c){var d=b.generateUniqueNumber(e);return e.set(d,function(){a(),"function"==typeof e.get(d)&&h.postMessage({id:null,method:"set",params:{delay:c,now:performance.now(),timerId:d,timerType:"interval"}});}),h.postMessage({id:null,method:"set",params:{delay:c,now:performance.now(),timerId:d,timerType:"interval"}}),d},l=function(a,c){var d=b.generateUniqueNumber(f);return f.set(d,a),h.postMessage({id:null,method:"set",params:{delay:c,now:performance.now(),timerId:d,timerType:"timeout"}}),d};return{clearInterval:i,clearTimeout:j,setInterval:k,setTimeout:l}};a.load=e,Object.defineProperty(a,"__esModule",{value:!0});});},{"fast-unique-numbers":4}],4:[function(b,c,d){!function(b,e){"object"==typeof d&&"undefined"!=typeof c?e(d):"function"==typeof a&&a.amd?a(["exports"],e):e(b.fastUniqueNumbers={});}(this,function(a){"use strict";var b=new WeakMap,c=Number.MAX_SAFE_INTEGER||9007199254740991,d=function(a,c){return b.set(a,c),c},e=function(a){var e=b.get(a),f=void 0===e?a.size:e>2147483648?0:e+1;if(!a.has(f))return d(a,f);if(a.size<1073741824){for(;a.has(f);)f=Math.floor(2147483648*Math.random());return d(a,f)}if(a.size>c)throw new Error("Congratulations, you created a collection of unique numbers which uses all available integers!");for(;a.has(f);)f=Math.floor(Math.random()*c);return d(a,f)},f=function(a){var b=e(a);return a.add(b),b};a.addUniqueNumber=f,a.generateUniqueNumber=e,Object.defineProperty(a,"__esModule",{value:!0});});},{}],5:[function(a,b,c){"use strict";function d(a){if(a&&a.__esModule)return a;var b={};if(null!=a)for(var c in a)Object.prototype.hasOwnProperty.call(a,c)&&(b[c]=a[c]);return b["default"]=a,b}function e(a){return a&&a.__esModule?a:{"default":a}}function f(a,b){if(!(a instanceof b))throw new TypeError("Cannot call a class as a function")}c.__esModule=!0;var g=function(){function a(a,b){for(var c=0;c<b.length;c++){var d=b[c];d.enumerable=d.enumerable||!1,d.configurable=!0,"value"in d&&(d.writable=!0),Object.defineProperty(a,d.key,d);}}return function(b,c,d){return c&&a(b.prototype,c),d&&a(b,d),b}}(),h=a("global/window"),i=e(h),j=a("./platform"),k=e(j),l=a("worker-timers"),m=d(l),n=function(){function a(b,c,d,e,g){var h=arguments.length<=5||void 0===arguments[5]?{}:arguments[5],i=arguments.length<=6||void 0===arguments[6]?{}:arguments[6];f(this,a),this.CYCLE_TIME=1e3,this.EVENT_PURGE_TIME_DEFAULT=3*this.CYCLE_TIME,this.TIME_WITHOUT_BEAT_DEFAULT=60*this.CYCLE_TIME,this.SERVER_URL_DEFAULT="",this.CUSTOMER_DEFAULT="",this.BUSINESS_UNIT_DEFAULT="",this.INCLUDE_DEVICE_METRICS_DEFAULT=!0,this.SESSION_TOKEN_DEFAULT="",this.SESSION_ID_DEFAULT="",this.DEBUG_DEFAULT=!1,this.MAX_RETRIES=20,this.DEVICE_CLOCK_CHECK_THRESHOLD=3e5,this.eventsSkeleton=this.initEventSkeleton(),this.customer_=c,this.businessUnit_=d,this.sessionToken_=e,this.serverURL_=b,this.includeDeviceMetrics_=!1,this.userId_=g,this.deviceInfoData_=h,this.props_=i||{},this.pendingRequest_=!1;}return a.prototype.init=function(){var a=this;this.cycleTimer&&("undefined"!=typeof Worker&&this.props_.disableWebWorkers!==!0?m.clearInterval(this.cycleTimer):clearInterval(this.cycleTimer)),"undefined"!=typeof Worker&&this.props_.disableWebWorkers!==!0?this.cycleTimer=m.setInterval(function(){return a.cycle()},this.CYCLE_TIME):this.cycleTimer=setInterval(function(){return a.cycle()},this.CYCLE_TIME),this.communicationCurrentTime=0,this.lastCommunicationTime=0,this.eventPool={};},a.prototype.clear=function(){this.eventPool={};},a.prototype.ok=function(a){var b=this.eventPool[a];return!!b&&(b.forbidden===!1&&b.retries<this.MAX_RETRIES)},a.prototype.created=function(a){var b=arguments.length<=1||void 0===arguments[1]?{}:arguments[1],c={type:"Created"};this.addEventToPool(a,c,b);},a.prototype.play=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"PlayerReady",currentTime:b};this.deviceAppInfo&&(c.deviceAppInfo=this.deviceAppInfo),this.addEventToPool(a,d,c);},a.prototype.playing=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"Started",currentTime:b};if(this.customAttributes){var e=Object.keys(this.customAttributes);e.length&&e.length>0&&(c.attributes=this.customAttributes);}this.addEventToPool(a,d,c),this.changeSessionState(a,"PLAYING");},a.prototype.paused=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"Paused",currentTime:b};this.addEventToPool(a,d,c,!0);},a.prototype.seek=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"ScrubbedTo",currentTime:b};this.addEventToPool(a,d,c,!0);},a.prototype.programChanged=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"ProgramChanged",currentTime:b};this.addEventToPool(a,d,c,!0);},a.prototype.startCasting=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"StartCasting",currentTime:b};this.addEventToPool(a,d,c,!0),this.changeSessionState(a,"FINISHED");},a.prototype.stopCasting=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"StopCasting",currentTime:b};this.addEventToPool(a,d,c,!0),this.changeSessionState(a,"FINISHED");},a.prototype.setCurrentTime=function(a,b){this.eventPool[a]&&(this.eventPool[a].currentTime=b);},a.prototype.handshake=function(a){var b=arguments.length<=1||void 0===arguments[1]?{}:arguments[1],c={type:"HandshakeStarted"};this.addEventToPool(a,c,b);},a.prototype.resume=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"Resumed",currentTime:b};this.addEventToPool(a,d,c,!0);},a.prototype.bitrateChanged=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"BitrateChanged",currentTime:b};this.addEventToPool(a,d,c,!0);},a.prototype.drmSessionUpdate=function(a){var b=arguments.length<=1||void 0===arguments[1]?{}:arguments[1],c={type:"DRM"};this.addEventToPool(a,c,b,!0);},a.prototype.endOfStream=function(a){var b=arguments.length<=1||void 0===arguments[1]?{}:arguments[1],c={type:"Completed"};this.addEventToPool(a,c,b,!0),this.changeSessionState(a,"FINISHED");},a.prototype.error=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"Error",currentTime:b};this.addEventToPool(a,d,c),this.changeSessionState(a,"FINISHED");},a.prototype.dispose=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d=this.eventPool[a];if(d&&"FINISHED"!==d.currentState){var e={type:"Aborted"};b&&(e.currentTime=b),this.addEventToPool(a,e,c,!0),this.changeSessionState(a,"FINISHED");}},a.prototype.waiting=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"BufferingStarted",currentTime:b};this.addEventToPool(a,d,c);},a.prototype.waitingEnded=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"BufferingEnded",currentTime:b};this.addEventToPool(a,d,c);},a.prototype.getSessionState=function(a){return this.eventPool[a]?this.eventPool[a].currentState||"IDLE":"IDLE"},a.prototype.dispatchNow=function(){var a=arguments.length<=0||void 0===arguments[0]||arguments[0];this.cycle(a,!0);},a.prototype.exitOngoingSession=function(a){var b=this,c=Object.keys(this.eventPool);c.map(function(c){b.eventPool[c]&&b.dispose(c,a);});},a.prototype.setCustomAttribute=function(a,b){this.customAttributes||this.resetAnalyticsCustomAttributes(),this.customAttributes[a]=b;},a.prototype.clearCustomAttributes=function(){this.customAttributes={};},a.prototype.removeSession=function(a){var b=!(arguments.length<=1||void 0===arguments[1])&&arguments[1];if(b===!0)delete this.eventPool[a];else{var c=this.eventPool[a];c&&(c.currentState="REMOVED");}},a.prototype.hasDataToSend=function(){for(var a=Object.keys(this.eventPool),b=0;b<a.length;++b)if(this.eventPool[a[b]].events.length>0)return!0;return!1},a.prototype.sendData=function(){var a=this,b=arguments.length<=0||void 0===arguments[0]||arguments[0],c=!(arguments.length<=1||void 0===arguments[1])&&arguments[1];if(!this.pendingRequest_){var d=!1;this.pendingRequest_=!0;var e=void 0;e="undefined"!=typeof Worker&&this.props_.disableWebWorkers!==!0?m.setTimeout(function(){a.pendingRequest_=!1,e=void 0;},2*this.EVENT_PURGE_TIME_DEFAULT):setTimeout(function(){a.pendingRequest_=!1,e=void 0;},2*this.EVENT_PURGE_TIME_DEFAULT);var f=Object.keys(this.eventPool);f.map(function(f){var g=a.eventPool[f];if(g){if(!f)return g.events=[],void a.removeSession(f,!0);if("PLAYING"===g.currentState&&0===g.events.length&&c&&g.events.push({EventType:"Playback.Heartbeat",Timestamp:(new Date).getTime(),OffsetTime:Math.floor(1e3*g.currentTime)}),"IDLE"!==g.currentState&&"REMOVED"!==g.currentState){if(0===g.events.length)return void("FINISHED"===g.currentState&&a.removeSession(f));var h={DispatchTime:(new Date).getTime(),Customer:a.customer_,BusinessUnit:a.businessUnit_,Payload:g.events,SessionId:f,ClockOffset:g.clockOffset};if(a.debugLog("Sending analytics - sessionId: "+f+" and params: ",h),g.retries>a.MAX_RETRIES||g.forbidden===!0)return void(g.events=[]);Math.abs(a.communicationCurrentDate-a.lastCommunicationDate)>a.DEVICE_CLOCK_CHECK_THRESHOLD&&a.initRequest(f).then(function(){}),d=!0,a.sendRequest(b,h,function(b,c){if(e)try{"undefined"!=typeof Worker&&a.props_.disableWebWorkers!==!0?(m.clearTimeout(e),e=void 0):(clearTimeout(e),e=void 0);}catch(d){}a.pendingRequest_=!1;var h=b&&b.httpCode?b.httpCode:200;"undefined"!=typeof c||200!==h?(401===h&&(g.forbidden=!0),a.debugLog("Error sending request to backend",c),g.retries++):(g.events=[],g.retries=0,"FINISHED"===g.currentState&&a.removeSession(f));});}}}),d||(this.pendingRequest_=!1);}},a.prototype.cycle=function(){var a=arguments.length<=0||void 0===arguments[0]||arguments[0],b=!(arguments.length<=1||void 0===arguments[1])&&arguments[1];this.communicationCurrentDate=new Date,this.communicationCurrentTime+=this.CYCLE_TIME,this.hasDataToSend()?(b||this.lastCommunicationTime+this.EVENT_PURGE_TIME_DEFAULT<this.communicationCurrentTime)&&(this.sendData(a),this.lastCommunicationTime=this.communicationCurrentTime,this.lastCommunicationDate=this.communicationCurrentDate):(b||this.lastCommunicationTime+this.TIME_WITHOUT_BEAT_DEFAULT<this.communicationCurrentTime)&&(this.sendData(a,!0),this.lastCommunicationTime=this.communicationCurrentTime,this.lastCommunicationDate=this.communicationCurrentDate);},a.prototype.sendRequest=function(a,b,c){var d=new XMLHttpRequest;d.open("POST",this.serverURL_+"/eventsink/send",!0),d.setRequestHeader("Content-type","application/json"),d.setRequestHeader("Authorization","Bearer "+this.sessionToken_),d.onload=function(){var a=JSON.parse(this.responseText);c(a);},d.onerror=function(a){c(null,a);},d.send(JSON.stringify(b));},a.prototype.initRequest=function(a){var b=this;return new Promise(function(c,d){var e=(new Date).getTime(),f=new XMLHttpRequest;f.open("POST",b.serverURL_+"/eventsink/init",!0),f.setRequestHeader("Content-type","application/json"),f.setRequestHeader("Authorization","Bearer "+b.sessionToken_),f.onload=function(){var d=(new Date).getTime(),g=JSON.parse(f.responseText);if(b.determineClockOffset(a,g,e,d),g&&g.settings){g.settings;g.settings.includeDeviceMetrics&&(b.includeDeviceMetrics_=!!g.settings.includeDeviceMetrics);}c();},f.onerror=function(a){b.debugLog("Unable to init. Aborting."),d(a);};var g={Customer:b.customer_,BusinessUnit:b.businessUnit_,SessionId:a};f.send(JSON.stringify(g));})},a.prototype.debugLog=function(a,b){b=b||"",this.debug_;},a.prototype.addDeviceInfoEvent=function(a){var b=this.eventPool[a];if(this.includeDeviceMetrics_&&b&&b.events&&b.events.length){var c={Timestamp:(new Date).getTime(),EventType:"Device.Info",DeviceModel:this.deviceInfoData_.deviceModel||"Desktop",UserAgent:this.deviceInfoData_.userAgent||i["default"].navigator.userAgent,Height:this.deviceInfoData_.screenHeight||i["default"].screen.height,Width:this.deviceInfoData_.screenWidth||i["default"].screen.width,Model:this.deviceInfoData_.model||i["default"].navigator.appName,Name:this.deviceInfoData_.deviceName||i["default"].navigator.product,OS:this.deviceInfoData_.deviceOS||k["default"].os.family,OSVersion:this.deviceInfoData_.deviceOSVersion||k["default"].os.version,Type:this.deviceInfoData_.type||"WEB"};(this.deviceInfoData_.deviceManufacturer||k["default"].manufacturer)&&(c.Manufacturer=this.deviceInfoData_.deviceManufacturer||k["default"].manufacturer),this.deviceInfoData_.deviceId&&(c.DeviceId=this.deviceInfoData_.deviceId),b.events.push(c);}},a.prototype.determineClockOffset=function(a,b,c,d){var e=this.eventPool[a];e&&(e.clockOffset=Math.floor((d-b.repliedTime+c-b.receivedTime)/2));},a.prototype.createPool=function(a){var b=this;return new Promise(function(c,d){b.eventPool[a]={currentState:"IDLE",currentTime:0,clockOffset:0,events:[],retries:0,forbidden:!1},b.initRequest(a).then(function(){b.addDeviceInfoEvent(a),c();})["catch"](function(a){d(a);});})},a.prototype.addEventToPool=function(a,b,c){var d=this,e=!(arguments.length<=3||void 0===arguments[3])&&arguments[3];if(!e||!this.eventPool[a]||"FINISHED"!==this.eventPool[a].currentState&&"REMOVED"!==this.eventPool[a].currentState){var f;this.eventPool[a]||(f=this.createPool(a)),f?f.then(function(){d.internalAddEventToPool(a,b,c);}):this.internalAddEventToPool(a,b,c);}},a.prototype.internalAddEventToPool=function(a,b,c){var d=this.eventsSkeleton[b.type];if(!d)return void this.debugLog("Unknown playback event: ",b);var e={Timestamp:(new Date).getTime(),EventType:"Playback."+d.event};d.includeOffset&&(e.OffsetTime=Math.floor(1e3*b.currentTime)),d.attributes&&"function"==typeof d.attributes&&(e=this.objectAssign(e,d.attributes(c))),this.eventPool[a].events.push(e),this.debugLog("added "+d.event+" to queue");},a.prototype.changeSessionState=function(a,b){var c,d=this;this.eventPool[a]||(c=this.createPool(a)),c?c.then(function(){d.eventPool[a].currentState=b;}):this.eventPool[a].currentState=b;},a.prototype.initEventSkeleton=function(){var a={};return a.Completed={event:"Completed",autoListener:!1},a.PlayerReady={event:"PlayerReady",autoListener:!1,attributes:function(a){var b={Technology:a.techName,PlayerVersion:a.version};return a.techVersion&&(b.TechVersion=a.techVersion),a.deviceAppInfo&&(b.DeviceAppInfo=a.deviceAppInfo),a.playMode&&(b.PlayMode=a.playMode),b}},a.Resumed={event:"Resumed",autoListener:!1,includeOffset:!0},a.BufferingStarted={event:"BufferingStarted",includeOffset:!0},a.BufferingEnded={event:"BufferingEnded",includeOffset:!0},a.ScrubbedTo={event:"ScrubbedTo",includeOffset:!0},a.Created={event:"Created",attributes:function(a){var b={};return"undefined"!=typeof a.autoplay&&(b.AutoPlay=a.autoplay),a.techName&&(b.Technology=a.techName),a.player&&(b.Player=a.player),a.version&&(b.Version=a.version),a.requestId&&(b.RequestId=a.requestId),a.techVersion&&(b.TechVersion=a.techVersion),a.deviceAppInfo&&(b.DeviceAppInfo=a.deviceAppInfo),a.playMode&&(b.PlayMode=a.playMode),b}},a.StartCasting={event:"StartCasting",includeOffset:!0},a.StopCasting={event:"StopCasting",includeOffset:!0},a.Paused={event:"Paused",includeOffset:!0},a.BitrateChanged={event:"BitrateChanged",includeOffset:!0,attributes:function(a){return{Bitrate:a.bitrate}}},a.DRM={event:"DRM",includeOffset:!1,attributes:function b(a){var b={};return a.message&&(b.Message=a.message),a.code&&(b.Code=a.code),a.info&&(b.Info=a.info),b}},a.Error={event:"Error",includeOffset:!0,attributes:function c(a){var c={};return a.errorCode&&(c.Code=a.errorCode),a.errorMessage?c.Message=a.errorMessage:c.Message="Unknown Error",a.errorInfo&&(c.Info=a.errorInfo),a.errorDetails&&(c.Details=a.errorDetails),c}},a.HandshakeStarted={event:"HandshakeStarted",autoListener:!1,attributes:function d(a){if(!a.assetId)return{};var d={AssetId:a.assetId};return a.programId&&(d.ProgramId=a.programId),d}},a.ProgramChanged={event:"ProgramChanged",includeOffset:!0,autoListener:!1,attributes:function(a){return a.programId?{ProgramId:a.programId}:{}}},a.Aborted={event:"Aborted",autoListener:!1,includeOffset:!0},a.Started={event:"Started",autoListener:!1,includeOffset:!0,attributes:function e(a){var e={};return a.bitrate&&(e.Bitrate=a.bitrate),a.duration&&(e.VideoLength=1e3*a.duration),a.mediaLocator&&(e.MediaLocator=a.mediaLocator),a.attributes&&(e.Attributes=a.attributes),a.referenceTime&&(e.ReferenceTime=a.referenceTime),a.playMode&&(e.PlayMode=a.playMode),e}},a},a.prototype.objectAssign=function(a,b){for(var c,d,e=1;e<arguments.length;++e){d=arguments[e];for(c in d)Object.prototype.hasOwnProperty.call(d,c)&&(a[c]=d[c]);}return a},g(a,[{key:"debug",get:function(){return this.debug_},set:function(a){this.debug_=a;}},{key:"deviceAppInfo",get:function(){return this.deviceInfoData_?this.deviceInfoData_.deviceAppInfo:null}}]),a}();n.VERSION="2.0.93-5",c["default"]=n,b.exports=c["default"];},{"./platform":6,"global/window":1,"worker-timers":2}],6:[function(b,c,d){(function(b){"use strict";(function(){function e(a){return a=String(a),a.charAt(0).toUpperCase()+a.slice(1)}function f(a,b,c){var d={"10.0":"10",6.4:"10 Technical Preview",6.3:"8.1",6.2:"8",6.1:"7 / Server 2008 R2","6.0":"Vista / Server 2008",5.2:"XP 64-bit / Server 2003",5.1:"XP",5.01:"2000 SP1","5.0":"2000","4.0":"NT","4.90":"ME"};return b&&c&&/^Win/i.test(a)&&!/^Windows Phone /i.test(a)&&(d=d[/[\d.]+$/.exec(a)])&&(a="Windows "+d),a=String(a),b&&c&&(a=a.replace(RegExp(b,"i"),c)),a=h(a.replace(/ ce$/i," CE").replace(/\bhpw/i,"web").replace(/\bMacintosh\b/,"Mac OS").replace(/_PowerPC\b/i," OS").replace(/\b(OS X) [^ \d]+/i,"$1").replace(/\bMac (OS X)\b/,"$1").replace(/\/(\d)/," $1").replace(/_/g,".").replace(/(?: BePC|[ .]*fc[ \d.]+)$/i,"").replace(/\bx86\.64\b/gi,"x86_64").replace(/\b(Windows Phone) OS\b/,"$1").replace(/\b(Chrome OS \w+) [\d.]+\b/,"$1").split(" on ")[0])}function g(a,b){var c=-1,d=a?a.length:0;if("number"==typeof d&&d>-1&&d<=v)for(;++c<d;)b(a[c],c,a);else i(a,b);}function h(a){return a=n(a),/^(?:webOS|i(?:OS|P))/.test(a)?a:e(a)}function i(a,b){for(var c in a)z.call(a,c)&&b(a[c],c,a);}function j(a){return null==a?e(a):A.call(a).slice(8,-1)}function k(a,b){var c=null!=a?typeof a[b]:"number";return!(/^(?:boolean|number|string|undefined)$/.test(c)||"object"==c&&!a[b])}function l(a){return String(a).replace(/([ -])(?!$)/g,"$1?")}function m(a,b){var c=null;return g(a,function(d,e){c=b(c,d,e,a);}),c}function n(a){return String(a).replace(/^ +| +$/g,"")}function o(a){function b(b){return m(b,function(b,c){return b||RegExp("\\b"+(c.pattern||l(c))+"\\b","i").exec(a)&&(c.label||c)})}function c(b){return m(b,function(b,c,d){return b||(c[X]||c[/^[a-z]+(?: +[a-z]+\b)*/i.exec(X)]||RegExp("\\b"+l(d)+"(?:\\b|\\w*\\d)","i").exec(a))&&d})}function d(b){return m(b,function(b,c){return b||RegExp("\\b"+(c.pattern||l(c))+"\\b","i").exec(a)&&(c.label||c)})}function e(b){return m(b,function(b,c){var d=c.pattern||l(c);return!b&&(b=RegExp("\\b"+d+"(?:/[\\d.]+|[ \\w.]*)","i").exec(a))&&(b=f(b,d,c.label||c)),b})}function g(b){return m(b,function(b,c){var d=c.pattern||l(c);return!b&&(b=RegExp("\\b"+d+" *\\d+[.\\w_]*","i").exec(a)||RegExp("\\b"+d+"(?:; *(?:[a-z]+[_-])?[a-z]+\\d+|[^ ();-]*)","i").exec(a))&&((b=String(c.label&&!RegExp(d,"i").test(c.label)?c.label:b).split("/"))[1]&&!/[\d.]+/.test(b[0])&&(b[0]+=" "+b[1]),c=c.label||c,b=h(b[0].replace(RegExp(d,"i"),c).replace(RegExp("; *(?:"+c+"[_-])?","i")," ").replace(RegExp("("+c+")[-_.]?(\\w)","i"),"$1 $2"))),b})}function p(b){return m(b,function(b,c){return b||(RegExp(c+"(?:-[\\d.]+/|(?: for [\\w-]+)?[ /-])([\\d.]+[^ ();/_-]*)","i").exec(a)||0)[1]||null})}function s(){return this.description||""}var t=q,u=a&&"object"==typeof a&&"String"!=j(a);u&&(t=a,a=null);var v=t.navigator||{},y=v.userAgent||"";a||(a=y);var z,B,C=u||x==r,D=u?!!v.likeChrome:/\bChrome\b/.test(a)&&!/internal|\n/i.test(A.toString()),E="Object",F=u?E:"ScriptBridgingProxyObject",G=u?E:"Environment",H=u&&t.java?"JavaPackage":j(t.java),I=u?E:"RuntimeObject",J=/\bJava/.test(H)&&t.java,K=J&&j(t.environment)==G,L=J?"a":"α",M=J?"b":"β",N=t.document||{},O=t.operamini||t.opera,P=w.test(P=u&&O?O["[[Class]]"]:j(O))?P:O=null,Q=a,R=[],S=null,T=a==y,U=T&&O&&"function"==typeof O.version&&O.version(),V=b([{label:"EdgeHTML",pattern:"Edge"},"Trident",{label:"WebKit",pattern:"AppleWebKit"},"iCab","Presto","NetFront","Tasman","KHTML","Gecko"]),W=d(["Adobe AIR","Arora","Avant Browser","Breach","Camino","Epiphany","Fennec","Flock","Galeon","GreenBrowser","iCab","Iceweasel","K-Meleon","Konqueror","Lunascape","Maxthon",{label:"Microsoft Edge",pattern:"Edge"},"Midori","Nook Browser","PaleMoon","PhantomJS","Raven","Rekonq","RockMelt","SeaMonkey",{label:"Silk",pattern:"(?:Cloud9|Silk-Accelerated)"},"Sleipnir","SlimBrowser",{label:"SRWare Iron",pattern:"Iron"},"Sunrise","Swiftfox","WebPositive","Opera Mini",{label:"Opera Mini",pattern:"OPiOS"},"Opera",{label:"Opera",pattern:"OPR"},"Chrome",{label:"Chrome Mobile",pattern:"(?:CriOS|CrMo)"},{label:"Firefox",pattern:"(?:Firefox|Minefield)"},{label:"Firefox Mobile",pattern:"FxiOS"},{label:"IE",pattern:"IEMobile"},{label:"IE",pattern:"MSIE"},"Safari"]),X=g([{label:"BlackBerry",pattern:"BB10"},"BlackBerry",{label:"Galaxy S",pattern:"GT-I9000"},{label:"Galaxy S2",pattern:"GT-I9100"},{label:"Galaxy S3",pattern:"GT-I9300"},{label:"Galaxy S4",pattern:"GT-I9500"},"Google TV","Lumia","iPad","iPod","iPhone","Kindle",{label:"Kindle Fire",pattern:"(?:Cloud9|Silk-Accelerated)"},"Nexus","Nook","PlayBook","PlayStation 3","PlayStation 4","PlayStation Vita","TouchPad","Transformer",{label:"Wii U",pattern:"WiiU"},"Wii","Xbox One",{label:"Xbox 360",pattern:"Xbox"},"Xoom"]),Y=c({Apple:{iPad:1,iPhone:1,iPod:1},Amazon:{Kindle:1,"Kindle Fire":1},Asus:{Transformer:1},"Barnes & Noble":{Nook:1},BlackBerry:{PlayBook:1},Google:{"Google TV":1,Nexus:1},HP:{TouchPad:1},HTC:{},LG:{},Microsoft:{Xbox:1,"Xbox One":1},Motorola:{Xoom:1},Nintendo:{"Wii U":1,Wii:1},Nokia:{Lumia:1},Samsung:{"Galaxy S":1,"Galaxy S2":1,"Galaxy S3":1,"Galaxy S4":1},Sony:{"PlayStation 4":1,"PlayStation 3":1,"PlayStation Vita":1}}),Z=e(["Windows Phone ","Android","CentOS",{label:"Chrome OS",pattern:"CrOS"},"Debian","Fedora","FreeBSD","Gentoo","Haiku","Kubuntu","Linux Mint","OpenBSD","Red Hat","SuSE","Ubuntu","Xubuntu","Cygwin","Symbian OS","hpwOS","webOS ","webOS","Tablet OS","Linux","Mac OS X","Macintosh","Mac","Windows 98;","Windows "]);if(V&&(V=[V]),Y&&!X&&(X=g([Y])),(z=/\bGoogle TV\b/.exec(X))&&(X=z[0]),/\bSimulator\b/i.test(a)&&(X=(X?X+" ":"")+"Simulator"),"Opera Mini"==W&&/\bOPiOS\b/.test(a)&&R.push("running in Turbo/Uncompressed mode"),/^iP/.test(X)?(W||(W="Safari"),Z="iOS"+((z=/ OS ([\d_]+)/i.exec(a))?" "+z[1].replace(/_/g,"."):"")):"Konqueror"!=W||/buntu/i.test(Z)?Y&&"Google"!=Y&&(/Chrome/.test(W)&&!/\bMobile Safari\b/i.test(a)||/\bVita\b/.test(X))?(W="Android Browser",Z=/\bAndroid\b/.test(Z)?Z:"Android"):"Silk"==W?(/\bMobi/i.test(a)||(Z="Android",R.unshift("desktop mode")),/Accelerated *= *true/i.test(a)&&R.unshift("accelerated")):"PaleMoon"==W&&(z=/\bFirefox\/([\d.]+)\b/.exec(a))?R.push("identifying as Firefox "+z[1]):"Firefox"==W&&(z=/\b(Mobile|Tablet|TV)\b/i.exec(a))?(Z||(Z="Firefox OS"),X||(X=z[1])):W&&!(z=!/\bMinefield\b/i.test(a)&&/\b(?:Firefox|Safari)\b/.exec(W))||(W&&!X&&/[\/,]|^[^(]+?\)/.test(a.slice(a.indexOf(z+"/")+8))&&(W=null),(z=X||Y||Z)&&(X||Y||/\b(?:Android|Symbian OS|Tablet OS|webOS)\b/.test(Z))&&(W=/[a-z]+(?: Hat)?/i.exec(/\bAndroid\b/.test(Z)?Z:z)+" Browser")):Z="Kubuntu",U||(U=p(["(?:Cloud9|CriOS|CrMo|Edge|FxiOS|IEMobile|Iron|Opera ?Mini|OPiOS|OPR|Raven|Silk(?!/[\\d.]+$))","Version",l(W),"(?:Firefox|Minefield|NetFront)"])),(z="iCab"==V&&parseFloat(U)>3&&"WebKit"||/\bOpera\b/.test(W)&&(/\bOPR\b/.test(a)?"Blink":"Presto")||/\b(?:Midori|Nook|Safari)\b/i.test(a)&&!/^(?:Trident|EdgeHTML)$/.test(V)&&"WebKit"||!V&&/\bMSIE\b/i.test(a)&&("Mac OS"==Z?"Tasman":"Trident")||"WebKit"==V&&/\bPlayStation\b(?! Vita\b)/i.test(W)&&"NetFront")&&(V=[z]),"IE"==W&&(z=(/; *(?:XBLWP|ZuneWP)(\d+)/i.exec(a)||0)[1])?(W+=" Mobile",Z="Windows Phone "+(/\+$/.test(z)?z:z+".x"),R.unshift("desktop mode")):/\bWPDesktop\b/i.test(a)?(W="IE Mobile",Z="Windows Phone 8.x",R.unshift("desktop mode"),U||(U=(/\brv:([\d.]+)/.exec(a)||0)[1])):"IE"!=W&&"Trident"==V&&(z=/\brv:([\d.]+)/.exec(a))&&(W&&R.push("identifying as "+W+(U?" "+U:"")),W="IE",U=z[1]),T){if(k(t,"global"))if(J&&(z=J.lang.System,Q=z.getProperty("os.arch"),Z=Z||z.getProperty("os.name")+" "+z.getProperty("os.version")),C&&k(t,"system")&&(z=[t.system])[0]){Z||(Z=z[0].os||null);try{z[1]=t.require("ringo/engine").version,U=z[1].join("."),W="RingoJS";}catch($){z[0].global.system==t.system&&(W="Narwhal");}}else"object"==typeof t.process&&(z=t.process)?(W="Node.js",Q=z.arch,Z=z.platform,U=/[\d.]+/.exec(z.version)[0]):K&&(W="Rhino");else j(z=t.runtime)==F?(W="Adobe AIR",Z=z.flash.system.Capabilities.os):j(z=t.phantom)==I?(W="PhantomJS",U=(z=z.version||null)&&z.major+"."+z.minor+"."+z.patch):"number"==typeof N.documentMode&&(z=/\bTrident\/(\d+)/i.exec(a))&&(U=[U,N.documentMode],(z=+z[1]+4)!=U[1]&&(R.push("IE "+U[1]+" mode"),V&&(V[1]=""),U[1]=z),U="IE"==W?String(U[1].toFixed(1)):U[0]);Z=Z&&h(Z);}U&&(z=/(?:[ab]|dp|pre|[ab]\d+pre)(?:\d+\+?)?$/i.exec(U)||/(?:alpha|beta)(?: ?\d)?/i.exec(a+";"+(T&&v.appMinorVersion))||/\bMinefield\b/i.test(a)&&"a")&&(S=/b/i.test(z)?"beta":"alpha",U=U.replace(RegExp(z+"\\+?$"),"")+("beta"==S?M:L)+(/\d+\+?/.exec(z)||"")),"Fennec"==W||"Firefox"==W&&/\b(?:Android|Firefox OS)\b/.test(Z)?W="Firefox Mobile":"Maxthon"==W&&U?U=U.replace(/\.[\d.]+/,".x"):/\bXbox\b/i.test(X)?(Z=null,"Xbox 360"==X&&/\bIEMobile\b/.test(a)&&R.unshift("mobile mode")):!/^(?:Chrome|IE|Opera)$/.test(W)&&(!W||X||/Browser|Mobi/.test(W))||"Windows CE"!=Z&&!/Mobi/i.test(a)?"IE"==W&&T&&null===t.external?R.unshift("platform preview"):(/\bBlackBerry\b/.test(X)||/\bBB10\b/.test(a))&&(z=(RegExp(X.replace(/ +/g," *")+"/([.\\d]+)","i").exec(a)||0)[1]||U)?(z=[z,/BB10/.test(a)],Z=(z[1]?(X=null,Y="BlackBerry"):"Device Software")+" "+z[0],U=null):this!=i&&"Wii"!=X&&(T&&O||/Opera/.test(W)&&/\b(?:MSIE|Firefox)\b/i.test(a)||"Firefox"==W&&/\bOS X (?:\d+\.){2,}/.test(Z)||"IE"==W&&(Z&&!/^Win/.test(Z)&&U>5.5||/\bWindows XP\b/.test(Z)&&U>8||8==U&&!/\bTrident\b/.test(a)))&&!w.test(z=o.call(i,a.replace(w,"")+";"))&&z.name&&(z="ing as "+z.name+((z=z.version)?" "+z:""),w.test(W)?(/\bIE\b/.test(z)&&"Mac OS"==Z&&(Z=null),z="identify"+z):(z="mask"+z,
+W=P?h(P.replace(/([a-z])([A-Z])/g,"$1 $2")):"Opera",/\bIE\b/.test(z)&&(Z=null),T||(U=null)),V=["Presto"],R.push(z)):W+=" Mobile",(z=(/\bAppleWebKit\/([\d.]+\+?)/i.exec(a)||0)[1])&&(z=[parseFloat(z.replace(/\.(\d)$/,".0$1")),z],"Safari"==W&&"+"==z[1].slice(-1)?(W="WebKit Nightly",S="alpha",U=z[1].slice(0,-1)):U!=z[1]&&U!=(z[2]=(/\bSafari\/([\d.]+\+?)/i.exec(a)||0)[1])||(U=null),z[1]=(/\bChrome\/([\d.]+)/i.exec(a)||0)[1],537.36==z[0]&&537.36==z[2]&&parseFloat(z[1])>=28&&"WebKit"==V&&(V=["Blink"]),T&&(D||z[1])?(V&&(V[1]="like Chrome"),z=z[1]||(z=z[0],z<530?1:z<532?2:z<532.05?3:z<533?4:z<534.03?5:z<534.07?6:z<534.1?7:z<534.13?8:z<534.16?9:z<534.24?10:z<534.3?11:z<535.01?12:z<535.02?"13+":z<535.07?15:z<535.11?16:z<535.19?17:z<536.05?18:z<536.1?19:z<537.01?20:z<537.11?"21+":z<537.13?23:z<537.18?24:z<537.24?25:z<537.36?26:"Blink"!=V?"27":"28")):(V&&(V[1]="like Safari"),z=z[0],z=z<400?1:z<500?2:z<526?3:z<533?4:z<534?"4+":z<535?5:z<537?6:z<538?7:z<601?8:"8"),V&&(V[1]+=" "+(z+="number"==typeof z?".x":/[.+]/.test(z)?"":"+")),"Safari"==W&&(!U||parseInt(U)>45)&&(U=z)),"Opera"==W&&(z=/\bzbov|zvav$/.exec(Z))?(W+=" ",R.unshift("desktop mode"),"zvav"==z?(W+="Mini",U=null):W+="Mobile",Z=Z.replace(RegExp(" *"+z+"$"),"")):"Safari"==W&&/\bChrome\b/.exec(V&&V[1])&&(R.unshift("desktop mode"),W="Chrome Mobile",U=null,/\bOS X\b/.test(Z)?(Y="Apple",Z="iOS 4.3+"):Z=null),U&&0==U.indexOf(z=/[\d.]+$/.exec(Z))&&a.indexOf("/"+z+"-")>-1&&(Z=n(Z.replace(z,""))),V&&!/\b(?:Avant|Nook)\b/.test(W)&&(/Browser|Lunascape|Maxthon/.test(W)||"Safari"!=W&&/^iOS/.test(Z)&&/\bSafari\b/.test(V[1])||/^(?:Adobe|Arora|Breach|Midori|Opera|Phantom|Rekonq|Rock|Sleipnir|Web)/.test(W)&&V[1])&&(z=V[V.length-1])&&R.push(z),R.length&&(R=["("+R.join("; ")+")"]),Y&&X&&X.indexOf(Y)<0&&R.push("on "+Y),X&&R.push((/^on /.test(R[R.length-1])?"":"on ")+X),Z&&(z=/ ([\d.+]+)$/.exec(Z)||(B=/^[a-z]+ ([\d.+]+) \//i.exec(Z)),Z={architecture:32,family:z&&!B?Z.replace(z[0],""):Z,version:z?z[1]:null,toString:function(){var a=this.version;return this.family+(a&&!B?" "+a:"")+(64==this.architecture?" 64-bit":"")}}),(z=/\b(?:AMD|IA|Win|WOW|x86_|x)64\b/i.exec(Q))&&!/\bi686\b/i.test(Q)&&(Z&&(Z.architecture=64,Z.family=Z.family.replace(RegExp(" *"+z),"")),W&&(/\bWOW64\b/i.test(a)||T&&/\w(?:86|32)$/.test(v.cpuClass||v.platform)&&!/\bWin64; x64\b/i.test(a))&&R.unshift("32-bit")),a||(a=null);var _={};return _.description=a,_.layout=V&&V[0],_.manufacturer=Y,_.name=W,_.prerelease=S,_.product=X,_.ua=a,_.version=W&&U,_.os=Z||{architecture:null,family:null,version:null,toString:function(){return"null"}},_.parse=o,_.toString=s,_.version&&R.unshift(U),_.name&&R.unshift(W),Z&&W&&(Z!=String(Z).split(" ")[0]||Z!=W.split(" ")[0]&&!X)&&R.push(X?"("+Z+")":"on "+Z),R.length&&(_.description=R.join(" ")),_}var p={"function":!0,object:!0},q=p[typeof window]&&window||this,r=q,s=p[typeof d]&&d,t=p[typeof c]&&c&&!c.nodeType&&c,u=s&&t&&"object"==typeof b&&b;!u||u.global!==u&&u.window!==u&&u.self!==u||(q=u);var v=Math.pow(2,53)-1,w=/\bOpera/,x=this,y=Object.prototype,z=y.hasOwnProperty,A=y.toString;"function"==typeof a&&"object"==typeof a.amd&&a.amd?a(function(){return o()}):s&&t?i(o(),function(a,b){s[b]=a;}):q.platform=o();}).call(void 0);}).call(this,"undefined"!=typeof commonjsGlobal?commonjsGlobal:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{});},{}]},{},[5])(5)});
 });
 
 var empAnalyticsTmp = unwrapExports(empAnalytics_min);
@@ -11552,6 +11615,18 @@ var AnalyticsPlugin = function (_Plugin) {
   };
 
   /**
+   * stopCasting
+   */
+
+
+  AnalyticsPlugin.prototype.stopCasting = function stopCasting() {
+    if (this.analyticsConnector_ && this.analyticsConnector_.dispose) {
+      this.analyticsConnector_.onChromeCastingStop(true);
+      this.analyticsConnector_ = null;
+    }
+  };
+
+  /**
    * dispose Analytics
    */
 
@@ -11559,7 +11634,11 @@ var AnalyticsPlugin = function (_Plugin) {
   AnalyticsPlugin.prototype.dispose = function dispose() {
     log$1('AnalyticsPlugin', 'dispose');
     this.player.off(empPlayerEvents.LOAD_START, this.onLoadStartBind);
-    this.stop();
+    if (IS_CHROMECAST) {
+      this.stopCasting();
+    } else {
+      this.stop();
+    }
     _Plugin.prototype.dispose.call(this);
   };
 
@@ -11648,7 +11727,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin$2);
 
-AnalyticsPlugin.VERSION = '2.0.93-174';
+AnalyticsPlugin.VERSION = '2.0.93-0';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -11773,7 +11852,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.0.93-174';
+empPlayer.VERSION = '2.0.93-0';
 
 /*
  * Universal Module Definition (UMD)
