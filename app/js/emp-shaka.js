@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.93-0 
+ * EMP-Player 2.0.93-177 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -164,511 +164,511 @@ var taggedTemplateLiteralLoose = function (strings, raw) {
  * @class EmpPlayerEvents
  */
 var EmpPlayerEvents = function EmpPlayerEvents() {
-    classCallCheck(this, EmpPlayerEvents);
-
-    /**
-    * Fired when video playback ends
-    * @event ENDED
-    */
-    this.ENDED = 'ended';
-
-    /**
-    * Fired when an error occurs
-    * @event ERROR
-    */
-    this.ERROR = 'error';
-
-    /**
-    * Fired when the player has downloaded data at the current playback position
-    * @event LOADED_DATA
-    */
-    this.LOADED_DATA = 'loadeddata';
-
-    /**
-    * Fired when the timeshift changes
-    * @event TIMESHIFT_CHANGE
-    */
-    this.TIMESHIFT_CHANGE = 'timeshiftchange';
-
-    /**
-    * Fired when the video duration changes
-    * @event DURATION_CHANGE
-    */
-    this.DURATION_CHANGE = 'durationchange';
-
-    /**
-    * Fired when the player has initial duration and dimension information
-    * @event LOADED_METADATA
-    */
-    this.LOADED_METADATA = 'loadedmetadata';
-
-    /**
-    * Fired when the player started seeking
-    * @event SEEKING
-    */
-    this.SEEKING = 'seeking';
-
-    /**
-    * Fired when the current playback position has changed
-    * @event TIME_UPDATE
-    */
-    this.TIME_UPDATE = 'timeupdate';
-
-    /**
-    * Fired when the user is active
-    * @event USER_ACTIVE
-    */
-    this.USER_ACTIVE = 'useractive';
-
-    /**
-    * Fired when the user is inactive
-    * @event USERIN_ACTIVE
-    */
-    this.USERIN_ACTIVE = 'userinactive';
-
-    /**
-    * Fired when the volume changes
-    * @event VOLUME_CHANGE
-    */
-    this.VOLUME_CHANGE = 'volumechange';
-
-    /**
-    * Fired when the video is starting to load
-    * @event LOAD_START
-    */
-    this.LOAD_START = 'loadstart';
-
-    /**
-    * Fired when the player can start playback
-    * @event CAN_PLAY
-    */
-    this.CAN_PLAY = 'canplay';
-
-    /**
-    * Fired when the player has starting playback
-    * @event PLAYING
-    */
-    this.PLAYING = 'playing';
-
-    /**
-    * Fired when the player starts buffering
-    * @event WAITING
-    */
-    this.WAITING = 'waiting';
-
-    /**
-    * Fired when the player seeked to a different point in time
-    * @event SEEKED
-    */
-    this.SEEKED = 'seeked';
-
-    /**
-    * Fired when playback is aborted
-    * @event ABORT
-    */
-    this.ABORT = 'abort';
-
-    /**
-    * Fired when the player will start playing
-    * @event PLAY
-    */
-    this.PLAY = 'play';
-
-    /**
-    * Fired when the player is paused
-    * @event PAUSE
-    */
-    this.PAUSE = 'pause';
-
-    /**
-    * Fired when the player is destroyed.
-    * @event DISPOSE
-    */
-    this.DISPOSE = 'dispose';
-
-    /**
-    * Fired when an AudioTrack object changes its enabled value
-    * @event MODE_CHANGE
-    */
-    this.MODE_CHANGE = 'modechange';
-
-    /**
-    * Fired when a state changes. Used for example when an AudioTrack changes its enabled value
-    * @event CHANGE
-    */
-    this.CHANGE = 'change';
-
-    /**
-    * Fired when an AudioTrack object has been added to an AudioTrackList object.
-    * @event ADD_TRACK
-    */
-    this.ADD_TRACK = 'addtrack';
-
-    /**
-    * Fired when an AudioTrack object has been removed from an AudioTrackList object.
-    * @event REMOVE_TRACK
-    */
-    this.REMOVE_TRACK = 'removetrack';
-
-    /**
-    * Fired by Dash.js when a metric changes
-    * @event METRIC_CHANGED
-    */
-    this.METRIC_CHANGED = 'metricchanged';
-
-    /**
-    * Fired when a recoverable asset error occurs
-    * @event RECOVERABLE_ASSET_ERROR
-    */
-    this.RECOVERABLE_ASSET_ERROR = 'recoverableasseterror';
-
-    /**
-    * Fired when the video bitrate changes
-    * @event BITRATE_CHANGED
-    */
-    this.BITRATE_CHANGED = 'bitratechanged';
-
-    /**
-    * Used when something closes. Fired by VideoJS when the CloseButton closes
-    * @event CLOSE
-    */
-    this.CLOSE = 'close';
-
-    /**
-    * Used when something is ready. Fired when the tech is ready
-    * @event READY
-    */
-    this.READY = 'ready';
-
-    /**
-    * Used when an html element resizes. Fired when the video element changes size
-    * @event RESIZE
-    */
-    this.RESIZE = 'resize';
-
-    /**
-    * Used when an html element is tapped. Fired by VideoJS on components
-    * @event TAP
-    */
-    this.TAP = 'tap';
-
-    /**
-    * Used when an html element is clicked. Fired by VideoJS on components
-    * @event CLICK
-    */
-    this.CLICK = 'click';
-
-    /**
-    * Used when an html element gains focus. Fired by VideoJS on components
-    * @event FOCUS
-    */
-    this.FOCUS = 'focus';
-
-    /**
-    * Used when an html element loses focus. Fired by VideoJS on components
-    * @event BLUR
-    */
-    this.BLUR = 'blur';
-
-    /**
-    * Used when a modal html view is about to be opened. Fired by VideoJS on the ModalDialog
-    * @event BEFORE_MODAL_OPEN
-    */
-    this.BEFORE_MODAL_OPEN = 'beforemodalopen';
-
-    /**
-    * Used when a modal html view has been opened. Fired by VideoJS on the ModalDialog
-    * @event MODAL_OPEN
-    */
-    this.MODAL_OPEN = 'modalopen';
-
-    /**
-    * Used when a modal html view will be closed. Fired by VideoJS on the ModalDialog
-    * @event BEFORE_MODAL_CLOSE
-    */
-    this.BEFORE_MODAL_CLOSE = 'beforemodalclose';
-
-    /**
-    * Used when a modal html view has been closed. Fired by VideoJS on the ModalDialog
-    * @event MODAL_CLOSE
-    */
-    this.MODAL_CLOSE = 'modalclose';
-
-    /**
-    * Used when a modal html view will be populated with html content. Fired by VideoJS on the ModalDialog
-    * @event BEFORE_MODAL_FILL
-    */
-    this.BEFORE_MODAL_FILL = 'beforemodalfill';
-
-    /**
-    * Used when a modal html view has been populated with html content. Fired by VideoJS on the ModalDialog
-    * @event MODAL_FILL
-    */
-    this.MODAL_FILL = 'modalfill';
-
-    /**
-    * Used when a modal html view will clear its content. Fired by VideoJS on the ModalDialog
-    * @event BEFORE_MODAL_EMPTY
-    */
-    this.BEFORE_MODAL_EMPTY = 'beforemodalempty';
-
-    /**
-    * Used when a modal html view has cleared its content. Fired by VideoJS on the ModalDialog
-    * @event MODAL_EMPTY
-    */
-    this.MODAL_EMPTY = 'modalempty';
-
-    /**
-    * Enough data has been loaded to play the media up to its end
-    * @event CAN_PLAY_THROUGH
-    */
-    this.CAN_PLAY_THROUGH = 'canplaythrough';
-
-    /**
-    * Video is played for the first time
-    * @event FIRST_PLAY
-    */
-    this.FIRST_PLAY = 'firstplay';
-
-    /**
-    * When the user agent is downloading media data
-    * @event PROGRESS
-    */
-    this.PROGRESS = 'progress';
-
-    /**
-    * When the player is suspended from downloading media data
-    * @event SUSPEND
-    */
-    this.SUSPEND = 'suspend';
-
-    /**
-    * When the current playlist is empty
-    * @event EMPTIED
-    */
-    this.EMPTIED = 'emptied';
-
-    /**
-    * When the player is trying to get media data, but data is not available
-    * @event STALLED
-    */
-    this.STALLED = 'stalled';
-
-    /**
-    * When the playing speed of the audio/video is changed
-    * @event RATE_CHANGE
-    */
-    this.RATE_CHANGE = 'ratechange';
-
-    /**
-    * When the text track has been changed
-    * @event TEXT_TRACK_CHANGE
-    */
-    this.TEXT_TRACK_CHANGE = 'texttrackchange';
-
-    /**
-    * When the track has been changed
-    * @event TRACK_CHANGE
-    */
-    this.TRACK_CHANGE = 'trackchanged';
-
-    /**
-    * When the video poster changes
-    * @event POSTER_CHANGE
-    */
-    this.POSTER_CHANGE = 'posterchange';
-
-    /**
-    * When a key is down
-    * @event KEY_DOWN
-    */
-    this.KEY_DOWN = 'keydown';
-
-    /**
-    * When a key is up
-    * @event KEY_UP
-    */
-    this.KEY_UP = 'keyup';
-
-    /**
-    * When the mouse is down
-    * @event MOUSE_DOWN
-    */
-    this.MOUSE_DOWN = 'mousedown';
-
-    /**
-    * When the mouse is moved
-    * @event MOUSE_MOVE
-    */
-    this.MOUSE_MOVE = 'mousemove';
-
-    /**
-    * When the mouse is up
-    * @event MOUSE_UP
-    */
-    this.MOUSE_UP = 'mouseup';
-
-    /**
-    * When touch started
-    * @event TOUCH_START
-    */
-    this.TOUCH_START = 'touchstart';
-
-    /**
-    * When touch moved
-    * @event TOUCH_MOVE
-    */
-    this.TOUCH_MOVE = 'touchmove';
-
-    /**
-    * When touch ended
-    * @event TOUCH_END
-    */
-    this.TOUCH_END = 'touchend';
-
-    /**
-    * When a touch point is moved off the interactive area of an element
-    * @event TOUCH_LEAVE
-    */
-    this.TOUCH_LEAVE = 'touchleave';
-
-    /**
-    * When a touch point has been disrupted
-    * @event TOUCH_CANCEL
-    */
-    this.TOUCH_CANCEL = 'touchcancel';
-
-    /**
-    * When the fullscreen state changes
-    * @event FULLSCREEN_CHANGE
-    */
-    this.FULLSCREEN_CHANGE = 'fullscreenchange';
-
-    /**
-    * When fullscreen isn't supported and the video will resize to the window
-    * @event ENTER_FULL_WINDOW
-    */
-    this.ENTER_FULL_WINDOW = 'enterFullWindow';
-
-    /**
-    * When exiting full window
-    * @event EXIT_FULL_WINDOW
-    */
-    this.EXIT_FULL_WINDOW = 'exitFullWindow';
-
-    /**
-    * When controls are enabled
-    * @event CONTROLS_ENABLED
-    */
-    this.CONTROLS_ENABLED = 'controlsenabled';
-
-    /**
-    * When controls are disabled
-    * @event CONTROLS_DISABLED
-    */
-    this.CONTROLS_DISABLED = 'controlsdisabled';
-
-    /**
-    * When native tech or device controls are being used
-    * @event USING_NATIVE_CONTROLS
-    */
-    this.USING_NATIVE_CONTROLS = 'usingnativecontrols';
-
-    /**
-    * When custom controls are being used
-    * @event USING_CUSTOM_CONTROLS
-    */
-    this.USING_CUSTOM_CONTROLS = 'usingcustomcontrols';
-
-    /**
-    * Fired when a VideoJS slider is active
-    * @event SLIDER_ACTIVE
-    */
-    this.SLIDER_ACTIVE = 'slideractive';
-
-    /**
-    * Fired when a VideoJS slider is inactive
-    * @event SLIDER_INACTIVE
-    */
-    this.SLIDER_INACTIVE = 'sliderinactive';
-
-    /**
-     * Fired when a new entitlement is used to start playback
-     */
-    this.ENTITLEMENT_CHANGE = 'entitlementchange';
-
-    /**
-     * Fired when the entitlement loading starts
-     */
-    this.ENTITLEMENT_LOAD_START = 'entitlementloadstart';
-
-    /**
-     * Fired when the player is initalized
-     */
-    this.PLAYER_CREATED = 'playercreated';
-
-    /**
-     * Fired when playback is restarted
-     */
-    this.RESTARTING = 'restarting';
-
-    this.SEGMENTS_UPDATED = 'segmentsupdated';
-    this.SEGMENT_CHANGED = 'segmentchanged';
-
-    /**
-     * Fired when chromecast begins casting
-     */
-    this.CHROMECAST_CASTING = 'chromecastcasting';
-
-    /**
-     * Fired when chromecast has stopped casting
-     */
-    this.CHROMECAST_STOPPED = 'chromecaststopped';
-
-    /**
-     * Fired when playback is stopped
-     */
-    this.STOPPED = 'stopped';
-
-    /**
-     * Fired when the video is ready to be played
-     */
-    this.READY_TO_PLAY = 'readytoplay';
-
-    /**
-     * Fired when program changes in a live or catchUp stream
-      */
-    this.PROGRAM_CHANGED = 'programchanged';
-
-    /**
-    * Fired when vod/asset changes
-     */
-    this.ASSET_CHANGED = 'assetchanged';
-
-    /**
-     * Fired when prefetch segment before seek in a vod/catchup stream
-    */
-    this.SEGMENT_MISSING = 'segmentmissing';
-
-    /**
-    * Fired when airplayStart
-    */
-    this.AIRPLAY_START = 'airplayStart';
-
-    /**
-    * Fired when replay
-    */
-    this.REPLAY = 'replay';
-
-    /**
-    * Fired during download
-    */
-    this.DOWNLOAD_PROGRESS = 'downloadprogress';
-
-    /**
-    * Fired when drm session try to update
-    */
-    this.DRM_SESSION_UPDATE = 'drmsessionupdate';
+  classCallCheck(this, EmpPlayerEvents);
+
+  /**
+  * Fired when video playback ends
+  * @event ENDED
+  */
+  this.ENDED = 'ended';
+
+  /**
+  * Fired when an error occurs
+  * @event ERROR
+  */
+  this.ERROR = 'error';
+
+  /**
+  * Fired when the player has downloaded data at the current playback position
+  * @event LOADED_DATA
+  */
+  this.LOADED_DATA = 'loadeddata';
+
+  /**
+  * Fired when the timeshift changes
+  * @event TIMESHIFT_CHANGE
+  */
+  this.TIMESHIFT_CHANGE = 'timeshiftchange';
+
+  /**
+  * Fired when the video duration changes
+  * @event DURATION_CHANGE
+  */
+  this.DURATION_CHANGE = 'durationchange';
+
+  /**
+  * Fired when the player has initial duration and dimension information
+  * @event LOADED_METADATA
+  */
+  this.LOADED_METADATA = 'loadedmetadata';
+
+  /**
+  * Fired when the player started seeking
+  * @event SEEKING
+  */
+  this.SEEKING = 'seeking';
+
+  /**
+  * Fired when the current playback position has changed
+  * @event TIME_UPDATE
+  */
+  this.TIME_UPDATE = 'timeupdate';
+
+  /**
+  * Fired when the user is active
+  * @event USER_ACTIVE
+  */
+  this.USER_ACTIVE = 'useractive';
+
+  /**
+  * Fired when the user is inactive
+  * @event USERIN_ACTIVE
+  */
+  this.USERIN_ACTIVE = 'userinactive';
+
+  /**
+  * Fired when the volume changes
+  * @event VOLUME_CHANGE
+  */
+  this.VOLUME_CHANGE = 'volumechange';
+
+  /**
+  * Fired when the video is starting to load
+  * @event LOAD_START
+  */
+  this.LOAD_START = 'loadstart';
+
+  /**
+  * Fired when the player can start playback
+  * @event CAN_PLAY
+  */
+  this.CAN_PLAY = 'canplay';
+
+  /**
+  * Fired when the player has starting playback
+  * @event PLAYING
+  */
+  this.PLAYING = 'playing';
+
+  /**
+  * Fired when the player starts buffering
+  * @event WAITING
+  */
+  this.WAITING = 'waiting';
+
+  /**
+  * Fired when the player seeked to a different point in time
+  * @event SEEKED
+  */
+  this.SEEKED = 'seeked';
+
+  /**
+  * Fired when playback is aborted
+  * @event ABORT
+  */
+  this.ABORT = 'abort';
+
+  /**
+  * Fired when the player will start playing
+  * @event PLAY
+  */
+  this.PLAY = 'play';
+
+  /**
+  * Fired when the player is paused
+  * @event PAUSE
+  */
+  this.PAUSE = 'pause';
+
+  /**
+  * Fired when the player is destroyed.
+  * @event DISPOSE
+  */
+  this.DISPOSE = 'dispose';
+
+  /**
+  * Fired when an AudioTrack object changes its enabled value
+  * @event MODE_CHANGE
+  */
+  this.MODE_CHANGE = 'modechange';
+
+  /**
+  * Fired when a state changes. Used for example when an AudioTrack changes its enabled value
+  * @event CHANGE
+  */
+  this.CHANGE = 'change';
+
+  /**
+  * Fired when an AudioTrack object has been added to an AudioTrackList object.
+  * @event ADD_TRACK
+  */
+  this.ADD_TRACK = 'addtrack';
+
+  /**
+  * Fired when an AudioTrack object has been removed from an AudioTrackList object.
+  * @event REMOVE_TRACK
+  */
+  this.REMOVE_TRACK = 'removetrack';
+
+  /**
+  * Fired by Dash.js when a metric changes
+  * @event METRIC_CHANGED
+  */
+  this.METRIC_CHANGED = 'metricchanged';
+
+  /**
+  * Fired when a recoverable asset error occurs
+  * @event RECOVERABLE_ASSET_ERROR
+  */
+  this.RECOVERABLE_ASSET_ERROR = 'recoverableasseterror';
+
+  /**
+  * Fired when the video bitrate changes
+  * @event BITRATE_CHANGED
+  */
+  this.BITRATE_CHANGED = 'bitratechanged';
+
+  /**
+  * Used when something closes. Fired by VideoJS when the CloseButton closes
+  * @event CLOSE
+  */
+  this.CLOSE = 'close';
+
+  /**
+  * Used when something is ready. Fired when the tech is ready
+  * @event READY
+  */
+  this.READY = 'ready';
+
+  /**
+  * Used when an html element resizes. Fired when the video element changes size
+  * @event RESIZE
+  */
+  this.RESIZE = 'resize';
+
+  /**
+  * Used when an html element is tapped. Fired by VideoJS on components
+  * @event TAP
+  */
+  this.TAP = 'tap';
+
+  /**
+  * Used when an html element is clicked. Fired by VideoJS on components
+  * @event CLICK
+  */
+  this.CLICK = 'click';
+
+  /**
+  * Used when an html element gains focus. Fired by VideoJS on components
+  * @event FOCUS
+  */
+  this.FOCUS = 'focus';
+
+  /**
+  * Used when an html element loses focus. Fired by VideoJS on components
+  * @event BLUR
+  */
+  this.BLUR = 'blur';
+
+  /**
+  * Used when a modal html view is about to be opened. Fired by VideoJS on the ModalDialog
+  * @event BEFORE_MODAL_OPEN
+  */
+  this.BEFORE_MODAL_OPEN = 'beforemodalopen';
+
+  /**
+  * Used when a modal html view has been opened. Fired by VideoJS on the ModalDialog
+  * @event MODAL_OPEN
+  */
+  this.MODAL_OPEN = 'modalopen';
+
+  /**
+  * Used when a modal html view will be closed. Fired by VideoJS on the ModalDialog
+  * @event BEFORE_MODAL_CLOSE
+  */
+  this.BEFORE_MODAL_CLOSE = 'beforemodalclose';
+
+  /**
+  * Used when a modal html view has been closed. Fired by VideoJS on the ModalDialog
+  * @event MODAL_CLOSE
+  */
+  this.MODAL_CLOSE = 'modalclose';
+
+  /**
+  * Used when a modal html view will be populated with html content. Fired by VideoJS on the ModalDialog
+  * @event BEFORE_MODAL_FILL
+  */
+  this.BEFORE_MODAL_FILL = 'beforemodalfill';
+
+  /**
+  * Used when a modal html view has been populated with html content. Fired by VideoJS on the ModalDialog
+  * @event MODAL_FILL
+  */
+  this.MODAL_FILL = 'modalfill';
+
+  /**
+  * Used when a modal html view will clear its content. Fired by VideoJS on the ModalDialog
+  * @event BEFORE_MODAL_EMPTY
+  */
+  this.BEFORE_MODAL_EMPTY = 'beforemodalempty';
+
+  /**
+  * Used when a modal html view has cleared its content. Fired by VideoJS on the ModalDialog
+  * @event MODAL_EMPTY
+  */
+  this.MODAL_EMPTY = 'modalempty';
+
+  /**
+  * Enough data has been loaded to play the media up to its end
+  * @event CAN_PLAY_THROUGH
+  */
+  this.CAN_PLAY_THROUGH = 'canplaythrough';
+
+  /**
+  * Video is played for the first time
+  * @event FIRST_PLAY
+  */
+  this.FIRST_PLAY = 'firstplay';
+
+  /**
+  * When the user agent is downloading media data
+  * @event PROGRESS
+  */
+  this.PROGRESS = 'progress';
+
+  /**
+  * When the player is suspended from downloading media data
+  * @event SUSPEND
+  */
+  this.SUSPEND = 'suspend';
+
+  /**
+  * When the current playlist is empty
+  * @event EMPTIED
+  */
+  this.EMPTIED = 'emptied';
+
+  /**
+  * When the player is trying to get media data, but data is not available
+  * @event STALLED
+  */
+  this.STALLED = 'stalled';
+
+  /**
+  * When the playing speed of the audio/video is changed
+  * @event RATE_CHANGE
+  */
+  this.RATE_CHANGE = 'ratechange';
+
+  /**
+  * When the text track has been changed
+  * @event TEXT_TRACK_CHANGE
+  */
+  this.TEXT_TRACK_CHANGE = 'texttrackchange';
+
+  /**
+  * When the track has been changed
+  * @event TRACK_CHANGE
+  */
+  this.TRACK_CHANGE = 'trackchanged';
+
+  /**
+  * When the video poster changes
+  * @event POSTER_CHANGE
+  */
+  this.POSTER_CHANGE = 'posterchange';
+
+  /**
+  * When a key is down
+  * @event KEY_DOWN
+  */
+  this.KEY_DOWN = 'keydown';
+
+  /**
+  * When a key is up
+  * @event KEY_UP
+  */
+  this.KEY_UP = 'keyup';
+
+  /**
+  * When the mouse is down
+  * @event MOUSE_DOWN
+  */
+  this.MOUSE_DOWN = 'mousedown';
+
+  /**
+  * When the mouse is moved
+  * @event MOUSE_MOVE
+  */
+  this.MOUSE_MOVE = 'mousemove';
+
+  /**
+  * When the mouse is up
+  * @event MOUSE_UP
+  */
+  this.MOUSE_UP = 'mouseup';
+
+  /**
+  * When touch started
+  * @event TOUCH_START
+  */
+  this.TOUCH_START = 'touchstart';
+
+  /**
+  * When touch moved
+  * @event TOUCH_MOVE
+  */
+  this.TOUCH_MOVE = 'touchmove';
+
+  /**
+  * When touch ended
+  * @event TOUCH_END
+  */
+  this.TOUCH_END = 'touchend';
+
+  /**
+  * When a touch point is moved off the interactive area of an element
+  * @event TOUCH_LEAVE
+  */
+  this.TOUCH_LEAVE = 'touchleave';
+
+  /**
+  * When a touch point has been disrupted
+  * @event TOUCH_CANCEL
+  */
+  this.TOUCH_CANCEL = 'touchcancel';
+
+  /**
+  * When the fullscreen state changes
+  * @event FULLSCREEN_CHANGE
+  */
+  this.FULLSCREEN_CHANGE = 'fullscreenchange';
+
+  /**
+  * When fullscreen isn't supported and the video will resize to the window
+  * @event ENTER_FULL_WINDOW
+  */
+  this.ENTER_FULL_WINDOW = 'enterFullWindow';
+
+  /**
+  * When exiting full window
+  * @event EXIT_FULL_WINDOW
+  */
+  this.EXIT_FULL_WINDOW = 'exitFullWindow';
+
+  /**
+  * When controls are enabled
+  * @event CONTROLS_ENABLED
+  */
+  this.CONTROLS_ENABLED = 'controlsenabled';
+
+  /**
+  * When controls are disabled
+  * @event CONTROLS_DISABLED
+  */
+  this.CONTROLS_DISABLED = 'controlsdisabled';
+
+  /**
+  * When native tech or device controls are being used
+  * @event USING_NATIVE_CONTROLS
+  */
+  this.USING_NATIVE_CONTROLS = 'usingnativecontrols';
+
+  /**
+  * When custom controls are being used
+  * @event USING_CUSTOM_CONTROLS
+  */
+  this.USING_CUSTOM_CONTROLS = 'usingcustomcontrols';
+
+  /**
+  * Fired when a VideoJS slider is active
+  * @event SLIDER_ACTIVE
+  */
+  this.SLIDER_ACTIVE = 'slideractive';
+
+  /**
+  * Fired when a VideoJS slider is inactive
+  * @event SLIDER_INACTIVE
+  */
+  this.SLIDER_INACTIVE = 'sliderinactive';
+
+  /**
+   * Fired when a new entitlement is used to start playback
+   */
+  this.ENTITLEMENT_CHANGE = 'entitlementchange';
+
+  /**
+   * Fired when the entitlement loading starts
+   */
+  this.ENTITLEMENT_LOAD_START = 'entitlementloadstart';
+
+  /**
+   * Fired when the player is initalized
+   */
+  this.PLAYER_CREATED = 'playercreated';
+
+  /**
+   * Fired when playback is restarted
+   */
+  this.RESTARTING = 'restarting';
+
+  this.SEGMENTS_UPDATED = 'segmentsupdated';
+  this.SEGMENT_CHANGED = 'segmentchanged';
+
+  /**
+   * Fired when chromecast begins casting
+   */
+  this.CHROMECAST_CASTING = 'chromecastcasting';
+
+  /**
+   * Fired when chromecast has stopped casting
+   */
+  this.CHROMECAST_STOPPED = 'chromecaststopped';
+
+  /**
+   * Fired when playback is stopped
+   */
+  this.STOPPED = 'stopped';
+
+  /**
+   * Fired when the video is ready to be played
+   */
+  this.READY_TO_PLAY = 'readytoplay';
+
+  /**
+   * Fired when program changes in a live or catchUp stream
+    */
+  this.PROGRAM_CHANGED = 'programchanged';
+
+  /**
+  * Fired when vod/asset changes
+   */
+  this.ASSET_CHANGED = 'assetchanged';
+
+  /**
+   * Fired when prefetch segment before seek in a vod/catchup stream
+  */
+  this.SEGMENT_MISSING = 'segmentmissing';
+
+  /**
+  * Fired when airplayStart
+  */
+  this.AIRPLAY_START = 'airplayStart';
+
+  /**
+  * Fired when replay
+  */
+  this.REPLAY = 'replay';
+
+  /**
+  * Fired during download
+  */
+  this.DOWNLOAD_PROGRESS = 'downloadprogress';
+
+  /**
+  * Fired when drm session try to update
+  */
+  this.DRM_SESSION_UPDATE = 'drmsessionupdate';
 };
 
 var empPlayerEvents = new EmpPlayerEvents();
@@ -3157,7 +3157,7 @@ var DownloadService = function (_Plugin) {
   return DownloadService;
 }(Plugin);
 
-DownloadService.VERSION = '2.0.93-0';
+DownloadService.VERSION = '2.0.93-177';
 
 if (videojs.getPlugin('DownloadService')) {
   videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -5389,7 +5389,7 @@ EmpShaka.prototype['featuresNativeTextTracks'] = false;
 
 Tech.withSourceHandlers(EmpShaka);
 
-EmpShaka.VERSION = '2.0.93-0';
+EmpShaka.VERSION = '2.0.93-177';
 
 // Unset source handlers set by Html5 super class.
 // We do not intent to support any sources other then sources allowed by nativeSourceHandler
