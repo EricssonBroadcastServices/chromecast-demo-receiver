@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.93-185 
+ * EMP-Player 2.0.93-186 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -2593,6 +2593,28 @@ var IS_IE_OR_EDGE = IS_EDGE || IE_VERSION !== null;
 
 
 var BACKGROUND_SIZE_SUPPORTED = isReal() && 'backgroundSize' in window_1.document.createElement('video').style;
+
+function detectClient() {
+  var ua = navigator.userAgent,
+      tem,
+      M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*([0-9.]+)/i) || [];
+  if (/trident/i.test(M[1])) {
+    tem = /\brv[ :]+([0-9.]+)/g.exec(ua) || [];
+    return { name: 'Explorer', version: tem[1] || '' };
+  }
+  if (M[1] === 'Chrome') {
+    tem = ua.match(/\b(OPR|Edge)\/([0-9.]+)/);
+    if (tem != null) {
+      var app = tem.slice(1).toString().split(',');return { name: app[0].replace('OPR', 'Opera'), version: app[1] };
+    }
+  }
+  M = M[2] ? [M[1], M[2]] : [navigator.appName, navigator.appVersion, '-?'];
+  if ((tem = ua.match(/version\/([0-9.]+)/i)) != null) M.splice(1, 1, tem[1]);
+  return {
+    name: M[0],
+    version: M[1]
+  };
+}
 
 /**
  * Returns whether an object is `Promise`-like (i.e. has a `then` method).
@@ -7412,7 +7434,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.0.93-185';
+      return '2.0.93-186';
     }
 
     /**
@@ -10129,7 +10151,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin);
 
-ProgramService.VERSION = '2.0.93-185';
+ProgramService.VERSION = '2.0.93-186';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -10305,7 +10327,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$1);
 
-EntitlementExpirationService.VERSION = '2.0.93-185';
+EntitlementExpirationService.VERSION = '2.0.93-186';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -10753,7 +10775,7 @@ EntitlementMiddleware.getLog = function () {
   return log$1;
 };
 
-EntitlementMiddleware.VERSION = '2.0.93-185';
+EntitlementMiddleware.VERSION = '2.0.93-186';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -11566,6 +11588,14 @@ var AnalyticsPlugin = function (_Plugin) {
     _this.options_ = options;
     _this.onLoadStartBind = _this.onLoadStart_.bind(_this);
     _this.player.on(empPlayerEvents.LOAD_START, _this.onLoadStartBind);
+    var client = detectClient();
+    _this.options_ = _this.options_ ? _this.options_ : {};
+    _this.options_.analytics = _this.options_.analytics ? _this.options_.analytics : {};
+    _this.options_.analytics.deviceInfo = _this.options_.analytics.deviceInfo ? _this.options_.analytics.deviceInfo : {};
+    _this.options_.analytics.deviceInfo = videojs$1.mergeOptions({
+      'deviceName': client.name,
+      'model': client.version
+    }, _this.options_.analytics.deviceInfo);
     return _this;
   }
 
@@ -11617,7 +11647,7 @@ var AnalyticsPlugin = function (_Plugin) {
     if (!obj) {
       return this.options_;
     }
-    this.options_ = obj;
+    this.options_ = videojs$1.mergeOptions(this.options_, obj);
   };
 
   /**
@@ -11629,6 +11659,7 @@ var AnalyticsPlugin = function (_Plugin) {
   AnalyticsPlugin.prototype.newAnalytics = function newAnalytics(opt) {
     log$1('new EMPAnalytics');
     //exposureApiURL, customer, businessUnit, sessionToken, userId, deviceInfoData = {}, props = {}
+
     var analytics = new EMPAnalytics(opt.exposureApiURL, opt.customer, opt.businessUnit, opt.sessionToken, opt.userId, this.options_.analytics && this.options_.analytics.deviceInfo);
     this.stop();
     log$1('new EMPAnalyticsConnector');
@@ -11698,7 +11729,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin$2);
 
-AnalyticsPlugin.VERSION = '2.0.93-185';
+AnalyticsPlugin.VERSION = '2.0.93-186';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -11823,7 +11854,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.0.93-185';
+empPlayer.VERSION = '2.0.93-186';
 
 /*
  * Universal Module Definition (UMD)
