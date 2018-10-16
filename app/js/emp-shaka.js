@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.93-186 
+ * EMP-Player 2.0.93-187 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -3147,7 +3147,7 @@ var DownloadService = function (_Plugin) {
   return DownloadService;
 }(Plugin);
 
-DownloadService.VERSION = '2.0.93-186';
+DownloadService.VERSION = '2.0.93-187';
 
 if (videojs.getPlugin('DownloadService')) {
   videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -3808,7 +3808,7 @@ var EmpShaka = function (_Html) {
       }
     }
     // Don't fetch certificate if IE or Edge or CC
-    if (window_1.document.documentMode || /Edge/.test(window_1.navigator.userAgent) || IS_CHROMECAST) {
+    if (window_1.document.documentMode || /Edge/.test(window_1.navigator.userAgent) || IS_CHROMECAST || IS_ANDROID) {
       this.certificate_ = null;
     } else {
       if (source.certificateServer && !this.certificate_) {
@@ -3944,21 +3944,20 @@ var EmpShaka = function (_Html) {
       ignoreTextStreamFailures: true
     };
 
-    if (window_1.navigator.userAgent.indexOf('Android') === -1) {
+    if (IS_ANDROID) {
       config.drm = {
         advanced: {
           'com.widevine.alpha': {
-            'videoRobustness': 'SW_SECURE_DECODE',
+            'videoRobustness': 'SW_SECURE_CRYPTO',
             'audioRobustness': 'SW_SECURE_CRYPTO'
           }
         }
       };
     } else {
-      //Android
       config.drm = {
         advanced: {
           'com.widevine.alpha': {
-            'videoRobustness': 'SW_SECURE_CRYPTO',
+            'videoRobustness': 'SW_SECURE_DECODE',
             'audioRobustness': 'SW_SECURE_CRYPTO'
           }
         }
@@ -5379,7 +5378,7 @@ EmpShaka.prototype['featuresNativeTextTracks'] = false;
 
 Tech.withSourceHandlers(EmpShaka);
 
-EmpShaka.VERSION = '2.0.93-186';
+EmpShaka.VERSION = '2.0.93-187';
 
 // Unset source handlers set by Html5 super class.
 // We do not intent to support any sources other then sources allowed by nativeSourceHandler
