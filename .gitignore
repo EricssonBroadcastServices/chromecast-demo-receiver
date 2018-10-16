@@ -19,3 +19,4 @@ applicationhost.config
 *.tgz
 Web.config
 applicationhost.config
+package-lock.json
