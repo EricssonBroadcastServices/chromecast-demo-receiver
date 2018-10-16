@@ -136,10 +136,14 @@ https://github.com/google/shaka-player/releases
 ## 2.93.0
 
 ### Bug fixes
-**EMP-11837** Playback.Aborted should not be sent after Playback.Error + order of the events is not always right
+- **EMP-11837** Playback.Aborted should not be sent after Playback.Error + order of the events is not always right
+- **EMP-11899** Playback.Aborted not sent when jumping to live
+- **EMP-11902** Playback.Aborted events sent by the CC have offset null
 
 ### New features
-**EMP-11832** Adapt the timeline in the player for streams with DVR-window in the manifest URL (streams without epg)
+- **EMP-11832** Adapt the timeline in the player for streams with DVR-window in the manifest URL (streams without epg)
+- **EMP-11791** Update to Shaka 2.4.4
+- **EMP-11904** Analytics improvement - Send browser/version in Name and Model
 
 
 
