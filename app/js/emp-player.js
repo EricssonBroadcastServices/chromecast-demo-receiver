@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.94-189 
+ * EMP-Player 2.0.94-190 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -5464,6 +5464,7 @@ var Player = function (_VjsPlayer) {
       if (_this.techName_ !== 'EmpCast') {
         _this.loadNextSource();
       }
+      _this.yospace && _this.yospace().stop();
     });
 
     _this.on(empPlayerEvents.DISPOSE, function () {
@@ -5478,6 +5479,7 @@ var Player = function (_VjsPlayer) {
       if (_this.entitlementExpirationService) {
         _this.entitlementExpirationService().stop();
       }
+      _this.yospace && _this.yospace().dispose();
     });
     _this.on(empPlayerEvents.ERROR, function () {
       _this.loadNextSrc_ = null;
@@ -5491,6 +5493,7 @@ var Player = function (_VjsPlayer) {
       if (_this.entitlementExpirationService) {
         _this.entitlementExpirationService().stop();
       }
+      _this.yospace && _this.yospace().stop();
     });
 
     _this.on(empPlayerEvents.CAN_PLAY, function () {
@@ -5733,6 +5736,7 @@ var Player = function (_VjsPlayer) {
 
   Player.prototype.stop = function stop(afterStopCallback) {
     this.analytics && this.analytics().stop();
+    this.yospace && this.yospace().stop();
     extplayer.stop(this, afterStopCallback);
   };
 
@@ -6221,6 +6225,7 @@ var Player = function (_VjsPlayer) {
     if (!sources[0].type) {
       sources[0].type = 'video/emp';
     }
+
     //Throttling the play request
     if (sources[0].type === 'video/emp') {
       // already loading an src, block this for now
@@ -6241,6 +6246,22 @@ var Player = function (_VjsPlayer) {
     }
     this.loadNextSrc_ = null;
     log$1('load src OK');
+
+    if (!sources[0].isYospace) {
+      this.yospace && this.yospace().stop();
+    } else {
+      sources[0].isYospace = false;
+    }
+    if (sources[0].type === 'application/yospace' && this.yospace) {
+      this.yospace().start('VoD', sources[0].src).then(function (mediaLocator) {
+        log$1("yospace mediaLocator returned", mediaLocator);
+        _this4.options_.techOrder = ['EmpHLS'];
+        _this4.src({ 'src': mediaLocator, 'type': 'application/x-mpegURL', 'isYospace': true });
+      })['catch'](function (errMsg) {
+        _this4.error(errMsg);
+      });
+      return;
+    }
 
     this.options_.excludeTechs = [];
     if (!this.tech_) {
@@ -7434,7 +7455,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.0.94-189';
+      return '2.0.94-190';
     }
 
     /**
@@ -7634,6 +7655,9 @@ function canPlayEncrypted() {
  * @param {string}  [options.liveTime=null] - Last viewed offset liveTime
  * @param {Object}  [options.licenseServers] - licenseServers for dash
  * @param {Object}  [options.requestId] - requestId for the play call
+ * @param {Object}  [options.adMediaLocator] - MediaLocator for ad override MediaLocator
+ * @param {Object}  [options.fairplayConfig] - fairplayConfig {certificateUrl, licenseAcquisitionUrl}
+ * @param {Object}  [options.widevineConfig]  - widevineConfig {certificateServer}
 
  */
 
@@ -7650,6 +7674,7 @@ var Entitlement = function () {
     if (this.mediaLocator) {
       this.src = this.mediaLocator.replace(/^(http:)/, '').replace(/^(https:)/, '');
     }
+    this.adMediaLocator = options.adMediaLocator || '';
     if (options.streamInfo) {
       this.streamInfo = options.streamInfo;
     } else {
@@ -10151,7 +10176,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin);
 
-ProgramService.VERSION = '2.0.94-189';
+ProgramService.VERSION = '2.0.94-190';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -10327,7 +10352,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$1);
 
-EntitlementExpirationService.VERSION = '2.0.94-189';
+EntitlementExpirationService.VERSION = '2.0.94-190';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -10463,9 +10488,9 @@ var EntitlementMiddleware = function EntitlementMiddleware(player) {
         }
       });
       if (techs.length === 0) {
-        var error = new EmpPlayerError('Unable to load asset: None of the playback technologies are supported', EmpPlayerErrorCodes.ENTITLEMENT);
-        player.error(error);
-        next(error);
+        var _error = new EmpPlayerError('Unable to load asset: None of the playback technologies are supported', EmpPlayerErrorCodes.ENTITLEMENT);
+        player.error(_error);
+        next(_error);
         return;
       }
       var entitlementRequestError;
@@ -10508,10 +10533,28 @@ var EntitlementMiddleware = function EntitlementMiddleware(player) {
               } else {
                 // Set the entitlement to use, and break out of the loop. No need to get other entitlements.
                 srcEntitlement = setupEntitlement(entitlement, tech);
-                startProgramService_(player, options, exposure, srcEntitlement, function () {
-                  next(null, srcEntitlement);
-                });
-                loop['break']();
+                if (srcEntitlement.adMediaLocator && player.yospace) {
+                  log$1("play adMediaLocator with yospace", srcEntitlement.adMediaLocator);
+                  player.yospace().start('VoD', srcEntitlement.adMediaLocator).then(function (mediaLocator) {
+                    log$1("yospace mediaLocator returned", mediaLocator);
+                    srcEntitlement.mediaLocator = mediaLocator;
+                    srcEntitlement.src = mediaLocator;
+                    startProgramService_(player, options, exposure, srcEntitlement, function () {
+                      next(null, srcEntitlement);
+                    });
+                    loop['break']();
+                  })['catch'](function (errMsg) {
+                    entitlementRequestError = new EmpPlayerError(errMsg, EmpPlayerErrorCodes.ENTITLEMENT);
+                    player.error(entitlementRequestError);
+                    extplayer.stop(player);
+                    srcEntitlement === null;
+                  });
+                } else {
+                  startProgramService_(player, options, exposure, srcEntitlement, function () {
+                    next(null, srcEntitlement);
+                  });
+                  loop['break']();
+                }
               }
             });
           }
@@ -10584,7 +10627,7 @@ var EntitlementMiddleware = function EntitlementMiddleware(player) {
           player.programService().options({ 'exposure': exposure });
 
           if (srcEntitlement.isDynamicCachupAsLive && options.playFrom) {
-            var seekToProgramStart = options.playFrom === 'beginning' || !srcEntitlement.live && !player.options_.absoluteStartTime && !player.options_.startTime; //it's set by useLastViewedOffset or options.playFrom === 'startTime'
+            seekToProgramStart = options.playFrom === 'beginning' || !srcEntitlement.live && !player.options_.absoluteStartTime && !player.options_.startTime; //it's set by useLastViewedOffset or options.playFrom === 'startTime'
             if (seekToProgramStart) {
               //Use timeParams.start as startTime
               var startTime = srcEntitlement.streamInfo.start.getTime() + 100;
@@ -10775,7 +10818,7 @@ EntitlementMiddleware.getLog = function () {
   return log$1;
 };
 
-EntitlementMiddleware.VERSION = '2.0.94-189';
+EntitlementMiddleware.VERSION = '2.0.94-190';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -11729,7 +11772,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin$2);
 
-AnalyticsPlugin.VERSION = '2.0.94-189';
+AnalyticsPlugin.VERSION = '2.0.94-190';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -11854,7 +11897,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.0.94-189';
+empPlayer.VERSION = '2.0.94-190';
 
 /*
  * Universal Module Definition (UMD)
