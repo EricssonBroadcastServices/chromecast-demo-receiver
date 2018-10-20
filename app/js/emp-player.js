@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.94-193 
+ * EMP-Player 2.0.94-194 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -5510,7 +5510,9 @@ var Player = function (_VjsPlayer) {
       }
     });
     _this.on(empPlayerEvents.REPLAY, function () {
-      if (_this.cache_ && _this.cache_.source) {
+      if (_this.cache_ && _this.cache_.source && _this.cache_.source.yospaceUrl) {
+        _this.src({ 'src': _this.cache_.source.yospaceUrl, 'type': 'application/yospace' });
+      } else if (_this.cache_ && _this.cache_.source) {
         _this.src(_this.cache_.source);
       }
     });
@@ -6247,16 +6249,16 @@ var Player = function (_VjsPlayer) {
     this.loadNextSrc_ = null;
     log$1('load src OK');
 
-    if (!sources[0].isYospace) {
-      this.yospace && this.yospace().stop();
-    } else {
-      sources[0].isYospace = false;
-    }
+    this.yospace && this.yospace().stop();
+
     if (sources[0].type === 'application/yospace' && this.yospace) {
       this.yospace().start('VoD', sources[0].src).then(function (mediaLocator) {
         log$1("yospace mediaLocator returned", mediaLocator);
         _this4.options_.techOrder = ['EmpHLS'];
-        _this4.src({ 'src': mediaLocator, 'type': 'application/x-mpegURL', 'isYospace': true });
+        sources[0] = {
+          'src': mediaLocator, 'type': 'application/x-mpegURL', 'yospaceUrl': sources[0].src
+        };
+        _VjsPlayer.prototype.src.call(_this4, sources);
       })['catch'](function (errMsg) {
         _this4.error(errMsg);
       });
@@ -7455,7 +7457,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.0.94-193';
+      return '2.0.94-194';
     }
 
     /**
@@ -10176,7 +10178,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin);
 
-ProgramService.VERSION = '2.0.94-193';
+ProgramService.VERSION = '2.0.94-194';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -10352,7 +10354,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$1);
 
-EntitlementExpirationService.VERSION = '2.0.94-193';
+EntitlementExpirationService.VERSION = '2.0.94-194';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -10818,7 +10820,7 @@ EntitlementMiddleware.getLog = function () {
   return log$1;
 };
 
-EntitlementMiddleware.VERSION = '2.0.94-193';
+EntitlementMiddleware.VERSION = '2.0.94-194';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -11772,7 +11774,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin$2);
 
-AnalyticsPlugin.VERSION = '2.0.94-193';
+AnalyticsPlugin.VERSION = '2.0.94-194';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -11897,7 +11899,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.0.94-193';
+empPlayer.VERSION = '2.0.94-194';
 
 /*
  * Universal Module Definition (UMD)
