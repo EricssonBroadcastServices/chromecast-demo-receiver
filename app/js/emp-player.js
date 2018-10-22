@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.94-195 
+ * EMP-Player 2.0.94-196 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -593,8 +593,7 @@ var EmpPlayerEvents = function EmpPlayerEvents() {
    */
   this.RESTARTING = 'restarting';
 
-  this.SEGMENTS_UPDATED = 'segmentsupdated';
-  this.SEGMENT_CHANGED = 'segmentchanged';
+  this.AD_TIMELINE_CHANGED = 'adtimelinechanged';
 
   /**
    * Fired when chromecast begins casting
@@ -2446,6 +2445,93 @@ function formatTime(seconds) {
 }
 
 var Component$6 = videojs$1.getComponent('Component');
+
+/**
+ * EmpMarker gui element for ad markers
+ *
+ * @param {Player|Object} player
+ * @param {Object=} options
+ * @extends MenuButton
+ * @class EmpMarker
+ */
+
+var EmpMarker = function (_Component) {
+  inherits(EmpMarker, _Component);
+
+  function EmpMarker(player, options) {
+    classCallCheck(this, EmpMarker);
+
+    var _this = possibleConstructorReturn(this, _Component.call(this, player, options));
+
+    _this.on(_this.player(), empPlayerEvents.PLAYING, function () {
+      return _this.updateVisibility();
+    });
+    _this.on(_this.player(), empPlayerEvents.DURATION_CHANGE, function () {
+      return _this.updateVisibility();
+    });
+    _this.on(_this.player(), empPlayerEvents.SEEKED, function () {
+      return _this.updateVisibility();
+    });
+    _this.addClass('vjs-hidden');
+    return _this;
+  }
+
+  /**
+  * Create the component's DOM element
+  *
+  * @return {Element}
+  * @method createEl
+  */
+
+
+  EmpMarker.prototype.createEl = function createEl() {
+    var el = _Component.prototype.createEl.call(this, 'div', {
+      className: 'emp-ad-marker'
+    });
+    return el;
+  };
+
+  EmpMarker.prototype.buildCSSClass = function buildCSSClass() {
+    return 'emp-ad-marker ' + _Component.prototype.buildCSSClass.call(this);
+  };
+
+  EmpMarker.prototype.updateVisibility = function updateVisibility() {
+    if (this.player_.duration()) {
+      var element = this.options_.element;
+
+      if (element.offset + element.duration < this.player_.currentTime()) {
+        this.addClass('emp-ad-past');
+      } else {
+        this.removeClass('emp-ad-past');
+      }
+
+      var percent_startTime = element.offset / this.player_.duration();
+      if (percent_startTime >= 1) {
+        percent_startTime = 1;
+      }
+
+      var percent_duration = element.duration / this.player_.duration();
+      if (percent_duration >= 1) {
+        percent_duration = 1;
+      }
+
+      this.el_.style.left = (percent_startTime * 100).toFixed(2) + '%';
+      this.el_.style.width = (percent_duration * 100).toFixed(2) + '%';
+
+      this.show();
+    }
+  };
+
+  EmpMarker.prototype.dispose = function dispose() {
+    _Component.prototype.dispose.call(this);
+  };
+
+  return EmpMarker;
+}(Component$6);
+
+Component$6.registerComponent('EmpMarker', EmpMarker);
+
+var Component$7 = videojs$1.getComponent('Component');
 var MouseTimeDisplay = videojs$1.getComponent('MouseTimeDisplay');
 
 /**
@@ -2506,7 +2592,7 @@ var EmpMouseTimeDisplay = function (_MouseTimeDisplay) {
   return EmpMouseTimeDisplay;
 }(MouseTimeDisplay);
 
-Component$6.registerComponent('MouseTimeDisplay', EmpMouseTimeDisplay);
+Component$7.registerComponent('MouseTimeDisplay', EmpMouseTimeDisplay);
 
 var USER_AGENT = window_1.navigator && window_1.navigator.userAgent || '';
 var webkitVersionMap = /AppleWebKit\/([\d.]+)/i.exec(USER_AGENT);
@@ -2679,11 +2765,13 @@ var SeekBar = function (_Slider) {
     var _this = possibleConstructorReturn(this, _Slider.call(this, player, options));
 
     _this.lastStep = 0;
+    _this.markers = [];
 
     _this.update = throttle(bind(_this, _this.update), UPDATE_REFRESH_INTERVAL);
 
-    _this.on(player, 'timeupdate', _this.update);
-    _this.on(player, 'ended', _this.handleEnded);
+    _this.on(player, empPlayerEvents.TIME_UPDATE, _this.update);
+    _this.on(player, empPlayerEvents.ENDED, _this.handleEnded);
+    _this.on(player, empPlayerEvents.AD_TIMELINE_CHANGED, _this.updateMarkers);
 
     // when playing, let's ensure we smoothly update the play progress bar
     // via an interval
@@ -2713,6 +2801,53 @@ var SeekBar = function (_Slider) {
     _this.on(player, ['timeupdate', 'ended'], _this.update);
     return _this;
   }
+
+  /**
+  * Update the marker displays
+  */
+
+
+  SeekBar.prototype.updateMarkers = function updateMarkers(event, data) {
+    for (var _iterator = this.markers, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
+      var _ref;
+
+      if (_isArray) {
+        if (_i >= _iterator.length) break;
+        _ref = _iterator[_i++];
+      } else {
+        _i = _iterator.next();
+        if (_i.done) break;
+        _ref = _i.value;
+      }
+
+      var marker = _ref;
+
+      this.removeChild(marker);
+    }
+    if (data && data.timeline) {
+      for (var _iterator2 = data.timeline.getAllElements(), _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
+        var _ref2;
+
+        if (_isArray2) {
+          if (_i2 >= _iterator2.length) break;
+          _ref2 = _iterator2[_i2++];
+        } else {
+          _i2 = _iterator2.next();
+          if (_i2.done) break;
+          _ref2 = _i2.value;
+        }
+
+        var element = _ref2;
+
+        if (element.type === 'advert') {
+          var _marker = new EmpMarker(this.player_, { 'element': element });
+          this.markers.push(_marker);
+          this.addChild(_marker);
+          _marker.updateVisibility();
+        }
+      }
+    }
+  };
 
   /**
    * Create the `Component`'s DOM element
@@ -2807,6 +2942,22 @@ var SeekBar = function (_Slider) {
 
   SeekBar.prototype.handleEnded = function handleEnded(event) {
     this.update_(this.player_.duration(), 1);
+    for (var _iterator3 = this.markers, _isArray3 = Array.isArray(_iterator3), _i3 = 0, _iterator3 = _isArray3 ? _iterator3 : _iterator3[Symbol.iterator]();;) {
+      var _ref3;
+
+      if (_isArray3) {
+        if (_i3 >= _iterator3.length) break;
+        _ref3 = _iterator3[_i3++];
+      } else {
+        _i3 = _iterator3.next();
+        if (_i3.done) break;
+        _ref3 = _i3.value;
+      }
+
+      var marker = _ref3;
+
+      this.removeChild(marker);
+    }
   };
 
   /**
@@ -3020,7 +3171,7 @@ SeekBar.prototype.playerEvent = 'timeupdate';
 Component$5.registerComponent('SeekBar', SeekBar);
 
 var Button$1 = videojs$1.getComponent('Button');
-var Component$7 = videojs$1.getComponent('Component');
+var Component$8 = videojs$1.getComponent('Component');
 
 /**
  * Displays a button to jump back to the beginning of the current asset / program
@@ -3101,10 +3252,10 @@ var EmpRestartButton = function (_Button) {
 
 EmpRestartButton.prototype.controlText_ = 'Restart';
 
-Component$7.registerComponent('EmpRestartButton', EmpRestartButton);
+Component$8.registerComponent('EmpRestartButton', EmpRestartButton);
 
 var Button$2 = videojs$1.getComponent('Button');
-var Component$8 = videojs$1.getComponent('Component');
+var Component$9 = videojs$1.getComponent('Component');
 
 /**
  * Displays a button to jump forward a few seconds
@@ -3211,10 +3362,10 @@ var EmpForwardButton = function (_Button) {
 
 EmpForwardButton.prototype.controlText_ = 'Forward';
 
-Component$8.registerComponent('EmpForwardButton', EmpForwardButton);
+Component$9.registerComponent('EmpForwardButton', EmpForwardButton);
 
 var Button$3 = videojs$1.getComponent('Button');
-var Component$9 = videojs$1.getComponent('Component');
+var Component$10 = videojs$1.getComponent('Component');
 
 /**
  * Displays a button to jump back a few seconds
@@ -3321,13 +3472,13 @@ var EmpRewindButton = function (_Button) {
 
 EmpRewindButton.prototype.controlText_ = 'Rewind';
 
-Component$9.registerComponent('EmpRewindButton', EmpRewindButton);
+Component$10.registerComponent('EmpRewindButton', EmpRewindButton);
 
 /**
  * Similar to restart, however this will always request a new entitlement.
  */
 var Button$4 = videojs$1.getComponent('Button');
-var Component$10 = videojs$1.getComponent('Component');
+var Component$11 = videojs$1.getComponent('Component');
 
 /**
  * Displays a button to jump back to the beginning of the current asset / program and request a new entitlement
@@ -3372,10 +3523,10 @@ var EmpReloadButton = function (_Button) {
 
 EmpReloadButton.prototype.controlText_ = 'Reload';
 
-Component$10.registerComponent('EmpReloadButton', EmpReloadButton);
+Component$11.registerComponent('EmpReloadButton', EmpReloadButton);
 
 var RemainingTimeDisplay = videojs$1.getComponent('RemainingTimeDisplay');
-var Component$11 = videojs$1.getComponent('Component');
+var Component$12 = videojs$1.getComponent('Component');
 
 var UPDATE_REFRESH_INTERVAL$1 = !IS_CHROMECAST && !window.EMP_DEBUG_CHROMECAST ? 30 : 1000;
 
@@ -3487,13 +3638,13 @@ var EmpTimeDisplay = function (_Component) {
   };
 
   return EmpTimeDisplay;
-}(Component$11);
+}(Component$12);
 
-Component$11.registerComponent('EmpTimeDisplay', EmpTimeDisplay);
-Component$11.registerComponent('EmpTimeDisplay2', EmpTimeDisplay);
+Component$12.registerComponent('EmpTimeDisplay', EmpTimeDisplay);
+Component$12.registerComponent('EmpTimeDisplay2', EmpTimeDisplay);
 
 var Button$5 = videojs$1.getComponent('Button');
-var Component$12 = videojs$1.getComponent('Component');
+var Component$13 = videojs$1.getComponent('Component');
 
 /**
  * The button component for stopping playback
@@ -3573,10 +3724,10 @@ var EmpStopButton = function (_Button) {
 EmpStopButton.prototype.kind_ = 'stop';
 EmpStopButton.prototype.controlText_ = 'stop';
 
-Component$12.registerComponent('EmpStopButton', EmpStopButton);
+Component$13.registerComponent('EmpStopButton', EmpStopButton);
 
 var PlayToggle = videojs$1.getComponent('PlayToggle');
-var Component$13 = videojs$1.getComponent('Component');
+var Component$14 = videojs$1.getComponent('Component');
 
 /**
  * The button component for the play toggle
@@ -3651,9 +3802,9 @@ var EmpPlayToggle = function (_PlayToggle) {
 EmpPlayToggle.prototype.kind_ = 'playToggle';
 EmpPlayToggle.prototype.controlText_ = 'playToggle';
 
-Component$13.registerComponent('EmpPlayToggle', EmpPlayToggle);
+Component$14.registerComponent('EmpPlayToggle', EmpPlayToggle);
 
-var Component$14 = videojs$1.getComponent('Component');
+var Component$15 = videojs$1.getComponent('Component');
 var Button$6 = videojs$1.getComponent('Button');
 
 var AirplayToggle = function (_Button) {
@@ -3724,7 +3875,7 @@ AirplayToggle.prototype.controlText_ = 'Airplay';
 videojs$1.registerComponent('AirplayToggle', AirplayToggle);
 
 var Button$7 = videojs$1.getComponent('Button');
-var Component$15 = videojs$1.getComponent('Component');
+var Component$16 = videojs$1.getComponent('Component');
 
 /**
  * Displays a button to jump forward a few seconds
@@ -3807,10 +3958,10 @@ var EmpNextButton = function (_Button) {
 
 EmpNextButton.prototype.controlText_ = 'Next';
 
-Component$15.registerComponent('EmpNextButton', EmpNextButton);
+Component$16.registerComponent('EmpNextButton', EmpNextButton);
 
 var Button$8 = videojs$1.getComponent('Button');
-var Component$16 = videojs$1.getComponent('Component');
+var Component$17 = videojs$1.getComponent('Component');
 
 /**
  * Displays a button to jump back a few seconds
@@ -3893,7 +4044,7 @@ var EmpPreviousButton = function (_Button) {
 
 EmpPreviousButton.prototype.controlText_ = 'Previous';
 
-Component$16.registerComponent('EmpPreviousButton', EmpPreviousButton);
+Component$17.registerComponent('EmpPreviousButton', EmpPreviousButton);
 
 var ControlBar = videojs$1.getComponent('ControlBar');
 var Component$1 = videojs$1.getComponent('Component');
@@ -4010,7 +4161,7 @@ function rangeCheck(fnName, index, maxIndex) {
   }
 }
 
-var Component$17 = videojs$1.getComponent('Component');
+var Component$18 = videojs$1.getComponent('Component');
 
 var darkGray = '#222';
 var lightGray = '#ccc';
@@ -4497,11 +4648,11 @@ var TextTrackDisplay = function (_Component) {
   };
 
   return TextTrackDisplay;
-}(Component$17);
+}(Component$18);
 
-Component$17.registerComponent('TextTrackDisplay', TextTrackDisplay);
+Component$18.registerComponent('TextTrackDisplay', TextTrackDisplay);
 
-var Component$18 = videojs$1.getComponent('Component');
+var Component$19 = videojs$1.getComponent('Component');
 var ModalDialog = videojs$1.getComponent('ModalDialog');
 
 var LOCAL_STORAGE_KEY = 'vjs-text-track-settings';
@@ -5034,9 +5185,9 @@ var TextTrackSettings = function (_ModalDialog) {
   return TextTrackSettings;
 }(ModalDialog);
 
-Component$18.registerComponent('TextTrackSettings', TextTrackSettings);
+Component$19.registerComponent('TextTrackSettings', TextTrackSettings);
 
-var Component$19 = videojs$1.getComponent('Component');
+var Component$20 = videojs$1.getComponent('Component');
 
 /**
  * EmpMediaInfoBar Show media-title, media-artwork, media-resolution and media-subtitle
@@ -5261,11 +5412,11 @@ var EmpMediaInfoBar = function (_Component) {
   };
 
   return EmpMediaInfoBar;
-}(Component$19);
+}(Component$20);
 
 EmpMediaInfoBar.prototype.controlText_ = 'MediaInfo';
 
-Component$19.registerComponent('EmpMediaInfoBar', EmpMediaInfoBar);
+Component$20.registerComponent('EmpMediaInfoBar', EmpMediaInfoBar);
 
 /**
  * A Custom `MediaError` class which mimics the standard HTML5 `MediaError` class.
@@ -6251,20 +6402,6 @@ var Player = function (_VjsPlayer) {
 
     this.yospace && this.yospace().stop();
 
-    if (sources[0].type === 'application/yospace' && this.yospace) {
-      this.yospace().start('VoD', sources[0].src).then(function (mediaLocator) {
-        log$1("yospace mediaLocator returned", mediaLocator);
-        _this4.options_.techOrder = ['EmpHLS'];
-        sources[0] = {
-          'src': mediaLocator, 'type': 'application/x-mpegURL', 'yospaceUrl': sources[0].src
-        };
-        _VjsPlayer.prototype.src.call(_this4, sources);
-      })['catch'](function (errMsg) {
-        _this4.error(errMsg);
-      });
-      return;
-    }
-
     this.options_.excludeTechs = [];
     if (!this.tech_) {
       this.reset();
@@ -6291,6 +6428,21 @@ var Player = function (_VjsPlayer) {
       //Start playback
       this.off(empPlayerEvents.LOADED_DATA, this.initialSeekToAbsoluteStartTimeBind);
       this.one(empPlayerEvents.LOADED_DATA, this.initialSeekToAbsoluteStartTimeBind);
+
+      if (sources[0].type === 'application/yospace' && this.yospace) {
+        this.yospace().start('VoD', sources[0].src).then(function (mediaLocator) {
+          log$1("yospace mediaLocator returned", mediaLocator);
+          _this4.options_.techOrder = ['EmpHLS'];
+          sources[0] = {
+            'src': mediaLocator, 'type': 'application/x-mpegURL', 'yospaceUrl': sources[0].src
+          };
+          _VjsPlayer.prototype.src.call(_this4, sources);
+        })['catch'](function (errMsg) {
+          _this4.error(errMsg);
+        });
+        return;
+      }
+
       return _VjsPlayer.prototype.src.call(this, sources);
     }
   };
@@ -7457,7 +7609,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.0.94-195';
+      return '2.0.94-196';
     }
 
     /**
@@ -10182,7 +10334,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin);
 
-ProgramService.VERSION = '2.0.94-195';
+ProgramService.VERSION = '2.0.94-196';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -10358,7 +10510,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$1);
 
-EntitlementExpirationService.VERSION = '2.0.94-195';
+EntitlementExpirationService.VERSION = '2.0.94-196';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -10824,7 +10976,7 @@ EntitlementMiddleware.getLog = function () {
   return log$1;
 };
 
-EntitlementMiddleware.VERSION = '2.0.94-195';
+EntitlementMiddleware.VERSION = '2.0.94-196';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -11778,7 +11930,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin$2);
 
-AnalyticsPlugin.VERSION = '2.0.94-195';
+AnalyticsPlugin.VERSION = '2.0.94-196';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -11903,7 +12055,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.0.94-195';
+empPlayer.VERSION = '2.0.94-196';
 
 /*
  * Universal Module Definition (UMD)

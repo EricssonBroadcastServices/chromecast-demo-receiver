@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.94-195 
+ * EMP-Player 2.0.94-196 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -612,8 +612,7 @@ var EmpPlayerEvents = function EmpPlayerEvents() {
    */
   this.RESTARTING = 'restarting';
 
-  this.SEGMENTS_UPDATED = 'segmentsupdated';
-  this.SEGMENT_CHANGED = 'segmentchanged';
+  this.AD_TIMELINE_CHANGED = 'adtimelinechanged';
 
   /**
    * Fired when chromecast begins casting
@@ -3147,7 +3146,7 @@ var DownloadService = function (_Plugin) {
   return DownloadService;
 }(Plugin);
 
-DownloadService.VERSION = '2.0.94-195';
+DownloadService.VERSION = '2.0.94-196';
 
 if (videojs.getPlugin('DownloadService')) {
   videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -5378,7 +5377,7 @@ EmpShaka.prototype['featuresNativeTextTracks'] = false;
 
 Tech.withSourceHandlers(EmpShaka);
 
-EmpShaka.VERSION = '2.0.94-195';
+EmpShaka.VERSION = '2.0.94-196';
 
 // Unset source handlers set by Html5 super class.
 // We do not intent to support any sources other then sources allowed by nativeSourceHandler
