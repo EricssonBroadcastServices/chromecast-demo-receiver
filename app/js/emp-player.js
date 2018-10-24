@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.94-198 
+ * EMP-Player 2.0.94-199 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -870,7 +870,9 @@ var EmpPlayerErrorCodes = {
 
   FLASH_TECH: 400,
 
-  CHROMECAST_TECH: 500
+  CHROMECAST_TECH: 500,
+
+  HLS_MSE_TECH: 600
 };
 
 var EmpPlayerError = function (_Error) {
@@ -1967,7 +1969,7 @@ var extplayer = {
       var entitlement = this.getEntitlement(player);
       if (value && entitlement && entitlement.isStaticCachupAsLive) {
         value = new Date(value.getTime() + entitlement.streamInfo.start.getTime());
-      } else if (entitlement && entitlement.isDynamicCachupAsLive && player.techName_ === 'EmpHLS') {
+      } else if (entitlement && entitlement.isDynamicCachupAsLive && (player.techName_ === 'EmpHLS' || player.techName_ === 'EmpHLS-MSE')) {
         value = new Date(player.tech_.baseCurrentTime() * 1000 + entitlement.streamInfo.start.getTime());
       }
     }
@@ -2034,7 +2036,7 @@ var extplayer = {
     var nowdate = this.getServerTime(player);
     var value = player.tech_.startTimeLive(nowdate);
     var entitlement = this.getEntitlement(player);
-    if (entitlement && entitlement.isDynamicCachupAsLive && player.techName_ === 'EmpHLS') {
+    if (entitlement && entitlement.isDynamicCachupAsLive && (player.techName_ === 'EmpHLS' || player.techName_ === 'EmpHLS-MSE')) {
       value = entitlement.streamInfo.referenceTime;
     }
     if (entitlement && entitlement.isStaticCachupAsLive && player.techName_ !== 'EmpCast') {
@@ -2132,14 +2134,14 @@ var extplayer = {
           log$1('setAbsoluteTime', 'playPreviousProgram');
           this.playProgram(player, date);
           //Go to start of stream as a fallback
-          if (player.techName_ === 'EmpHLS') {
+          if (player.techName_ === 'EmpHLS' || player.techName_ === 'EmpHLS-MSE') {
             player.techCall_('setCurrentTime', 0);
             return;
           } else {
             //EmpShaka
             date = new Date(entitlement.streamInfo.start.getTime());
           }
-        } else if (player.techName_ === 'EmpHLS') {
+        } else if (player.techName_ === 'EmpHLS' || player.techName_ === 'EmpHLS-MSE') {
           date = date - entitlement.streamInfo.start.getTime();
           player.techCall_('setCurrentTime', date / 1000);
           return;
@@ -4262,7 +4264,7 @@ var TextTrackDisplay = function (_Component) {
         this.hide();
         return;
       }
-      if (player.techName_ === 'EmpShaka' || player.techName_ === 'EmpHLS' || player.techName_ === 'EmpCast') {
+      if (player.techName_ === 'EmpShaka' || player.techName_ === 'EmpHLS' || player.techName_ === 'EmpHLS-MSE' || player.techName_ === 'EmpCast') {
         this.hide();
         return;
       }
@@ -4349,7 +4351,7 @@ var TextTrackDisplay = function (_Component) {
 
 
   TextTrackDisplay.prototype.toggleDisplay = function toggleDisplay() {
-    if (this.player_.techName_ === 'EmpShaka' || this.player_.techName_ === 'EmpHLS' || this.player_.techName_ === 'EmpCast') {
+    if (this.player_.techName_ === 'EmpShaka' || this.player_.techName_ === 'EmpHLS' || this.player_.techName_ === 'EmpHLS-MSE' || this.player_.techName_ === 'EmpCast') {
       this.hide();
       return;
     }
@@ -4499,7 +4501,7 @@ var TextTrackDisplay = function (_Component) {
         overrides = this.player_.textTrackSettings.getValues();
       }
       var styleName = 'styles_cue';
-      if (this.player_.techName_ === 'EmpShaka' || this.player_.techName_ === 'EmpHLS' || this.player_.techName_ === 'EmpCast') {
+      if (this.player_.techName_ === 'EmpShaka' || this.player_.techName_ === 'EmpHLS' || this.player_.techName_ === 'EmpHLS-MSE' || this.player_.techName_ === 'EmpCast') {
         var styleStr = this.getStyle(overrides);
         if (this.player_.techName_ === 'EmpHLS') {
           this.writeStyles(styleName, 'video::cue {' + styleStr + '}' + '\n' + this.getSafariStyle(overrides));
@@ -6432,7 +6434,7 @@ var Player = function (_VjsPlayer) {
       if (sources[0].type === 'application/yospace' && this.yospace) {
         this.yospace().start('VoD', sources[0].src).then(function (mediaLocator) {
           log$1("yospace mediaLocator returned", mediaLocator);
-          _this4.options_.techOrder = ['EmpHLS'];
+          _this4.options_.techOrder = ['EmpHLS', 'EmpHLS-MSE'];
           sources[0] = {
             'src': mediaLocator, 'type': 'application/x-mpegURL', 'yospaceUrl': sources[0].src
           };
@@ -7112,7 +7114,7 @@ var Player = function (_VjsPlayer) {
             seconds = 1;
           }
           var start = new Date(_program.startTime);
-          if (entitlement.isStaticCachupAsLive || this.techName_ === 'EmpHLS') {
+          if (entitlement.isStaticCachupAsLive || this.techName_ === 'EmpHLS' || this.techName_ === 'EmpHLS-MSE') {
             var t = entitlement.streamInfo;
             seconds = seconds + (start.getTime() - t.start.getTime()) / 1000;
             if (seconds <= 0) {
@@ -7149,7 +7151,7 @@ var Player = function (_VjsPlayer) {
       var program = this.getProgramDetails();
       if (program && currentTime > 1) {
         var _start = new Date(program.startTime);
-        if (entitlement.isStaticCachupAsLive || this.techName_ === 'EmpHLS') {
+        if (entitlement.isStaticCachupAsLive || this.techName_ === 'EmpHLS' || this.techName_ === 'EmpHLS-MSE') {
           var _t = entitlement.streamInfo;
           currentTime = currentTime - (_start.getTime() - _t.start.getTime()) / 1000;
         } else {
@@ -7202,7 +7204,7 @@ var Player = function (_VjsPlayer) {
         var _program2 = this.getProgramDetails();
         if (_program2 && seconds !== Infinity) {
           var start = new Date(_program2.startTime);
-          if (entitlement.isStaticCachupAsLive || this.techName_ === 'EmpHLS') {
+          if (entitlement.isStaticCachupAsLive || this.techName_ === 'EmpHLS' || this.techName_ === 'EmpHLS-MSE') {
             var t = entitlement.streamInfo;
             seconds = seconds - (start.getTime() - t.start.getTime()) / 1000;
           } else {
@@ -7286,7 +7288,7 @@ var Player = function (_VjsPlayer) {
           var startRange = range.start(range.length - 1);
           var endRange = range.end(range.length - 1);
           if (endRange) {
-            if (entitlement.isStaticCachupAsLive || this.techName_ === 'EmpHLS') {
+            if (entitlement.isStaticCachupAsLive || this.techName_ === 'EmpHLS' || this.techName_ === 'EmpHLS-MSE') {
               startRange = startRange - (programStart.getTime() - t.start.getTime()) / 1000;
               endRange = endRange - (programStart.getTime() - t.start.getTime()) / 1000;
               range = createTimeRanges(startRange > 0 ? startRange : 0, endRange > this.duration() ? this.duration() : endRange);
@@ -7322,7 +7324,7 @@ var Player = function (_VjsPlayer) {
         duration = this.techGet_('duration');
         if (duration !== Infinity) {
           var t = entitlement.streamInfo;
-          if (this.techName_ === 'EmpHLS') {
+          if (this.techName_ === 'EmpHLS' || this.techName_ === 'EmpHLS-MSE') {
             duration = (t.start.getTime() + duration * 1000 - program.start.getTime()) / 1000;
           } else {
             duration = (duration * 1000 - program.start.getTime()) / 1000;
@@ -7644,7 +7646,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.0.94-198';
+      return '2.0.94-199';
     }
 
     /**
@@ -7676,7 +7678,7 @@ var Player = function (_VjsPlayer) {
 * @static
 */
 Player.AutoTechArray = function () {
-  var autoTechOrder = ['EmpShaka', 'EmpHLS', 'Html5'];
+  var autoTechOrder = ['EmpShaka', 'EmpHLS-MSE', 'EmpHLS', 'Html5'];
   if (Player.SupportFairplay_()) {
     autoTechOrder = ['EmpHLS', 'EmpShaka', 'Html5'];
   }
@@ -7721,6 +7723,11 @@ function canPlayUnencrypted() {
   // test if HLS is supported
   var hlsTech = videojs$1.getTech('EmpHLS');
   if (undefined !== hlsTech && hlsTech.isSupported()) {
+    return Promise.resolve(true);
+  }
+
+  var hlsMseTech = videojs$1.getTech('EmpHLS-MSE');
+  if (undefined !== hlsMseTech && hlsMseTech.isSupported()) {
     return Promise.resolve(true);
   }
 
@@ -8298,6 +8305,9 @@ var EMPAnalyticsConnector = function () {
         case 'EmpHLS':
           techName = 'NativeHLS';
           break;
+        case 'EmpHLS-MSE':
+          techName = 'HLS-MSE';
+          break;
       }
       var params = {
         'techName': techName,
@@ -8745,7 +8755,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin);
 
-AnalyticsPlugin.VERSION = '2.0.94-198';
+AnalyticsPlugin.VERSION = '2.0.94-199';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -11325,7 +11335,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin$1);
 
-ProgramService.VERSION = '2.0.94-198';
+ProgramService.VERSION = '2.0.94-199';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -11501,7 +11511,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$2);
 
-EntitlementExpirationService.VERSION = '2.0.94-198';
+EntitlementExpirationService.VERSION = '2.0.94-199';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -11801,7 +11811,7 @@ var EntitlementMiddleware$1 = function EntitlementMiddleware(player) {
                 player.options_.absoluteStartTime = srcEntitlement.streamInfo.start.getTime();
               }
               var _startTime = player.options_.absoluteStartTime;
-              if (player.techName_ === 'EmpHLS') {
+              if (player.techName_ === 'EmpHLS' || player.techName_ === 'EmpHLS-MSE') {
                 _startTime = player.options_.absoluteStartTime - srcEntitlement.streamInfo.start.getTime();
               }
 
@@ -11973,7 +11983,7 @@ EntitlementMiddleware$1.registerEntitlementEngine = EntitlementEngine.registerEn
 
 EntitlementMiddleware$1.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
 
-EntitlementMiddleware$1.VERSION = '2.0.94-198';
+EntitlementMiddleware$1.VERSION = '2.0.94-199';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -12103,7 +12113,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.0.94-198';
+empPlayer.VERSION = '2.0.94-199';
 
 /*
  * Universal Module Definition (UMD)
