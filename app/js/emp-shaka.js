@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.94-200 
+ * EMP-Player 2.0.94-202 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -3148,7 +3148,7 @@ var DownloadService = function (_Plugin) {
   return DownloadService;
 }(Plugin);
 
-DownloadService.VERSION = '2.0.94-200';
+DownloadService.VERSION = '2.0.94-202';
 
 if (videojs.getPlugin('DownloadService')) {
   videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -4133,10 +4133,16 @@ var EmpShaka = function (_Html) {
           _this3.configureVideojsTextTracks();
         }
       }
-
-      if (_this3.preActiveVariantTrack && activeVariantTrack.videoBandwidth !== _this3.preActiveVariantTrack.videoBandwidth) {
+      if (!_this3.preActiveVariantTrack || activeVariantTrack.videoBandwidth !== _this3.preActiveVariantTrack.videoBandwidth) {
         log$1('BITRATE_CHANGED', activeVariantTrack.videoBandwidth);
-        _this3.trigger({ type: empPlayerEvents.BITRATE_CHANGED, bubbles: true }, { bitrate: activeVariantTrack.videoBandwidth, auto: false });
+        var auto = false;
+        var config = _this3.shakaPlayer_.getConfiguration();
+        if (config.abr.enabled) {
+          auto = true;
+        }
+        _this3.trigger({ type: empPlayerEvents.BITRATE_CHANGED, 'bubbles': true }, {
+          'bitrate': activeVariantTrack.videoBandwidth, 'auto': auto
+        });
       }
 
       _this3.stopBlockLocalTrackChange('adaptationchanged');
@@ -4478,16 +4484,18 @@ var EmpShaka = function (_Html) {
 
     var activeVariantTrack = this.getActiveVariantTrack();
     var variantTracks = this.getVariantTracks();
-    var bitrateList = [];
+    var bitrates = [];
 
     variantTracks.forEach(function (track) {
       //Add only unique videoBandwidth
-      if (track.language === activeVariantTrack.language && bitrateList.indexOf(track.videoBandwidth) === -1) {
-        bitrateList.push(track.videoBandwidth);
+      if (track.language === activeVariantTrack.language && bitrates.indexOf(track.videoBandwidth) === -1) {
+        bitrates.push(track.videoBandwidth);
       }
     });
-    bitrateList = bitrateList.reverse();
-    return bitrateList;
+    bitrates.sort(function (a, b) {
+      return b - a;
+    });
+    return bitrates;
   };
 
   /**
@@ -4521,7 +4529,8 @@ var EmpShaka = function (_Html) {
     } else if (value === 0) {
       // Reset bitrate, it should auto switch again.
       this.shakaPlayer_.configure({ abr: { enabled: true } });
-      this.trigger({ type: empPlayerEvents.BITRATE_CHANGED, bubbles: true }, { bitrate: value, auto: false });
+      this.trigger({ type: empPlayerEvents.BITRATE_CHANGED, bubbles: true }, { bitrate: value, auto: true });
+      this.preActiveVariantTrack = null;
       return;
     } else {
       // Set bitrate and stop auto switch.
@@ -4851,7 +4860,7 @@ var EmpShaka = function (_Html) {
         if (track.language === languageCode && !track.enabled) {
           this.blockLocalTrackChange = true;
           track.enabled = true;
-          return;
+          break;
         }
       }
       this.stopBlockLocalTrackChange('selectVideojsAudioLanguage');
@@ -5008,8 +5017,9 @@ var EmpShaka = function (_Html) {
         this.shakaPlayer_.setTextTrackVisibility(true);
       }
     } else {
-      this.shakaPlayer_.setTextTrackVisibility(true);
+      this.shakaPlayer_.setTextTrackVisibility(false);
     }
+    this.stopBlockLocalTrackChange('configureVideojsTextTracks');
   };
 
   /**
@@ -5031,7 +5041,6 @@ var EmpShaka = function (_Html) {
       } else if (languageCode !== track.language && track.mode === 'showing') {
         this.blockLocalTrackChange = true;
         track.mode === 'disabled';
-        return;
       }
     }
     this.stopBlockLocalTrackChange('selectVideojsAudioLanguage');
@@ -5295,11 +5304,11 @@ var EmpShaka = function (_Html) {
          * @returns {probably|maybe|*}
          * @method canHandleSource
          */
-        canHandleSource: function canHandleSource(source) {
+        canHandleSource: function canHandleSource(source, options) {
           // Keep this so when setting the source to an mpd url it still works
           var dashExtRE = /\.mpd/i;
 
-          if (EmpShaka.nativeSourceHandler.canPlayType(source.type)) {
+          if (EmpShaka.nativeSourceHandler.canPlayType(source.type, options)) {
             return 'probably';
           } else if (dashExtRE.test(source.src)) {
             return 'maybe';
@@ -5322,13 +5331,13 @@ var EmpShaka = function (_Html) {
          * @param {String}  type mime-type
          * @returns {probably|''}
          */
-        canPlayType: function canPlayType(type) {
+        canPlayType: function canPlayType(type, options) {
           var dashTypeRE = /^application\/dash\+xml/i;
           if (dashTypeRE.test(type) && shaka.Player.isBrowserSupported()) {
             return 'probably';
           }
 
-          if (window_1.muxjs) {
+          if (window_1.muxjs && options && options.videoType === 'HLS') {
             var xMpegRE = /^application\/x-mpegurl/i;
             var vndMpegRE = /^application\/x-vnd.apple.mpegurl/i;
 
@@ -5379,7 +5388,7 @@ EmpShaka.prototype['featuresNativeTextTracks'] = false;
 
 Tech.withSourceHandlers(EmpShaka);
 
-EmpShaka.VERSION = '2.0.94-200';
+EmpShaka.VERSION = '2.0.94-202';
 
 // Unset source handlers set by Html5 super class.
 // We do not intent to support any sources other then sources allowed by nativeSourceHandler

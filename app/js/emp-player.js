@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.94-200 
+ * EMP-Player 2.0.94-202 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -1144,7 +1144,7 @@ var BitrateMenuItem = function (_MenuItem) {
     var bitrate = options['bitrate'];
 
     // Modify options for parent MenuItem class's init.
-    options['label'] = bitrate === 0 ? 'auto' : Math.max(0, Math.round(bitrate / 1000)) + 'Kb/s';
+    options['label'] = bitrate === 0 ? 'auto' : Math.max(0, Math.round(bitrate / 1000)) + ' kbps';
     options['selected'] = player.bitrate() === bitrate;
 
     var _this = possibleConstructorReturn(this, _MenuItem.call(this, player, options));
@@ -1153,7 +1153,11 @@ var BitrateMenuItem = function (_MenuItem) {
 
     _this.player_.on(empPlayerEvents.BITRATE_CHANGED, function (event, data) {
       if (_this.el()) {
-        _this.selected(data.bitrate === _this.bitrate);
+        if (_this.bitrate === 0) {
+          _this.selected(data.auto);
+        } else {
+          _this.selected(!data.auto && data.bitrate === _this.bitrate);
+        }
       }
     });
     return _this;
@@ -7646,7 +7650,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.0.94-200';
+      return '2.0.94-202';
     }
 
     /**
@@ -8755,7 +8759,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin);
 
-AnalyticsPlugin.VERSION = '2.0.94-200';
+AnalyticsPlugin.VERSION = '2.0.94-202';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -11335,7 +11339,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin$1);
 
-ProgramService.VERSION = '2.0.94-200';
+ProgramService.VERSION = '2.0.94-202';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -11511,7 +11515,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$2);
 
-EntitlementExpirationService.VERSION = '2.0.94-200';
+EntitlementExpirationService.VERSION = '2.0.94-202';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -11983,7 +11987,7 @@ EntitlementMiddleware$1.registerEntitlementEngine = EntitlementEngine.registerEn
 
 EntitlementMiddleware$1.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
 
-EntitlementMiddleware$1.VERSION = '2.0.94-200';
+EntitlementMiddleware$1.VERSION = '2.0.94-202';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -12113,7 +12117,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.0.94-200';
+empPlayer.VERSION = '2.0.94-202';
 
 /*
  * Universal Module Definition (UMD)
