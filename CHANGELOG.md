@@ -133,7 +133,7 @@ https://github.com/google/shaka-player/releases
 - **EMP-11768** HTML5 and CC should log errors in analytics according to the standard
 - **EMP-11785** Html5 and CC Start playback with only programId.
 
-## 2.93.0
+## 2.0.93
 
 ### Bug fixes
 - **EMP-11837** Playback.Aborted should not be sent after Playback.Error + order of the events is not always right
@@ -145,5 +145,7 @@ https://github.com/google/shaka-player/releases
 - **EMP-11791** Update to Shaka 2.4.4
 - **EMP-11904** Analytics improvement - Send browser/version in Name and Model
 
+## 2.0.94
 
-
+### New features
+- New HtML5 player 2.0.94
