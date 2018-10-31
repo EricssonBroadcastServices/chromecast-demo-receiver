@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.94-207 
+ * EMP-Player 2.0.94-208 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -38,7 +38,6 @@ if (typeof window !== "undefined") {
 
 var window_1 = win;
 
-//TODO Remove this maybe not good for treeshaking
 var videojsTmp = window_1.videojs;
 var videojs$1 = videojsTmp;
 
@@ -7653,10 +7652,21 @@ var Player = function (_VjsPlayer) {
     return this.sourceChanging_;
   };
 
+  /**
+   * Check if player is casting to Chromecast
+   * 
+   * @returns {boolean}  true if casting
+   */
+
+
+  Player.prototype.isCasting = function isCasting() {
+    return this.techName_ === 'EmpCast';
+  };
+
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.0.94-207';
+      return '2.0.94-208';
     }
 
     /**
@@ -8765,7 +8775,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin);
 
-AnalyticsPlugin.VERSION = '2.0.94-207';
+AnalyticsPlugin.VERSION = '2.0.94-208';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -11345,7 +11355,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin$1);
 
-ProgramService.VERSION = '2.0.94-207';
+ProgramService.VERSION = '2.0.94-208';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -11521,7 +11531,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$2);
 
-EntitlementExpirationService.VERSION = '2.0.94-207';
+EntitlementExpirationService.VERSION = '2.0.94-208';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -11994,7 +12004,7 @@ EntitlementMiddleware$1.registerEntitlementEngine = EntitlementEngine.registerEn
 
 EntitlementMiddleware$1.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
 
-EntitlementMiddleware$1.VERSION = '2.0.94-207';
+EntitlementMiddleware$1.VERSION = '2.0.94-208';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -12124,7 +12134,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.0.94-207';
+empPlayer.VERSION = '2.0.94-208';
 
 /*
  * Universal Module Definition (UMD)
