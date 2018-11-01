@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.94-209 
+ * EMP-Player 2.0.94-210 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -871,7 +871,7 @@ var EmpPlayerErrorCodes = {
 
   CHROMECAST_TECH: 500,
 
-  HLS_MSE_TECH: 600
+  HLS_MSE_TECH: 10000
 };
 
 var EmpPlayerError = function (_Error) {
@@ -5834,7 +5834,7 @@ var Player = function (_VjsPlayer) {
       this.techCall_('sendTextTrackStyle', style);
     } else {
       this.options_.textTrackStyle = style;
-      this.trigger('texttrackchange');
+      this.trigger(empPlayerEvents.TEXT_TRACK_CHANGE);
     }
   };
 
@@ -5965,7 +5965,7 @@ var Player = function (_VjsPlayer) {
 
   Player.prototype.handleRecoverableError = function handleRecoverableError(event, data) {
     var excludeTechs = [];
-    if (!this.options_.excludeTechs) {
+    if (this.options_.excludeTechs) {
       excludeTechs = this.options_.excludeTechs.slice(0);
     }
     excludeTechs.push(data.techName);
@@ -6748,11 +6748,7 @@ var Player = function (_VjsPlayer) {
     }
     log$1.error('(CODE:' + this.error_.code + ' ' + errorTypes + ')', this.error_.message, this.error_);
 
-    /**
-     * @event Player#error
-     * @type {EventTarget~Event}
-     */
-    this.trigger('error');
+    this.trigger({ type: empPlayerEvents.ERROR, bubbles: true }, this.error_);
 
     return;
   };
@@ -7504,7 +7500,7 @@ var Player = function (_VjsPlayer) {
         //log('playheadMoving', moving);
         if (!moving) {
           _this7.addClass('vjs-waiting');
-          _this7.trigger('waiting');
+          _this7.trigger(empPlayerEvents.WAITING);
           _this7.removeWaitingClass_();
         }
       });
@@ -7592,7 +7588,7 @@ var Player = function (_VjsPlayer) {
      * @event Player#canplay
      * @type {EventTarget~Event}
      */
-    this.trigger('canplay');
+    this.trigger(empPlayerEvents.CAN_PLAY);
   };
 
   /**
@@ -7615,7 +7611,7 @@ var Player = function (_VjsPlayer) {
      * @event Player#canplaythrough
      * @type {EventTarget~Event}
      */
-    this.trigger('canplaythrough');
+    this.trigger(empPlayerEvents.CAN_PLAY_THROUGH);
   };
 
   /**
@@ -7638,7 +7634,7 @@ var Player = function (_VjsPlayer) {
      * @event Player#playing
      * @type {EventTarget~Event}
      */
-    this.trigger('playing');
+    this.trigger(empPlayerEvents.PLAYING);
   };
 
   /**
@@ -7666,7 +7662,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.0.94-209';
+      return '2.0.94-210';
     }
 
     /**
@@ -8775,7 +8771,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin);
 
-AnalyticsPlugin.VERSION = '2.0.94-209';
+AnalyticsPlugin.VERSION = '2.0.94-210';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -11355,7 +11351,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin$1);
 
-ProgramService.VERSION = '2.0.94-209';
+ProgramService.VERSION = '2.0.94-210';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -11531,7 +11527,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$2);
 
-EntitlementExpirationService.VERSION = '2.0.94-209';
+EntitlementExpirationService.VERSION = '2.0.94-210';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -12004,7 +12000,7 @@ EntitlementMiddleware$1.registerEntitlementEngine = EntitlementEngine.registerEn
 
 EntitlementMiddleware$1.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
 
-EntitlementMiddleware$1.VERSION = '2.0.94-209';
+EntitlementMiddleware$1.VERSION = '2.0.94-210';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -12134,7 +12130,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.0.94-209';
+empPlayer.VERSION = '2.0.94-210';
 
 /*
  * Universal Module Definition (UMD)
