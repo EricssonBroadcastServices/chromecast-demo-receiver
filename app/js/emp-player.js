@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.94-211 
+ * EMP-Player 2.0.94-212 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -7662,7 +7662,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.0.94-211';
+      return '2.0.94-212';
     }
 
     /**
@@ -8771,7 +8771,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin);
 
-AnalyticsPlugin.VERSION = '2.0.94-211';
+AnalyticsPlugin.VERSION = '2.0.94-212';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -11351,7 +11351,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin$1);
 
-ProgramService.VERSION = '2.0.94-211';
+ProgramService.VERSION = '2.0.94-212';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -11527,7 +11527,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$2);
 
-EntitlementExpirationService.VERSION = '2.0.94-211';
+EntitlementExpirationService.VERSION = '2.0.94-212';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -11697,6 +11697,10 @@ var EntitlementMiddleware$1 = function EntitlementMiddleware(player) {
             exposure.getEntitlement(entitlementRequest, playRequest, function (entitlement, error) {
               // If we have an fatal error during playcall break out of the loop else try next tech
               if (error) {
+                if (!player.options_.excludeTechs) {
+                  player.options_.excludeTechs = [];
+                }
+                player.options_.excludeTechs.push(techs[i][0]);
                 entitlementRequestError = new EmpPlayerError(error.message + '  ' + JSON.stringify(playRequest) + JSON.stringify(entitlementRequest), error.code, error.stack);
                 if (error.fatal) {
                   player.error(entitlementRequestError);
@@ -12000,7 +12004,7 @@ EntitlementMiddleware$1.registerEntitlementEngine = EntitlementEngine.registerEn
 
 EntitlementMiddleware$1.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
 
-EntitlementMiddleware$1.VERSION = '2.0.94-211';
+EntitlementMiddleware$1.VERSION = '2.0.94-212';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -12130,7 +12134,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.0.94-211';
+empPlayer.VERSION = '2.0.94-212';
 
 /*
  * Universal Module Definition (UMD)
