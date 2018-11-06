@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.94-213 
+ * EMP-Player 2.0.94-214 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -3147,7 +3147,7 @@ var DownloadService = function (_Plugin) {
   return DownloadService;
 }(Plugin);
 
-DownloadService.VERSION = '2.0.94-213';
+DownloadService.VERSION = '2.0.94-214';
 
 if (videojs.getPlugin('DownloadService')) {
   videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -5292,7 +5292,16 @@ var EmpShaka = function (_Html) {
     }
   };
 
-  createClass(EmpShaka, null, [{
+  createClass(EmpShaka, [{
+    key: 'streamType',
+    get: function get$$1() {
+      if (this.options_ && this.options_.streamType === 'HLS') {
+        return 'HLS';
+      } else {
+        return 'DASH';
+      }
+    }
+  }], [{
     key: 'nativeSourceHandler',
     get: function get$$1() {
       return {
@@ -5336,7 +5345,7 @@ var EmpShaka = function (_Html) {
             return 'probably';
           }
 
-          if (window_1.muxjs && options && options.videoType === 'HLS') {
+          if (window_1.muxjs && options && options.streamType === 'HLS') {
             var xMpegRE = /^application\/x-mpegurl/i;
             var vndMpegRE = /^application\/x-vnd.apple.mpegurl/i;
 
@@ -5387,7 +5396,7 @@ EmpShaka.prototype['featuresNativeTextTracks'] = false;
 
 Tech.withSourceHandlers(EmpShaka);
 
-EmpShaka.VERSION = '2.0.94-213';
+EmpShaka.VERSION = '2.0.94-214';
 
 // Unset source handlers set by Html5 super class.
 // We do not intent to support any sources other then sources allowed by nativeSourceHandler

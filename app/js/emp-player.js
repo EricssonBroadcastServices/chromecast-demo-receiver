@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.94-213 
+ * EMP-Player 2.0.94-214 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -1972,7 +1972,7 @@ var extplayer = {
       var entitlement = this.getEntitlement(player);
       if (value && entitlement && entitlement.isStaticCachupAsLive) {
         value = new Date(value.getTime() + entitlement.streamInfo.start.getTime());
-      } else if (entitlement && entitlement.isDynamicCachupAsLive && (player.techName_ === 'EmpHLS' || player.techName_ === 'EmpHLS-MSE')) {
+      } else if (entitlement && entitlement.isDynamicCachupAsLive && player.streamType === 'HLS') {
         value = new Date(player.tech_.baseCurrentTime() * 1000 + entitlement.streamInfo.start.getTime());
       }
     }
@@ -2039,7 +2039,7 @@ var extplayer = {
     var nowdate = this.getServerTime(player);
     var value = player.tech_.startTimeLive(nowdate);
     var entitlement = this.getEntitlement(player);
-    if (entitlement && entitlement.isDynamicCachupAsLive && (player.techName_ === 'EmpHLS' || player.techName_ === 'EmpHLS-MSE')) {
+    if (entitlement && entitlement.isDynamicCachupAsLive && player.streamType === 'HLS') {
       value = entitlement.streamInfo.referenceTime;
     }
     if (entitlement && entitlement.isStaticCachupAsLive && player.techName_ !== 'EmpCast') {
@@ -2137,14 +2137,14 @@ var extplayer = {
           log$1('setAbsoluteTime', 'playPreviousProgram');
           this.playProgram(player, date);
           //Go to start of stream as a fallback
-          if (player.techName_ === 'EmpHLS' || player.techName_ === 'EmpHLS-MSE') {
+          if (player.streamType === 'HLS') {
             player.techCall_('setCurrentTime', 0);
             return;
           } else {
-            //EmpShaka
+            //DASH
             date = new Date(entitlement.streamInfo.start.getTime());
           }
-        } else if (player.techName_ === 'EmpHLS' || player.techName_ === 'EmpHLS-MSE') {
+        } else if (player.streamType === 'HLS') {
           date = date - entitlement.streamInfo.start.getTime();
           player.techCall_('setCurrentTime', date / 1000);
           return;
@@ -4267,7 +4267,7 @@ var TextTrackDisplay = function (_Component) {
         this.hide();
         return;
       }
-      if (player.techName_ === 'EmpShaka' || player.techName_ === 'EmpHLS' || player.techName_ === 'EmpHLS-MSE' || player.techName_ === 'EmpCast') {
+      if (player.streamType === 'DASH' || player.streamType === 'HLS' || player.techName_ === 'EmpCast') {
         this.hide();
         return;
       }
@@ -4354,7 +4354,7 @@ var TextTrackDisplay = function (_Component) {
 
 
   TextTrackDisplay.prototype.toggleDisplay = function toggleDisplay() {
-    if (this.player_.techName_ === 'EmpShaka' || this.player_.techName_ === 'EmpHLS' || this.player_.techName_ === 'EmpHLS-MSE' || this.player_.techName_ === 'EmpCast') {
+    if (this.player_.streamType === 'DASH' || this.player_.streamType === 'HLS' || this.player_.techName_ === 'EmpCast') {
       this.hide();
       return;
     }
@@ -4504,7 +4504,7 @@ var TextTrackDisplay = function (_Component) {
         overrides = this.player_.textTrackSettings.getValues();
       }
       var styleName = 'styles_cue';
-      if (this.player_.techName_ === 'EmpShaka' || this.player_.techName_ === 'EmpHLS' || this.player_.techName_ === 'EmpHLS-MSE' || this.player_.techName_ === 'EmpCast') {
+      if (this.player_.streamType === 'DASH' || this.player_.techName_ === 'EmpHLS' || this.player_.streamType === 'HLS') {
         var styleStr = this.getStyle(overrides);
         if (this.player_.techName_ === 'EmpHLS') {
           this.writeStyles(styleName, 'video::cue {' + styleStr + '}' + '\n' + this.getSafariStyle(overrides));
@@ -5577,7 +5577,9 @@ var Player = function (_VjsPlayer) {
     }, options);
 
     if (options.techOrder === 'auto' || Array.isArray(options.techOrder) && options.techOrder.length === 1 && options.techOrder[0] === 'auto') {
-      options.techOrder = Player.AutoTechArray();
+      options.techOrder = Player.AutoTechArray('EmpShaka');
+    } else if (options.techOrder === 'auto-dashif' || Array.isArray(options.techOrder) && options.techOrder.length === 1 && options.techOrder[0] === 'auto-dashif') {
+      options.techOrder = Player.AutoTechArray('EmpDashif');
     }
 
     //element data-setup
@@ -5587,7 +5589,7 @@ var Player = function (_VjsPlayer) {
     // default options are overidden by options set in the options parameter
     options = videojs$1.mergeOptions({
       'entitlement-engine': 'EricssonExposure',
-      'techOrder': tagOptions.techOrder ? tagOptions.techOrder : Player.AutoTechArray(),
+      'techOrder': tagOptions.techOrder ? tagOptions.techOrder : Player.AutoTechArray('EmpShaka'),
       'maxBitrate': tagOptions.maxBitrate ? tagOptions.maxBitrate : 0,
       'timeShiftDisabled': tagOptions.timeShiftDisabled ? tagOptions.timeShiftDisabled : false,
       'useLastViewedOffset': tagOptions.useLastViewedOffset ? tagOptions.useLastViewedOffset : false,
@@ -5726,7 +5728,9 @@ var Player = function (_VjsPlayer) {
     }
 
     if (obj.techOrder === 'auto' || Array.isArray(obj.techOrder) && obj.techOrder.length === 1 && obj.techOrder[0] === 'auto') {
-      obj.techOrder = Player.AutoTechArray();
+      obj.techOrder = Player.AutoTechArray('EmpShaka');
+    } else if (obj.techOrder === 'auto-dashif' || Array.isArray(obj.techOrder) && obj.techOrder.length === 1 && obj.techOrder[0] === 'auto-dashif') {
+      obj.techOrder = Player.AutoTechArray('EmpDashif');
     }
 
     if (obj.startTime !== undefined) {
@@ -5984,7 +5988,7 @@ var Player = function (_VjsPlayer) {
         this.options_.excludeTechs = [];
       }
       this.options_.excludeTechs.push(data.techName);
-      //TODO: If we want to try Dash then we can ship add to excludeTechs and set this.options_.empshaka['videoType'] = null
+      //TODO: If we want to try Dash then we can ship add to excludeTechs and set this.options_.empshaka['streamType'] = null
       if (this.options_.techOrder.length > this.options_.excludeTechs.length) {
         this.error(null);
         this.resetWithoutReload_();
@@ -6439,6 +6443,7 @@ var Player = function (_VjsPlayer) {
         this.yospace().start('VoD', sources[0].src).then(function (mediaLocator) {
           log$1('yospace mediaLocator returned', mediaLocator);
           _this4.options_.excludeTechs.push('EmpShaka');
+          _this4.options_.excludeTechs.push('EmpDashif');
           sources[0] = {
             'src': mediaLocator, 'type': 'application/x-mpegURL', 'yospaceUrl': sources[0].src
           };
@@ -6507,7 +6512,7 @@ var Player = function (_VjsPlayer) {
 
         this.resetAndReloadTimer_ = this.setTimeout(function () {
           _this5.clearResetAndReloadTimer_();
-          if (_this5.isLive() && _this5.techName_ === 'EmpShaka') {
+          if (_this5.isLive() && _this5.streamType === 'DASH') {
             _this5.resetAndRestartFormPlayhead();
           }
         }, time * 1000 * 60);
@@ -6533,7 +6538,7 @@ var Player = function (_VjsPlayer) {
     }
     //Seek to lastViewedOffset, can't use startTime with Shaka if stream not dashed
     //TODO Use startTime when we have VOD in new A/V pipe
-    else if (this.options_.useLastViewedOffset && entitlement && !this.isLive() && this.techName_ === 'EmpShaka' && entitlement.lastViewedOffset) {
+    else if (this.options_.useLastViewedOffset && entitlement && !this.isLive() && this.streamType === 'DASH' && entitlement.lastViewedOffset) {
         this.currentTime(entitlement.lastViewedOffset / 1000);
       }
   };
@@ -7108,8 +7113,6 @@ var Player = function (_VjsPlayer) {
   * @return {number}
   *         - the current time in seconds when getting
   */
-
-
   Player.prototype.currentTime = function currentTime(seconds) {
     var entitlement = extplayer.getEntitlement(this);
     if (entitlement && (entitlement.isDynamicCachupAsLive || entitlement.isStaticCachupAsLive) && this.techName_ !== 'EmpCast') {
@@ -7120,7 +7123,7 @@ var Player = function (_VjsPlayer) {
             seconds = 1;
           }
           var start = new Date(_program.startTime);
-          if (entitlement.isStaticCachupAsLive || this.techName_ === 'EmpHLS' || this.techName_ === 'EmpHLS-MSE') {
+          if (entitlement.isStaticCachupAsLive || this.streamType === 'HLS') {
             var t = entitlement.streamInfo;
             seconds = seconds + (start.getTime() - t.start.getTime()) / 1000;
             if (seconds <= 0) {
@@ -7157,7 +7160,7 @@ var Player = function (_VjsPlayer) {
       var program = this.getProgramDetails();
       if (program && currentTime > 1) {
         var _start = new Date(program.startTime);
-        if (entitlement.isStaticCachupAsLive || this.techName_ === 'EmpHLS' || this.techName_ === 'EmpHLS-MSE') {
+        if (entitlement.isStaticCachupAsLive || this.streamType === 'HLS') {
           var _t = entitlement.streamInfo;
           currentTime = currentTime - (_start.getTime() - _t.start.getTime()) / 1000;
         } else {
@@ -7210,7 +7213,7 @@ var Player = function (_VjsPlayer) {
         var _program2 = this.getProgramDetails();
         if (_program2 && seconds !== Infinity) {
           var start = new Date(_program2.startTime);
-          if (entitlement.isStaticCachupAsLive || this.techName_ === 'EmpHLS' || this.techName_ === 'EmpHLS-MSE') {
+          if (entitlement.isStaticCachupAsLive || this.streamType === 'HLS') {
             var t = entitlement.streamInfo;
             seconds = seconds - (start.getTime() - t.start.getTime()) / 1000;
           } else {
@@ -7294,7 +7297,7 @@ var Player = function (_VjsPlayer) {
           var startRange = range.start(range.length - 1);
           var endRange = range.end(range.length - 1);
           if (endRange) {
-            if (entitlement.isStaticCachupAsLive || this.techName_ === 'EmpHLS' || this.techName_ === 'EmpHLS-MSE') {
+            if (entitlement.isStaticCachupAsLive || this.streamType === 'HLS') {
               startRange = startRange - (programStart.getTime() - t.start.getTime()) / 1000;
               endRange = endRange - (programStart.getTime() - t.start.getTime()) / 1000;
               range = createTimeRanges(startRange > 0 ? startRange : 0, endRange > this.duration() ? this.duration() : endRange);
@@ -7330,7 +7333,7 @@ var Player = function (_VjsPlayer) {
         duration = this.techGet_('duration');
         if (duration !== Infinity) {
           var t = entitlement.streamInfo;
-          if (this.techName_ === 'EmpHLS' || this.techName_ === 'EmpHLS-MSE') {
+          if (this.streamType === 'HLS') {
             duration = (t.start.getTime() + duration * 1000 - program.start.getTime()) / 1000;
           } else {
             duration = (duration * 1000 - program.start.getTime()) / 1000;
@@ -7663,7 +7666,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.0.94-213';
+      return '2.0.94-214';
     }
 
     /**
@@ -7683,6 +7686,15 @@ var Player = function (_VjsPlayer) {
       }
       return entitlement;
     }
+  }, {
+    key: 'streamType',
+    get: function get$$1() {
+      if (this.tech_) {
+        return this.tech_['streamType'];
+      } else {
+        return undefined;
+      }
+    }
   }]);
   return Player;
 }(VjsPlayer);
@@ -7690,14 +7702,15 @@ var Player = function (_VjsPlayer) {
 
 
 /**
-* Get AutoTechArray
-* @returns {String[]} AutoTechArray
-* @static
-*/
-Player.AutoTechArray = function () {
-  var autoTechOrder = ['EmpShaka', 'EmpHLS-MSE', 'EmpHLS', 'Html5'];
+ * Get AutoTechArray
+ * @param {string} dashTech choice of dash tech
+ * @returns {String[]} AutoTechArray
+ *  @static
+ */
+Player.AutoTechArray = function (dashTech) {
+  var autoTechOrder = [dashTech, 'EmpHLS-MSE', 'EmpHLS', 'Html5'];
   if (Player.SupportFairplay_()) {
-    autoTechOrder = ['EmpHLS', 'EmpShaka', 'Html5'];
+    autoTechOrder = ['EmpHLS', dashTech, 'Html5'];
   }
   var validAutoTechOrder = [];
   for (var i = 0; i < autoTechOrder.length; i++) {
@@ -7734,6 +7747,11 @@ function canPlayUnencrypted() {
   // test if DASH is supported
   var shakaTech = videojs$1.getTech('EmpShaka');
   if (undefined !== shakaTech && shakaTech.isSupported()) {
+    return Promise.resolve(true);
+  }
+
+  var dashifTech = videojs$1.getTech('EmpDashif');
+  if (undefined !== dashifTech && dashifTech.isSupported()) {
     return Promise.resolve(true);
   }
 
@@ -7780,7 +7798,8 @@ function canPlayEncrypted() {
 
     // test if DASH + Widevine or Playready is supported
     var shakaTech = videojs$1.getTech('EmpShaka');
-    if (undefined !== shakaTech && shakaTech.isSupported()) {
+    var dashifTech = videojs$1.getTech('EmpDashif');
+    if (undefined !== shakaTech && shakaTech.isSupported() || undefined !== dashifTech && dashifTech.isSupported()) {
       ptable.push(new Promise(function (resolve, reject) {
         window_1.navigator.requestMediaKeySystemAccess('com.microsoft.playready', config).then(function () {
           resolve(true);
@@ -8313,8 +8332,8 @@ var EMPAnalyticsConnector = function () {
         case 'EmpShaka':
           techName = 'Shaka';
           break;
-        case 'EmpDash':
-          techName = 'DashJS';
+        case 'EmpDashif':
+          techName = 'DashIf';
           break;
         case 'EmpFlash':
           techName = 'Flash';
@@ -8472,8 +8491,8 @@ var EMPAnalyticsConnector = function () {
 
       var options = _this19.player_.options();
       if (_this19.player_.tech_) {
-        var videoType = _this19.player_.techName_ === 'EmpShaka' && options && options.empshaka ? options.empshaka.videoType : '';
-        params.errorInfo = _this19.player_.techName_ + (videoType ? '-' + videoType : '');
+        var streamType = _this19.player_.techName_ === 'EmpShaka' && options && options.empshaka ? options.empshaka.streamType : '';
+        params.errorInfo = _this19.player_.techName_ + (streamType ? '-' + streamType : '');
       } else {
         params.errorInfo = 'Unknown tech, techOrder: ' + options.techOrder.toString();
       }
@@ -8772,7 +8791,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin);
 
-AnalyticsPlugin.VERSION = '2.0.94-213';
+AnalyticsPlugin.VERSION = '2.0.94-214';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -11352,7 +11371,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin$1);
 
-ProgramService.VERSION = '2.0.94-213';
+ProgramService.VERSION = '2.0.94-214';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -11528,7 +11547,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$2);
 
-EntitlementExpirationService.VERSION = '2.0.94-213';
+EntitlementExpirationService.VERSION = '2.0.94-214';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -11694,7 +11713,7 @@ var EntitlementMiddleware$1 = function EntitlementMiddleware(player) {
             return;
           } else {
             var techOptions = options[techs[i][0].toLowerCase()];
-            var playRequest = techOptions && techOptions.videoType && tech.entitlementPlayRequests ? tech.entitlementPlayRequests[techOptions.videoType] : tech.entitlementPlayRequest;
+            var playRequest = techOptions && techOptions.streamType && tech.entitlementPlayRequests ? tech.entitlementPlayRequests[techOptions.streamType] : tech.entitlementPlayRequest;
             exposure.getEntitlement(entitlementRequest, playRequest, function (entitlement, error) {
               // If we have an fatal error during playcall break out of the loop else try next tech
               if (error) {
@@ -11812,7 +11831,7 @@ var EntitlementMiddleware$1 = function EntitlementMiddleware(player) {
               //Use timeParams.start as startTime
               var startTime = srcEntitlement.streamInfo.start.getTime() + 100;
 
-              if (player.techName_ === 'EmpShaka' && player.tech_) {
+              if (player.streamType === 'DASH') {
                 log$1('SET startTime', startTime);
                 player.options({
                   startTime: startTime / 1000
@@ -11832,7 +11851,7 @@ var EntitlementMiddleware$1 = function EntitlementMiddleware(player) {
                 player.options_.absoluteStartTime = srcEntitlement.streamInfo.start.getTime();
               }
               var _startTime = player.options_.absoluteStartTime;
-              if (player.techName_ === 'EmpHLS' || player.techName_ === 'EmpHLS-MSE') {
+              if (player.streamType === 'HLS') {
                 _startTime = player.options_.absoluteStartTime - srcEntitlement.streamInfo.start.getTime();
               }
               _startTime = _startTime ? _startTime : 0.1;
@@ -11904,7 +11923,8 @@ var EntitlementMiddleware$1 = function EntitlementMiddleware(player) {
           } else if (entitlement.lastViewedOffset) {
             log$1('lastViewedOffset', entitlement.lastViewedOffset / 1000);
             //TODO Use startTime when we have VOD in new A/V pipe
-            if (player.techName_ !== 'EmpShaka') {
+            if (player['this'].streamType !== 'DASH') {
+              //HLS
               player.options({ 'startTime': entitlement.lastViewedOffset / 1000 });
             }
           }
@@ -12005,7 +12025,7 @@ EntitlementMiddleware$1.registerEntitlementEngine = EntitlementEngine.registerEn
 
 EntitlementMiddleware$1.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
 
-EntitlementMiddleware$1.VERSION = '2.0.94-213';
+EntitlementMiddleware$1.VERSION = '2.0.94-214';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -12135,7 +12155,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.0.94-213';
+empPlayer.VERSION = '2.0.94-214';
 
 /*
  * Universal Module Definition (UMD)
