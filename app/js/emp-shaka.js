@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.94-217 
+ * EMP-Player 2.0.94-218 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -889,6 +889,9 @@ function isObject(value) {
  * @param {Object} value
  * @returns {Boolean}
  */
+function isEmpty(value) {
+  return keys(value).length === 0;
+}
 
 /*global
   document, atob
@@ -897,7 +900,39 @@ function isObject(value) {
 
 
 
+function base64EncodeUint8Array(input) {
+  var keyStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+  var chr1 = void 0;
+  var chr2 = void 0;
+  var chr3 = void 0;
+  var enc1 = void 0;
+  var enc2 = void 0;
+  var enc3 = void 0;
+  var enc4 = void 0;
+  var i = 0;
+  var output = '';
 
+  while (i < input.length) {
+    chr1 = input[i++];
+    chr2 = i < input.length ? input[i++] : Number.NaN; // Not sure if the index
+    chr3 = i < input.length ? input[i++] : Number.NaN; // checks are needed here
+
+    enc1 = chr1 >> 2;
+    enc2 = (chr1 & 3) << 4 | chr2 >> 4;
+    enc3 = (chr2 & 15) << 2 | chr3 >> 6;
+    enc4 = chr3 & 63;
+
+    if (isNaN(chr2)) {
+      enc3 = enc4 = 64;
+    } else if (isNaN(chr3)) {
+      enc4 = 64;
+    }
+
+    output += keyStr.charAt(enc1) + keyStr.charAt(enc2) + keyStr.charAt(enc3) + keyStr.charAt(enc4);
+  }
+
+  return output;
+}
 
 
 
@@ -1004,6 +1039,532 @@ var EmpPlayerError = function (_Error) {
 }(Error);
 
 /**
+ * Unique ID for an element or function
+ * @type {Number}
+ * @private
+ */
+/**
+ * Get the next unique ID
+ *
+ * @return {String}
+ * @function newGUID
+ */
+
+var _templateObject = taggedTemplateLiteralLoose(['Setting attributes in the second argument of createEl()\n                has been deprecated. Use the third argument instead.\n                createEl(type, properties, attributes). Attempting to set ', ' to ', '.'], ['Setting attributes in the second argument of createEl()\n                has been deprecated. Use the third argument instead.\n                createEl(type, properties, attributes). Attempting to set ', ' to ', '.']);
+
+/**
+ * Whether the current DOM interface appears to be real.
+ *
+ * @return {Boolean}
+ */
+function isReal() {
+  return (
+
+    // Both document and window will never be undefined thanks to `global`.
+    document_1 === window_1.document &&
+
+    // In IE < 9, DOM methods return "object" as their type, so all we can
+    // confidently check is that it exists.
+    typeof document_1.createElement !== 'undefined'
+  );
+}
+
+/**
+ * Determines, via duck typing, whether or not a value is a DOM element.
+ *
+ * @param {Mixed} value
+ *        The thing to check
+ *
+ * @return {boolean}
+ *         - True if it is a DOM element
+ *         - False otherwise
+ */
+
+
+/**
+ * Determines if the current DOM is embedded in an iframe.
+ *
+ * @return {boolean}
+ *
+ */
+
+
+/**
+ * Creates an element and applies properties.
+ *
+ * @param {string} [tagName='div']
+ *         Name of tag to be created.
+ *
+ * @param {Object} [properties={}]
+ *         Element properties to be applied.
+ *
+ * @param {Object} [attributes={}]
+ *         Element attributes to be applied.
+ *
+ * @param {String|Element|TextNode|Array|Function} [content]
+ *         Contents for the element (see: {@link dom:normalizeContent})
+ *
+ * @return {Element}
+ *         The element that was created.
+ */
+
+
+/**
+ * Injects text into an element, replacing any existing contents entirely.
+ *
+ * @param {Element} el
+ *        The element to add text content into
+ *
+ * @param {string} text
+ *        The text content to add.
+ *
+ * @return {Element}
+ *         The element with added text content.
+ */
+
+
+/**
+ * Insert an element as the first child node of another
+ *
+ * @param {Element} child
+ *        Element to insert
+ *
+ * @param {Element} parent
+ *        Element to insert child into
+ */
+
+
+/**
+ * Check if an element has a CSS class
+ *
+ * @param {Element} element
+ *        Element to check
+ *
+ * @param {string} classToCheck
+ *        Class name to check for
+ *
+ * @return {boolean}
+ *         - True if the element had the class
+ *         - False otherwise.
+ *
+ * @throws {Error}
+ *         Throws an error if `classToCheck` has white space.
+ */
+
+
+/**
+ * Add a CSS class name to an element
+ *
+ * @param {Element} element
+ *        Element to add class name to.
+ *
+ * @param {string} classToAdd
+ *        Class name to add.
+ *
+ * @return {Element}
+ *         The dom element with the added class name.
+ */
+
+
+/**
+ * Remove a CSS class name from an element
+ *
+ * @param {Element} element
+ *        Element to remove a class name from.
+ *
+ * @param {string} classToRemove
+ *        Class name to remove
+ *
+ * @return {Element}
+ *         The dom element with class name removed.
+ */
+
+
+/**
+ * The callback definition for toggleElClass.
+ *
+ * @callback Dom~PredicateCallback
+ * @param {Element} element
+ *        The DOM element of the Component.
+ *
+ * @param {string} classToToggle
+ *        The `className` that wants to be toggled
+ *
+ * @return {boolean|undefined}
+ *         - If true the `classToToggle` will get added to `element`.
+ *         - If false the `classToToggle` will get removed from `element`.
+ *         - If undefined this callback will be ignored
+ */
+
+/**
+ * Adds or removes a CSS class name on an element depending on an optional
+ * condition or the presence/absence of the class name.
+ *
+ * @param {Element} element
+ *        The element to toggle a class name on.
+ *
+ * @param {string} classToToggle
+ *        The class that should be toggled
+ *
+ * @param {boolean|PredicateCallback} [predicate]
+ *        See the return value for {@link Dom~PredicateCallback}
+ *
+ * @return {Element}
+ *         The element with a class that has been toggled.
+ */
+
+
+/**
+ * Apply attributes to an HTML element.
+ *
+ * @param {Element} el
+ *        Element to add attributes to.
+ *
+ * @param {Object} [attributes]
+ *        Attributes to be applied.
+ */
+
+
+/**
+ * Get an element's attribute values, as defined on the HTML tag
+ * Attributes are not the same as properties. They're defined on the tag
+ * or with setAttribute (which shouldn't be used with HTML)
+ * This will return true or false for boolean attributes.
+ *
+ * @param {Element} tag
+ *        Element from which to get tag attributes.
+ *
+ * @return {Object}
+ *         All attributes of the element.
+ */
+
+
+/**
+ * Get the value of an element's attribute
+ *
+ * @param {Element} el
+ *        A DOM element
+ *
+ * @param {string} attribute
+ *        Attribute to get the value of
+ *
+ * @return {string}
+ *         value of the attribute
+ */
+
+
+/**
+ * Set the value of an element's attribute
+ *
+ * @param {Element} el
+ *        A DOM element
+ *
+ * @param {string} attribute
+ *        Attribute to set
+ *
+ * @param {string} value
+ *        Value to set the attribute to
+ */
+
+
+/**
+ * Remove an element's attribute
+ *
+ * @param {Element} el
+ *        A DOM element
+ *
+ * @param {string} attribute
+ *        Attribute to remove
+ */
+
+
+/**
+ * Attempt to block the ability to select text while dragging controls
+ */
+
+
+/**
+ * Turn off text selection blocking
+ */
+
+
+/**
+ * Identical to the native `getBoundingClientRect` function, but ensures that
+ * the method is supported at all (it is in all browsers we claim to support)
+ * and that the element is in the DOM before continuing.
+ *
+ * This wrapper function also shims properties which are not provided by some
+ * older browsers (namely, IE8).
+ *
+ * Additionally, some browsers do not support adding properties to a
+ * `ClientRect`/`DOMRect` object; so, we shallow-copy it with the standard
+ * properties (except `x` and `y` which are not widely supported). This helps
+ * avoid implementations where keys are non-enumerable.
+ *
+ * @param  {Element} el
+ *         Element whose `ClientRect` we want to calculate.
+ *
+ * @return {Object|undefined}
+ *         Always returns a plain
+ */
+
+
+/**
+ * The postion of a DOM element on the page.
+ *
+ * @typedef {Object} module:dom~Position
+ *
+ * @property {number} left
+ *           Pixels to the left
+ *
+ * @property {number} top
+ *           Pixels on top
+ */
+
+/**
+ * Offset Left.
+ * getBoundingClientRect technique from
+ * John Resig
+ *
+ * @see http://ejohn.org/blog/getboundingclientrect-is-awesome/
+ *
+ * @param {Element} el
+ *        Element from which to get offset
+ *
+ * @return {module:dom~Position}
+ *         The position of the element that was passed in.
+ */
+
+
+/**
+ * x and y coordinates for a dom element or mouse pointer
+ *
+ * @typedef {Object} Dom~Coordinates
+ *
+ * @property {number} x
+ *           x coordinate in pixels
+ *
+ * @property {number} y
+ *           y coordinate in pixels
+ */
+
+/**
+ * Get pointer position in element
+ * Returns an object with x and y coordinates.
+ * The base on the coordinates are the bottom left of the element.
+ *
+ * @param {Element} el
+ *        Element on which to get the pointer position on
+ *
+ * @param {EventTarget~Event} event
+ *        Event object
+ *
+ * @return {Dom~Coordinates}
+ *         A Coordinates object corresponding to the mouse position.
+ *
+ */
+
+
+/**
+ * Determines, via duck typing, whether or not a value is a text node.
+ *
+ * @param {Mixed} value
+ *        Check if this value is a text node.
+ *
+ * @return {boolean}
+ *         - True if it is a text node
+ *         - False otherwise
+ */
+
+
+/**
+ * Empties the contents of an element.
+ *
+ * @param {Element} el
+ *        The element to empty children from
+ *
+ * @return {Element}
+ *         The element with no children
+ */
+
+
+/**
+ * Normalizes content for eventual insertion into the DOM.
+ *
+ * This allows a wide range of content definition methods, but protects
+ * from falling into the trap of simply writing to `innerHTML`, which is
+ * an XSS concern.
+ *
+ * The content for an element can be passed in multiple types and
+ * combinations, whose behavior is as follows:
+ *
+ * @param {String|Element|TextNode|Array|Function} content
+ *        - String: Normalized into a text node.
+ *        - Element/TextNode: Passed through.
+ *        - Array: A one-dimensional array of strings, elements, nodes, or functions
+ *          (which return single strings, elements, or nodes).
+ *        - Function: If the sole argument, is expected to produce a string, element,
+ *          node, or array as defined above.
+ *
+ * @return {Array}
+ *         All of the content that was passed in normalized.
+ */
+
+
+/**
+ * Normalizes and appends content to an element.
+ *
+ * @param {Element} el
+ *        Element to append normalized content to.
+ *
+ *
+ * @param {String|Element|TextNode|Array|Function} content
+ *        See the `content` argument of {@link dom:normalizeContent}
+ *
+ * @return {Element}
+ *         The element with appended normalized content.
+ */
+
+
+/**
+ * Normalizes and inserts content into an element; this is identical to
+ * `appendContent()`, except it empties the element first.
+ *
+ * @param {Element} el
+ *        Element to insert normalized content into.
+ *
+ * @param {String|Element|TextNode|Array|Function} content
+ *        See the `content` argument of {@link dom:normalizeContent}
+ *
+ * @return {Element}
+ *         The element with inserted normalized content.
+ *
+ */
+
+
+/**
+ * Finds a single DOM element matching `selector` within the optional
+ * `context` of another DOM element (defaulting to `document`).
+ *
+ * @param {string} selector
+ *        A valid CSS selector, which will be passed to `querySelector`.
+ *
+ * @param {Element|String} [context=document]
+ *        A DOM element within which to query. Can also be a selector
+ *        string in which case the first matching element will be used
+ *        as context. If missing (or no element matches selector), falls
+ *        back to `document`.
+ *
+ * @return {Element|null}
+ *         The element that was found or null.
+ */
+
+
+/**
+ * Finds a all DOM elements matching `selector` within the optional
+ * `context` of another DOM element (defaulting to `document`).
+ *
+ * @param {string} selector
+ *           A valid CSS selector, which will be passed to `querySelectorAll`.
+ *
+ * @param {Element|String} [context=document]
+ *           A DOM element within which to query. Can also be a selector
+ *           string in which case the first matching element will be used
+ *           as context. If missing (or no element matches selector), falls
+ *           back to `document`.
+ *
+ * @return {NodeList}
+ *         A element list of elements that were found. Will be empty if none were found.
+ *
+ */
+
+var USER_AGENT = window_1.navigator && window_1.navigator.userAgent || '';
+var webkitVersionMap = /AppleWebKit\/([\d.]+)/i.exec(USER_AGENT);
+/*
+ * Device is an iPhone
+ *
+ * @type {Boolean}
+ * @constant
+ * @private
+ */
+var IS_IPAD = /iPad/i.test(USER_AGENT);
+
+var IS_CHROMECAST = window_1.navigator.userAgent.indexOf('CrKey') >= 0;
+
+// The Facebook app's UIWebView identifies as both an iPhone and iPad, so
+// to identify iPhones, we need to exclude iPads.
+// http://artsy.github.io/blog/2012/10/18/the-perils-of-ios-user-agent-sniffing/
+var IS_IPHONE = /iPhone/i.test(USER_AGENT) && !IS_IPAD;
+var IS_IPOD = /iPod/i.test(USER_AGENT);
+
+
+var IOS_VERSION = function () {
+  var match = USER_AGENT.match(/OS (\d+)_/i);
+
+  if (match && match[1]) {
+    return match[1];
+  }
+  return null;
+}();
+
+var IS_ANDROID = /Android/i.test(USER_AGENT);
+var ANDROID_VERSION = function () {
+  // This matches Android Major.Minor.Patch versions
+  // ANDROID_VERSION is Major.Minor as a Number, if Minor isn't available, then only Major is returned
+  var match = USER_AGENT.match(/Android (\d+)(?:\.(\d+))?(?:\.(\d+))*/i);
+
+  if (!match) {
+    return null;
+  }
+
+  var major = match[1] && parseFloat(match[1]);
+  var minor = match[2] && parseFloat(match[2]);
+
+  if (major && minor) {
+    return parseFloat(match[1] + '.' + match[2]);
+  } else if (major) {
+    return major;
+  }
+  return null;
+}();
+
+// Old Android is defined as Version older than 2.3, and requiring a webkit version of the android browser
+var IS_OLD_ANDROID = IS_ANDROID && /webkit/i.test(USER_AGENT) && ANDROID_VERSION < 2.3;
+
+
+var IS_FIREFOX = /Firefox/i.test(USER_AGENT);
+var IS_EDGE = /Edge/i.test(USER_AGENT);
+var IS_CHROME = !IS_EDGE && /Chrome/i.test(USER_AGENT);
+var CHROME_VERSION = function () {
+  var match = USER_AGENT.match(/Chrome\/(\d+)/);
+
+  if (match && match[1]) {
+    return parseFloat(match[1]);
+  }
+  return null;
+}();
+var IS_IE8 = /MSIE\s8\.0/.test(USER_AGENT);
+var IE_VERSION = function () {
+  var result = /MSIE\s(\d+)\.\d/.exec(USER_AGENT);
+  var version = result && parseFloat(result[1]);
+
+  if (!version && /Trident\/7.0/i.test(USER_AGENT) && /rv:11.0/.test(USER_AGENT)) {
+    // IE 11 has a different user agent string than other IE versions
+    version = 11.0;
+  }
+
+  return version;
+}();
+
+var IS_SAFARI = /Safari/i.test(USER_AGENT) && !IS_CHROME && !IS_ANDROID && !IS_EDGE;
+
+
+
+
+
+var BACKGROUND_SIZE_SUPPORTED = isReal() && 'backgroundSize' in window_1.document.createElement('video').style;
+
+/**
  * EmpTech - General tech implementation, not specific to a certain tech
  *
  * @class EmpTech
@@ -1014,26 +1575,10 @@ var EmpTech = function () {
     classCallCheck(this, EmpTech);
   }
 
-  EmpTech.prototype.addAudioTrack = function addAudioTrack(kind, label, language) {
-    var enabled = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
-
-    // Add the track to the player's audio track list.
-    var track = new videojs$1.AudioTrack({
-      enabled: enabled,
-      kind: kind || 'main',
-      label: label,
-      language: language
-    });
-    this.audioTracks().addTrack(track);
-    return track;
-  };
-
   /**
    * Returns the language code of a language string: 'en-English' to 'en' or returns the original string if '-' can't be found
    * @returns {String} language code
    */
-
-
   EmpTech.prototype.languageCode = function languageCode(language) {
     return language ? language.split('-')[0] : null;
   };
@@ -1124,6 +1669,365 @@ var EmpTech = function () {
         this.preDuration_ = this.duration();
         this.trigger(empPlayerEvents.DURATION_CHANGE);
       }
+    }
+  };
+
+  EmpTech.prototype.fetchWidevineCertificate = function fetchWidevineCertificate(certificateUrl, callback) {
+    var _this = this;
+
+    log$1('fetchWidevineCertificate');
+    //Can't trigger here no handlers yet
+    //this.trigger({ type: EmpPlayerEvents.DRM_SESSION_UPDATE, bubbles: true }, { 'messageType': 'WIDEVINE_CERTIFICATE_REQUEST', 'code': undefined, 'info': certificateUrl });
+    var request = new XMLHttpRequest();
+    request.addEventListener('error', this.checkForRecoverableErrors, false);
+    //'irdeto'
+    request.responseType = 'arraybuffer';
+    request.addEventListener('load', function (event) {
+      _this.onWidevineCertificateLoad_(event, {
+        callback: callback, certificateUrl: certificateUrl
+      });
+    }, false);
+
+    request.open('GET', certificateUrl, true);
+    request.send();
+  };
+
+  EmpTech.prototype.onWidevineCertificateLoad_ = function onWidevineCertificateLoad_(event, _ref) {
+    var callback = _ref.callback,
+        certificateUrl = _ref.certificateUrl;
+
+    log$1('onWidevineCertificateLoad');
+    this.trigger({ type: empPlayerEvents.DRM_SESSION_UPDATE, bubbles: true }, { 'messageType': 'WIDEVINE_CERTIFICATE_REQUEST', 'code': undefined, 'info': certificateUrl });
+    var request = event.target;
+    if (request.status < 300 && request.readyState === 4) {
+      var certificate = new Uint8Array(event.target.response);
+
+      this.trigger({ type: empPlayerEvents.DRM_SESSION_UPDATE, bubbles: true }, { 'messageType': 'WIDEVINE_CERTIFICATE_RESPONSE', 'code': undefined, 'info': 'onWidevineCertificateLoad' });
+      callback(certificate);
+    } else {
+      var error = {
+        message: 'onWidevineCertificateLoad',
+        code: request.status
+      };
+      if (request.responseType === "arraybuffer") {
+        var enc = new TextDecoder('utf-8');
+        error.message = enc.decode(request.response);
+      }
+      error.category = 6;
+      callback(null, error);
+    }
+  };
+
+  EmpTech.prototype.baseHandleSource = function baseHandleSource(source, tech) {
+    var _this2 = this;
+
+    if (!source.src) {
+      return false;
+    }
+
+    // Don't fetch certificate if IE or Edge or CC
+    if (window.document.documentMode || /Edge/.test(window.navigator.userAgent) || IS_CHROMECAST || IS_ANDROID) {
+      this.certificate_ = null;
+    } else {
+      if (source.certificateServer && !this.certificate_ && (source.licenseServer || source.licenseServers && !isEmpty(source.licenseServers))) {
+        this.fetchWidevineCertificate(source.certificateServer, function (cert, error) {
+          if (cert) {
+
+            if (_this2.name_ === 'EmpDashif') {
+              _this2.certificate_ = base64EncodeUint8Array(cert);
+            } else {
+              //Shaka
+              _this2.certificate_ = cert;
+            }
+            _this2.handleSource(source, tech);
+          } else {
+            _this2.checkForRecoverableErrors(error ? error : { message: 'no certificate', category: 6 });
+          }
+        });
+        return false;
+      }
+    }
+
+    if (this.stopTrackingDuration) {
+      this.stopTrackingDuration();
+    }
+    this.stopped_ = false;
+    this.ended_ = false;
+    this.hasStarted_ = false;
+    this.hasMetadata_ = false;
+    var options = this.options_;
+    options.source = source;
+    this.options_ = assign(this.options_, source.options);
+    this.currentProgram_ = null;
+
+    if (source.licenseServer || source.licenseServers) {
+      this.playToken = source.playToken;
+    }
+
+    this.clearTracks(['text']);
+
+    return true;
+  };
+
+  ///////////////////// Text tracks
+
+  /**
+   * isTextTrackSynchronized
+   * @param {string[]} techTracksLanguages
+   * @private
+   */
+
+
+  EmpTech.prototype.isTechTextTrackSynchronized = function isTechTextTrackSynchronized(techTracksLanguages) {
+    techTracksLanguages = techTracksLanguages.sort();
+
+    var videojsTextTracks = this.textTracks();
+    var videojsTextTracksLanguages = [];
+    for (var i = 0; i < videojsTextTracks.length; i++) {
+      videojsTextTracksLanguages.push(videojsTextTracks[i].language);
+    }
+    videojsTextTracksLanguages = videojsTextTracksLanguages.sort();
+
+    var isSync = techTracksLanguages.join() === videojsTextTracksLanguages.join();
+    //log('isTextTrackSynchronized', isSync, techTracksLanguages.join(), videojsTextTracksLanguages.join());
+    log$1('isTextTrackSynchronized', isSync);
+    return isSync;
+  };
+
+  /**
+  * syncVideojsTexttrackVisibility
+  *
+  * @private
+  */
+
+
+  EmpTech.prototype.syncVideojsTexttrackVisibility = function syncVideojsTexttrackVisibility() {
+    log$1('syncVideojsTexttrackVisibility');
+    this.blockLocalTrackChange = true;
+    var textTracks = this.textTracks();
+    var i = textTracks.length;
+    if (!this.shakaPlayer_.isTextTrackVisible()) {
+      while (i--) {
+        var track = textTracks[i];
+        if (track.mode === 'showing') {
+          track.mode = 'hidden';
+        }
+      }
+    } else {
+      var selectedTechTextLanguage = this.getSelectedTechTextLanguage();
+      while (i--) {
+        var track = textTracks[i];
+        if (track.language === selectedTechTextLanguage && track.mode !== 'showing') {
+          track.mode = 'showing';
+        } else if (track.language !== selectedTechTextLanguage && track.mode !== 'disabled') {
+          track.mode = 'disabled';
+        }
+      }
+    }
+    this.stopBlockLocalTrackChange('syncVideojsTexttrackVisibility');
+  };
+
+  /**
+  * deferredSelectTextTrack
+  * When changing tracklist we get many onTextTrackChange, wait to the update is done
+  * @param {string} languageCode
+  * @private
+  */
+
+
+  EmpTech.prototype.deferredSelectTextTrack = function deferredSelectTextTrack(languageCode) {
+    log$1('deferredSelectTextTrack enter', languageCode);
+    if (this.deferredTextTrackChangeTimeOut) {
+      //Reset TrackChange, new selection comming in
+      clearTimeout(this.deferredTextTrackChangeTimeOut);
+    }
+    this.deferredTextTrackChangeTimeOut = setTimeout(function () {
+      log$1('update texttrack');
+      clearTimeout(this.deferredTextTrackChangeTimeOut);
+      this.deferredTextTrackChangeTimeOut = null;
+      if (this.isDispose_) {
+        return;
+      }
+      this.blockLocalTrackChange = true;
+
+      this.selectTechTextLanguage(languageCode);
+      this.stopBlockLocalTrackChange('deferredSelectTextTrack exit');
+    }.bind(this), 2000); // 1 sec
+  };
+
+  /**
+  * selectVideojsTextLanguage
+  * @param {string} languageCode
+  * @private
+  */
+
+
+  EmpTech.prototype.selectVideojsTextLanguage = function selectVideojsTextLanguage(languageCode) {
+    log$1('selectVideojsTextLanguage', languageCode);
+    var textTracks = this.textTracks();
+    var i = textTracks.length;
+    while (i--) {
+      var track = textTracks[i];
+      if (languageCode === track.language && track.mode !== 'showing') {
+        this.blockLocalTrackChange = true;
+        track.mode === 'showing';
+      } else if (languageCode !== track.language && track.mode === 'showing') {
+        this.blockLocalTrackChange = true;
+        track.mode === 'disabled';
+      }
+    }
+    this.stopBlockLocalTrackChange('selectVideojsAudioLanguage');
+  };
+
+  /**
+  * VideoJS Text track change
+  * @param {object} event
+  * One of the VideoJS text track changed its mode
+  *
+  * @private
+  */
+
+
+  EmpTech.prototype.baseTextTrackChange = function baseTextTrackChange(event) {
+    if (this.blockLocalTrackChange) {
+      log$1('blockLocalTrackChange', 'baseTextTrackChange');
+      return;
+    }
+
+    log$1('ontextTrackChange');
+    var textTracks = this.textTracks();
+    var i = textTracks.length;
+    while (i--) {
+      var track = textTracks[i];
+      if (track.mode === 'showing') {
+        this.deferredSelectTextTrack(track.language);
+        return;
+      }
+    }
+    this.deferredSelectTextTrack(null);
+  };
+
+  ///////////////////// Audio tracks
+
+  /**
+  * isTechAudioTrackSynchronized
+  * @param {string[]} techTracksLanguages
+  * @private
+  */
+
+
+  EmpTech.prototype.isTechAudioTrackSynchronized = function isTechAudioTrackSynchronized(techTracksLanguages) {
+    techTracksLanguages = techTracksLanguages.sort();
+
+    var videojsAudioTracks = this.audioTracks();
+    var videojsAudioTracksLanguages = [];
+    for (var i = 0; i < videojsAudioTracks.length; i++) {
+      videojsAudioTracksLanguages.push(videojsAudioTracks[i].language);
+    }
+    videojsAudioTracksLanguages = videojsAudioTracksLanguages.sort();
+
+    var isSync = techTracksLanguages.join() === videojsAudioTracksLanguages.join();
+    //log('isAudioTrackSynchronized', isSync, techTracksLanguages.join(), videojsAudioTracksLanguages.join());
+    log$1('isAudioTrackSynchronized', isSync);
+    return isSync;
+  };
+
+  /**
+   * VideoJS
+   * One of the VideoJS audio track changed its enabled
+   * @param {object} event
+   * @private
+   */
+
+
+  EmpTech.prototype.baseAudioTrackChange = function baseAudioTrackChange(event) {
+    if (this.blockLocalTrackChange) {
+      log$1('blockLocalTrackChange', 'baseAudioTrackChange');
+      return;
+    }
+    log$1('onAudioTrackChange');
+    var audioTracks = this.audioTracks();
+    var i = audioTracks.length;
+    while (i--) {
+      var track = audioTracks[i];
+      if (track.enabled) {
+        this.selectTechAudioLanguage(track.language);
+        return;
+      }
+    }
+  };
+
+  /**
+  * selectVideojsAudioLanguage
+  * @param {string} languageCode
+  * @private
+  */
+
+
+  EmpTech.prototype.selectVideojsAudioLanguage = function selectVideojsAudioLanguage(languageCode) {
+    log$1('selectVideojsAudioLanguage', languageCode);
+    if (languageCode) {
+      var audioTracks = this.audioTracks();
+      var i = audioTracks.length;
+      while (i--) {
+        var track = audioTracks[i];
+        if (track.language === languageCode && !track.enabled) {
+          this.blockLocalTrackChange = true;
+          track.enabled = true;
+          break;
+        }
+      }
+      this.stopBlockLocalTrackChange('selectVideojsAudioLanguage');
+    }
+  };
+
+  /**
+   * 
+   * @param {string} kind
+   * @param {string} label
+   * @param {string} language
+   * @param {boolean} enabled = false
+   * @returns {object} new Track
+   * @private
+   */
+
+
+  EmpTech.prototype.addAudioTrack = function addAudioTrack(kind, label, language) {
+    var enabled = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+
+    // Add the track to the player's audio track list.
+    var track = new videojs$1.AudioTrack({
+      enabled: enabled,
+      kind: kind || 'main',
+      label: label,
+      language: language
+    });
+    this.audioTracks().addTrack(track);
+    return track;
+  };
+
+  /**
+  * stopBlockLocalTrackChange
+  * @param {string} caller
+  * @private
+  */
+
+
+  EmpTech.prototype.stopBlockLocalTrackChange = function stopBlockLocalTrackChange(caller) {
+    if (this.blockLocalTrackChange) {
+      if (this.blockLocalTrackChangeTimeOut) {
+        clearTimeout(this.blockLocalTrackChangeTimeOut);
+      }
+
+      this.blockLocalTrackChangeTimeOut = setTimeout(function () {
+        try {
+          clearTimeout(this.blockLocalTrackChangeTimeOut);
+          this.blockLocalTrackChangeTimeOut = null;
+          log$1(caller, 'stopBlockLocalTrackChange', ' TRACK_CHANGE');
+          this.trigger(empPlayerEvents.TRACK_CHANGE);
+          this.blockLocalTrackChange = false;
+        } catch (e) {} //Crash when navigate away
+      }.bind(this), 2000); //Stop block LocalTrackChange after 1 sec
     }
   };
 
@@ -3147,539 +4051,13 @@ var DownloadService = function (_Plugin) {
   return DownloadService;
 }(Plugin);
 
-DownloadService.VERSION = '2.0.94-217';
+DownloadService.VERSION = '2.0.94-218';
 
 if (videojs.getPlugin('DownloadService')) {
   videojs.log.warn('A plugin named "DownloadService" already exists.');
 } else {
   videojs.registerPlugin('download', DownloadService);
 }
-
-/**
- * Unique ID for an element or function
- * @type {Number}
- * @private
- */
-/**
- * Get the next unique ID
- *
- * @return {String}
- * @function newGUID
- */
-
-var _templateObject = taggedTemplateLiteralLoose(['Setting attributes in the second argument of createEl()\n                has been deprecated. Use the third argument instead.\n                createEl(type, properties, attributes). Attempting to set ', ' to ', '.'], ['Setting attributes in the second argument of createEl()\n                has been deprecated. Use the third argument instead.\n                createEl(type, properties, attributes). Attempting to set ', ' to ', '.']);
-
-/**
- * Whether the current DOM interface appears to be real.
- *
- * @return {Boolean}
- */
-function isReal() {
-  return (
-
-    // Both document and window will never be undefined thanks to `global`.
-    document_1 === window_1.document &&
-
-    // In IE < 9, DOM methods return "object" as their type, so all we can
-    // confidently check is that it exists.
-    typeof document_1.createElement !== 'undefined'
-  );
-}
-
-/**
- * Determines, via duck typing, whether or not a value is a DOM element.
- *
- * @param {Mixed} value
- *        The thing to check
- *
- * @return {boolean}
- *         - True if it is a DOM element
- *         - False otherwise
- */
-
-
-/**
- * Determines if the current DOM is embedded in an iframe.
- *
- * @return {boolean}
- *
- */
-
-
-/**
- * Creates an element and applies properties.
- *
- * @param {string} [tagName='div']
- *         Name of tag to be created.
- *
- * @param {Object} [properties={}]
- *         Element properties to be applied.
- *
- * @param {Object} [attributes={}]
- *         Element attributes to be applied.
- *
- * @param {String|Element|TextNode|Array|Function} [content]
- *         Contents for the element (see: {@link dom:normalizeContent})
- *
- * @return {Element}
- *         The element that was created.
- */
-
-
-/**
- * Injects text into an element, replacing any existing contents entirely.
- *
- * @param {Element} el
- *        The element to add text content into
- *
- * @param {string} text
- *        The text content to add.
- *
- * @return {Element}
- *         The element with added text content.
- */
-
-
-/**
- * Insert an element as the first child node of another
- *
- * @param {Element} child
- *        Element to insert
- *
- * @param {Element} parent
- *        Element to insert child into
- */
-
-
-/**
- * Check if an element has a CSS class
- *
- * @param {Element} element
- *        Element to check
- *
- * @param {string} classToCheck
- *        Class name to check for
- *
- * @return {boolean}
- *         - True if the element had the class
- *         - False otherwise.
- *
- * @throws {Error}
- *         Throws an error if `classToCheck` has white space.
- */
-
-
-/**
- * Add a CSS class name to an element
- *
- * @param {Element} element
- *        Element to add class name to.
- *
- * @param {string} classToAdd
- *        Class name to add.
- *
- * @return {Element}
- *         The dom element with the added class name.
- */
-
-
-/**
- * Remove a CSS class name from an element
- *
- * @param {Element} element
- *        Element to remove a class name from.
- *
- * @param {string} classToRemove
- *        Class name to remove
- *
- * @return {Element}
- *         The dom element with class name removed.
- */
-
-
-/**
- * The callback definition for toggleElClass.
- *
- * @callback Dom~PredicateCallback
- * @param {Element} element
- *        The DOM element of the Component.
- *
- * @param {string} classToToggle
- *        The `className` that wants to be toggled
- *
- * @return {boolean|undefined}
- *         - If true the `classToToggle` will get added to `element`.
- *         - If false the `classToToggle` will get removed from `element`.
- *         - If undefined this callback will be ignored
- */
-
-/**
- * Adds or removes a CSS class name on an element depending on an optional
- * condition or the presence/absence of the class name.
- *
- * @param {Element} element
- *        The element to toggle a class name on.
- *
- * @param {string} classToToggle
- *        The class that should be toggled
- *
- * @param {boolean|PredicateCallback} [predicate]
- *        See the return value for {@link Dom~PredicateCallback}
- *
- * @return {Element}
- *         The element with a class that has been toggled.
- */
-
-
-/**
- * Apply attributes to an HTML element.
- *
- * @param {Element} el
- *        Element to add attributes to.
- *
- * @param {Object} [attributes]
- *        Attributes to be applied.
- */
-
-
-/**
- * Get an element's attribute values, as defined on the HTML tag
- * Attributes are not the same as properties. They're defined on the tag
- * or with setAttribute (which shouldn't be used with HTML)
- * This will return true or false for boolean attributes.
- *
- * @param {Element} tag
- *        Element from which to get tag attributes.
- *
- * @return {Object}
- *         All attributes of the element.
- */
-
-
-/**
- * Get the value of an element's attribute
- *
- * @param {Element} el
- *        A DOM element
- *
- * @param {string} attribute
- *        Attribute to get the value of
- *
- * @return {string}
- *         value of the attribute
- */
-
-
-/**
- * Set the value of an element's attribute
- *
- * @param {Element} el
- *        A DOM element
- *
- * @param {string} attribute
- *        Attribute to set
- *
- * @param {string} value
- *        Value to set the attribute to
- */
-
-
-/**
- * Remove an element's attribute
- *
- * @param {Element} el
- *        A DOM element
- *
- * @param {string} attribute
- *        Attribute to remove
- */
-
-
-/**
- * Attempt to block the ability to select text while dragging controls
- */
-
-
-/**
- * Turn off text selection blocking
- */
-
-
-/**
- * Identical to the native `getBoundingClientRect` function, but ensures that
- * the method is supported at all (it is in all browsers we claim to support)
- * and that the element is in the DOM before continuing.
- *
- * This wrapper function also shims properties which are not provided by some
- * older browsers (namely, IE8).
- *
- * Additionally, some browsers do not support adding properties to a
- * `ClientRect`/`DOMRect` object; so, we shallow-copy it with the standard
- * properties (except `x` and `y` which are not widely supported). This helps
- * avoid implementations where keys are non-enumerable.
- *
- * @param  {Element} el
- *         Element whose `ClientRect` we want to calculate.
- *
- * @return {Object|undefined}
- *         Always returns a plain
- */
-
-
-/**
- * The postion of a DOM element on the page.
- *
- * @typedef {Object} module:dom~Position
- *
- * @property {number} left
- *           Pixels to the left
- *
- * @property {number} top
- *           Pixels on top
- */
-
-/**
- * Offset Left.
- * getBoundingClientRect technique from
- * John Resig
- *
- * @see http://ejohn.org/blog/getboundingclientrect-is-awesome/
- *
- * @param {Element} el
- *        Element from which to get offset
- *
- * @return {module:dom~Position}
- *         The position of the element that was passed in.
- */
-
-
-/**
- * x and y coordinates for a dom element or mouse pointer
- *
- * @typedef {Object} Dom~Coordinates
- *
- * @property {number} x
- *           x coordinate in pixels
- *
- * @property {number} y
- *           y coordinate in pixels
- */
-
-/**
- * Get pointer position in element
- * Returns an object with x and y coordinates.
- * The base on the coordinates are the bottom left of the element.
- *
- * @param {Element} el
- *        Element on which to get the pointer position on
- *
- * @param {EventTarget~Event} event
- *        Event object
- *
- * @return {Dom~Coordinates}
- *         A Coordinates object corresponding to the mouse position.
- *
- */
-
-
-/**
- * Determines, via duck typing, whether or not a value is a text node.
- *
- * @param {Mixed} value
- *        Check if this value is a text node.
- *
- * @return {boolean}
- *         - True if it is a text node
- *         - False otherwise
- */
-
-
-/**
- * Empties the contents of an element.
- *
- * @param {Element} el
- *        The element to empty children from
- *
- * @return {Element}
- *         The element with no children
- */
-
-
-/**
- * Normalizes content for eventual insertion into the DOM.
- *
- * This allows a wide range of content definition methods, but protects
- * from falling into the trap of simply writing to `innerHTML`, which is
- * an XSS concern.
- *
- * The content for an element can be passed in multiple types and
- * combinations, whose behavior is as follows:
- *
- * @param {String|Element|TextNode|Array|Function} content
- *        - String: Normalized into a text node.
- *        - Element/TextNode: Passed through.
- *        - Array: A one-dimensional array of strings, elements, nodes, or functions
- *          (which return single strings, elements, or nodes).
- *        - Function: If the sole argument, is expected to produce a string, element,
- *          node, or array as defined above.
- *
- * @return {Array}
- *         All of the content that was passed in normalized.
- */
-
-
-/**
- * Normalizes and appends content to an element.
- *
- * @param {Element} el
- *        Element to append normalized content to.
- *
- *
- * @param {String|Element|TextNode|Array|Function} content
- *        See the `content` argument of {@link dom:normalizeContent}
- *
- * @return {Element}
- *         The element with appended normalized content.
- */
-
-
-/**
- * Normalizes and inserts content into an element; this is identical to
- * `appendContent()`, except it empties the element first.
- *
- * @param {Element} el
- *        Element to insert normalized content into.
- *
- * @param {String|Element|TextNode|Array|Function} content
- *        See the `content` argument of {@link dom:normalizeContent}
- *
- * @return {Element}
- *         The element with inserted normalized content.
- *
- */
-
-
-/**
- * Finds a single DOM element matching `selector` within the optional
- * `context` of another DOM element (defaulting to `document`).
- *
- * @param {string} selector
- *        A valid CSS selector, which will be passed to `querySelector`.
- *
- * @param {Element|String} [context=document]
- *        A DOM element within which to query. Can also be a selector
- *        string in which case the first matching element will be used
- *        as context. If missing (or no element matches selector), falls
- *        back to `document`.
- *
- * @return {Element|null}
- *         The element that was found or null.
- */
-
-
-/**
- * Finds a all DOM elements matching `selector` within the optional
- * `context` of another DOM element (defaulting to `document`).
- *
- * @param {string} selector
- *           A valid CSS selector, which will be passed to `querySelectorAll`.
- *
- * @param {Element|String} [context=document]
- *           A DOM element within which to query. Can also be a selector
- *           string in which case the first matching element will be used
- *           as context. If missing (or no element matches selector), falls
- *           back to `document`.
- *
- * @return {NodeList}
- *         A element list of elements that were found. Will be empty if none were found.
- *
- */
-
-var USER_AGENT = window_1.navigator && window_1.navigator.userAgent || '';
-var webkitVersionMap = /AppleWebKit\/([\d.]+)/i.exec(USER_AGENT);
-/*
- * Device is an iPhone
- *
- * @type {Boolean}
- * @constant
- * @private
- */
-var IS_IPAD = /iPad/i.test(USER_AGENT);
-
-var IS_CHROMECAST = window_1.navigator.userAgent.indexOf('CrKey') >= 0;
-
-// The Facebook app's UIWebView identifies as both an iPhone and iPad, so
-// to identify iPhones, we need to exclude iPads.
-// http://artsy.github.io/blog/2012/10/18/the-perils-of-ios-user-agent-sniffing/
-var IS_IPHONE = /iPhone/i.test(USER_AGENT) && !IS_IPAD;
-var IS_IPOD = /iPod/i.test(USER_AGENT);
-
-
-var IOS_VERSION = function () {
-  var match = USER_AGENT.match(/OS (\d+)_/i);
-
-  if (match && match[1]) {
-    return match[1];
-  }
-  return null;
-}();
-
-var IS_ANDROID = /Android/i.test(USER_AGENT);
-var ANDROID_VERSION = function () {
-  // This matches Android Major.Minor.Patch versions
-  // ANDROID_VERSION is Major.Minor as a Number, if Minor isn't available, then only Major is returned
-  var match = USER_AGENT.match(/Android (\d+)(?:\.(\d+))?(?:\.(\d+))*/i);
-
-  if (!match) {
-    return null;
-  }
-
-  var major = match[1] && parseFloat(match[1]);
-  var minor = match[2] && parseFloat(match[2]);
-
-  if (major && minor) {
-    return parseFloat(match[1] + '.' + match[2]);
-  } else if (major) {
-    return major;
-  }
-  return null;
-}();
-
-// Old Android is defined as Version older than 2.3, and requiring a webkit version of the android browser
-var IS_OLD_ANDROID = IS_ANDROID && /webkit/i.test(USER_AGENT) && ANDROID_VERSION < 2.3;
-
-
-var IS_FIREFOX = /Firefox/i.test(USER_AGENT);
-var IS_EDGE = /Edge/i.test(USER_AGENT);
-var IS_CHROME = !IS_EDGE && /Chrome/i.test(USER_AGENT);
-var CHROME_VERSION = function () {
-  var match = USER_AGENT.match(/Chrome\/(\d+)/);
-
-  if (match && match[1]) {
-    return parseFloat(match[1]);
-  }
-  return null;
-}();
-var IS_IE8 = /MSIE\s8\.0/.test(USER_AGENT);
-var IE_VERSION = function () {
-  var result = /MSIE\s(\d+)\.\d/.exec(USER_AGENT);
-  var version = result && parseFloat(result[1]);
-
-  if (!version && /Trident\/7.0/i.test(USER_AGENT) && /rv:11.0/.test(USER_AGENT)) {
-    // IE 11 has a different user agent string than other IE versions
-    version = 11.0;
-  }
-
-  return version;
-}();
-
-var IS_SAFARI = /Safari/i.test(USER_AGENT) && !IS_CHROME && !IS_ANDROID && !IS_EDGE;
-
-
-
-
-
-var BACKGROUND_SIZE_SUPPORTED = isReal() && 'backgroundSize' in window_1.document.createElement('video').style;
 
 /**
  * @file emp-shaka.js
@@ -3708,6 +4086,8 @@ var EmpShaka = function (_Html) {
     var ready = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
     classCallCheck(this, EmpShaka);
 
+    options.constructing_ = true;
+
     // es6-mixins adds the method to the prototype
     // meaning the second time this object is created the methods are already on the prototype
     // therefore do not merge duplicates
@@ -3724,17 +4104,11 @@ var EmpShaka = function (_Html) {
     // Shaka polyfills, fullscreen has been excluded because VideoJS handles this api
     shaka.polyfill.installAll();
 
-    _this.textTrackChangeBind = _this.textTrackChange.bind(_this);
+    _this.textTrackChangeBind = _this.baseTextTrackChange.bind(_this);
     _this.textTracks().on('selectedlanguagechange', _this.textTrackChangeBind);
 
-    _this.textTrackAddedBind = _this.textTrackAdded.bind(_this);
-    _this.textTracks().on(empPlayerEvents.ADD_TRACK, _this.textTrackAddedBind);
-
-    _this.audioTrackChangeBind = _this.audioTrackChange.bind(_this);
+    _this.audioTrackChangeBind = _this.baseAudioTrackChange.bind(_this);
     _this.audioTracks().on(empPlayerEvents.CHANGE, _this.audioTrackChangeBind);
-
-    _this.audioTrackAddedBind = _this.audioTrackAdded.bind(_this);
-    _this.audioTracks().on(empPlayerEvents.ADD_TRACK, _this.audioTrackAddedBind);
 
     _this.onEndedBind = _this.onEnded.bind(_this);
     _this.el_.addEventListener(empPlayerEvents.ENDED, _this.onEndedBind);
@@ -3748,6 +4122,11 @@ var EmpShaka = function (_Html) {
     //https://bugzilla.mozilla.org/show_bug.cgi?id=1491365
     if (IS_FIREFOX) {
       window_1.VTTRegion = null;
+    }
+
+    _this.options_.constructing_ = options.constructing_ = undefined;
+    if (_this.options_.source && _this.options_.source.src) {
+      _this.setSource(_this.options_.source);
     }
     return _this;
   }
@@ -3791,13 +4170,16 @@ var EmpShaka = function (_Html) {
    */
 
 
-  EmpShaka.prototype.handleSource = function handleSource(source) {
+  EmpShaka.prototype.handleSource = function handleSource(source, tech) {
     var _this2 = this;
 
-    // Do nothing if the src is falsey
-    if (!source.src) {
+    if (tech.options_.constructing_ || !this.baseHandleSource(source, tech)) {
       return;
     }
+
+    this.preActiveVariantTrack = null;
+    this.preActiveTextTrack = null;
+
     // Shaka is loading
     if (this.loading_ || !source.src) {
       log$1.warn('handleSource shaka is loading');
@@ -3807,48 +4189,6 @@ var EmpShaka = function (_Html) {
         this.streamrootWrapper_ = null;
       }
     }
-    // Don't fetch certificate if IE or Edge or CC
-    if (window_1.document.documentMode || /Edge/.test(window_1.navigator.userAgent) || IS_CHROMECAST || IS_ANDROID) {
-      this.certificate_ = null;
-    } else {
-      if (source.certificateServer && !this.certificate_) {
-        this.fetchCertificate(source.certificateServer, function (cert, error) {
-          if (cert) {
-            _this2.certificate_ = cert;
-            _this2.handleSource(source);
-          } else {
-            _this2.checkForRecoverableErrors(error ? error : { message: 'no certificate', category: 6 });
-          }
-        });
-        return;
-      }
-    }
-
-    //For testing fallback
-    //setTimeout(() => {
-    //   this.triggerRecoverableError({ code: 1, message: 'test fallback' });
-    //}, 30000); 
-    if (this.stopTrackingDuration) {
-      this.stopTrackingDuration();
-    }
-    this.stopped_ = false;
-    this.ended_ = false;
-    this.hasStarted_ = false;
-    this.hasMetadata_ = false;
-    this.preActiveVariantTrack = null;
-    this.preActiveTextTrack = null;
-    var options = this.options_;
-    options.source = source;
-    this.options_ = assign(this.options_, source.options);
-    this.currentProgram_ = null;
-
-    var manifestSource = void 0;
-
-    this.playToken = source.playToken;
-
-    manifestSource = source.src;
-
-    this.isDispose_ = false;
 
     if (!this.shakaPlayer_) {
       // We can re-use the old player. calling the 'load' method automatically calls 'unload' if a previous manifest has
@@ -3862,7 +4202,6 @@ var EmpShaka = function (_Html) {
       }
 
     this.shakaPlayer_.resetConfiguration();
-
     // Default language is defined (in descending order)
     // 1. language set in player options
     // 2. document language (lang attribute on html tag)
@@ -3873,7 +4212,6 @@ var EmpShaka = function (_Html) {
     textLanguage = textLanguage !== 'None' ? textLanguage : '';
     log$1('preferredAudioLanguage', audioLanguage);
     log$1('preferredTextLanguage', textLanguage);
-    this.clearTracks(['text']);
     var config = { streaming: {}, abr: {}, restrictions: {}, preferredAudioLanguage: audioLanguage, preferredTextLanguage: textLanguage };
     config.abr.enabled = true;
     // minBandwidth/maxBandwidth bit/sec, from entitlement we get kbit/sec. Not Byte/sec.
@@ -3892,43 +4230,34 @@ var EmpShaka = function (_Html) {
     }
 
     //override with custom value
-    if (options.maxBitrate) {
-      config.restrictions.maxBandwidth = options.maxBitrate * 1000;
+    if (this.options_.maxBitrate) {
+      config.restrictions.maxBandwidth = this.options_.maxBitrate * 1000;
     }
 
     config.manifest = {
       dash: {}
     };
 
-    if (options.clockSyncUri) {
-      config.manifest.dash.clockSyncUri = options.clockSyncUri;
+    if (this.options_.clockSyncUri) {
+      config.manifest.dash.clockSyncUri = this.options_.clockSyncUri;
     }
 
-    if (source.baseUrl) {
-      //Remove Last Directory Part Of BaseUrl, EMP MDN Rule
-      var the_arr = source.baseUrl.split('/');
-      the_arr.pop(); // last separator
-      the_arr.pop(); // last directory
-      var baseUrl = the_arr.join('/') + '/';
-      config.manifest.dash.baseUrl = baseUrl;
+    if (this.options_.liveDelay !== undefined) {
+      config.manifest.dash.defaultPresentationDelay = this.options_.liveDelay;
     }
 
-    if (options.liveDelay !== undefined) {
-      config.manifest.dash.defaultPresentationDelay = options.liveDelay;
-    }
-
-    if (options.abr) {
-      if (options.abr.defaultBandwidthEstimate) {
-        config.abr.defaultBandwidthEstimate = options.abr.defaultBandwidthEstimate;
+    if (this.options_.abr) {
+      if (this.options_.abr.defaultBandwidthEstimate) {
+        config.abr.defaultBandwidthEstimate = this.options_.abr.defaultBandwidthEstimate;
       }
-      if (options.abr.bandwidth_upgrade_target) {
-        config.abr.bandwidthUpgradeTarget = options.abr.bandwidth_upgrade_target;
+      if (this.options_.abr.bandwidth_upgrade_target) {
+        config.abr.bandwidthUpgradeTarget = this.options_.abr.bandwidth_upgrade_target;
       }
-      if (options.abr.bandwidth_downgrade_target) {
-        config.abr.bandwidthDowngradeTarget = options.abr.bandwidth_downgrade_target;
+      if (this.options_.abr.bandwidth_downgrade_target) {
+        config.abr.bandwidthDowngradeTarget = this.options_.abr.bandwidth_downgrade_target;
       }
-      if (options.abr.switch_interval_ms) {
-        config.abr.switchInterval = options.abr.switch_interval_ms / 1000;
+      if (this.options_.abr.switch_interval_ms) {
+        config.abr.switchInterval = this.options_.abr.switch_interval_ms / 1000;
       }
     }
 
@@ -3997,18 +4326,18 @@ var EmpShaka = function (_Html) {
     var startTime;
     // In order to start from the beginning of live stream send 0.1s as startTime
     if (this.options_.startTime > 0) {
-      if (!this.options._timeShiftDisabled) {
+      if (!this.options_.timeShiftDisabled) {
         startTime = this.options_.startTime;
       }
     }
     log$1('before load stream');
     this.loading_ = true; //Block load call if loading 
 
-    if (window_1.ShakaPlayerDnaWrapper && options.streamrootkey && !this.streamrootWrapper_) {
-      this.createStreamrootWrapper_(options.streamrootkey);
+    if (window_1.ShakaPlayerDnaWrapper && this.options_.streamrootkey && !this.streamrootWrapper_) {
+      this.createStreamrootWrapper_(this.options_.streamrootkey);
     }
 
-    this.shakaPlayer_.load(manifestSource, startTime).then(function () {
+    this.shakaPlayer_.load(source.src, startTime).then(function () {
       log$1('after load stream');
       _this2.loading_ = false;
       _this2.trackDuration();
@@ -4705,20 +5034,7 @@ var EmpShaka = function (_Html) {
     }).filter(function (value, index, self) {
       return self.indexOf(value) === index;
     });
-
-    shakaVariantTracksLanguages = shakaVariantTracksLanguages.sort();
-
-    var videojsAudioTracks = this.audioTracks();
-    var videojsAudioTracksLanguages = [];
-    for (var i = 0; i < videojsAudioTracks.length; i++) {
-      videojsAudioTracksLanguages.push(videojsAudioTracks[i].language);
-    }
-    videojsAudioTracksLanguages = videojsAudioTracksLanguages.sort();
-
-    var isSync = shakaVariantTracksLanguages.join() === videojsAudioTracksLanguages.join();
-    //log('isAudioTrackSynchronized', isSync, shakaVariantTracksLanguages.join(), videojsAudioTracksLanguages.join());
-    log$1('isAudioTrackSynchronized', isSync);
-    return isSync;
+    return this.isTechAudioTrackSynchronized(shakaVariantTracksLanguages);
   };
 
   /**
@@ -4733,7 +5049,7 @@ var EmpShaka = function (_Html) {
     var _this5 = this;
 
     if (this.isAudioTrackSynchronized()) {
-      this.selectVideojsAudioLanguage(this.getSelectedShakaAudioLanguage());
+      this.selectVideojsAudioLanguage(this.getSelectedTechAudioLanguage());
       return;
     }
 
@@ -4778,13 +5094,13 @@ var EmpShaka = function (_Html) {
   };
 
   /**
-  * selectShakaAudioLanguage
+  * selectTechAudioLanguage
   *
   * @private
   */
 
 
-  EmpShaka.prototype.selectShakaAudioLanguage = function selectShakaAudioLanguage(languageCode) {
+  EmpShaka.prototype.selectTechAudioLanguage = function selectTechAudioLanguage(languageCode) {
     if (languageCode) {
       //Make selection sticky
       if (!this.options_) {
@@ -4795,87 +5111,26 @@ var EmpShaka = function (_Html) {
         this.options_.audioLanguage = languageCode;
       }
 
-      if (languageCode !== this.getSelectedShakaAudioLanguage()) {
-        log$1('selectShakaAudioLanguage', languageCode);
+      if (languageCode !== this.getSelectedTechAudioLanguage()) {
+        log$1('selectTechAudioLanguage', languageCode);
         this.shakaPlayer_.selectAudioLanguage(languageCode);
       }
     }
   };
 
   /**
-   * getSelectedShakaAudioLanguage
+   * getSelectedTechAudioLanguage
    *
    * @private
    */
 
 
-  EmpShaka.prototype.getSelectedShakaAudioLanguage = function getSelectedShakaAudioLanguage() {
+  EmpShaka.prototype.getSelectedTechAudioLanguage = function getSelectedTechAudioLanguage() {
     if (!this.shakaPlayer_) {
       return null;
     }
     var activeVariantTrack = this.getActiveVariantTrack();
     return activeVariantTrack ? activeVariantTrack.language : null;
-  };
-
-  /**
-   * VideoJS audioTrackChange
-   * One of the VideoJS audio track changed its enabled
-   *
-   * @private
-   */
-
-
-  EmpShaka.prototype.audioTrackChange = function audioTrackChange(event) {
-    if (this.blockLocalTrackChange) {
-      log$1('blockLocalTrackChange', 'audioTrackChange');
-      return;
-    }
-    log$1('onAudioTrackChange');
-    var audioTracks = this.audioTracks();
-    var i = audioTracks.length;
-    while (i--) {
-      var track = audioTracks[i];
-      if (track.enabled) {
-        this.selectShakaAudioLanguage(track.language);
-        return;
-      }
-    }
-  };
-
-  /**
-  * selectVideojsAudioLanguage
-  *
-  * @private
-  */
-
-
-  EmpShaka.prototype.selectVideojsAudioLanguage = function selectVideojsAudioLanguage(languageCode) {
-    log$1('selectVideojsAudioLanguage', languageCode);
-    if (languageCode) {
-      var audioTracks = this.audioTracks();
-      var i = audioTracks.length;
-      while (i--) {
-        var track = audioTracks[i];
-        if (track.language === languageCode && !track.enabled) {
-          this.blockLocalTrackChange = true;
-          track.enabled = true;
-          break;
-        }
-      }
-      this.stopBlockLocalTrackChange('selectVideojsAudioLanguage');
-    }
-  };
-
-  /**
-  * Called when a VideoJS audio track has been added
-  *
-  * @private
-  */
-
-
-  EmpShaka.prototype.audioTrackAdded = function audioTrackAdded(event) {
-    //No code here
-    log$1('videojs audioTrackAdded', event);
   };
 
   //////////////////////////// Text tracks
@@ -4897,13 +5152,13 @@ var EmpShaka = function (_Html) {
   };
 
   /**
-  * getSelectedShakaTextLanguage
+  * getSelectedTechTextLanguage
   *
   * @private
   */
 
 
-  EmpShaka.prototype.getSelectedShakaTextLanguage = function getSelectedShakaTextLanguage() {
+  EmpShaka.prototype.getSelectedTechTextLanguage = function getSelectedTechTextLanguage() {
     if (!this.shakaPlayer_) {
       return null;
     }
@@ -4922,52 +5177,7 @@ var EmpShaka = function (_Html) {
     var shakaTextTracksLanguages = this.shakaPlayer_.getTextTracks().map(function (track) {
       return track.language;
     });
-    shakaTextTracksLanguages = shakaTextTracksLanguages.sort();
-
-    var videojsTextTracks = this.textTracks();
-    var videojsTextTracksLanguages = [];
-    for (var i = 0; i < videojsTextTracks.length; i++) {
-      videojsTextTracksLanguages.push(videojsTextTracks[i].language);
-    }
-    videojsTextTracksLanguages = videojsTextTracksLanguages.sort();
-
-    var isSync = shakaTextTracksLanguages.join() === videojsTextTracksLanguages.join();
-    //log('isTextTrackSynchronized', isSync, shakaTextTracksLanguages.join(), videojsTextTracksLanguages.join());
-    log$1('isTextTrackSynchronized', isSync);
-    return isSync;
-  };
-
-  /**
-  * syncVideojsTexttrackVisibility
-  *
-  * @private
-  */
-
-
-  EmpShaka.prototype.syncVideojsTexttrackVisibility = function syncVideojsTexttrackVisibility() {
-    log$1('syncVideojsTexttrackVisibility');
-    this.blockLocalTrackChange = true;
-    var textTracks = this.textTracks();
-    var i = textTracks.length;
-    if (!this.shakaPlayer_.isTextTrackVisible()) {
-      while (i--) {
-        var track = textTracks[i];
-        if (track.mode === 'showing') {
-          track.mode = 'hidden';
-        }
-      }
-    } else {
-      var selectedShakaTextLanguage = this.getSelectedShakaTextLanguage();
-      while (i--) {
-        var track = textTracks[i];
-        if (track.language === selectedShakaTextLanguage && track.mode !== 'showing') {
-          track.mode = 'showing';
-        } else if (track.language !== selectedShakaTextLanguage && track.mode !== 'disabled') {
-          track.mode = 'disabled';
-        }
-      }
-    }
-    this.stopBlockLocalTrackChange('syncVideojsTexttrackVisibility');
+    return this.isTechTextTrackSynchronized(shakaTextTracksLanguages);
   };
 
   /**
@@ -4982,7 +5192,7 @@ var EmpShaka = function (_Html) {
     var _this6 = this;
 
     if (this.isTextTrackSynchronized()) {
-      this.selectVideojsTextLanguage(this.getSelectedShakaTextLanguage());
+      this.selectVideojsTextLanguage(this.getSelectedTechTextLanguage());
       return;
     }
 
@@ -4994,7 +5204,7 @@ var EmpShaka = function (_Html) {
     // Add available text tracks to videojs
     var textTracks = this.shakaPlayer_.getTextTracks();
     var selectedVideojsTrack = void 0;
-    var selectedShakaTextLanguage = this.getSelectedShakaTextLanguage();
+    var selectedShakaTextLanguage = this.getSelectedTechTextLanguage();
     /*
      Videojs TextTrack kind
       "subtitles" (default): Translations of the dialogue in the video for when audio is available but not understood. Subtitles are shown over the video.
@@ -5022,100 +5232,20 @@ var EmpShaka = function (_Html) {
   };
 
   /**
-  * selectVideojsTextLanguage
+  * selectTechTextLanguage
   *
   * @private
   */
 
 
-  EmpShaka.prototype.selectVideojsTextLanguage = function selectVideojsTextLanguage(languageCode) {
-    log$1('selectVideojsTextLanguage', languageCode);
-    var textTracks = this.textTracks();
-    var i = textTracks.length;
-    while (i--) {
-      var track = textTracks[i];
-      if (languageCode === track.language && track.mode !== 'showing') {
-        this.blockLocalTrackChange = true;
-        track.mode === 'showing';
-      } else if (languageCode !== track.language && track.mode === 'showing') {
-        this.blockLocalTrackChange = true;
-        track.mode === 'disabled';
-      }
-    }
-    this.stopBlockLocalTrackChange('selectVideojsAudioLanguage');
-  };
-
-  /**
-   * VideoJS Text track change
-   *
-   * One of the VideoJS text track changed its mode
-   *
-   * @private
-   */
-
-
-  EmpShaka.prototype.textTrackChange = function textTrackChange(event) {
-    if (this.blockLocalTrackChange) {
-      log$1('blockLocalTrackChange', 'textTrackChange');
-      return;
-    }
-
-    log$1('ontextTrackChange');
-    var textTracks = this.textTracks();
-    var i = textTracks.length;
-    while (i--) {
-      var track = textTracks[i];
-      if (track.mode === 'showing') {
-        this.deferredSelectTextTrack(track.language);
-        return;
-      }
-    }
-    this.deferredSelectTextTrack(null);
-  };
-
-  /**
-  * deferredSelectTextTrack
-  * When changing tracklist we get many onTextTrackChange, wait to the update is done
-  *
-  * @private
-  */
-
-
-  EmpShaka.prototype.deferredSelectTextTrack = function deferredSelectTextTrack(languageCode) {
-    log$1('deferredSelectTextTrack enter', languageCode);
-    if (this.deferredTextTrackChangeTimeOut) {
-      //Reset TrackChange, new selection comming in
-      clearTimeout(this.deferredTextTrackChangeTimeOut);
-    }
-    this.deferredTextTrackChangeTimeOut = setTimeout(function () {
-      log$1('update texttrack');
-      clearTimeout(this.deferredTextTrackChangeTimeOut);
-      this.deferredTextTrackChangeTimeOut = null;
-      if (this.isDispose_) {
-        return;
-      }
-      this.blockLocalTrackChange = true;
-
-      this.selectShakaTextLanguage(languageCode);
-      this.stopBlockLocalTrackChange('deferredSelectTextTrack exit');
-    }.bind(this), 2000); // 1 sec
-  };
-
-  /**
-  * selectShakaTextLanguage
-  *
-  * @private
-  */
-
-
-  EmpShaka.prototype.selectShakaTextLanguage = function selectShakaTextLanguage(languageCode) {
+  EmpShaka.prototype.selectTechTextLanguage = function selectTechTextLanguage(languageCode) {
     if (languageCode) {
       // Show text track
       if (!this.shakaPlayer_.isTextTrackVisible()) {
-        log$1('Shaka texttrack', 'show', this.getSelectedShakaTextLanguage());
+        log$1('Shaka texttrack', 'show', this.getSelectedTechTextLanguage());
         this.shakaPlayer_.setTextTrackVisibility(true);
       }
-      if (this.getSelectedShakaTextLanguage() !== languageCode) {
+      if (this.getSelectedTechTextLanguage() !== languageCode) {
         log$1('select Shaka texttrack', languageCode);
         this.shakaPlayer_.selectTextLanguage(languageCode);
       }
@@ -5137,37 +5267,8 @@ var EmpShaka = function (_Html) {
     }
   };
 
-  /**
-   * Called when a VideoJS text track has been added
-   *
-   * @private
-   */
-
-
-  EmpShaka.prototype.textTrackAdded = function textTrackAdded(event) {
-    //No code here
-    log$1('videojs textTrackAdded', event);
-  };
-
   /////////////////// Text tracks end
 
-  EmpShaka.prototype.stopBlockLocalTrackChange = function stopBlockLocalTrackChange(caller) {
-    if (this.blockLocalTrackChange) {
-      if (this.blockLocalTrackChangeTimeOut) {
-        clearTimeout(this.blockLocalTrackChangeTimeOut);
-      }
-
-      this.blockLocalTrackChangeTimeOut = setTimeout(function () {
-        try {
-          clearTimeout(this.blockLocalTrackChangeTimeOut);
-          this.blockLocalTrackChangeTimeOut = null;
-          log$1(caller, 'stopBlockLocalTrackChange', ' TRACK_CHANGE');
-          this.trigger(empPlayerEvents.TRACK_CHANGE);
-          this.blockLocalTrackChange = false;
-        } catch (e) {} //Crash when navigate away
-      }.bind(this), 2000); //Stop block LocalTrackChange after 1 sec
-    }
-  };
 
   /**
   *
@@ -5207,9 +5308,7 @@ var EmpShaka = function (_Html) {
     log$1('dispose ' + TechName);
     this.stopTrackingDuration();
     this.textTracks().off('selectedlanguagechange', this.textTrackChangeBind);
-    this.textTracks().off('addtrack', this.textTrackAddedBind);
     this.audioTracks().off('change', this.audioTrackChangeBind);
-    this.audioTracks().off('addtrack', this.audioTrackAddedBind);
     this.el_.removeEventListener('ended', this.onEndedBind);
     this.off(empPlayerEvents.LOAD_START, this.onLoadStartBind);
 
@@ -5248,48 +5347,6 @@ var EmpShaka = function (_Html) {
 
   EmpShaka.prototype.triggerRecoverableError = function triggerRecoverableError(error) {
     this.triggerRecoverableTechError(error, TechName);
-  };
-
-  EmpShaka.prototype.fetchCertificate = function fetchCertificate(certificateUrl, callback) {
-    var _this7 = this;
-
-    log$1('fetchCertificate()');
-    this.trigger({ type: empPlayerEvents.DRM_SESSION_UPDATE, bubbles: true }, { 'messageType': 'WIDEVINE_CERTIFICATE_REQUEST', 'code': undefined, 'info': certificateUrl });
-    var request = new XMLHttpRequest();
-    request.addEventListener('error', this.checkForRecoverableErrors, false);
-    //'irdeto'
-    request.responseType = 'arraybuffer';
-    request.addEventListener('load', function (event) {
-      _this7.onCertificateLoad(event, {
-        callback: callback
-      });
-    }, false);
-
-    request.open('GET', certificateUrl, true);
-    request.send();
-  };
-
-  EmpShaka.prototype.onCertificateLoad = function onCertificateLoad(event, _ref) {
-    var callback = _ref.callback;
-
-    log$1('onCertificateLoad()');
-    var request = event.target;
-    if (request.status < 300 && request.readyState === 4) {
-      var certificate = new Uint8Array(event.target.response);
-      this.trigger({ type: empPlayerEvents.DRM_SESSION_UPDATE, bubbles: true }, { 'messageType': 'WIDEVINE_CERTIFICATE_RESPONSE', 'code': undefined, 'info': 'onCertificateLoad' });
-      callback(certificate);
-    } else {
-      var error = {
-        message: 'onLicensonCertificateLoadeLoadBin',
-        code: request.status
-      };
-      if (request.responseType === "arraybuffer") {
-        var enc = new TextDecoder('utf-8');
-        error.message = enc.decode(request.response);
-      }
-      error.category = 6;
-      callback(null, error);
-    }
   };
 
   createClass(EmpShaka, [{
@@ -5331,7 +5388,7 @@ var EmpShaka = function (_Html) {
          * @param {Tech}   tech Tech object to use for playback
          */
         handleSource: function handleSource(source, tech) {
-          tech.handleSource(source);
+          tech.handleSource(source, tech);
         },
 
         /**
@@ -5396,7 +5453,7 @@ EmpShaka.prototype['featuresNativeTextTracks'] = false;
 
 Tech.withSourceHandlers(EmpShaka);
 
-EmpShaka.VERSION = '2.0.94-217';
+EmpShaka.VERSION = '2.0.94-218';
 
 // Unset source handlers set by Html5 super class.
 // We do not intent to support any sources other then sources allowed by nativeSourceHandler

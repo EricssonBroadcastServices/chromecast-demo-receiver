@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.94-217 
+ * EMP-Player 2.0.94-218 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -5676,7 +5676,6 @@ var Player = function (_VjsPlayer) {
 
     _this.on(empPlayerEvents.FIRST_PLAY, function () {
       log$1('FIRST_PLAY');
-      //TODO replace with .mp4#t=10,20
       if (_this.options_.startTime && _this.techName_ === 'Html5') {
         _this.currentTime(_this.options_.startTime);
       }
@@ -5711,7 +5710,20 @@ var Player = function (_VjsPlayer) {
         return items;
       };
     }
-    return null;
+    // Bug fix textTracks.onchange event is not firing
+    // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/8019792/
+    if (IS_EDGE) {
+      var textTrackMenuItem = videojs$1.getComponent('TextTrackMenuItem');
+      if (textTrackMenuItem) {
+        var originalTextTrackMenuItem_handleClick = textTrackMenuItem.prototype.handleClick;
+        var self = this;
+        textTrackMenuItem.prototype.handleClick = function () {
+          originalTextTrackMenuItem_handleClick.apply(this, arguments);
+          self.trigger(empPlayerEvents.TRACK_CHANGE);
+          self.trigger(empPlayerEvents.TEXT_TRACK_CHANGE);
+        };
+      }
+    }
   };
 
   /**
@@ -6163,6 +6175,12 @@ var Player = function (_VjsPlayer) {
       else if (track.mode !== 'disabled') {
           track.mode = 'disabled';
         }
+    }
+    // Bug fix textTracks.onchange event is not firing
+    // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/8019792/
+    if (this.techName_ === 'EmpHLS' && IS_EDGE) {
+      this.trigger(empPlayerEvents.TRACK_CHANGE);
+      this.trigger(empPlayerEvents.TEXT_TRACK_CHANGE);
     }
   };
 
@@ -7665,7 +7683,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.0.94-217';
+      return '2.0.94-218';
     }
 
     /**
@@ -8193,7 +8211,7 @@ var EMPAnalyticsConnector = function () {
 
     this.onGeneric('BitrateChange', this.analytics_.bitrateChanged, function () {
       var params = {
-        'bitrate': Math.max(0, Math.round(_this9.getBitrate() / 1024))
+        'bitrate': Math.max(0, Math.round(_this9.getBitrate() / 1000))
       };
       _this9.analytics_.bitrateChanged(_this9.SessionId(), _this9.OffsetTime(), params);
     }, true);
@@ -8790,7 +8808,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin);
 
-AnalyticsPlugin.VERSION = '2.0.94-217';
+AnalyticsPlugin.VERSION = '2.0.94-218';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -11370,7 +11388,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin$1);
 
-ProgramService.VERSION = '2.0.94-217';
+ProgramService.VERSION = '2.0.94-218';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -11546,7 +11564,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$2);
 
-EntitlementExpirationService.VERSION = '2.0.94-217';
+EntitlementExpirationService.VERSION = '2.0.94-218';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -12024,7 +12042,7 @@ EntitlementMiddleware$1.registerEntitlementEngine = EntitlementEngine.registerEn
 
 EntitlementMiddleware$1.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
 
-EntitlementMiddleware$1.VERSION = '2.0.94-217';
+EntitlementMiddleware$1.VERSION = '2.0.94-218';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -12154,7 +12172,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.0.94-217';
+empPlayer.VERSION = '2.0.94-218';
 
 /*
  * Universal Module Definition (UMD)
