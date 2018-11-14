@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.94-218 
+ * EMP-Player 2.0.94-219 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -1757,7 +1757,16 @@ var EmpTech = function () {
     this.hasMetadata_ = false;
     var options = this.options_;
     options.source = source;
+    // If user select language keep it
+    var preAudioLanguage = this.options_.audioLanguage;
+    var preSubtitleLanguage = this.options_.subtitleLanguage;
     this.options_ = assign(this.options_, source.options);
+    if (preAudioLanguage) {
+      this.options_.audioLanguage = preAudioLanguage;
+    }
+    if (preSubtitleLanguage) {
+      this.options_.subtitleLanguage = preSubtitleLanguage;
+    }
     this.currentProgram_ = null;
 
     if (source.licenseServer || source.licenseServers) {
@@ -4051,7 +4060,7 @@ var DownloadService = function (_Plugin) {
   return DownloadService;
 }(Plugin);
 
-DownloadService.VERSION = '2.0.94-218';
+DownloadService.VERSION = '2.0.94-219';
 
 if (videojs.getPlugin('DownloadService')) {
   videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -4086,6 +4095,7 @@ var EmpShaka = function (_Html) {
     var ready = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
     classCallCheck(this, EmpShaka);
 
+    // Block call to handleSource before constructor
     options.constructing_ = true;
 
     // es6-mixins adds the method to the prototype
@@ -4326,9 +4336,7 @@ var EmpShaka = function (_Html) {
     var startTime;
     // In order to start from the beginning of live stream send 0.1s as startTime
     if (this.options_.startTime > 0) {
-      if (!this.options_.timeShiftDisabled) {
-        startTime = this.options_.startTime;
-      }
+      startTime = this.options_.startTime;
     }
     log$1('before load stream');
     this.loading_ = true; //Block load call if loading 
@@ -5029,12 +5037,12 @@ var EmpShaka = function (_Html) {
 
 
   EmpShaka.prototype.isAudioTrackSynchronized = function isAudioTrackSynchronized() {
-    var shakaVariantTracksLanguages = this.shakaPlayer_.getVariantTracks().map(function (track) {
+    var langcodes = this.shakaPlayer_.getVariantTracks().map(function (track) {
       return track.language;
     }).filter(function (value, index, self) {
       return self.indexOf(value) === index;
     });
-    return this.isTechAudioTrackSynchronized(shakaVariantTracksLanguages);
+    return this.isTechAudioTrackSynchronized(langcodes);
   };
 
   /**
@@ -5453,7 +5461,7 @@ EmpShaka.prototype['featuresNativeTextTracks'] = false;
 
 Tech.withSourceHandlers(EmpShaka);
 
-EmpShaka.VERSION = '2.0.94-218';
+EmpShaka.VERSION = '2.0.94-219';
 
 // Unset source handlers set by Html5 super class.
 // We do not intent to support any sources other then sources allowed by nativeSourceHandler
