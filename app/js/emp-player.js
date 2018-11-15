@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.94-219 
+ * EMP-Player 2.0.94-221 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -7683,7 +7683,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.0.94-219';
+      return '2.0.94-221';
     }
 
     /**
@@ -7720,14 +7720,25 @@ var Player = function (_VjsPlayer) {
 
 /**
  * Get AutoTechArray
- * @param {string} dashTech choice of dash tech
+ * @param {string} chosenDashTech choice of dash tech
  * @returns {String[]} AutoTechArray
  *  @static
  */
-Player.AutoTechArray = function (dashTech) {
-  var autoTechOrder = [dashTech, 'EmpHLS-MSE', 'EmpHLS', 'Html5'];
+Player.AutoTechArray = function (chosenDashTech) {
+  var dashTech1 = Tech.techs_.hasOwnProperty('EmpShaka');
+  var dashTech2 = Tech.techs_.hasOwnProperty('EmpDashif');
+  if (dashTech1 && dashTech2) {
+    //Booth dash tech use chosenDashTech
+  } else {
+    if (dashTech1) {
+      chosenDashTech = 'EmpShaka';
+    } else {
+      chosenDashTech = 'EmpDashif';
+    }
+  }
+  var autoTechOrder = [chosenDashTech, 'EmpHLS-MSE', 'EmpHLS', 'Html5'];
   if (Player.SupportFairplay_()) {
-    autoTechOrder = ['EmpHLS', dashTech, 'Html5'];
+    autoTechOrder = ['EmpHLS', chosenDashTech, 'Html5'];
   }
   var validAutoTechOrder = [];
   for (var i = 0; i < autoTechOrder.length; i++) {
@@ -8808,7 +8819,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin);
 
-AnalyticsPlugin.VERSION = '2.0.94-219';
+AnalyticsPlugin.VERSION = '2.0.94-221';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -11388,7 +11399,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin$1);
 
-ProgramService.VERSION = '2.0.94-219';
+ProgramService.VERSION = '2.0.94-221';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -11564,7 +11575,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$2);
 
-EntitlementExpirationService.VERSION = '2.0.94-219';
+EntitlementExpirationService.VERSION = '2.0.94-221';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -12042,7 +12053,7 @@ EntitlementMiddleware$1.registerEntitlementEngine = EntitlementEngine.registerEn
 
 EntitlementMiddleware$1.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
 
-EntitlementMiddleware$1.VERSION = '2.0.94-219';
+EntitlementMiddleware$1.VERSION = '2.0.94-221';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -12172,7 +12183,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.0.94-219';
+empPlayer.VERSION = '2.0.94-221';
 
 /*
  * Universal Module Definition (UMD)

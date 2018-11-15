@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.94-219 
+ * EMP-Player 2.0.94-221 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -3908,7 +3908,7 @@ var DownloadService = function (_Plugin) {
     }).sort(function (a, b) {
       return a.bandwidth > b.bandwidth;
     }).pop();
-    console.log('Offline Track: ' + found);
+    log$1('Offline Track: ' + found);
     return [found];
   };
 
@@ -4060,7 +4060,7 @@ var DownloadService = function (_Plugin) {
   return DownloadService;
 }(Plugin);
 
-DownloadService.VERSION = '2.0.94-219';
+DownloadService.VERSION = '2.0.94-221';
 
 if (videojs.getPlugin('DownloadService')) {
   videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -5461,7 +5461,7 @@ EmpShaka.prototype['featuresNativeTextTracks'] = false;
 
 Tech.withSourceHandlers(EmpShaka);
 
-EmpShaka.VERSION = '2.0.94-219';
+EmpShaka.VERSION = '2.0.94-221';
 
 // Unset source handlers set by Html5 super class.
 // We do not intent to support any sources other then sources allowed by nativeSourceHandler
