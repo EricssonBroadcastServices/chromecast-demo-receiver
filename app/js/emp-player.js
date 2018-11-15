@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.0.95-223 
+ * EMP-Player 2.0.95-224 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -7683,7 +7683,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.0.95-223';
+      return '2.0.95-224';
     }
 
     /**
@@ -8819,7 +8819,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin);
 
-AnalyticsPlugin.VERSION = '2.0.95-223';
+AnalyticsPlugin.VERSION = '2.0.95-224';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -11399,7 +11399,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin$1);
 
-ProgramService.VERSION = '2.0.95-223';
+ProgramService.VERSION = '2.0.95-224';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -11575,7 +11575,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$2);
 
-EntitlementExpirationService.VERSION = '2.0.95-223';
+EntitlementExpirationService.VERSION = '2.0.95-224';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -11859,14 +11859,14 @@ var EntitlementMiddleware$1 = function EntitlementMiddleware(player) {
               //Use timeParams.start as startTime
               var startTime = srcEntitlement.streamInfo.start.getTime() + 100;
 
-              if (player.streamType === 'DASH') {
+              if (srcEntitlement.mimeType === 'application/dash+xml') {
                 log$1('SET startTime', startTime);
                 player.options({
                   startTime: startTime / 1000
                 });
                 srcEntitlement.options.startTime = startTime / 1000;
               } else {
-                //EmpHLS
+                //HLS
                 log$1('SET startTime', 0.1);
                 player.options({
                   startTime: 0.1
@@ -12053,7 +12053,7 @@ EntitlementMiddleware$1.registerEntitlementEngine = EntitlementEngine.registerEn
 
 EntitlementMiddleware$1.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
 
-EntitlementMiddleware$1.VERSION = '2.0.95-223';
+EntitlementMiddleware$1.VERSION = '2.0.95-224';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -12183,7 +12183,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.0.95-223';
+empPlayer.VERSION = '2.0.95-224';
 
 /*
  * Universal Module Definition (UMD)
