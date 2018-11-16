@@ -149,3 +149,9 @@ https://github.com/google/shaka-player/releases
 
 ### New features
 - New HtML5 player 2.0.94
+
+## 2.1.95
+
+### New features
+- New HtML5 player 2.1.95
+- **EMP-12047** Add EmpDashif tech to Chromecast
