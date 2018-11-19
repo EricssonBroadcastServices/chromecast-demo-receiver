@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.79.3 
+ * EMP-Player 2.1.95-228 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -38,7 +38,6 @@ if (typeof window !== "undefined") {
 
 var window_1 = win;
 
-//TODO Remove this maybe not good for treeshaking
 var videojsTmp = window_1.videojs;
 var videojs$1 = videojsTmp;
 
@@ -145,501 +144,510 @@ var taggedTemplateLiteralLoose = function (strings, raw) {
  * @class EmpPlayerEvents
  */
 var EmpPlayerEvents = function EmpPlayerEvents() {
-    classCallCheck(this, EmpPlayerEvents);
-
-    /**
-    * Fired when video playback ends
-    * @event ENDED
-    */
-    this.ENDED = 'ended';
-
-    /**
-    * Fired when an error occurs
-    * @event ERROR
-    */
-    this.ERROR = 'error';
-
-    /**
-    * Fired when the player has downloaded data at the current playback position
-    * @event LOADED_DATA
-    */
-    this.LOADED_DATA = 'loadeddata';
-
-    /**
-    * Fired when the timeshift changes
-    * @event TIMESHIFT_CHANGE
-    */
-    this.TIMESHIFT_CHANGE = 'timeshiftchange';
-
-    /**
-    * Fired when the video duration changes
-    * @event DURATION_CHANGE
-    */
-    this.DURATION_CHANGE = 'durationchange';
-
-    /**
-    * Fired when the player has initial duration and dimension information
-    * @event LOADED_METADATA
-    */
-    this.LOADED_METADATA = 'loadedmetadata';
-
-    /**
-    * Fired when the player started seeking
-    * @event SEEKING
-    */
-    this.SEEKING = 'seeking';
-
-    /**
-    * Fired when the current playback position has changed
-    * @event TIME_UPDATE
-    */
-    this.TIME_UPDATE = 'timeupdate';
-
-    /**
-    * Fired when the user is active
-    * @event USER_ACTIVE
-    */
-    this.USER_ACTIVE = 'useractive';
-
-    /**
-    * Fired when the user is inactive
-    * @event USERIN_ACTIVE
-    */
-    this.USERIN_ACTIVE = 'userinactive';
-
-    /**
-    * Fired when the volume changes
-    * @event VOLUME_CHANGE
-    */
-    this.VOLUME_CHANGE = 'volumechange';
-
-    /**
-    * Fired when the video is starting to load
-    * @event LOAD_START
-    */
-    this.LOAD_START = 'loadstart';
-
-    /**
-    * Fired when the player can start playback
-    * @event CAN_PLAY
-    */
-    this.CAN_PLAY = 'canplay';
-
-    /**
-    * Fired when the player has starting playback
-    * @event PLAYING
-    */
-    this.PLAYING = 'playing';
-
-    /**
-    * Fired when the player starts buffering
-    * @event WAITING
-    */
-    this.WAITING = 'waiting';
-
-    /**
-    * Fired when the player seeked to a different point in time
-    * @event SEEKED
-    */
-    this.SEEKED = 'seeked';
-
-    /**
-    * Fired when playback is aborted
-    * @event ABORT
-    */
-    this.ABORT = 'abort';
-
-    /**
-    * Fired when the player will start playing
-    * @event PLAY
-    */
-    this.PLAY = 'play';
-
-    /**
-    * Fired when the player is paused
-    * @event PAUSE
-    */
-    this.PAUSE = 'pause';
-
-    /**
-    * Fired when the player is destroyed.
-    * @event DISPOSE
-    */
-    this.DISPOSE = 'dispose';
-
-    /**
-    * Fired when an AudioTrack object changes its enabled value
-    * @event MODE_CHANGE
-    */
-    this.MODE_CHANGE = 'modechange';
-
-    /**
-    * Fired when a state changes. Used for example when an AudioTrack changes its enabled value
-    * @event CHANGE
-    */
-    this.CHANGE = 'change';
-
-    /**
-    * Fired when an AudioTrack object has been added to an AudioTrackList object.
-    * @event ADD_TRACK
-    */
-    this.ADD_TRACK = 'addtrack';
-
-    /**
-    * Fired when an AudioTrack object has been removed from an AudioTrackList object.
-    * @event REMOVE_TRACK
-    */
-    this.REMOVE_TRACK = 'removetrack';
-
-    /**
-    * Fired by Dash.js when a metric changes
-    * @event METRIC_CHANGED
-    */
-    this.METRIC_CHANGED = 'metricchanged';
-
-    /**
-    * Fired when a recoverable asset error occurs
-    * @event RECOVERABLE_ASSET_ERROR
-    */
-    this.RECOVERABLE_ASSET_ERROR = 'recoverableasseterror';
-
-    /**
-    * Fired when the video bitrate changes
-    * @event BITRATE_CHANGED
-    */
-    this.BITRATE_CHANGED = 'bitratechanged';
-
-    /**
-    * Used when something closes. Fired by VideoJS when the CloseButton closes
-    * @event CLOSE
-    */
-    this.CLOSE = 'close';
-
-    /**
-    * Used when something is ready. Fired when the tech is ready
-    * @event READY
-    */
-    this.READY = 'ready';
-
-    /**
-    * Used when an html element resizes. Fired when the video element changes size
-    * @event RESIZE
-    */
-    this.RESIZE = 'resize';
-
-    /**
-    * Used when an html element is tapped. Fired by VideoJS on components
-    * @event TAP
-    */
-    this.TAP = 'tap';
-
-    /**
-    * Used when an html element is clicked. Fired by VideoJS on components
-    * @event CLICK
-    */
-    this.CLICK = 'click';
-
-    /**
-    * Used when an html element gains focus. Fired by VideoJS on components
-    * @event FOCUS
-    */
-    this.FOCUS = 'focus';
-
-    /**
-    * Used when an html element loses focus. Fired by VideoJS on components
-    * @event BLUR
-    */
-    this.BLUR = 'blur';
-
-    /**
-    * Used when a modal html view is about to be opened. Fired by VideoJS on the ModalDialog
-    * @event BEFORE_MODAL_OPEN
-    */
-    this.BEFORE_MODAL_OPEN = 'beforemodalopen';
-
-    /**
-    * Used when a modal html view has been opened. Fired by VideoJS on the ModalDialog
-    * @event MODAL_OPEN
-    */
-    this.MODAL_OPEN = 'modalopen';
-
-    /**
-    * Used when a modal html view will be closed. Fired by VideoJS on the ModalDialog
-    * @event BEFORE_MODAL_CLOSE
-    */
-    this.BEFORE_MODAL_CLOSE = 'beforemodalclose';
-
-    /**
-    * Used when a modal html view has been closed. Fired by VideoJS on the ModalDialog
-    * @event MODAL_CLOSE
-    */
-    this.MODAL_CLOSE = 'modalclose';
-
-    /**
-    * Used when a modal html view will be populated with html content. Fired by VideoJS on the ModalDialog
-    * @event BEFORE_MODAL_FILL
-    */
-    this.BEFORE_MODAL_FILL = 'beforemodalfill';
-
-    /**
-    * Used when a modal html view has been populated with html content. Fired by VideoJS on the ModalDialog
-    * @event MODAL_FILL
-    */
-    this.MODAL_FILL = 'modalfill';
-
-    /**
-    * Used when a modal html view will clear its content. Fired by VideoJS on the ModalDialog
-    * @event BEFORE_MODAL_EMPTY
-    */
-    this.BEFORE_MODAL_EMPTY = 'beforemodalempty';
-
-    /**
-    * Used when a modal html view has cleared its content. Fired by VideoJS on the ModalDialog
-    * @event MODAL_EMPTY
-    */
-    this.MODAL_EMPTY = 'modalempty';
-
-    /**
-    * Enough data has been loaded to play the media up to its end
-    * @event CAN_PLAY_THROUGH
-    */
-    this.CAN_PLAY_THROUGH = 'canplaythrough';
-
-    /**
-    * Video is played for the first time
-    * @event FIRST_PLAY
-    */
-    this.FIRST_PLAY = 'firstplay';
-
-    /**
-    * When the user agent is downloading media data
-    * @event PROGRESS
-    */
-    this.PROGRESS = 'progress';
-
-    /**
-    * When the player is suspended from downloading media data
-    * @event SUSPEND
-    */
-    this.SUSPEND = 'suspend';
-
-    /**
-    * When the current playlist is empty
-    * @event EMPTIED
-    */
-    this.EMPTIED = 'emptied';
-
-    /**
-    * When the player is trying to get media data, but data is not available
-    * @event STALLED
-    */
-    this.STALLED = 'stalled';
-
-    /**
-    * When the playing speed of the audio/video is changed
-    * @event RATE_CHANGE
-    */
-    this.RATE_CHANGE = 'ratechange';
-
-    /**
-    * When the text track has been changed
-    * @event TEXT_TRACK_CHANGE
-    */
-    this.TEXT_TRACK_CHANGE = 'texttrackchange';
-
-    /**
-    * When the track has been changed
-    * @event TRACK_CHANGE
-    */
-    this.TRACK_CHANGE = 'trackchanged';
-
-    /**
-    * When the video poster changes
-    * @event POSTER_CHANGE
-    */
-    this.POSTER_CHANGE = 'posterchange';
-
-    /**
-    * When a key is down
-    * @event KEY_DOWN
-    */
-    this.KEY_DOWN = 'keydown';
-
-    /**
-    * When a key is up
-    * @event KEY_UP
-    */
-    this.KEY_UP = 'keyup';
-
-    /**
-    * When the mouse is down
-    * @event MOUSE_DOWN
-    */
-    this.MOUSE_DOWN = 'mousedown';
-
-    /**
-    * When the mouse is moved
-    * @event MOUSE_MOVE
-    */
-    this.MOUSE_MOVE = 'mousemove';
-
-    /**
-    * When the mouse is up
-    * @event MOUSE_UP
-    */
-    this.MOUSE_UP = 'mouseup';
-
-    /**
-    * When touch started
-    * @event TOUCH_START
-    */
-    this.TOUCH_START = 'touchstart';
-
-    /**
-    * When touch moved
-    * @event TOUCH_MOVE
-    */
-    this.TOUCH_MOVE = 'touchmove';
-
-    /**
-    * When touch ended
-    * @event TOUCH_END
-    */
-    this.TOUCH_END = 'touchend';
-
-    /**
-    * When a touch point is moved off the interactive area of an element
-    * @event TOUCH_LEAVE
-    */
-    this.TOUCH_LEAVE = 'touchleave';
-
-    /**
-    * When a touch point has been disrupted
-    * @event TOUCH_CANCEL
-    */
-    this.TOUCH_CANCEL = 'touchcancel';
-
-    /**
-    * When the fullscreen state changes
-    * @event FULLSCREEN_CHANGE
-    */
-    this.FULLSCREEN_CHANGE = 'fullscreenchange';
-
-    /**
-    * When fullscreen isn't supported and the video will resize to the window
-    * @event ENTER_FULL_WINDOW
-    */
-    this.ENTER_FULL_WINDOW = 'enterFullWindow';
-
-    /**
-    * When exiting full window
-    * @event EXIT_FULL_WINDOW
-    */
-    this.EXIT_FULL_WINDOW = 'exitFullWindow';
-
-    /**
-    * When controls are enabled
-    * @event CONTROLS_ENABLED
-    */
-    this.CONTROLS_ENABLED = 'controlsenabled';
-
-    /**
-    * When controls are disabled
-    * @event CONTROLS_DISABLED
-    */
-    this.CONTROLS_DISABLED = 'controlsdisabled';
-
-    /**
-    * When native tech or device controls are being used
-    * @event USING_NATIVE_CONTROLS
-    */
-    this.USING_NATIVE_CONTROLS = 'usingnativecontrols';
-
-    /**
-    * When custom controls are being used
-    * @event USING_CUSTOM_CONTROLS
-    */
-    this.USING_CUSTOM_CONTROLS = 'usingcustomcontrols';
-
-    /**
-    * Fired when a VideoJS slider is active
-    * @event SLIDER_ACTIVE
-    */
-    this.SLIDER_ACTIVE = 'slideractive';
-
-    /**
-    * Fired when a VideoJS slider is inactive
-    * @event SLIDER_INACTIVE
-    */
-    this.SLIDER_INACTIVE = 'sliderinactive';
-
-    /**
-     * Fired when a new entitlement is used to start playback
-     */
-    this.ENTITLEMENT_CHANGE = 'entitlementchange';
-
-    /**
-     * Fired when the entitlement loading starts
-     */
-    this.ENTITLEMENT_LOAD_START = 'entitlementloadstart';
-
-    /**
-     * Fired when the player is initalized
-     */
-    this.PLAYER_CREATED = 'playercreated';
-
-    /**
-     * Fired when playback is restarted
-     */
-    this.RESTARTING = 'restarting';
-
-    this.SEGMENTS_UPDATED = 'segmentsupdated';
-    this.SEGMENT_CHANGED = 'segmentchanged';
-
-    /**
-     * Fired when chromecast begins casting
-     */
-    this.CHROMECAST_CASTING = 'chromecastcasting';
-
-    /**
-     * Fired when chromecast has stopped casting
-     */
-    this.CHROMECAST_STOPPED = 'chromecaststopped';
-
-    /**
-     * Fired when playback is stopped
-     */
-    this.STOPPED = 'stopped';
-
-    /**
-     * Fired when the video is ready to be played
-     */
-    this.READY_TO_PLAY = 'readytoplay';
-
-    /**
-     * Fired when program changes in a live or catchUp stream
-      */
-    this.PROGRAM_CHANGED = 'programchanged';
-
-    /**
-    * Fired when vod/asset changes
-     */
-    this.ASSET_CHANGED = 'assetchanged';
-
-    /**
-     * Fired when prefetch segment before seek in a vod/catchup stream
-    */
-    this.SEGMENT_MISSING = 'segmentmissing';
-
-    /**
-    * Fired when airplayStart
-    */
-    this.AIRPLAY_START = 'airplayStart';
-
-    /**
-    * Fired when replay
-    */
-    this.REPLAY = 'replay';
+  classCallCheck(this, EmpPlayerEvents);
+
+  /**
+  * Fired when video playback ends
+  * @event ENDED
+  */
+  this.ENDED = 'ended';
+
+  /**
+  * Fired when an error occurs
+  * @event ERROR
+  */
+  this.ERROR = 'error';
+
+  /**
+  * Fired when the player has downloaded data at the current playback position
+  * @event LOADED_DATA
+  */
+  this.LOADED_DATA = 'loadeddata';
+
+  /**
+  * Fired when the timeshift changes
+  * @event TIMESHIFT_CHANGE
+  */
+  this.TIMESHIFT_CHANGE = 'timeshiftchange';
+
+  /**
+  * Fired when the video duration changes
+  * @event DURATION_CHANGE
+  */
+  this.DURATION_CHANGE = 'durationchange';
+
+  /**
+  * Fired when the player has initial duration and dimension information
+  * @event LOADED_METADATA
+  */
+  this.LOADED_METADATA = 'loadedmetadata';
+
+  /**
+  * Fired when the player started seeking
+  * @event SEEKING
+  */
+  this.SEEKING = 'seeking';
+
+  /**
+  * Fired when the current playback position has changed
+  * @event TIME_UPDATE
+  */
+  this.TIME_UPDATE = 'timeupdate';
+
+  /**
+  * Fired when the user is active
+  * @event USER_ACTIVE
+  */
+  this.USER_ACTIVE = 'useractive';
+
+  /**
+  * Fired when the user is inactive
+  * @event USERIN_ACTIVE
+  */
+  this.USERIN_ACTIVE = 'userinactive';
+
+  /**
+  * Fired when the volume changes
+  * @event VOLUME_CHANGE
+  */
+  this.VOLUME_CHANGE = 'volumechange';
+
+  /**
+  * Fired when the video is starting to load
+  * @event LOAD_START
+  */
+  this.LOAD_START = 'loadstart';
+
+  /**
+  * Fired when the player can start playback
+  * @event CAN_PLAY
+  */
+  this.CAN_PLAY = 'canplay';
+
+  /**
+  * Fired when the player has starting playback
+  * @event PLAYING
+  */
+  this.PLAYING = 'playing';
+
+  /**
+  * Fired when the player starts buffering
+  * @event WAITING
+  */
+  this.WAITING = 'waiting';
+
+  /**
+  * Fired when the player seeked to a different point in time
+  * @event SEEKED
+  */
+  this.SEEKED = 'seeked';
+
+  /**
+  * Fired when playback is aborted
+  * @event ABORT
+  */
+  this.ABORT = 'abort';
+
+  /**
+  * Fired when the player will start playing
+  * @event PLAY
+  */
+  this.PLAY = 'play';
+
+  /**
+  * Fired when the player is paused
+  * @event PAUSE
+  */
+  this.PAUSE = 'pause';
+
+  /**
+  * Fired when the player is destroyed.
+  * @event DISPOSE
+  */
+  this.DISPOSE = 'dispose';
+
+  /**
+  * Fired when an AudioTrack object changes its enabled value
+  * @event MODE_CHANGE
+  */
+  this.MODE_CHANGE = 'modechange';
+
+  /**
+  * Fired when a state changes. Used for example when an AudioTrack changes its enabled value
+  * @event CHANGE
+  */
+  this.CHANGE = 'change';
+
+  /**
+  * Fired when an AudioTrack object has been added to an AudioTrackList object.
+  * @event ADD_TRACK
+  */
+  this.ADD_TRACK = 'addtrack';
+
+  /**
+  * Fired when an AudioTrack object has been removed from an AudioTrackList object.
+  * @event REMOVE_TRACK
+  */
+  this.REMOVE_TRACK = 'removetrack';
+
+  /**
+  * Fired by Dash.js when a metric changes
+  * @event METRIC_CHANGED
+  */
+  this.METRIC_CHANGED = 'metricchanged';
+
+  /**
+  * Fired when a recoverable asset error occurs
+  * @event RECOVERABLE_ASSET_ERROR
+  */
+  this.RECOVERABLE_ASSET_ERROR = 'recoverableasseterror';
+
+  /**
+  * Fired when the video bitrate changes
+  * @event BITRATE_CHANGED
+  */
+  this.BITRATE_CHANGED = 'bitratechanged';
+
+  /**
+  * Used when something closes. Fired by VideoJS when the CloseButton closes
+  * @event CLOSE
+  */
+  this.CLOSE = 'close';
+
+  /**
+  * Used when something is ready. Fired when the tech is ready
+  * @event READY
+  */
+  this.READY = 'ready';
+
+  /**
+  * Used when an html element resizes. Fired when the video element changes size
+  * @event RESIZE
+  */
+  this.RESIZE = 'resize';
+
+  /**
+  * Used when an html element is tapped. Fired by VideoJS on components
+  * @event TAP
+  */
+  this.TAP = 'tap';
+
+  /**
+  * Used when an html element is clicked. Fired by VideoJS on components
+  * @event CLICK
+  */
+  this.CLICK = 'click';
+
+  /**
+  * Used when an html element gains focus. Fired by VideoJS on components
+  * @event FOCUS
+  */
+  this.FOCUS = 'focus';
+
+  /**
+  * Used when an html element loses focus. Fired by VideoJS on components
+  * @event BLUR
+  */
+  this.BLUR = 'blur';
+
+  /**
+  * Used when a modal html view is about to be opened. Fired by VideoJS on the ModalDialog
+  * @event BEFORE_MODAL_OPEN
+  */
+  this.BEFORE_MODAL_OPEN = 'beforemodalopen';
+
+  /**
+  * Used when a modal html view has been opened. Fired by VideoJS on the ModalDialog
+  * @event MODAL_OPEN
+  */
+  this.MODAL_OPEN = 'modalopen';
+
+  /**
+  * Used when a modal html view will be closed. Fired by VideoJS on the ModalDialog
+  * @event BEFORE_MODAL_CLOSE
+  */
+  this.BEFORE_MODAL_CLOSE = 'beforemodalclose';
+
+  /**
+  * Used when a modal html view has been closed. Fired by VideoJS on the ModalDialog
+  * @event MODAL_CLOSE
+  */
+  this.MODAL_CLOSE = 'modalclose';
+
+  /**
+  * Used when a modal html view will be populated with html content. Fired by VideoJS on the ModalDialog
+  * @event BEFORE_MODAL_FILL
+  */
+  this.BEFORE_MODAL_FILL = 'beforemodalfill';
+
+  /**
+  * Used when a modal html view has been populated with html content. Fired by VideoJS on the ModalDialog
+  * @event MODAL_FILL
+  */
+  this.MODAL_FILL = 'modalfill';
+
+  /**
+  * Used when a modal html view will clear its content. Fired by VideoJS on the ModalDialog
+  * @event BEFORE_MODAL_EMPTY
+  */
+  this.BEFORE_MODAL_EMPTY = 'beforemodalempty';
+
+  /**
+  * Used when a modal html view has cleared its content. Fired by VideoJS on the ModalDialog
+  * @event MODAL_EMPTY
+  */
+  this.MODAL_EMPTY = 'modalempty';
+
+  /**
+  * Enough data has been loaded to play the media up to its end
+  * @event CAN_PLAY_THROUGH
+  */
+  this.CAN_PLAY_THROUGH = 'canplaythrough';
+
+  /**
+  * Video is played for the first time
+  * @event FIRST_PLAY
+  */
+  this.FIRST_PLAY = 'firstplay';
+
+  /**
+  * When the user agent is downloading media data
+  * @event PROGRESS
+  */
+  this.PROGRESS = 'progress';
+
+  /**
+  * When the player is suspended from downloading media data
+  * @event SUSPEND
+  */
+  this.SUSPEND = 'suspend';
+
+  /**
+  * When the current playlist is empty
+  * @event EMPTIED
+  */
+  this.EMPTIED = 'emptied';
+
+  /**
+  * When the player is trying to get media data, but data is not available
+  * @event STALLED
+  */
+  this.STALLED = 'stalled';
+
+  /**
+  * When the playing speed of the audio/video is changed
+  * @event RATE_CHANGE
+  */
+  this.RATE_CHANGE = 'ratechange';
+
+  /**
+  * When the text track has been changed
+  * @event TEXT_TRACK_CHANGE
+  */
+  this.TEXT_TRACK_CHANGE = 'texttrackchange';
+
+  /**
+  * When the track has been changed
+  * @event TRACK_CHANGE
+  */
+  this.TRACK_CHANGE = 'trackchanged';
+
+  /**
+  * When the video poster changes
+  * @event POSTER_CHANGE
+  */
+  this.POSTER_CHANGE = 'posterchange';
+
+  /**
+  * When a key is down
+  * @event KEY_DOWN
+  */
+  this.KEY_DOWN = 'keydown';
+
+  /**
+  * When a key is up
+  * @event KEY_UP
+  */
+  this.KEY_UP = 'keyup';
+
+  /**
+  * When the mouse is down
+  * @event MOUSE_DOWN
+  */
+  this.MOUSE_DOWN = 'mousedown';
+
+  /**
+  * When the mouse is moved
+  * @event MOUSE_MOVE
+  */
+  this.MOUSE_MOVE = 'mousemove';
+
+  /**
+  * When the mouse is up
+  * @event MOUSE_UP
+  */
+  this.MOUSE_UP = 'mouseup';
+
+  /**
+  * When touch started
+  * @event TOUCH_START
+  */
+  this.TOUCH_START = 'touchstart';
+
+  /**
+  * When touch moved
+  * @event TOUCH_MOVE
+  */
+  this.TOUCH_MOVE = 'touchmove';
+
+  /**
+  * When touch ended
+  * @event TOUCH_END
+  */
+  this.TOUCH_END = 'touchend';
+
+  /**
+  * When a touch point is moved off the interactive area of an element
+  * @event TOUCH_LEAVE
+  */
+  this.TOUCH_LEAVE = 'touchleave';
+
+  /**
+  * When a touch point has been disrupted
+  * @event TOUCH_CANCEL
+  */
+  this.TOUCH_CANCEL = 'touchcancel';
+
+  /**
+  * When the fullscreen state changes
+  * @event FULLSCREEN_CHANGE
+  */
+  this.FULLSCREEN_CHANGE = 'fullscreenchange';
+
+  /**
+  * When fullscreen isn't supported and the video will resize to the window
+  * @event ENTER_FULL_WINDOW
+  */
+  this.ENTER_FULL_WINDOW = 'enterFullWindow';
+
+  /**
+  * When exiting full window
+  * @event EXIT_FULL_WINDOW
+  */
+  this.EXIT_FULL_WINDOW = 'exitFullWindow';
+
+  /**
+  * When controls are enabled
+  * @event CONTROLS_ENABLED
+  */
+  this.CONTROLS_ENABLED = 'controlsenabled';
+
+  /**
+  * When controls are disabled
+  * @event CONTROLS_DISABLED
+  */
+  this.CONTROLS_DISABLED = 'controlsdisabled';
+
+  /**
+  * When native tech or device controls are being used
+  * @event USING_NATIVE_CONTROLS
+  */
+  this.USING_NATIVE_CONTROLS = 'usingnativecontrols';
+
+  /**
+  * When custom controls are being used
+  * @event USING_CUSTOM_CONTROLS
+  */
+  this.USING_CUSTOM_CONTROLS = 'usingcustomcontrols';
+
+  /**
+  * Fired when a VideoJS slider is active
+  * @event SLIDER_ACTIVE
+  */
+  this.SLIDER_ACTIVE = 'slideractive';
+
+  /**
+  * Fired when a VideoJS slider is inactive
+  * @event SLIDER_INACTIVE
+  */
+  this.SLIDER_INACTIVE = 'sliderinactive';
+
+  /**
+   * Fired when a new entitlement is used to start playback
+   */
+  this.ENTITLEMENT_CHANGE = 'entitlementchange';
+
+  /**
+   * Fired when the entitlement loading starts
+   */
+  this.ENTITLEMENT_LOAD_START = 'entitlementloadstart';
+
+  /**
+   * Fired when the player is initalized
+   */
+  this.PLAYER_CREATED = 'playercreated';
+
+  /**
+   * Fired when playback is restarted
+   */
+  this.RESTARTING = 'restarting';
+
+  this.AD_TIMELINE_CHANGED = 'adtimelinechanged';
+
+  /**
+   * Fired when chromecast begins casting
+   */
+  this.CHROMECAST_CASTING = 'chromecastcasting';
+
+  /**
+   * Fired when chromecast has stopped casting
+   */
+  this.CHROMECAST_STOPPED = 'chromecaststopped';
+
+  /**
+   * Fired when playback is stopped
+   */
+  this.STOPPED = 'stopped';
+
+  /**
+   * Fired when the video is ready to be played
+   */
+  this.READY_TO_PLAY = 'readytoplay';
+
+  /**
+   * Fired when program changes in a live or catchUp stream
+    */
+  this.PROGRAM_CHANGED = 'programchanged';
+
+  /**
+  * Fired when vod/asset changes
+   */
+  this.ASSET_CHANGED = 'assetchanged';
+
+  /**
+   * Fired when prefetch segment before seek in a vod/catchup stream
+  */
+  this.SEGMENT_MISSING = 'segmentmissing';
+
+  /**
+  * Fired when airplayStart
+  */
+  this.AIRPLAY_START = 'airplayStart';
+
+  /**
+  * Fired when replay
+  */
+  this.REPLAY = 'replay';
+
+  /**
+  * Fired during download
+  */
+  this.DOWNLOAD_PROGRESS = 'downloadprogress';
+
+  /**
+  * Fired when drm session try to update
+  */
+  this.DRM_SESSION_UPDATE = 'drmsessionupdate';
 };
 
 var empPlayerEvents = new EmpPlayerEvents();
@@ -707,7 +715,27 @@ function reduce(object, fn) {
  * @param  {Object} ...sources
  * @return {Object}
  */
+function assign(target) {
+  for (var _len = arguments.length, sources = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+    sources[_key - 1] = arguments[_key];
+  }
 
+  if (Object.assign) {
+    return Object.assign.apply(Object, [target].concat(sources));
+  }
+
+  sources.forEach(function (source) {
+    if (!source) {
+      return;
+    }
+
+    each(source, function (value, key) {
+      target[key] = value;
+    });
+  });
+
+  return target;
+}
 
 /**
  * Returns whether a value is an object of any kind - including DOM nodes,
@@ -730,6 +758,16 @@ function isObject(value) {
  * @param  {Object} value
  * @return {Boolean}
  */
+
+
+/**
+ * Check is Object is isEmpty
+ * @param {Object} value
+ * @returns {Boolean}
+ */
+function isEmpty(value) {
+  return keys(value).length === 0;
+}
 
 /*global
   document, atob
@@ -823,13 +861,17 @@ var EmpPlayerErrorCodes = {
 
   ENTITLEMENT: 102,
 
+  ENTITLEMENT2: 103,
+
   SHAKA_TECH: 200,
 
   HLS_TECH: 300,
 
   FLASH_TECH: 400,
 
-  CHROMECAST_TECH: 500
+  CHROMECAST_TECH: 500,
+
+  HLS_MSE_TECH: 10000
 };
 
 var EmpPlayerError = function (_Error) {
@@ -1101,8 +1143,8 @@ var BitrateMenuItem = function (_MenuItem) {
     var bitrate = options['bitrate'];
 
     // Modify options for parent MenuItem class's init.
-    options['label'] = bitrate === 0 ? 'auto' : Math.max(0, Math.round(bitrate / 1000)) + 'Kb/s';
-    options['selected'] = player.bitrate() === bitrate;
+    options['label'] = bitrate === 0 ? 'auto' : Math.max(0, Math.round(bitrate / 1000)) + ' kbps';
+    options['selected'] = bitrate === 0;
 
     var _this = possibleConstructorReturn(this, _MenuItem.call(this, player, options));
 
@@ -1110,7 +1152,11 @@ var BitrateMenuItem = function (_MenuItem) {
 
     _this.player_.on(empPlayerEvents.BITRATE_CHANGED, function (event, data) {
       if (_this.el()) {
-        _this.selected(data.bitrate === _this.bitrate);
+        if (_this.bitrate === 0) {
+          _this.selected(data.auto);
+        } else {
+          _this.selected(!data.auto && data.bitrate === _this.bitrate);
+        }
       }
     });
     return _this;
@@ -1832,7 +1878,7 @@ var extplayer = {
 
     return player.techGet_('canRestart');
   },
-  restart: function restart(player, useLastViewedOffset) {
+  restart: function restart(player, useLastViewedOffset, absoluteStartTime) {
     if (player.currentSource()) {
       player.options_.startTime = 0;
       player.options_.absoluteStartTime = undefined;
@@ -1846,7 +1892,12 @@ var extplayer = {
         });
       }
       player.trigger(empPlayerEvents.RESTARTING);
-      player.options_.useLastViewedOffset = useLastViewedOffset;
+      if (absoluteStartTime) {
+        player.options_.absoluteStartTime = absoluteStartTime;
+        player.options_.useLastViewedOffset = false;
+      } else {
+        player.options_.useLastViewedOffset = useLastViewedOffset;
+      }
       player.trigger(empPlayerEvents.REPLAY);
     }
   },
@@ -1876,10 +1927,13 @@ var extplayer = {
     var callback = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : function () {};
 
     var asset = { 'assetId': assetId ? assetId : channelId, 'programId': programId, 'channelId': channelId };
-    player.on(empPlayerEvents.LOADED_DATA, function () {
+    player.one(empPlayerEvents.LOADED_DATA, function () {
       //Clone of entitlement
       callback(player.entitlement);
     });
+    if (player.startResetAndReloadTimer_) {
+      player.startResetAndReloadTimer_();
+    }
     player.src({ 'type': 'video/emp', 'src': JSON.stringify(asset) });
   },
   currentAsset: function currentAsset(player, assetId, programId, channelId) {
@@ -1918,7 +1972,7 @@ var extplayer = {
       var entitlement = this.getEntitlement(player);
       if (value && entitlement && entitlement.isStaticCachupAsLive) {
         value = new Date(value.getTime() + entitlement.streamInfo.start.getTime());
-      } else if (entitlement && entitlement.isDynamicCachupAsLive && player.techName_ === 'EmpHLS') {
+      } else if (entitlement && entitlement.isDynamicCachupAsLive && player.streamType === 'HLS') {
         value = new Date(player.tech_.baseCurrentTime() * 1000 + entitlement.streamInfo.start.getTime());
       }
     }
@@ -1932,24 +1986,32 @@ var extplayer = {
   },
   timeBehindLive: function timeBehindLive(player) {
     if (!player.tech_ || player.tech_['timeBehindLive'] === undefined) return 0;
+    var value = 0;
     var nowdate = this.getServerTime(player);
     var entitlement = this.getEntitlement(player);
     if (entitlement && entitlement.isStaticCachupAsLive) {
-      return nowdate - this.getPlayheadTime(player);
+      value = (nowdate - this.getPlayheadTime(player)) / 1000;
+    } else {
+      value = player.tech_.timeBehindLive(nowdate);
     }
-    var value = player.tech_.timeBehindLive(nowdate);
-    return value === Infinity || !value ? 0 : value;
+    return value === Infinity || !value ? 0 : Math.round(value);
   },
   liveDelay: function liveDelay(player) {
+    var liveDelay = 0;
     if (this.isLive(player)) {
-      return (this.getServerTime(player) - this.getSeekTimerange(player).end) / 1000;
+      if (player.tech_ && player.tech_['liveDelay'] !== undefined) {
+        liveDelay = player.tech_.liveDelay();
+      } else {
+        liveDelay = (this.getServerTime(player) - this.getSeekTimerange(player).end) / 1000;
+      }
     }
-    return 0;
+    return Math.round(liveDelay);
   },
   stop: function stop(player, afterStopCallback) {
     if (player.stopProgramService) {
       player.stopProgramService();
     }
+    player.sourceChanging_ = false;
     player.cache_.sources = [];
     if (!player.tech_ || player.tech_['stop'] === undefined) {
       player.techCall_('stopTrackingCurrentTime');
@@ -1977,7 +2039,7 @@ var extplayer = {
     var nowdate = this.getServerTime(player);
     var value = player.tech_.startTimeLive(nowdate);
     var entitlement = this.getEntitlement(player);
-    if (entitlement && entitlement.isDynamicCachupAsLive && player.techName_ === 'EmpHLS') {
+    if (entitlement && entitlement.isDynamicCachupAsLive && player.streamType === 'HLS') {
       value = entitlement.streamInfo.referenceTime;
     }
     if (entitlement && entitlement.isStaticCachupAsLive && player.techName_ !== 'EmpCast') {
@@ -2013,7 +2075,7 @@ var extplayer = {
     return player.techGet_('techVersion');
   },
   canSeekTo: function canSeekTo(player, position) {
-    if (this.timeShiftEnabled(player) === false) {
+    if (this.timeShiftEnabled(player) === false || !player.hasStarted()) {
       return false;
     }
     var entitlement = this.getEntitlement(player);
@@ -2075,14 +2137,14 @@ var extplayer = {
           log$1('setAbsoluteTime', 'playPreviousProgram');
           this.playProgram(player, date);
           //Go to start of stream as a fallback
-          if (player.techName_ === 'EmpHLS') {
+          if (player.streamType === 'HLS') {
             player.techCall_('setCurrentTime', 0);
             return;
           } else {
-            //EmpShaka
+            //DASH
             date = new Date(entitlement.streamInfo.start.getTime());
           }
-        } else if (player.techName_ === 'EmpHLS') {
+        } else if (player.streamType === 'HLS') {
           date = date - entitlement.streamInfo.start.getTime();
           player.techCall_('setCurrentTime', date / 1000);
           return;
@@ -2092,6 +2154,10 @@ var extplayer = {
     player.techCall_('setAbsoluteTime', { 'date': date, 'nowDate': nowDate });
   },
   gotoLive: function gotoLive(player) {
+    if (player.sourceChanging_) {
+      log$1('gotoLive ignore sourceChanging');
+      return;
+    }
     if (player.tech_['gotoLive']) {
       player.techCall_('gotoLive');
     } else {
@@ -2111,8 +2177,8 @@ var extplayer = {
       }
     }
   },
-  SeekToTime: function SeekToTime(player, dateTime) {
-    this.setAbsoluteTime(player, new Date(dateTime));
+  setPlayheadTime: function setPlayheadTime(player, unixTime) {
+    this.setAbsoluteTime(player, new Date(unixTime));
   },
   supportsEpgProgramChange: function supportsEpgProgramChange(player) {
     if (!player.tech_ || player.tech_['supportsEpgProgramChange'] === undefined) return;
@@ -2124,9 +2190,15 @@ var extplayer = {
     return player.techGet_('program');
   },
   playPreviousProgram: function playPreviousProgram(player, theEnd) {
+    if (player.sourceChanging_) {
+      log$1('playPreviousProgram ignore sourceChanging');
+      return;
+    }
     if (player.programService) {
+      player.sourceChanging_ = true;
       player.programService().getPreviousProgram(function (program, error) {
         if (error) {
+          player.sourceChanging_ = false;
           log$1.error('playPreviousProgram', error);
         } else {
           var playbackProperties = {};
@@ -2144,10 +2216,16 @@ var extplayer = {
     }
   },
   playNextProgram: function playNextProgram(player) {
+    if (player.sourceChanging_) {
+      log$1('playNextProgram ignore sourceChanging');
+      return;
+    }
     if (player.programService && player.programService().currentProgram) {
       if (this.getServerTime(player) > player.programService().currentProgram.end.getTime()) {
+        player.sourceChanging_ = true;
         player.programService().getNextProgram(function (program, error) {
           if (error) {
+            player.sourceChanging_ = false;
             log$1.error('playNextProgram', error);
           } else {
             var playbackProperties = {};
@@ -2159,7 +2237,12 @@ var extplayer = {
     }
   },
   playProgram: function playProgram(player, startTime) {
+    if (player.sourceChanging_) {
+      log$1('playProgram ignore sourceChanging');
+      return;
+    }
     if (player.programService) {
+      player.sourceChanging_ = true;
       player.programService().getProgram(startTime, function (program, error) {
         if (error) {
           log$1.error('getProgram', error);
@@ -2197,6 +2280,12 @@ var extplayer = {
     if (seekable && seekable.length > 0) {
       result.start = (seekable.start(seekable.length - 1) + this.startTimeLive(player) / 1000) * 1000;
       result.end = (seekable.end(seekable.length - 1) + this.startTimeLive(player) / 1000) * 1000;
+      if (player.techName_ === 'EmpCast') {
+        var liveDelay = this.liveDelay(player);
+        if (result.end > this.getServerTime(player) - liveDelay * 1000) {
+          result.end = this.getServerTime(player) - liveDelay * 1000;
+        }
+      }
     }
     return result;
   },
@@ -2206,8 +2295,8 @@ var extplayer = {
 
     buffered = player.techGet_('buffered');
     if (buffered && buffered.length > 0) {
-      result.start = (buffered.start(buffered.length - 1) + this.startTimeLive(player) / 1000) * 1000;
-      result.end = (buffered.end(buffered.length - 1) + this.startTimeLive(player) / 1000) * 1000;
+      result.start = Math.round((buffered.start(buffered.length - 1) + this.startTimeLive(player) / 1000) * 1000);
+      result.end = Math.round((buffered.end(buffered.length - 1) + this.startTimeLive(player) / 1000) * 1000);
     }
     return result;
   },
@@ -2289,14 +2378,16 @@ var EmpLiveDisplay = function (_Button) {
   };
 
   EmpLiveDisplay.prototype.timeUpdate = function timeUpdate() {
-    var currentTime = this.player().currentTime();
-    var duration = this.player().duration();
-    var edgeMargin = 5; // margin for what is considered the live edge
-    var timeBehindLive = this.player().timeBehindLive();
-    if (this.player().isLive() && timeBehindLive < edgeMargin) {
-      this.addClass('emp-live-edge');
-    } else {
-      this.removeClass('emp-live-edge');
+    if (this.player().isLive() || this.entitlement && this.entitlement.isStaticCachupAsLive) {
+      var currentTime = this.player().currentTime();
+      var duration = this.player().duration();
+      var edgeMargin = 20; // margin for what is considered the live edge
+      var timeBehindLive = this.player().timeBehindLive();
+      if (this.player().isLive() && timeBehindLive < edgeMargin) {
+        this.addClass('emp-live-edge');
+      } else {
+        this.removeClass('emp-live-edge');
+      }
     }
   };
 
@@ -2359,6 +2450,93 @@ function formatTime(seconds) {
 }
 
 var Component$6 = videojs$1.getComponent('Component');
+
+/**
+ * EmpMarker gui element for ad markers
+ *
+ * @param {Player|Object} player
+ * @param {Object=} options
+ * @extends MenuButton
+ * @class EmpMarker
+ */
+
+var EmpMarker = function (_Component) {
+  inherits(EmpMarker, _Component);
+
+  function EmpMarker(player, options) {
+    classCallCheck(this, EmpMarker);
+
+    var _this = possibleConstructorReturn(this, _Component.call(this, player, options));
+
+    _this.on(_this.player(), empPlayerEvents.PLAYING, function () {
+      return _this.updateVisibility();
+    });
+    _this.on(_this.player(), empPlayerEvents.DURATION_CHANGE, function () {
+      return _this.updateVisibility();
+    });
+    _this.on(_this.player(), empPlayerEvents.SEEKED, function () {
+      return _this.updateVisibility();
+    });
+    _this.addClass('vjs-hidden');
+    return _this;
+  }
+
+  /**
+  * Create the component's DOM element
+  *
+  * @return {Element}
+  * @method createEl
+  */
+
+
+  EmpMarker.prototype.createEl = function createEl() {
+    var el = _Component.prototype.createEl.call(this, 'div', {
+      className: 'emp-ad-marker'
+    });
+    return el;
+  };
+
+  EmpMarker.prototype.buildCSSClass = function buildCSSClass() {
+    return 'emp-ad-marker ' + _Component.prototype.buildCSSClass.call(this);
+  };
+
+  EmpMarker.prototype.updateVisibility = function updateVisibility() {
+    if (this.player_.duration()) {
+      var element = this.options_.element;
+
+      if (element.offset + element.duration < this.player_.currentTime()) {
+        this.addClass('emp-ad-past');
+      } else {
+        this.removeClass('emp-ad-past');
+      }
+
+      var percent_startTime = element.offset / this.player_.duration();
+      if (percent_startTime >= 1) {
+        percent_startTime = 1;
+      }
+
+      var percent_duration = element.duration / this.player_.duration();
+      if (percent_duration >= 1) {
+        percent_duration = 1;
+      }
+
+      this.el_.style.left = (percent_startTime * 100).toFixed(2) + '%';
+      this.el_.style.width = (percent_duration * 100).toFixed(2) + '%';
+
+      this.show();
+    }
+  };
+
+  EmpMarker.prototype.dispose = function dispose() {
+    _Component.prototype.dispose.call(this);
+  };
+
+  return EmpMarker;
+}(Component$6);
+
+Component$6.registerComponent('EmpMarker', EmpMarker);
+
+var Component$7 = videojs$1.getComponent('Component');
 var MouseTimeDisplay = videojs$1.getComponent('MouseTimeDisplay');
 
 /**
@@ -2419,7 +2597,7 @@ var EmpMouseTimeDisplay = function (_MouseTimeDisplay) {
   return EmpMouseTimeDisplay;
 }(MouseTimeDisplay);
 
-Component$6.registerComponent('MouseTimeDisplay', EmpMouseTimeDisplay);
+Component$7.registerComponent('MouseTimeDisplay', EmpMouseTimeDisplay);
 
 var USER_AGENT = window_1.navigator && window_1.navigator.userAgent || '';
 var webkitVersionMap = /AppleWebKit\/([\d.]+)/i.exec(USER_AGENT);
@@ -2431,6 +2609,8 @@ var webkitVersionMap = /AppleWebKit\/([\d.]+)/i.exec(USER_AGENT);
  * @private
  */
 var IS_IPAD = /iPad/i.test(USER_AGENT);
+
+var IS_CHROMECAST = window_1.navigator.userAgent.indexOf('CrKey') >= 0;
 
 // The Facebook app's UIWebView identifies as both an iPhone and iPad, so
 // to identify iPhones, we need to exclude iPads.
@@ -2499,10 +2679,33 @@ var IE_VERSION = function () {
 
 var IS_SAFARI = /Safari/i.test(USER_AGENT) && !IS_CHROME && !IS_ANDROID && !IS_EDGE;
 
+var IS_IE_OR_EDGE = IS_EDGE || IE_VERSION !== null;
 
 
 
 var BACKGROUND_SIZE_SUPPORTED = isReal() && 'backgroundSize' in window_1.document.createElement('video').style;
+
+function detectClient() {
+  var ua = navigator.userAgent,
+      tem,
+      M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*([0-9.]+)/i) || [];
+  if (/trident/i.test(M[1])) {
+    tem = /\brv[ :]+([0-9.]+)/g.exec(ua) || [];
+    return { name: 'Explorer', version: tem[1] || '' };
+  }
+  if (M[1] === 'Chrome') {
+    tem = ua.match(/\b(OPR|Edge)\/([0-9.]+)/);
+    if (tem != null) {
+      var app = tem.slice(1).toString().split(',');return { name: app[0].replace('OPR', 'Opera'), version: app[1] };
+    }
+  }
+  M = M[2] ? [M[1], M[2]] : [navigator.appName, navigator.appVersion, '-?'];
+  if ((tem = ua.match(/version\/([0-9.]+)/i)) != null) M.splice(1, 1, tem[1]);
+  return {
+    name: M[0],
+    version: M[1]
+  };
+}
 
 /**
  * Returns whether an object is `Promise`-like (i.e. has a `then` method).
@@ -2540,7 +2743,7 @@ var PlayProgressBar = videojs$1.getComponent('PlayProgressBar');
 var STEP_SECONDS = 5;
 
 // The interval at which the bar should update as it progresses.
-var UPDATE_REFRESH_INTERVAL = 30;
+var UPDATE_REFRESH_INTERVAL = !IS_CHROMECAST && !window_1.EMP_DEBUG_CHROMECAST ? 30 : 1000;
 
 /**
  * Seek bar and container for the progress bars. Uses {@link PlayProgressBar}
@@ -2567,33 +2770,89 @@ var SeekBar = function (_Slider) {
     var _this = possibleConstructorReturn(this, _Slider.call(this, player, options));
 
     _this.lastStep = 0;
+    _this.markers = [];
 
     _this.update = throttle(bind(_this, _this.update), UPDATE_REFRESH_INTERVAL);
 
-    _this.on(player, 'timeupdate', _this.update);
-    _this.on(player, 'ended', _this.handleEnded);
+    _this.on(player, empPlayerEvents.TIME_UPDATE, _this.update);
+    _this.on(player, empPlayerEvents.ENDED, _this.handleEnded);
+    _this.on(player, empPlayerEvents.AD_TIMELINE_CHANGED, _this.updateMarkers);
 
     // when playing, let's ensure we smoothly update the play progress bar
     // via an interval
     _this.updateInterval = null;
 
     _this.on(player, ['playing'], function () {
-      _this.clearInterval(_this.updateInterval);
-
-      _this.updateInterval = _this.setInterval(function () {
-        _this.requestAnimationFrame(function () {
-          _this.update();
-        });
-      }, UPDATE_REFRESH_INTERVAL);
+      if (_this.updateInterval) {
+        _this.clearInterval(_this.updateInterval);
+        _this.updateInterval = null;
+      }
+      if (!IS_CHROMECAST && !window_1.EMP_DEBUG_CHROMECAST) {
+        _this.updateInterval = _this.setInterval(function () {
+          _this.requestAnimationFrame(function () {
+            _this.update();
+          });
+        }, UPDATE_REFRESH_INTERVAL);
+      }
     });
 
     _this.on(player, ['ended', 'pause', 'waiting'], function () {
-      _this.clearInterval(_this.updateInterval);
+      if (_this.updateInterval) {
+        _this.clearInterval(_this.updateInterval);
+        _this.updateInterval = null;
+      }
     });
 
     _this.on(player, ['timeupdate', 'ended'], _this.update);
     return _this;
   }
+
+  /**
+  * Update the marker displays
+  */
+
+
+  SeekBar.prototype.updateMarkers = function updateMarkers(event, data) {
+    for (var _iterator = this.markers, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
+      var _ref;
+
+      if (_isArray) {
+        if (_i >= _iterator.length) break;
+        _ref = _iterator[_i++];
+      } else {
+        _i = _iterator.next();
+        if (_i.done) break;
+        _ref = _i.value;
+      }
+
+      var marker = _ref;
+
+      this.removeChild(marker);
+    }
+    if (data && data.timeline) {
+      for (var _iterator2 = data.timeline.getAllElements(), _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
+        var _ref2;
+
+        if (_isArray2) {
+          if (_i2 >= _iterator2.length) break;
+          _ref2 = _iterator2[_i2++];
+        } else {
+          _i2 = _iterator2.next();
+          if (_i2.done) break;
+          _ref2 = _i2.value;
+        }
+
+        var element = _ref2;
+
+        if (element.type === 'advert') {
+          var _marker = new EmpMarker(this.player_, { 'element': element });
+          this.markers.push(_marker);
+          this.addChild(_marker);
+          _marker.updateVisibility();
+        }
+      }
+    }
+  };
 
   /**
    * Create the `Component`'s DOM element
@@ -2635,7 +2894,9 @@ var SeekBar = function (_Slider) {
     this.el_.setAttribute('aria-valuetext', this.localize('progress bar timing: currentTime={1} duration={2}', [formatTime(currentTime, duration), formatTime(duration, duration)], '{1} of {2}'));
 
     // Update the `PlayProgressBar`.
-    this.bar.update(getBoundingClientRect(this.el_), percent);
+    if (!IS_CHROMECAST && !window_1.EMP_DEBUG_CHROMECAST) {
+      this.bar.update(getBoundingClientRect(this.el_), percent);
+    }
   };
 
   /**
@@ -2686,6 +2947,22 @@ var SeekBar = function (_Slider) {
 
   SeekBar.prototype.handleEnded = function handleEnded(event) {
     this.update_(this.player_.duration(), 1);
+    for (var _iterator3 = this.markers, _isArray3 = Array.isArray(_iterator3), _i3 = 0, _iterator3 = _isArray3 ? _iterator3 : _iterator3[Symbol.iterator]();;) {
+      var _ref3;
+
+      if (_isArray3) {
+        if (_i3 >= _iterator3.length) break;
+        _ref3 = _iterator3[_i3++];
+      } else {
+        _i3 = _iterator3.next();
+        if (_i3.done) break;
+        _ref3 = _i3.value;
+      }
+
+      var marker = _ref3;
+
+      this.removeChild(marker);
+    }
   };
 
   /**
@@ -2714,9 +2991,6 @@ var SeekBar = function (_Slider) {
 
   SeekBar.prototype.handleMouseDown = function handleMouseDown(event) {
     this.player_.scrubbing(true);
-
-    this.videoWasPlaying = !this.player_.paused();
-    this.player_.pause();
 
     _Slider.prototype.handleMouseDown.call(this, event);
   };
@@ -2806,9 +3080,6 @@ var SeekBar = function (_Slider) {
   SeekBar.prototype.handleMouseUp = function handleMouseUp(event) {
     _Slider.prototype.handleMouseUp.call(this, event);
 
-    if (this.videoWasPlaying) {
-      silencePromise(this.player_.play());
-    }
     this.player_.scrubbing(false);
   };
 
@@ -2905,7 +3176,7 @@ SeekBar.prototype.playerEvent = 'timeupdate';
 Component$5.registerComponent('SeekBar', SeekBar);
 
 var Button$1 = videojs$1.getComponent('Button');
-var Component$7 = videojs$1.getComponent('Component');
+var Component$8 = videojs$1.getComponent('Component');
 
 /**
  * Displays a button to jump back to the beginning of the current asset / program
@@ -2986,10 +3257,10 @@ var EmpRestartButton = function (_Button) {
 
 EmpRestartButton.prototype.controlText_ = 'Restart';
 
-Component$7.registerComponent('EmpRestartButton', EmpRestartButton);
+Component$8.registerComponent('EmpRestartButton', EmpRestartButton);
 
 var Button$2 = videojs$1.getComponent('Button');
-var Component$8 = videojs$1.getComponent('Component');
+var Component$9 = videojs$1.getComponent('Component');
 
 /**
  * Displays a button to jump forward a few seconds
@@ -3009,7 +3280,7 @@ var EmpForwardButton = function (_Button) {
   function EmpForwardButton(player, options) {
     classCallCheck(this, EmpForwardButton);
 
-    options = Object.assign({
+    options = assign({
       'seconds': 30
     }, options);
 
@@ -3030,7 +3301,7 @@ var EmpForwardButton = function (_Button) {
   }
 
   EmpForwardButton.prototype.updateEnabled = function updateEnabled(program) {
-    if (this.entitlement && !this.entitlement.ffEnabled) {
+    if (this.entitlement && !this.entitlement.ffEnabled || !this.player().timeShiftEnabled()) {
       this.disable();
       this.controlText('Forward restricted');
     } else {
@@ -3078,18 +3349,11 @@ var EmpForwardButton = function (_Button) {
 
     this.player().scrubbing(true);
 
-    var videoWasPlaying = !this.player().paused();
-    this.player().pause();
-
     var newTime = this.player().currentTime() + this.options_.seconds;
 
     this.player().currentTime(newTime);
 
     this.player().scrubbing(false);
-
-    if (videoWasPlaying) {
-      silencePromise(this.player_.play());
-    }
   };
 
   createClass(EmpForwardButton, [{
@@ -3103,10 +3367,10 @@ var EmpForwardButton = function (_Button) {
 
 EmpForwardButton.prototype.controlText_ = 'Forward';
 
-Component$8.registerComponent('EmpForwardButton', EmpForwardButton);
+Component$9.registerComponent('EmpForwardButton', EmpForwardButton);
 
 var Button$3 = videojs$1.getComponent('Button');
-var Component$9 = videojs$1.getComponent('Component');
+var Component$10 = videojs$1.getComponent('Component');
 
 /**
  * Displays a button to jump back a few seconds
@@ -3126,7 +3390,7 @@ var EmpRewindButton = function (_Button) {
   function EmpRewindButton(player, options) {
     classCallCheck(this, EmpRewindButton);
 
-    options = Object.assign({
+    options = assign({
       'seconds': 30
     }, options);
 
@@ -3147,7 +3411,7 @@ var EmpRewindButton = function (_Button) {
   }
 
   EmpRewindButton.prototype.updateEnabled = function updateEnabled(program) {
-    if (this.entitlement && !this.entitlement.rwEnabled) {
+    if (this.entitlement && !this.entitlement.rwEnabled || !this.player().timeShiftEnabled()) {
       this.disable();
       this.controlText('Rewind restricted');
     } else {
@@ -3195,18 +3459,11 @@ var EmpRewindButton = function (_Button) {
 
     this.player().scrubbing(true);
 
-    var videoWasPlaying = !this.player().paused();
-    this.player().pause();
-
     var newTime = this.player().currentTime() - this.options_.seconds;
 
     this.player().currentTime(newTime);
 
     this.player().scrubbing(false);
-
-    if (videoWasPlaying) {
-      silencePromise(this.player_.play());
-    }
   };
 
   createClass(EmpRewindButton, [{
@@ -3220,13 +3477,13 @@ var EmpRewindButton = function (_Button) {
 
 EmpRewindButton.prototype.controlText_ = 'Rewind';
 
-Component$9.registerComponent('EmpRewindButton', EmpRewindButton);
+Component$10.registerComponent('EmpRewindButton', EmpRewindButton);
 
 /**
  * Similar to restart, however this will always request a new entitlement.
  */
 var Button$4 = videojs$1.getComponent('Button');
-var Component$10 = videojs$1.getComponent('Component');
+var Component$11 = videojs$1.getComponent('Component');
 
 /**
  * Displays a button to jump back to the beginning of the current asset / program and request a new entitlement
@@ -3271,10 +3528,12 @@ var EmpReloadButton = function (_Button) {
 
 EmpReloadButton.prototype.controlText_ = 'Reload';
 
-Component$10.registerComponent('EmpReloadButton', EmpReloadButton);
+Component$11.registerComponent('EmpReloadButton', EmpReloadButton);
 
 var RemainingTimeDisplay = videojs$1.getComponent('RemainingTimeDisplay');
-var Component$11 = videojs$1.getComponent('Component');
+var Component$12 = videojs$1.getComponent('Component');
+
+var UPDATE_REFRESH_INTERVAL$1 = !IS_CHROMECAST && !window.EMP_DEBUG_CHROMECAST ? 30 : 1000;
 
 /**
  * Displays the time left or the current time in the video
@@ -3297,7 +3556,8 @@ var EmpTimeDisplay = function (_Component) {
     var _this = possibleConstructorReturn(this, _Component.call(this, player, options));
 
     _this.mode_ = options.mode || 'remainingTime';
-    _this.on(player, empPlayerEvents.TIME_UPDATE, _this.updateContent);
+    _this.throttledUpdateContent = throttle(bind(_this, _this.updateContent), UPDATE_REFRESH_INTERVAL$1);
+    _this.on(player, empPlayerEvents.TIME_UPDATE, _this.throttledUpdateContent);
     _this.on(player, empPlayerEvents.DURATION_CHANGE, _this.updateContent);
     player.on(empPlayerEvents.ENDED, function () {
       _this.hide();
@@ -3318,14 +3578,18 @@ var EmpTimeDisplay = function (_Component) {
 
 
   EmpTimeDisplay.prototype.createEl = function createEl$$1() {
-    var el = _Component.prototype.createEl.call(this, 'div', {
-      className: 'emp-time vjs-time-control vjs-remaining-time vjs-control'
-    });
+    var classNameStr = 'emp-time vjs-time-control vjs-remaining-time vjs-control';
+    if (this.options_ && this.options_.mode == 'remainingTime') {
+      classNameStr += ' emp-remaining-time';
+    } else {
+      classNameStr += ' emp-currentTime-time';
+    }
+    var el = _Component.prototype.createEl.call(this, 'div', { className: classNameStr });
 
     this.contentEl_ = createEl('div', {
       className: 'emp-time-display',
       // label the remaining time for screen reader users
-      innerHTML: '<span class="vjs-control-text">' + this.localize('Remaining Time') + '</span>-0:00'
+      innerHTML: '<span class="vjs-control-text">' + this.localize('Remaining Time') + '</span>0:00'
     }, {
       // tell screen readers not to automatically read the time as it changes
       'aria-live': 'off'
@@ -3365,14 +3629,13 @@ var EmpTimeDisplay = function (_Component) {
           }
         } else {
           var remainingTime = this.player_.remainingTime();
-          if (remainingTime >= 0) {
-            _formattedTime = formatTime(remainingTime);
-          } else {
-            _formattedTime = '';
+          if (remainingTime < 0) {
+            remainingTime = 0;
           }
+          _formattedTime = formatTime(remainingTime);
           if (_formattedTime !== this.formattedTime_) {
             this.formattedTime_ = _formattedTime;
-            this.contentEl_.innerHTML = '<span class="vjs-control-text">' + _localizedText + '</span>-' + _formattedTime;
+            this.contentEl_.innerHTML = '<span class="vjs-control-text">' + _localizedText + '</span>' + _formattedTime;
           }
         }
       }
@@ -3380,12 +3643,13 @@ var EmpTimeDisplay = function (_Component) {
   };
 
   return EmpTimeDisplay;
-}(Component$11);
+}(Component$12);
 
-Component$11.registerComponent('EmpTimeDisplay', EmpTimeDisplay);
+Component$12.registerComponent('EmpTimeDisplay', EmpTimeDisplay);
+Component$12.registerComponent('EmpTimeDisplay2', EmpTimeDisplay);
 
 var Button$5 = videojs$1.getComponent('Button');
-var Component$12 = videojs$1.getComponent('Component');
+var Component$13 = videojs$1.getComponent('Component');
 
 /**
  * The button component for stopping playback
@@ -3465,10 +3729,10 @@ var EmpStopButton = function (_Button) {
 EmpStopButton.prototype.kind_ = 'stop';
 EmpStopButton.prototype.controlText_ = 'stop';
 
-Component$12.registerComponent('EmpStopButton', EmpStopButton);
+Component$13.registerComponent('EmpStopButton', EmpStopButton);
 
 var PlayToggle = videojs$1.getComponent('PlayToggle');
-var Component$13 = videojs$1.getComponent('Component');
+var Component$14 = videojs$1.getComponent('Component');
 
 /**
  * The button component for the play toggle
@@ -3543,9 +3807,9 @@ var EmpPlayToggle = function (_PlayToggle) {
 EmpPlayToggle.prototype.kind_ = 'playToggle';
 EmpPlayToggle.prototype.controlText_ = 'playToggle';
 
-Component$13.registerComponent('EmpPlayToggle', EmpPlayToggle);
+Component$14.registerComponent('EmpPlayToggle', EmpPlayToggle);
 
-var Component$14 = videojs$1.getComponent('Component');
+var Component$15 = videojs$1.getComponent('Component');
 var Button$6 = videojs$1.getComponent('Button');
 
 var AirplayToggle = function (_Button) {
@@ -3616,7 +3880,7 @@ AirplayToggle.prototype.controlText_ = 'Airplay';
 videojs$1.registerComponent('AirplayToggle', AirplayToggle);
 
 var Button$7 = videojs$1.getComponent('Button');
-var Component$15 = videojs$1.getComponent('Component');
+var Component$16 = videojs$1.getComponent('Component');
 
 /**
  * Displays a button to jump forward a few seconds
@@ -3699,10 +3963,10 @@ var EmpNextButton = function (_Button) {
 
 EmpNextButton.prototype.controlText_ = 'Next';
 
-Component$15.registerComponent('EmpNextButton', EmpNextButton);
+Component$16.registerComponent('EmpNextButton', EmpNextButton);
 
 var Button$8 = videojs$1.getComponent('Button');
-var Component$16 = videojs$1.getComponent('Component');
+var Component$17 = videojs$1.getComponent('Component');
 
 /**
  * Displays a button to jump back a few seconds
@@ -3785,7 +4049,7 @@ var EmpPreviousButton = function (_Button) {
 
 EmpPreviousButton.prototype.controlText_ = 'Previous';
 
-Component$16.registerComponent('EmpPreviousButton', EmpPreviousButton);
+Component$17.registerComponent('EmpPreviousButton', EmpPreviousButton);
 
 var ControlBar = videojs$1.getComponent('ControlBar');
 var Component$1 = videojs$1.getComponent('Component');
@@ -3821,12 +4085,14 @@ EmpControlBar.prototype.options_ = {
     'volumePanel': {
       'inline': false
     },
-    'currentTimeDisplay': {},
+    'empTimeDisplay': {
+      'mode': 'currentTime'
+    },
     'timeDivider': {},
     'durationDisplay': {},
     'empLiveDisplay': {},
     'progressControl': {},
-    'empTimeDisplay': {
+    'empTimeDisplay2': {
       'mode': 'remainingTime'
     },
     'customControlSpacer': {},
@@ -3900,10 +4166,7 @@ function rangeCheck(fnName, index, maxIndex) {
   }
 }
 
-/**
- * @file text-track-display.js
- */
-var Component$17 = videojs$1.getComponent('Component');
+var Component$18 = videojs$1.getComponent('Component');
 
 var darkGray = '#222';
 var lightGray = '#ccc';
@@ -4004,7 +4267,7 @@ var TextTrackDisplay = function (_Component) {
         this.hide();
         return;
       }
-      if (player.techName_ === 'EmpShaka' || player.techName_ === 'EmpHLS' || player.techName_ === 'EmpCast') {
+      if (player.streamType === 'DASH' || player.streamType === 'HLS' || player.techName_ === 'EmpCast') {
         this.hide();
         return;
       }
@@ -4091,7 +4354,7 @@ var TextTrackDisplay = function (_Component) {
 
 
   TextTrackDisplay.prototype.toggleDisplay = function toggleDisplay() {
-    if (this.player_.techName_ === 'EmpShaka' || this.player_.techName_ === 'EmpHLS' || this.player_.techName_ === 'EmpCast') {
+    if (this.player_.streamType === 'DASH' || this.player_.streamType === 'HLS' || this.player_.techName_ === 'EmpCast') {
       this.hide();
       return;
     }
@@ -4241,7 +4504,7 @@ var TextTrackDisplay = function (_Component) {
         overrides = this.player_.textTrackSettings.getValues();
       }
       var styleName = 'styles_cue';
-      if (this.player_.techName_ === 'EmpShaka' || this.player_.techName_ === 'EmpHLS' || this.player_.techName_ === 'EmpCast') {
+      if (this.player_.streamType === 'DASH' || this.player_.techName_ === 'EmpHLS' || this.player_.streamType === 'HLS') {
         var styleStr = this.getStyle(overrides);
         if (this.player_.techName_ === 'EmpHLS') {
           this.writeStyles(styleName, 'video::cue {' + styleStr + '}' + '\n' + this.getSafariStyle(overrides));
@@ -4253,7 +4516,13 @@ var TextTrackDisplay = function (_Component) {
       } else {
         this.removeStyles(styleName);
       }
+    } else {
+      // remove texttrack settings dialogs
+      this.writeStyles('style_no_texttrack_settings', '.vjs-texttrack-settings {display: none;}');
     }
+
+    //Shaka and HLS handle text tracks
+    return;
 
     var tracks = this.player_.textTracks();
 
@@ -4301,6 +4570,9 @@ var TextTrackDisplay = function (_Component) {
 
 
   TextTrackDisplay.prototype.updateForTrack = function updateForTrack(track) {
+    //Shaka and HLS handle text tracks
+    return;
+
     if (typeof window_1.WebVTT !== 'function' || !track.activeCues) {
       return;
     }
@@ -4381,14 +4653,11 @@ var TextTrackDisplay = function (_Component) {
   };
 
   return TextTrackDisplay;
-}(Component$17);
+}(Component$18);
 
-Component$17.registerComponent('TextTrackDisplay', TextTrackDisplay);
+Component$18.registerComponent('TextTrackDisplay', TextTrackDisplay);
 
-/**
- * @file text-track-settings.js
- */
-var Component$18 = videojs$1.getComponent('Component');
+var Component$19 = videojs$1.getComponent('Component');
 var ModalDialog = videojs$1.getComponent('ModalDialog');
 
 var LOCAL_STORAGE_KEY = 'vjs-text-track-settings';
@@ -4921,11 +5190,363 @@ var TextTrackSettings = function (_ModalDialog) {
   return TextTrackSettings;
 }(ModalDialog);
 
-Component$18.registerComponent('TextTrackSettings', TextTrackSettings);
+Component$19.registerComponent('TextTrackSettings', TextTrackSettings);
+
+var Component$20 = videojs$1.getComponent('Component');
+
+/**
+ * EmpMediaInfoBar Show media-title, media-artwork, media-resolution and media-subtitle
+ *
+ * @param {Player|Object} player
+ * @param {Object=} options
+ * @extends Component
+ * @class EmpMediaInfoBar
+ */
+
+var EmpMediaInfoBar = function (_Component) {
+  inherits(EmpMediaInfoBar, _Component);
+
+  function EmpMediaInfoBar(player, options) {
+    classCallCheck(this, EmpMediaInfoBar);
+
+    var _this = possibleConstructorReturn(this, _Component.call(this, player, options));
+
+    _this.assetMetadata = null;
+    _this.on(_this.player(), empPlayerEvents.ENDED, function () {
+      _this.hide();
+      _this.clearEl();
+      _this.assetMetadata = null;
+    });
+
+    _this.on(_this.player(), empPlayerEvents.ABORT, function () {
+      _this.hide();
+      _this.clearEl();
+      _this.assetMetadata = null;
+    });
+
+    _this.on(_this.player(), empPlayerEvents.CHROMECAST_CASTING, function () {
+      _this.hide();
+      _this.clearEl();
+      _this.assetMetadata = null;
+    });
+
+    _this.on(_this.player(), empPlayerEvents.PLAYING, function () {
+      _this.show();
+      if (!_this.assetMetadata) {
+        var opt = _this.player().options();
+        if (opt.mediaInfo) {
+          _this.updateMediaInformation_({
+            'title': opt.mediaInfo.title,
+            'subtitle': opt.mediaInfo.subtitle,
+            'images': opt.mediaInfo.artworkUrl ? [{ 'url': opt.mediaInfo.artworkUrl }] : [],
+            'channelInfo': {
+              'images': opt.mediaInfo.logoUrl ? [{ 'url': opt.mediaInfo.logoUrl }] : []
+            }
+          });
+        }
+      }
+    });
+
+    _this.on(_this.player(), empPlayerEvents.PROGRAM_CHANGED, function (event, data) {
+      var programId = data && data.program ? data.program.programId : null;
+      if (programId) {
+        _this.assetMetadata = _this.player().programService().extractAssetMetadata(data.program.asset);
+        _this.assetMetadata.channelInfo = data.program.channelInfo;
+        _this.updateMediaInformation_(_this.assetMetadata);
+      } else {
+        _this.hide();
+        _this.clearEl();
+        _this.assetMetadata = null;
+      }
+    });
+
+    _this.on(_this.player(), empPlayerEvents.ASSET_CHANGED, function (event, data) {
+      if (data && data.asset) {
+        _this.assetMetadata = _this.player().programService().extractAssetMetadata(data.asset);
+        _this.updateMediaInformation_(_this.assetMetadata);
+      } else {
+        _this.hide();
+        _this.clearEl();
+        _this.assetMetadata = null;
+      }
+    });
+
+    _this.on(_this.player(), empPlayerEvents.DISPOSE, function () {
+      _this.hide();
+      _this.clearEl();
+    });
+
+    _this.fillEl();
+    return _this;
+  }
+
+  /**
+   * Allow sub components to stack CSS class names
+   *
+   * @return {String} The constructed class name
+   * @method buildCSSClass
+   */
+
+
+  EmpMediaInfoBar.prototype.buildCSSClass = function buildCSSClass() {
+    return 'emp-mediainfo-bar ' + _Component.prototype.buildCSSClass.call(this);
+  };
+
+  /**
+  * Create the component's DOM element
+  *
+  * @return {Element}
+  * @method createEl
+  */
+
+
+  EmpMediaInfoBar.prototype.createEl = function createEl() {
+    var el = _Component.prototype.createEl.call(this, 'div', {
+      className: 'emp-mediainfo-bar'
+    });
+    return el;
+  };
+
+  /**
+  * Select the image to display for the asset
+  * @param {Array} images image objects
+  * @param {string} imageType image type in backend
+  * @returns {image} image object
+  */
+
+
+  EmpMediaInfoBar.prototype.imageSelector = function imageSelector(images, imageType) {
+    var image = void 0;
+    if (images.length > 0) {
+      image = images[0];
+    }
+    for (var i = 0; i < images.length; i++) {
+      if (images[i].url && images[i].type === imageType) {
+        return images[i];
+      }
+    }
+    return image;
+  };
+
+  EmpMediaInfoBar.prototype.updateMediaInformation_ = function updateMediaInformation_(assetMetadata) {
+    if (!this.el_) {
+      return;
+    }
+    this.show();
+
+    var opt = this.player().options();
+    if (!opt.mediaInfo) {
+      return;
+    }
+    this.fillEl();
+
+    var mediaArtworkElCollection = this.el_.getElementsByClassName('emp-media-artwork');
+    var mediaLogoElCollection = this.el_.getElementsByClassName('emp-media-logo');
+    var mediaTitleElCollection = this.el_.getElementsByClassName('emp-media-title');
+    var mediaSubtitleElCollection = this.el_.getElementsByClassName('emp-media-subtitle');
+
+    var mediaArtworkEl = mediaArtworkElCollection.length ? mediaArtworkElCollection[0] : null;
+    var mediaLogoEl = mediaLogoElCollection.length ? mediaLogoElCollection[0] : null;
+    var mediaTitleEl = mediaTitleElCollection.length ? mediaTitleElCollection[0] : null;
+    var mediaSubtitleEl = mediaSubtitleElCollection.length ? mediaSubtitleElCollection[0] : null;
+
+    if (mediaTitleEl) {
+      mediaTitleEl.innerHTML = assetMetadata.title || '';
+    }
+    if (mediaSubtitleEl) {
+      mediaSubtitleEl.innerHTML = assetMetadata.subtitle || '';
+    }
+
+    if (mediaArtworkEl && assetMetadata.images && assetMetadata.images.length > 0) {
+      var image = this.imageSelector(assetMetadata.images, 'chromecast');
+      mediaArtworkEl.style.backgroundImage = 'url("' + image.url + '")';
+      mediaArtworkEl.style.display = 'block';
+    } else if (mediaArtworkEl) {
+      mediaArtworkEl.style.display = 'none';
+      mediaArtworkEl.style.backgroundImage = 'none';
+    }
+
+    if (mediaLogoEl && assetMetadata.channelInfo) {
+      var channelLogo = this.imageSelector(assetMetadata.channelInfo.images, 'thumbnail');
+      if (channelLogo && channelLogo.url) {
+        mediaLogoEl.style.backgroundImage = 'url("' + channelLogo.url + '")';
+        mediaLogoEl.style.display = 'block';
+      } else {
+        mediaLogoEl.style.display = 'none';
+        mediaLogoEl.style.backgroundImage = 'none';
+      }
+    }
+    //Show the control and mediainfo bar
+    this.player().userActive(true);
+  };
+
+  EmpMediaInfoBar.prototype.clearEl = function clearEl() {
+    if (!this.el_) {
+      return;
+    }
+    this.el_.innerHTML = '';
+  };
+
+  EmpMediaInfoBar.prototype.fillEl = function fillEl() {
+    var opt = this.player().options();
+    if (opt.mediaInfo) {
+      var html = '';
+      if (opt.mediaInfo.artworkEnable) {
+        html += '<div class="emp-media-artwork"></div>';
+      }
+      if (opt.mediaInfo.titleEnable || opt.mediaInfo.subtitleEnable) {
+        html += '<div class="emp-media-text">';
+      }
+      if (opt.mediaInfo.titleEnable) {
+        html += '<div class="emp-media-title"></div>';
+      }
+      if (opt.mediaInfo.subtitleEnable) {
+        html += '<div class="emp-media-subtitle"></div>';
+      }
+      if (opt.mediaInfo.titleEnable || opt.mediaInfo.subtitleEnable) {
+        html += '</div>';
+      }
+      if (opt.mediaInfo.logoEnable) {
+        html += '<div class="emp-media-logo"></div>';
+      }
+
+      this.el_.innerHTML = html;
+    } else {
+      this.el_.innerHTML = '';
+    }
+  };
+
+  return EmpMediaInfoBar;
+}(Component$20);
+
+EmpMediaInfoBar.prototype.controlText_ = 'MediaInfo';
+
+Component$20.registerComponent('EmpMediaInfoBar', EmpMediaInfoBar);
+
+/**
+ * A Custom `MediaError` class which mimics the standard HTML5 `MediaError` class.
+ *
+ * @param {number|string|Object|MediaError} value
+ *        This can be of multiple types:
+ *        - number: should be a standard error code
+ *        - string: an error message (the code will be 0)
+ *        - Object: arbitrary properties
+ *        - `MediaError` (native): used to populate a video.js `MediaError` object
+ *        - `MediaError` (video.js): will return itself if it's already a
+ *          video.js `MediaError` object.
+ *
+ * @see [MediaError Spec]{@link https://dev.w3.org/html5/spec-author-view/video.html#mediaerror}
+ * @see [Encrypted MediaError Spec]{@link https://www.w3.org/TR/2013/WD-encrypted-media-20130510/#error-codes}
+ *
+ * @class MediaError
+ */
+function MediaError(value) {
+
+  // Allow redundant calls to this constructor to avoid having `instanceof`
+  // checks peppered around the code.
+  if (value instanceof MediaError) {
+    return value;
+  }
+
+  if (typeof value === 'number') {
+    this.code = value;
+  } else if (typeof value === 'string') {
+    // default code is zero, so this is a custom error
+    this.message = value;
+  } else if (isObject(value)) {
+
+    // We assign the `code` property manually because native `MediaError` objects
+    // do not expose it as an own/enumerable property of the object.
+    if (typeof value.code === 'number') {
+      this.code = value.code;
+    }
+    //Videojs bug fix message and status be removed
+    if (value.message) {
+      this.message = value.message;
+    }
+    if (value.status) {
+      this.status = value.status;
+    }
+
+    assign(this, value);
+  }
+
+  if (!this.message) {
+    this.message = MediaError.defaultMessages[this.code] || '';
+  }
+}
+
+/**
+ * The error code that refers two one of the defined `MediaError` types
+ *
+ * @type {Number}
+ */
+MediaError.prototype.code = 0;
+
+/**
+ * An optional message that to show with the error. Message is not part of the HTML5
+ * video spec but allows for more informative custom errors.
+ *
+ * @type {String}
+ */
+MediaError.prototype.message = '';
+
+/**
+ * An optional status code that can be set by plugins to allow even more detail about
+ * the error. For example a plugin might provide a specific HTTP status code and an
+ * error message for that code. Then when the plugin gets that error this class will
+ * know how to display an error message for it. This allows a custom message to show
+ * up on the `Player` error overlay.
+ *
+ * @type {Array}
+ */
+MediaError.prototype.status = null;
+
+/**
+ * Errors indexed by the W3C standard. The order **CANNOT CHANGE**! See the
+ * specification listed under {@link MediaError} for more information.
+ *
+ * @enum {array}
+ * @readonly
+ * @property {string} 0 - MEDIA_ERR_CUSTOM
+ * @property {string} 1 - MEDIA_ERR_CUSTOM
+ * @property {string} 2 - MEDIA_ERR_ABORTED
+ * @property {string} 3 - MEDIA_ERR_NETWORK
+ * @property {string} 4 - MEDIA_ERR_SRC_NOT_SUPPORTED
+ * @property {string} 5 - MEDIA_ERR_ENCRYPTED
+ */
+MediaError.errorTypes = ['MEDIA_ERR_CUSTOM', 'MEDIA_ERR_ABORTED', 'MEDIA_ERR_NETWORK', 'MEDIA_ERR_DECODE', 'MEDIA_ERR_SRC_NOT_SUPPORTED', 'MEDIA_ERR_ENCRYPTED'];
+
+/**
+ * The default `MediaError` messages based on the {@link MediaError.errorTypes}.
+ *
+ * @type {Array}
+ * @constant
+ */
+MediaError.defaultMessages = {
+  1: 'You aborted the media playback',
+  2: 'A network error caused the media download to fail part-way.',
+  3: 'The media playback was aborted due to a corruption problem or because the media used features your browser did not support.',
+  4: 'The media could not be loaded, either because the server or network failed or because the format is not supported.',
+  5: 'The media is encrypted and we do not have the keys to decrypt it.'
+};
+
+// Add types as properties on MediaError
+// e.g. MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED = 4;
+for (var errNum = 0; errNum < MediaError.errorTypes.length; errNum++) {
+  MediaError[MediaError.errorTypes[errNum]] = errNum;
+  // values should be accessible on both the class and instance
+  MediaError.prototype[MediaError.errorTypes[errNum]] = errNum;
+}
 
 var VjsPlayer = videojs$1.getComponent('Player');
 var Tech = videojs$1.getComponent('Tech');
 var CaptionSettingsMenuItem = videojs$1.getComponent('CaptionSettingsMenuItem');
+
+// Shaka polyfill this
+if (window_1.vttjs) {
+  window_1.vttjs.restore();
+}
 
 /**
  * Player class, inherits from videojs Player class.
@@ -4945,29 +5566,37 @@ var Player = function (_VjsPlayer) {
     var ready = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
     classCallCheck(this, Player);
 
-
+    //options.nativeTextTracks = true;
+    //options.empshaka.nativeTextTracks = true; 
     //absoluteStartTime override startTime
-    options.startTime = options.absoluteStartTime ? 0 : options.startTime;
-    options = Object.assign({
-      children: ['mediaLoader', 'PosterImage', 'textTrackDisplay', 'loadingSpinner', 'controlBar', 'errorDisplay', 'textTrackSettings', 'BigPlayButton']
+    if (options.absoluteStartTime) {
+      options.startTime = 0;
+    }
+    options = assign({
+      children: ['mediaLoader', 'PosterImage', 'textTrackDisplay', 'loadingSpinner', 'empMediaInfoBar', 'controlBar', 'errorDisplay', 'textTrackSettings', 'BigPlayButton']
     }, options);
 
     if (options.techOrder === 'auto' || Array.isArray(options.techOrder) && options.techOrder.length === 1 && options.techOrder[0] === 'auto') {
-      options.techOrder = Player.AutoTechArray();
+      options.techOrder = Player.AutoTechArray('EmpShaka');
+    } else if (options.techOrder === 'auto-dashif' || Array.isArray(options.techOrder) && options.techOrder.length === 1 && options.techOrder[0] === 'auto-dashif') {
+      options.techOrder = Player.AutoTechArray('EmpDashif');
     }
+
+    //element data-setup
+    var tagOptions = Player.getTagSettings(tag);
 
     // Add default options for every player instance
     // default options are overidden by options set in the options parameter
     options = videojs$1.mergeOptions({
       'entitlement-engine': 'EricssonExposure',
-      'techOrder': Player.AutoTechArray(),
-      'maxBitrate': 0,
-      'timeShiftDisabled': false,
-      'useLastViewedOffset': false,
-      'startTime': 0,
-      'absoluteStartTime': undefined,
-      'persistTextTrackSettings': true,
-      'textTrackSettings': true
+      'techOrder': tagOptions.techOrder ? tagOptions.techOrder : Player.AutoTechArray('EmpShaka'),
+      'maxBitrate': tagOptions.maxBitrate ? tagOptions.maxBitrate : 0,
+      'timeShiftDisabled': tagOptions.timeShiftDisabled ? tagOptions.timeShiftDisabled : false,
+      'useLastViewedOffset': tagOptions.useLastViewedOffset ? tagOptions.useLastViewedOffset : false,
+      'startTime': tagOptions.startTime ? tagOptions.startTime : 0,
+      'absoluteStartTime': tagOptions.absoluteStartTime ? tagOptions.absoluteStartTime : undefined,
+      'persistTextTrackSettings': tagOptions.persistTextTrackSettings ? tagOptions.persistTextTrackSettings : !IS_IE_OR_EDGE,
+      'textTrackSettings': tagOptions.textTrackSettings ? tagOptions.textTrackSettings : !IS_IE_OR_EDGE
     }, options);
 
     var _this = possibleConstructorReturn(this, _VjsPlayer.call(this, tag, options, ready));
@@ -4985,6 +5614,7 @@ var Player = function (_VjsPlayer) {
     _this.on(empPlayerEvents.ENDED, function () {
       log$1('ENDED');
       _this.ended_ = true;
+      _this.sourceChanging_ = false;
       _this.stopProgramService();
       if (_this.entitlementExpirationService) {
         _this.entitlementExpirationService().stop();
@@ -4992,19 +5622,35 @@ var Player = function (_VjsPlayer) {
       if (_this.techName_ !== 'EmpCast') {
         _this.loadNextSource();
       }
+      _this.yospace && _this.yospace().stop();
     });
 
     _this.on(empPlayerEvents.DISPOSE, function () {
+      _this.loadNextSrc_ = null;
+      if (_this.loadingSrc_) {
+        clearInterval(_this.loadingSrc_);
+        _this.loadingSrc_ = null;
+      }
+      _this.sourceChanging_ = false;
+      _this.clearResetAndReloadTimer_();
       _this.stopProgramService();
       if (_this.entitlementExpirationService) {
         _this.entitlementExpirationService().stop();
       }
     });
     _this.on(empPlayerEvents.ERROR, function () {
+      _this.loadNextSrc_ = null;
+      if (_this.loadingSrc_) {
+        clearInterval(_this.loadingSrc_);
+        _this.loadingSrc_ = null;
+      }
+      _this.sourceChanging_ = false;
+      _this.clearResetAndReloadTimer_();
       _this.stopProgramService();
       if (_this.entitlementExpirationService) {
         _this.entitlementExpirationService().stop();
       }
+      _this.yospace && _this.yospace().stop();
     });
 
     _this.on(empPlayerEvents.CAN_PLAY, function () {
@@ -5021,14 +5667,15 @@ var Player = function (_VjsPlayer) {
       }
     });
     _this.on(empPlayerEvents.REPLAY, function () {
-      if (_this.cache_ && _this.cache_.source) {
+      if (_this.cache_ && _this.cache_.source && _this.cache_.source.yospaceUrl) {
+        _this.src({ 'src': _this.cache_.source.yospaceUrl, 'type': 'application/yospace' });
+      } else if (_this.cache_ && _this.cache_.source) {
         _this.src(_this.cache_.source);
       }
     });
 
     _this.on(empPlayerEvents.FIRST_PLAY, function () {
-      log$1('firstplay');
-      //TODO replace with .mp4#t=10,20
+      log$1('FIRST_PLAY');
       if (_this.options_.startTime && _this.techName_ === 'Html5') {
         _this.currentTime(_this.options_.startTime);
       }
@@ -5040,6 +5687,7 @@ var Player = function (_VjsPlayer) {
     _this.isCreated = true;
     _this.trigger(empPlayerEvents.PLAYER_CREATED);
     _this.ended_ = false;
+    _this.sourceChanging_ = false;
     return _this;
   }
 
@@ -5062,7 +5710,20 @@ var Player = function (_VjsPlayer) {
         return items;
       };
     }
-    return null;
+    // Bug fix textTracks.onchange event is not firing
+    // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/8019792/
+    if (IS_EDGE) {
+      var textTrackMenuItem = videojs$1.getComponent('TextTrackMenuItem');
+      if (textTrackMenuItem) {
+        var originalTextTrackMenuItem_handleClick = textTrackMenuItem.prototype.handleClick;
+        var self = this;
+        textTrackMenuItem.prototype.handleClick = function () {
+          originalTextTrackMenuItem_handleClick.apply(this, arguments);
+          self.trigger(empPlayerEvents.TRACK_CHANGE);
+          self.trigger(empPlayerEvents.TEXT_TRACK_CHANGE);
+        };
+      }
+    }
   };
 
   /**
@@ -5078,7 +5739,9 @@ var Player = function (_VjsPlayer) {
     }
 
     if (obj.techOrder === 'auto' || Array.isArray(obj.techOrder) && obj.techOrder.length === 1 && obj.techOrder[0] === 'auto') {
-      obj.techOrder = Player.AutoTechArray();
+      obj.techOrder = Player.AutoTechArray('EmpShaka');
+    } else if (obj.techOrder === 'auto-dashif' || Array.isArray(obj.techOrder) && obj.techOrder.length === 1 && obj.techOrder[0] === 'auto-dashif') {
+      obj.techOrder = Player.AutoTechArray('EmpDashif');
     }
 
     if (obj.startTime !== undefined) {
@@ -5112,7 +5775,8 @@ var Player = function (_VjsPlayer) {
       'startTime': this.options_.startTime,
       'absoluteStartTime': this.options_.absoluteStartTime,
       'audioLanguage': this.options_.audioLanguage,
-      'subtitleLanguage': this.options_.subtitleLanguage
+      'subtitleLanguage': this.options_.subtitleLanguage,
+      'liveDelay': this.options_.liveDelay
     };
     return playOptions;
   };
@@ -5144,7 +5808,8 @@ var Player = function (_VjsPlayer) {
     });
 
     this.on(this.tech_, empPlayerEvents.DURATION_CHANGE, function () {
-      log$1('DURATION_CHANGE');
+      //log('DURATION_CHANGE');
+      _this2.player_.trigger(empPlayerEvents.DURATION_CHANGE);
     });
   };
 
@@ -5156,6 +5821,11 @@ var Player = function (_VjsPlayer) {
 
 
   Player.prototype.loadNextSource = function loadNextSource() {
+    if (this.sourceChanging_) {
+      log$1('loadNextSource ignore sourceChanging');
+      return;
+    }
+    this.sourceChanging_ = true;
     if (this.tech_ && this.tech_['loadNextSource'] !== undefined) {
       this.techCall_('loadNextSource');
       return true;
@@ -5164,6 +5834,7 @@ var Player = function (_VjsPlayer) {
       this.src(this.cache_.sources);
       return true;
     }
+    this.sourceChanging_ = false;
     return false;
   };
 
@@ -5178,7 +5849,7 @@ var Player = function (_VjsPlayer) {
       this.techCall_('sendTextTrackStyle', style);
     } else {
       this.options_.textTrackStyle = style;
-      this.trigger('texttrackchange');
+      this.trigger(empPlayerEvents.TEXT_TRACK_CHANGE);
     }
   };
 
@@ -5217,12 +5888,14 @@ var Player = function (_VjsPlayer) {
   };
 
   /**
-   * unloadTech_
+   * unloadTech 
+   * @private
    */
 
 
   Player.prototype.unloadTech_ = function unloadTech_() {
-    //TODO remove event
+    // Don't think we need to remove events, it seems to work.
+    this.techName_ = null;
     _VjsPlayer.prototype.unloadTech_.call(this);
   };
 
@@ -5231,11 +5904,70 @@ var Player = function (_VjsPlayer) {
    * Try not to call this method
    *
    * @param {Function=} afterStopCallback
+   * @private
    */
 
 
   Player.prototype.stop = function stop(afterStopCallback) {
+    this.analytics && this.analytics().stop();
+    this.yospace && this.yospace().stop();
     extplayer.stop(this, afterStopCallback);
+  };
+
+  /**
+   * Get Avalible Techs
+   * @param excludeTechs
+   * @returns {Array}
+   */
+
+
+  Player.prototype.getAvalibleTechs_ = function getAvalibleTechs_(excludeTechs) {
+    var techs = this.options_.techOrder.map(function (techName) {
+      return techName.charAt(0).toUpperCase() + techName.slice(1);
+    }).map(function (techName) {
+      return [techName, Tech.getTech(techName)];
+    }).filter(function (_ref) {
+      var techName = _ref[0],
+          tech = _ref[1];
+
+      if (tech && techName !== "Html5" && techName !== "EmpCast" && excludeTechs.indexOf(techName) === -1) {
+        return tech.isSupported();
+      }
+    });
+    return techs;
+  };
+
+  /**
+   * Select source based on tech-order or source-order
+   * Uses source-order selection if `options.sourceOrder` is truthy. Otherwise,
+   * defaults to tech-order selection
+   *
+   * @param {Array} sources
+   *        The sources for a media asset
+   *
+   * @return {Object|boolean}
+   *         Object of source and tech order or false
+   *         
+   * @private
+   */
+
+
+  Player.prototype.selectSource = function selectSource(sources) {
+    var _this3 = this;
+
+    var orgTechOrder = this.options_.techOrder;
+
+    if (this.options_.excludeTechs && this.options_.excludeTechs.length > 0) {
+      var techs = this.options_.techOrder.filter(function (techName) {
+        if (_this3.options_.excludeTechs.indexOf(techName) === -1) {
+          return true;
+        }
+      });
+      this.options_.techOrder = techs;
+    }
+    var sourceTech = _VjsPlayer.prototype.selectSource.call(this, sources);
+    this.options_.techOrder = orgTechOrder;
+    return sourceTech;
   };
 
   /**
@@ -5248,16 +5980,26 @@ var Player = function (_VjsPlayer) {
 
 
   Player.prototype.handleRecoverableError = function handleRecoverableError(event, data) {
-    //Fix reset for hls and add so we don't need gusse tech
-    if (data.source) {
-      if (data.code !== 6001) {
+    var excludeTechs = [];
+    if (this.options_.excludeTechs) {
+      excludeTechs = this.options_.excludeTechs.slice(0);
+    }
+    excludeTechs.push(data.techName);
+    var techs = this.getAvalibleTechs_(excludeTechs);
+
+    //TODO: Fix reset for hls
+    //Not for CHROMECAST and not for encrypted streams and tech left to try
+    if (data.source && !data.source.licenseServer && (!data.source.licenseServers || isEmpty(data.source.licenseServers)) && !data.source.protection && !IS_CHROMECAST && techs.length > 0) {
+
+      if (data.error.code !== 6001) {
         log$1.error('handleRecoverableError', data.techName, data.message);
-        this.analytics && this.analytics().onError({ code: data.code, message: data.message });
+        this.analytics && this.analytics().onError({ code: data.error.code, message: data.message, stack: data.error.stack });
       }
       if (!this.options_.excludeTechs) {
         this.options_.excludeTechs = [];
       }
       this.options_.excludeTechs.push(data.techName);
+      //TODO: If we want to try Dash then we can ship add to excludeTechs and set this.options_.empshaka['streamType'] = null
       if (this.options_.techOrder.length > this.options_.excludeTechs.length) {
         this.error(null);
         this.resetWithoutReload_();
@@ -5266,15 +6008,23 @@ var Player = function (_VjsPlayer) {
           this.options_.autoplay = true;
         }
         this.options_.absoluteStartTime = this.previousAbsoluteStartTime_;
-        if (data.source.assetId) {
-          var asset = { 'assetId': data.source.assetId, 'programId': data.source.programId };
+        if (data.source.channelId) {
+          var asset = { 'channelId': data.source.channelId, 'programId': data.source.programId };
           _VjsPlayer.prototype.src.call(this, { 'type': 'video/emp', 'src': JSON.stringify(asset) });
+          return;
+        } else if (data.source.assetId) {
+          var _asset = { 'assetId': data.source.assetId };
+          _VjsPlayer.prototype.src.call(this, { 'type': 'video/emp', 'src': JSON.stringify(_asset) });
           return;
         }
       }
     }
-    data.message = data.message || this.localize('Unknown error, can\'t recover');
-    this.error(new EmpPlayerError(data.message, data.code));
+    if (data.error.code && data.error.message) {
+      this.error(data.error);
+    } else {
+      data.message = data.message || this.localize('Tech error, can\'t recover');
+      this.error(new EmpPlayerError(data.message, data.error.code));
+    }
     this.resetWithoutReload_();
   };
 
@@ -5289,6 +6039,23 @@ var Player = function (_VjsPlayer) {
       this.techCall_('reset');
       this.unloadTech_();
     }
+  };
+
+  /**
+   * Reset and restart form current playhead position
+   */
+
+
+  Player.prototype.resetAndRestartFormPlayhead = function resetAndRestartFormPlayhead() {
+    var program = this.getProgramDetails();
+    if (program) {
+      extplayer.currentAsset(this, null, program.programId, program.channelId);
+    }
+    var startTime = this.getAbsoluteTime();
+    log$1('resetAndRestartFormPlayhead', startTime);
+    this.reset();
+    this.startResetAndReloadTimer_();
+    this.restart(null, startTime);
   };
 
   /**
@@ -5408,6 +6175,12 @@ var Player = function (_VjsPlayer) {
       else if (track.mode !== 'disabled') {
           track.mode = 'disabled';
         }
+    }
+    // Bug fix textTracks.onchange event is not firing
+    // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/8019792/
+    if (this.techName_ === 'EmpHLS' && IS_EDGE) {
+      this.trigger(empPlayerEvents.TRACK_CHANGE);
+      this.trigger(empPlayerEvents.TEXT_TRACK_CHANGE);
     }
   };
 
@@ -5604,14 +6377,14 @@ var Player = function (_VjsPlayer) {
 
 
   Player.prototype.src = function src(source) {
-    var _this3 = this;
+    var _this4 = this;
 
     if (typeof source === 'undefined') {
       return this.cache_.src || '';
     }
     if (!this.isCreated) {
       this.one(empPlayerEvents.PLAYER_CREATED, function () {
-        _this3.src(source);
+        _this4.src(source);
       });
       return;
     }
@@ -5633,15 +6406,48 @@ var Player = function (_VjsPlayer) {
       sources[0].type = 'video/emp';
     }
 
+    //Throttling the play request
+    if (sources[0].type === 'video/emp') {
+      // already loading an src, block this for now
+      if (this.loadingSrc_) {
+        log$1('load src blocked', source);
+        // saves the last src that comes in
+        this.loadNextSrc_ = source;
+        return;
+      }
+      // Block load src calls for 3 seconds, after that load the last src
+      this.loadingSrc_ = setTimeout(function () {
+        _this4.loadingSrc_ = null;
+        if (_this4.loadNextSrc_) {
+          // Call this method
+          _this4.src(_this4.loadNextSrc_);
+        }
+      }, 3000); // mseconds of blocking
+    }
+    this.loadNextSrc_ = null;
+    log$1('load src OK');
+
+    this.yospace && this.yospace().stop();
+
     this.options_.excludeTechs = [];
     if (!this.tech_) {
       this.reset();
     }
-
+    this.cache_.currentTime = 0;
     this.error(null);
+    //Keep current program to it start play new
+    if (sources[0].type !== 'video/emp') {
+      this.stopProgramService();
+    }
+    if (this.isPlaying()) {
+      this.sourceChanging_ = true;
+    }
 
     //Will start casting if connected
     if (!extplayer.casting(this, sources)) {
+      if (sources[0].options) {
+        this.options(sources[0].options);
+      }
       //for external dash streams copy options
       if (sources[0].type !== 'video/emp') {
         sources[0].options = this.getTechOptions_();
@@ -5649,7 +6455,85 @@ var Player = function (_VjsPlayer) {
       //Start playback
       this.off(empPlayerEvents.LOADED_DATA, this.initialSeekToAbsoluteStartTimeBind);
       this.one(empPlayerEvents.LOADED_DATA, this.initialSeekToAbsoluteStartTimeBind);
+
+      if (sources[0].type === 'application/yospace' && this.yospace) {
+        this.yospace().start('VoD', sources[0].src).then(function (mediaLocator) {
+          log$1('yospace mediaLocator returned', mediaLocator);
+          _this4.options_.excludeTechs.push('EmpShaka');
+          _this4.options_.excludeTechs.push('EmpDashif');
+          sources[0] = {
+            'src': mediaLocator, 'type': 'application/x-mpegURL', 'yospaceUrl': sources[0].src
+          };
+          _VjsPlayer.prototype.src.call(_this4, sources);
+        })['catch'](function (errMsg) {
+          _this4.error(errMsg);
+        });
+        return;
+      }
+
       return _VjsPlayer.prototype.src.call(this, sources);
+    }
+  };
+
+  /**
+   * 
+   * Reset the tech by removing all sources and then calling
+   * {@link Html5.resetMediaElement}.
+   */
+
+
+  Player.prototype.reset = function reset() {
+    this.clearResetAndReloadTimer_();
+    this.hasStarted(false);
+    _VjsPlayer.prototype.reset.call(this);
+  };
+
+  /**
+   *  clearResetAndReloadTimer_
+   * 
+   *  @private
+   */
+
+
+  Player.prototype.clearResetAndReloadTimer_ = function clearResetAndReloadTimer_() {
+    if (this.resetAndReloadTimer_) {
+      log$1('clearResetAndReloadTimer');
+      clearInterval(this.resetAndReloadTimer_);
+      this.resetAndReloadTimer_ = null;
+    }
+  };
+
+  /**
+   *  startResetAndReloadTimer_ use to fix memory issue when play long time
+   *    
+   *  @private
+   */
+
+
+  Player.prototype.startResetAndReloadTimer_ = function startResetAndReloadTimer_() {
+    var _this5 = this;
+
+    if (!IS_CHROMECAST || !this.hasStarted()) {
+      this.clearResetAndReloadTimer_();
+      log$1('startResetAndReloadTimer');
+      if (this.options_.resetAndReloadLive !== false) {
+        // Disable resetAndReloadLive
+        var time = 120;
+        if (this.options_.resetAndReloadLive) {
+          time = this.options_.resetAndReloadLive > 1 ? this.options_.resetAndReloadLive : 1; // Use resetAndReloadLive config
+        } else if (IS_CHROMECAST) {
+          time = 120; // reset and reload CC every 2 hour
+        } else {
+          time = 120 * 3; // reset and reload Web every 6 hour
+        }
+
+        this.resetAndReloadTimer_ = this.setTimeout(function () {
+          _this5.clearResetAndReloadTimer_();
+          if (_this5.isLive() && _this5.streamType === 'DASH') {
+            _this5.resetAndRestartFormPlayhead();
+          }
+        }, time * 1000 * 60);
+      }
     }
   };
 
@@ -5671,7 +6555,7 @@ var Player = function (_VjsPlayer) {
     }
     //Seek to lastViewedOffset, can't use startTime with Shaka if stream not dashed
     //TODO Use startTime when we have VOD in new A/V pipe
-    else if (this.options_.useLastViewedOffset && entitlement && !this.isLive() && this.techName_ === 'EmpShaka' && entitlement.lastViewedOffset) {
+    else if (this.options_.useLastViewedOffset && entitlement && !this.isLive() && this.streamType === 'DASH' && entitlement.lastViewedOffset) {
         this.currentTime(entitlement.lastViewedOffset / 1000);
       }
   };
@@ -5775,6 +6659,9 @@ var Player = function (_VjsPlayer) {
   Player.prototype.noEPG = function noEPG() {
     if (!this.getProgramDetails()) {
       var entitlement = extplayer.getEntitlement(this);
+      if (!entitlement) {
+        return true;
+      }
       return entitlement && (entitlement.isDynamicCachupAsLive || entitlement.isStaticCachupAsLive);
     }
     return false;
@@ -5788,6 +6675,10 @@ var Player = function (_VjsPlayer) {
 
 
   Player.prototype.canRestart = function canRestart() {
+    var entitlement = extplayer.getEntitlement(this);
+    if (!entitlement) {
+      return true;
+    }
     if (this.noEPG()) {
       return false;
     }
@@ -5797,12 +6688,13 @@ var Player = function (_VjsPlayer) {
   /**
    * Restart the program from beginning or with LastViewedOffset
    *
-   * @param {boolean}  useLastViewedOffset Start from last viewed offset
+   * @param {?boolean}  useLastViewedOffset optional start from last viewed offset
+   * @param {?number} startTime optional startTime in unix time (ms)
    */
 
 
-  Player.prototype.restart = function restart(useLastViewedOffset) {
-    extplayer.restart(this, useLastViewedOffset);
+  Player.prototype.restart = function restart(useLastViewedOffset, startTime) {
+    extplayer.restart(this, useLastViewedOffset, startTime);
   };
 
   /**
@@ -5817,12 +6709,71 @@ var Player = function (_VjsPlayer) {
     if (err === undefined) {
       return this.error_ || null;
     }
+    // restoring to default
+    if (err === null) {
+      _VjsPlayer.prototype.error.call(this, err);
+      return;
+    }
+
+    if (this.error_ && err && err.code === 4) {
+      //secondary fault use first one
+      return this.error_;
+    }
     if (err && isString(err)) {
       err = new EmpPlayerError(err);
     } else if (err && !err.code) {
       err['code'] = EmpPlayerErrorCodes.UNKNOWN;
     }
-    return _VjsPlayer.prototype.error.call(this, err);
+    if (err && this.cache_.sources && this.cache_.sources.length > 1) {
+      log$1.error(err);
+      this.loadNextSource();
+      return err;
+    } else {
+      return this.videojsError_(err);
+    }
+  };
+
+  /**
+   * videojs base error patched
+   *
+   * @param {object | string} err The error or null for clear error
+   * @returns {object | string} The current Error
+   * 
+   * @private
+   */
+
+
+  Player.prototype.videojsError_ = function videojsError_(err) {
+    if (err === undefined) {
+      return this.error_ || null;
+    }
+
+    // restoring to default
+    if (err === null) {
+      this.error_ = err;
+      this.removeClass('vjs-error');
+      if (this.errorDisplay) {
+        this.errorDisplay.close();
+      }
+      return;
+    }
+
+    this.error_ = new MediaError(err);
+
+    // add the vjs-error classname to the player
+    this.addClass('vjs-error');
+
+    // log the name of the error type and any message
+    // ie8 just logs "[object object]" if you just log the error object
+    var errorTypes = '';
+    if (MediaError.errorTypes.hasOwnProperty(this.error_.code)) {
+      errorTypes = MediaError.errorTypes[this.error_.code];
+    }
+    log$1.error('(CODE:' + this.error_.code + ' ' + errorTypes + ')', this.error_.message, this.error_);
+
+    this.trigger({ type: empPlayerEvents.ERROR, bubbles: true }, this.error_);
+
+    return;
   };
 
   /**
@@ -5830,8 +6781,6 @@ var Player = function (_VjsPlayer) {
    *
    * @returns {object} Error object
    */
-
-
   Player.prototype.getError = function getError() {
     return this.error_;
   };
@@ -5861,28 +6810,17 @@ var Player = function (_VjsPlayer) {
   /**
    * Set / Get the play head time unix time (ms) 
    *
-   * @param {number} dateTime
+   * @param {number} unixTime
    * @returns {number} playheadTime
    */
 
 
-  Player.prototype.playheadTime = function playheadTime(dateTime) {
-    if (dateTime === undefined) {
+  Player.prototype.playheadTime = function playheadTime(unixTime) {
+    if (unixTime === undefined) {
       return extplayer.getPlayheadTime(this);
     } else {
-      extplayer.SeekToTime(this, dateTime);
+      extplayer.setPlayheadTime(this, unixTime);
     }
-  };
-
-  /**
-   * Seek to a unix time (ms) for the channel
-   *
-   * @param {number} dateTime
-   */
-
-
-  Player.prototype.SeekToTime = function SeekToTime(dateTime) {
-    extplayer.SeekToTime(this, dateTime);
   };
 
   /**
@@ -5938,12 +6876,8 @@ var Player = function (_VjsPlayer) {
     if (!playbackProperties) {
       playbackProperties = {};
     }
-    if (!assetId && !channelId) {
-      log$1.error('assetId or channelId is undefined');
-      return;
-    }
-    if (programId && !channelId) {
-      log$1.error('channelId is undefined');
+    if (!assetId && !channelId && !programId) {
+      log$1.error('assetId or channelId or programId is undefined');
       return;
     }
     if (!playbackProperties.playFrom) {
@@ -6036,11 +6970,46 @@ var Player = function (_VjsPlayer) {
 
 
   /**
+   * Get current Exposure
+   *
+  * @returns {EntitlementEngine} 
+  */
+  Player.prototype.getExposure = function getExposure() {
+    if (this.programService) {
+      return this.programService().exposure;
+    }
+    return null;
+  };
+
+  /**
+  * Sync localtime with servertime
+  * @param {Function=}  callback  Callback when localtime sync with servertime or an error occurs
+  */
+
+
+  Player.prototype.syncServerTime = function syncServerTime(callback) {
+    if (this.programService) {
+      exposure = this.programService().exposure;
+      if (exposure) {
+        exposure.syncServerTime(callback);
+        return;
+      }
+    }
+    var errMsg = 'No programService or No exposure';
+    log$1.error(errMsg);
+    if (callback) {
+      callback(0, errMsg);
+    }
+  };
+
+  /**
   * Stop the Program Service
   */
+
+
   Player.prototype.stopProgramService = function stopProgramService() {
     if (this.programService) {
-      this.programService().stop();
+      this.programService().reset();
     }
   };
 
@@ -6161,8 +7130,6 @@ var Player = function (_VjsPlayer) {
   * @return {number}
   *         - the current time in seconds when getting
   */
-
-
   Player.prototype.currentTime = function currentTime(seconds) {
     var entitlement = extplayer.getEntitlement(this);
     if (entitlement && (entitlement.isDynamicCachupAsLive || entitlement.isStaticCachupAsLive) && this.techName_ !== 'EmpCast') {
@@ -6173,20 +7140,22 @@ var Player = function (_VjsPlayer) {
             seconds = 1;
           }
           var start = new Date(_program.startTime);
-          if (entitlement.isStaticCachupAsLive || this.techName_ === 'EmpHLS') {
+          if (entitlement.isStaticCachupAsLive || this.streamType === 'HLS') {
             var t = entitlement.streamInfo;
             seconds = seconds + (start.getTime() - t.start.getTime()) / 1000;
             if (seconds <= 0) {
               seconds = 0;
-              log$1('currentTime', 'playPreviousProgram');
+              //log('currentTime', 'playPreviousProgram');
               extplayer.playPreviousProgram(this, true);
+              return;
             }
           } else {
             seconds = seconds + start.getTime() / 1000;
             if (seconds * 1000 <= entitlement.streamInfo.start.getTime()) {
               seconds = entitlement.streamInfo.start.getTime() / 1000 + 1;
-              log$1('currentTime', 'playPreviousProgram');
+              //log('currentTime', 'playPreviousProgram');
               extplayer.playPreviousProgram(this, true);
+              return;
             }
           }
         }
@@ -6206,19 +7175,28 @@ var Player = function (_VjsPlayer) {
       // never get updated.
       var currentTime = this.techGet_('currentTime') || 0;
       var program = this.getProgramDetails();
-      if (program && currentTime) {
+      if (program && currentTime > 1) {
         var _start = new Date(program.startTime);
-        if (entitlement.isStaticCachupAsLive || this.techName_ === 'EmpHLS') {
+        if (entitlement.isStaticCachupAsLive || this.streamType === 'HLS') {
           var _t = entitlement.streamInfo;
           currentTime = currentTime - (_start.getTime() - _t.start.getTime()) / 1000;
         } else {
           currentTime = currentTime - _start.getTime() / 1000;
         }
+      } else if (!program) {
+        //Don't show progressbar
+        this.duration(Infinity);
+        //log('currentTimeN', this.hasClass('vjs-live'));
       }
       this.cache_.currentTime = currentTime;
       return this.cache_.currentTime;
     } else {
       if (typeof seconds !== 'undefined') {
+        if (entitlement && (entitlement.isDynamicCachupAsLive || entitlement.isStaticCachupAsLive) && this.techName_ === 'EmpCast') {
+          //Do nothing 
+        } else {
+          seconds = seconds < 0 ? 0 : seconds;
+        }
         this.techCall_('setCurrentTime', seconds);
         return;
       } else {
@@ -6252,7 +7230,7 @@ var Player = function (_VjsPlayer) {
         var _program2 = this.getProgramDetails();
         if (_program2 && seconds !== Infinity) {
           var start = new Date(_program2.startTime);
-          if (entitlement.isStaticCachupAsLive || this.techName_ === 'EmpHLS') {
+          if (entitlement.isStaticCachupAsLive || this.streamType === 'HLS') {
             var t = entitlement.streamInfo;
             seconds = seconds - (start.getTime() - t.start.getTime()) / 1000;
           } else {
@@ -6263,27 +7241,14 @@ var Player = function (_VjsPlayer) {
           seconds = Infinity;
           this.addClass('vjs-live');
         }
-        log$1('set duration', seconds);
+        //log('set duration', seconds);
         _VjsPlayer.prototype.duration.call(this, seconds);
         return;
-      }
-
+      } //seconds === undefined
       var duration = this.techGet_('duration');
       var program = this.getProgramDetails();
       if (program && duration !== Infinity) {
-        var nowDate = this.getServerTime();
-        var end = new Date(program.endTime);
-        if (nowDate < end) {
-          //live
-          var _t2 = entitlement.streamInfo;
-          if (this.techName_ === 'EmpHLS') {
-            duration = (_t2.start.getTime() + duration * 1000 - program.start.getTime()) / 1000;
-          } else {
-            duration = (duration * 1000 - program.start.getTime()) / 1000;
-          }
-        } else {
-          duration = program.duration / 1000;
-        }
+        duration = program.duration / 1000;
       }
       if (this.noEPG()) {
         duration = Infinity;
@@ -6349,20 +7314,53 @@ var Player = function (_VjsPlayer) {
           var startRange = range.start(range.length - 1);
           var endRange = range.end(range.length - 1);
           if (endRange) {
-            if (entitlement.isStaticCachupAsLive || this.techName_ === 'EmpHLS') {
+            if (entitlement.isStaticCachupAsLive || this.streamType === 'HLS') {
               startRange = startRange - (programStart.getTime() - t.start.getTime()) / 1000;
               endRange = endRange - (programStart.getTime() - t.start.getTime()) / 1000;
               range = createTimeRanges(startRange > 0 ? startRange : 0, endRange > this.duration() ? this.duration() : endRange);
             } else if (entitlement.isDynamicCachupAsLive) {
               startRange = startRange - programStart.getTime() / 1000;
               endRange = endRange - programStart.getTime() / 1000;
-              range = createTimeRanges(startRange > 0 ? startRange : 0, endRange > this.duration() ? this.duration() : endRange);
+              var liveDuration = this.getGrowingLiveDuration();
+              range = createTimeRanges(startRange > 0 ? startRange : 0, endRange > liveDuration ? liveDuration : endRange);
             }
           }
         }
       }
     }
     return range;
+  };
+
+  /**
+   * Get a growing (program based) live duration
+   *
+   * @return {number}  - The duration of the video in seconds when getting
+   */
+
+
+  Player.prototype.getGrowingLiveDuration = function getGrowingLiveDuration() {
+    var entitlement = extplayer.getEntitlement(this);
+    var duration = this.duration();
+    var program = this.getProgramDetails();
+    if (program && duration !== Infinity && entitlement && entitlement.isDynamicCachupAsLive) {
+      var nowDate = this.getServerTime();
+      var end = new Date(program.endTime).getTime();
+      if (nowDate < end) {
+        //live
+        duration = this.techGet_('duration');
+        if (duration !== Infinity) {
+          var t = entitlement.streamInfo;
+          if (this.streamType === 'HLS') {
+            duration = (t.start.getTime() + duration * 1000 - program.start.getTime()) / 1000;
+          } else {
+            duration = (duration * 1000 - program.start.getTime()) / 1000;
+          }
+        }
+      } else {
+        duration = program.duration / 1000;
+      }
+    }
+    return duration;
   };
 
   /**
@@ -6373,16 +7371,21 @@ var Player = function (_VjsPlayer) {
 
   Player.prototype.remainingTime = function remainingTime() {
     var entitlement = extplayer.getEntitlement(this);
+    var time = 0;
     if (entitlement && (entitlement.isDynamicCachupAsLive || entitlement.isStaticCachupAsLive) && this.techName_ !== 'EmpCast') {
       var duration = this.duration();
       if (duration === Infinity || duration === 0) {
         return Infinity;
       } else {
-        return duration - this.currentTime();
+        time = duration - this.currentTime();
       }
     } else {
-      return extplayer.remainingTime(this);
+      time = extplayer.remainingTime(this);
     }
+    if (time < 0) {
+      time = 0;
+    }
+    return Math.round(time);
   };
 
   /**
@@ -6401,8 +7404,12 @@ var Player = function (_VjsPlayer) {
 
 
   Player.prototype.playPreviousProgram = function playPreviousProgram(end) {
-    var _this4 = this;
+    var _this6 = this;
 
+    if (this.sourceChanging_) {
+      log$1('playPreviousProgram ignore sourceChanging');
+      return;
+    }
     if (this.tech_['playPreviousProgram']) {
       this.techCall_('playPreviousProgram', end);
     } else {
@@ -6414,9 +7421,9 @@ var Player = function (_VjsPlayer) {
           } else {
             var dateTime = new Date(program.startTime);
             if (end) {
-              _this4.playheadTime(program.end.getTime() - 30000);
+              _this6.playheadTime(program.end.getTime() - 30000);
             } else {
-              _this4.playheadTime(program.start.getTime() + 1000);
+              _this6.playheadTime(program.start.getTime() + 1000);
             }
           }
         });
@@ -6432,6 +7439,10 @@ var Player = function (_VjsPlayer) {
 
 
   Player.prototype.playNextProgram = function playNextProgram() {
+    if (this.sourceChanging_) {
+      log$1('playNextProgram ignore sourceChanging');
+      return;
+    }
     if (this.tech_['playNextProgram']) {
       this.techCall_('playNextProgram');
     } else {
@@ -6474,18 +7485,205 @@ var Player = function (_VjsPlayer) {
     }
   };
 
+  /**
+   * Get current video source asset object
+   *
+   * @returns {object} video source asset object { 'assetId': assetId, 'programId': programId, 'channelId': channelId }
+   */
+
+
   Player.prototype.currentAsset = function currentAsset() {
     return extplayer.currentAsset(this);
   };
+
+  /**
+   * Check if video has ended
+   *
+   * @returns {boolean}  true if Video has ended
+   */
+
 
   Player.prototype.ended = function ended() {
     return this.ended_;
   };
 
+  /**
+  * handleTechWaiting, filter if no real buffering
+  * @private
+  */
+
+
+  Player.prototype.handleTechWaiting_ = function handleTechWaiting_() {
+    var _this7 = this;
+
+    if (this.hasStarted() && !this.ended() && !this.paused() && !this.hasClass('vjs-waiting')) {
+      this.playheadMoving_(function (moving) {
+        //log('playheadMoving', moving);
+        if (!moving) {
+          _this7.addClass('vjs-waiting');
+          _this7.trigger(empPlayerEvents.WAITING);
+          _this7.removeWaitingClass_();
+        }
+      });
+    }
+  };
+
+  /**
+   * remove vjs-waiting class
+   * @private
+   */
+
+
+  Player.prototype.removeWaitingClass_ = function removeWaitingClass_() {
+    var _this8 = this;
+
+    this.one('timeupdate', function () {
+      //log('playheadMoving off', this.prePlayheadTime_, this.playheadTime(), this.playheadTime() - this.prePlayheadTime_);
+      if (_this8.playheadTime() - _this8.prePlayheadTime_ > 1 || _this8.playheadTime() - _this8.prePlayheadTime_ < -1) {
+        //log('playheadMoving off', true);
+        _this8.prePlayheadTime_ = 0;
+        _this8.removeClass('vjs-waiting');
+        //edgeIELoadingBugWorkaround_(); Add if need
+        if (_this8.paused()) {
+          _this8.trigger(empPlayerEvents.PAUSE);
+        } else {
+          _this8.trigger(empPlayerEvents.PLAYING);
+        }
+      } else {
+        _this8.removeWaitingClass_();
+      }
+    });
+  };
+
+  /*
+    //Temporary bug fix to overcome shaka bug in IE/Edge where the loading spinner never disapears after seek occurs.
+    edgeIELoadingBugWorkaround_() {
+      this.on(EmpPlayerEvents.SEEKED, () => {
+        var loadings = document.getElementsByClassName('vjs-waiting');
+        [].forEach.call(loadings, function (loadingEl) {
+          if (loadingEl && loadingEl.classList) {
+            loadingEl.classList.remove('vjs-waiting');
+          }
+        });
+      });
+    }
+   */
+
+  /**
+  * Check if playhead is moving
+  * @param {Function=} callback moving callback
+  * @private
+  */
+
+
+  Player.prototype.playheadMoving_ = function playheadMoving_(callback) {
+    if (this.playheadMovingTimer_) {
+      clearInterval(this.playheadMovingTimer_);
+      this.playheadMovingTimer_ = null;
+    }
+    this.prePlayheadTime_ = this.playheadTime();
+
+    this.playheadMovingTimer_ = this.setTimeout(function () {
+      //log('playheadMoving', this.prePlayheadTime_, this.playheadTime(), this.playheadTime() - this.prePlayheadTime_);
+      callback(this.playheadTime() - this.prePlayheadTime_ > 200 || this.playheadTime() - this.prePlayheadTime_ < -200);
+    }, 2000);
+  };
+
+  /**
+  * Retrigger the `canplay` event that was triggered by the {@link Tech}.
+  * > Note: This is not consistent between browsers. See #1351
+  *
+  * @fires Player#canplay
+  * @listens Tech#canplay
+  * @private
+  */
+
+
+  Player.prototype.handleTechCanPlay_ = function handleTechCanPlay_() {
+    if (!this.prePlayheadTime_) {
+      this.removeClass('vjs-waiting');
+    }
+    /**
+     * The media has a readyState of HAVE_FUTURE_DATA or greater.
+     *
+     * @event Player#canplay
+     * @type {EventTarget~Event}
+     */
+    this.trigger(empPlayerEvents.CAN_PLAY);
+  };
+
+  /**
+   * Retrigger the `canplaythrough` event that was triggered by the {@link Tech}.
+   *
+   * @fires Player#canplaythrough
+   * @listens Tech#canplaythrough
+   * @private
+   */
+
+
+  Player.prototype.handleTechCanPlayThrough_ = function handleTechCanPlayThrough_() {
+    if (!this.prePlayheadTime_) {
+      this.removeClass('vjs-waiting');
+    }
+    /**
+     * The media has a readyState of HAVE_ENOUGH_DATA or greater. This means that the
+     * entire media file can be played without buffering.
+     *
+     * @event Player#canplaythrough
+     * @type {EventTarget~Event}
+     */
+    this.trigger(empPlayerEvents.CAN_PLAY_THROUGH);
+  };
+
+  /**
+   * Retrigger the `playing` event that was triggered by the {@link Tech}.
+   *
+   * @fires Player#playing
+   * @listens Tech#playing
+   * @private
+   */
+
+
+  Player.prototype.handleTechPlaying_ = function handleTechPlaying_() {
+    if (!this.prePlayheadTime_) {
+      this.removeClass('vjs-waiting');
+    }
+    this.sourceChanging_ = false;
+    /**
+     * The media is no longer blocked from playback, and has started playing.
+     *
+     * @event Player#playing
+     * @type {EventTarget~Event}
+     */
+    this.trigger(empPlayerEvents.PLAYING);
+  };
+
+  /**
+   * Video Source is changing
+   *
+   * @returns {boolean}  true if video source is changing
+   */
+
+
+  Player.prototype.sourceChanging = function sourceChanging() {
+    return this.sourceChanging_;
+  };
+
+  /**
+   * Check if player is casting to Chromecast
+   * 
+   * @returns {boolean}  true if casting
+   */
+
+
+  Player.prototype.isCasting = function isCasting() {
+    return this.techName_ === 'EmpCast';
+  };
+
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.79.3';
+      return '2.1.95-228';
     }
 
     /**
@@ -6499,25 +7697,20 @@ var Player = function (_VjsPlayer) {
     get: function get$$1() {
       var entitlement = extplayer.getEntitlement(this);
       //Clone entitlement
-      entitlement = Object.assign({}, entitlement);
-      entitlement.options = undefined;
+      if (entitlement) {
+        entitlement = assign({}, entitlement);
+        entitlement.options = undefined;
+      }
       return entitlement;
     }
-
-    /**
-     * Get the Registered entitlementEngine
-     *
-    * @returns {EntitlementEngine} Registered entitlement engine
-    */
-
   }, {
-    key: 'entitlementEngine',
+    key: 'streamType',
     get: function get$$1() {
-      //for backward compatibility
-      if (this.programService) {
-        return this.programService().exposure;
+      if (this.tech_) {
+        return this.tech_['streamType'];
+      } else {
+        return undefined;
       }
-      return null;
     }
   }]);
   return Player;
@@ -6527,13 +7720,25 @@ var Player = function (_VjsPlayer) {
 
 /**
  * Get AutoTechArray
+ * @param {string} chosenDashTech choice of dash tech
  * @returns {String[]} AutoTechArray
- * @static
+ *  @static
  */
-Player.AutoTechArray = function () {
-  var autoTechOrder = ['EmpShaka', 'EmpHLS', 'EmpFlash', 'Html5'];
+Player.AutoTechArray = function (chosenDashTech) {
+  var dashTech1 = Tech.techs_.hasOwnProperty('EmpShaka');
+  var dashTech2 = Tech.techs_.hasOwnProperty('EmpDashif');
+  if (dashTech1 && dashTech2) {
+    //Booth dash tech use chosenDashTech
+  } else {
+    if (dashTech1) {
+      chosenDashTech = 'EmpShaka';
+    } else {
+      chosenDashTech = 'EmpDashif';
+    }
+  }
+  var autoTechOrder = [chosenDashTech, 'EmpHLS-MSE', 'EmpHLS', 'Html5'];
   if (Player.SupportFairplay_()) {
-    autoTechOrder = ['EmpHLS', 'EmpShaka', 'EmpFlash', 'Html5'];
+    autoTechOrder = ['EmpHLS', chosenDashTech, 'Html5'];
   }
   var validAutoTechOrder = [];
   for (var i = 0; i < autoTechOrder.length; i++) {
@@ -6544,6 +7749,11 @@ Player.AutoTechArray = function () {
   return validAutoTechOrder;
 };
 
+/**
+ * Check if the browser and plattform suppot Fairplay
+ *
+ * @returns {boolean} True if the browser and plattform support Fairplay
+ */
 Player.SupportFairplay_ = function () {
   var hlsTech = videojs$1.getTech('EmpHLS');
   if (undefined !== hlsTech && hlsTech.isSupported() && window_1.WebKitMediaKeys && hlsTech.getKeySystem && window_1.WebKitMediaKeys.isTypeSupported(hlsTech.getKeySystem(), 'video/mp4')) {
@@ -6568,17 +7778,29 @@ function canPlayUnencrypted() {
     return Promise.resolve(true);
   }
 
+  var dashifTech = videojs$1.getTech('EmpDashif');
+  if (undefined !== dashifTech && dashifTech.isSupported()) {
+    return Promise.resolve(true);
+  }
+
   // test if HLS is supported
   var hlsTech = videojs$1.getTech('EmpHLS');
   if (undefined !== hlsTech && hlsTech.isSupported()) {
     return Promise.resolve(true);
   }
 
+  var hlsMseTech = videojs$1.getTech('EmpHLS-MSE');
+  if (undefined !== hlsMseTech && hlsMseTech.isSupported()) {
+    return Promise.resolve(true);
+  }
+
   // test if Flash is supported
-  var flashTech = videojs$1.getTech('EmpFlash');
+  /*
+  let flashTech = videojs.getTech('EmpFlash');
   if (undefined !== flashTech && flashTech.isSupported()) {
     return Promise.resolve(true);
   }
+  */
 
   return Promise.resolve(false);
 }
@@ -6604,7 +7826,8 @@ function canPlayEncrypted() {
 
     // test if DASH + Widevine or Playready is supported
     var shakaTech = videojs$1.getTech('EmpShaka');
-    if (undefined !== shakaTech && shakaTech.isSupported()) {
+    var dashifTech = videojs$1.getTech('EmpDashif');
+    if (undefined !== shakaTech && shakaTech.isSupported() || undefined !== dashifTech && dashifTech.isSupported()) {
       ptable.push(new Promise(function (resolve, reject) {
         window_1.navigator.requestMediaKeySystemAccess('com.microsoft.playready', config).then(function () {
           resolve(true);
@@ -6630,10 +7853,12 @@ function canPlayEncrypted() {
   }
 
   // test if Flash + EDRM is supported
-  var flashTech = videojs$1.getTech('EmpFlash');
+  /* 
+  let flashTech = videojs.getTech('EmpFlash');
   if (undefined !== flashTech && flashTech.isSupported()) {
     ptable.push(true);
   }
+  */
 
   // If no playback technology is available, resolve to false
   if (0 === ptable.length) {
@@ -6645,6 +7870,961 @@ function canPlayEncrypted() {
   }, function (reason) {
     return false;
   });
+}
+
+var EMPAnalyticsConnector = function () {
+  function EMPAnalyticsConnector(player, analytics, analyticsConfig) {
+    classCallCheck(this, EMPAnalyticsConnector);
+
+    this.INITIAL_REFERENCE_TIME = 1;
+    this.player_ = player;
+    this.analytics_ = analytics;
+    this.sessionId_ = null;
+    this.customAttributes = analyticsConfig.analytics && analyticsConfig.analytics.customAttributes;
+    this.exposure = analyticsConfig.exposure;
+    this.currentTimeTimer = null;
+    this.onPlayBind = this.onPlay.bind(this);
+    this.onResumedBind = this.onResume.bind(this);
+    this.onPlayingBind = this.onPlaying.bind(this);
+    this.onPauseBind = this.onPause.bind(this);
+    this.onEndedBind = this.onEnded.bind(this);
+    this.onErrorBind = this.onError.bind(this);
+    this.onDrmSessionUpdateBind = this.onDrmSessionUpdate.bind(this);
+    this.onEntitlementLoadStartBind = this.onEntitlementLoadStart.bind(this);
+    this.onBitrateChangeBind = this.onBitrateChange.bind(this);
+    this.onDisposeBind = this.onDispose.bind(this);
+    this.onLoadStartBind = this.onLoadStart.bind(this);
+    this.onSeekedBind = this.onSeeked.bind(this);
+    this.onWaitingBind = this.onWaiting.bind(this);
+    this.onChromeCastingStartBind = this.onChromeCastingStart.bind(this);
+    this.onChromeCastingStopBind = this.onChromeCastingStop.bind(this);
+    this.onProgramChangeBind = this.onProgramChange.bind(this);
+    this.onWaitingEndedBind = this.onWaitingEnded.bind(this);
+    this.onErrorBeforeAssetBind = this.onErrorBeforeAsset.bind(this);
+    this.onEntitlementChangeBind = this.onEntitlementChange.bind(this);
+    this.onWindowUnloadBind = this.onWindowUnload.bind(this);
+    this.onPlayingAfterStartBind = this.onPlayingAfterStart.bind(this);
+    this.allEvents_ = Object.keys(empPlayerEvents).map(function (key) {
+      return empPlayerEvents[key];
+    });
+    this.init();
+    this.createdSessions = {};
+    this.mem = {};
+  }
+
+  /**
+   * Retrieves ongoing playback session id
+   *
+   */
+
+
+  EMPAnalyticsConnector.prototype.SessionId = function SessionId(playSessionId) {
+    if (!playSessionId) {
+      if (!this.entitlement() || !this.entitlementLoaded_) {
+        return this.errorSessionId;
+      }
+    }
+
+    var sId = playSessionId ? playSessionId : this.entitlement().playSessionId;
+    if (!this.mem[sId]) {
+      this.mem[sId] = {
+        'pause': {},
+        'resume': {}
+      };
+    }
+    return sId;
+  };
+
+  EMPAnalyticsConnector.prototype.hasSessionId = function hasSessionId() {
+    if (!this.entitlement() || !this.entitlementLoaded_) {
+      return false;
+    }
+    return true;
+  };
+
+  /**
+   * Sends current playback time to analytics
+   *
+   */
+
+
+  EMPAnalyticsConnector.prototype.sendCurrentTime = function sendCurrentTime() {
+    var sessionId = this.SessionId();
+    if (sessionId && this.player_ && this.analytics_.getSessionState && this.analytics_.getSessionState(sessionId) === 'PLAYING') {
+      this.analytics_.setCurrentTime(sessionId, this.OffsetTime());
+    }
+  };
+
+  /**
+   * Registers a new timer
+   *
+   */
+
+
+  EMPAnalyticsConnector.prototype.registerCurrentTimeTimer = function registerCurrentTimeTimer() {
+    var _this = this;
+
+    this.clearTimers();
+    this.currentTimeTimer = setInterval(function () {
+      _this.sendCurrentTime();
+      var sessionId = _this.SessionId();
+      if (sessionId && _this.analytics_ && _this.analytics_.ok && _this.analytics_.ok(sessionId) === false) {
+        if (_this.exposure) {
+          _this.exposure.verifySession(null, function () {
+            if (_this.player_.el_) {
+              _this.player_.trigger(empPlayerEvents.ERROR, '401 INVALID_SESSION_TOKEN: The session token is no longer valid.');
+              extplayer.stop(_this.player_);
+            }
+            _this.clearTimers();
+          });
+        } else {
+          log$1.error('registerCurrentTimeTimer Exposure is undefined');
+        }
+      }
+    }, 1000);
+  };
+
+  /**
+   * Method to unregister and clear timers
+   *
+   */
+
+
+  EMPAnalyticsConnector.prototype.clearTimers = function clearTimers() {
+    if (this.currentTimeTimer) {
+      clearInterval(this.currentTimeTimer);
+    }
+    this.currentTimeTimer = null;
+  };
+
+  /**
+   * Initialization method
+   *
+   */
+
+
+  EMPAnalyticsConnector.prototype.init = function init() {
+    if (!this.player_ || !this.analytics_) {
+      log$1.warn('Warning: init failed . Possible causes: either player or analytics were not set.');
+      return;
+    }
+    this._errorSessionId = null;
+    this.disabled_ = false;
+    this.entitlementLoaded_ = false;
+    log$1('Initialization EmpAnalytics');
+    this.analytics_.init();
+    window_1.addEventListener('beforeunload', this.onWindowUnloadBind);
+    this.player_.on(empPlayerEvents.ENTITLEMENT_LOAD_START, this.onEntitlementLoadStartBind);
+    this.player_.on(empPlayerEvents.PAUSE, this.onPauseBind);
+    this.player_.on(empPlayerEvents.SEEKED, this.onSeekedBind);
+    this.player_.on(empPlayerEvents.ENDED, this.onEndedBind);
+    this.player_.on(empPlayerEvents.ERROR, this.onErrorBind);
+    this.player_.on(empPlayerEvents.DISPOSE, this.onDisposeBind);
+    this.player_.on(empPlayerEvents.STOPPED, this.onDisposeBind);
+    this.player_.on(empPlayerEvents.BITRATE_CHANGED, this.onBitrateChangeBind);
+    this.player_.on(empPlayerEvents.WAITING, this.onWaitingBind);
+    this.player_.on(empPlayerEvents.CHROMECAST_CASTING, this.onChromeCastingStartBind);
+    this.player_.on(empPlayerEvents.CHROMECAST_STOPPED, this.onChromeCastingStopBind);
+    this.player_.on(empPlayerEvents.PROGRAM_CHANGED, this.onProgramChangeBind);
+    this.player_.on(empPlayerEvents.DRM_SESSION_UPDATE, this.onDrmSessionUpdateBind);
+  };
+
+  /**
+   * Callback when user closes browser tab or refreshes the page
+   *
+   */
+
+
+  EMPAnalyticsConnector.prototype.onWindowUnload = function onWindowUnload() {
+    var _this2 = this;
+
+    this.onGeneric('WindowClose', this.analytics_.dispose, function () {
+      if (_this2.hasSessionId() === true) {
+        _this2.analytics_.dispose(_this2.SessionId(), _this2.getCachedCurrentTime());
+      }
+      _this2.analytics_.dispatchNow(false);
+      _this2.clearTimers();
+    }, true);
+  };
+
+  /**
+   * Callback when chromecast starts casting
+   *
+   */
+
+
+  EMPAnalyticsConnector.prototype.onChromeCastingStart = function onChromeCastingStart() {
+    var _this3 = this;
+
+    this.onGeneric('StartCasting', this.analytics_.startCasting, function () {
+      if (_this3.hasSessionId() === false) {
+        return;
+      }
+      var sId = _this3.SessionId();
+      if (sId) {
+        var currentTime = _this3.getCachedCurrentTime();
+        log$1('StartCasting', currentTime);
+        _this3.analytics_.startCasting(_this3.SessionId(), currentTime);
+      }
+      _this3.clearTimers();
+    }, false);
+    this.disabled_ = true;
+  };
+
+  /**
+   * Callback when chromecast stops casting and sender takes back playback session
+   *
+   */
+
+
+  EMPAnalyticsConnector.prototype.onChromeCastingStop = function onChromeCastingStop(isChromecast) {
+    var _this4 = this;
+
+    this.disabled_ = false;
+    if (isChromecast) {
+      this.onGeneric('StopCasting', this.analytics_.stopCasting, function () {
+        if (_this4.hasSessionId() === false) {
+          return;
+        }
+        _this4.analytics_.stopCasting(_this4.SessionId(), _this4.OffsetTime());
+      }, false);
+    }
+  };
+
+  /**
+   * Callback when Program Change
+   *
+   */
+
+
+  EMPAnalyticsConnector.prototype.onProgramChange = function onProgramChange(event, data) {
+    var _this5 = this;
+
+    var program = data ? data.program : null;
+    log$1('analytics', 'onProgramChange', program);
+    if (program && this.analytics_.programChanged) {
+      //Don't send ProgramChange if it's a new session
+      if (this.player_.hasStarted()) {
+        this.onGeneric('ProgramChange', this.analytics_.programChanged, function () {
+          _this5.analytics_.programChanged(_this5.SessionId(), _this5.OffsetTime(), { 'programId': program.programId });
+        }, true);
+      }
+    }
+  };
+
+  /**
+   * Callback when there is an event to change entitlement
+   *
+   */
+
+
+  EMPAnalyticsConnector.prototype.onEntitlementChange = function onEntitlementChange(event, data, errorSessionId) {
+    var _this6 = this;
+
+    this.entitlementLoaded_ = true;
+    this.player_.off(empPlayerEvents.ERROR, this.onErrorBeforeAssetBind);
+    //entitlement method will cache entitlement
+    var entitlement = this.entitlement(data && data.entitlement);
+    this.onGeneric('HandShake', this.analytics_.handshake, function () {
+      var params = {};
+      if (entitlement && entitlement.assetId) {
+        params.assetId = entitlement.assetId;
+      }
+      if (entitlement && entitlement.programId) {
+        params.programId = entitlement.programId;
+      }
+      if (!entitlement) {
+        var asset = extplayer.currentAsset(_this6.player_);
+        if (asset) {
+          params.assetId = asset.assetId;
+          params.programId = asset.programId;
+        }
+      }
+      //Use this new playSessionId
+      var playSessionId = entitlement ? entitlement.playSessionId : errorSessionId;
+      _this6.analytics_.handshake(_this6.SessionId(playSessionId), params);
+      _this6.onLoadStart(playSessionId);
+    }, false);
+  };
+
+  /**
+   * Callback when starting to load an entitlement
+   *
+   */
+
+
+  EMPAnalyticsConnector.prototype.onEntitlementLoadStart = function onEntitlementLoadStart() {
+    var _this7 = this;
+
+    this.entitlementLoaded_ = false;
+    this.onGeneric('ExitOngoingSession', this.analytics_.exitOngoingSession, function () {
+      return _this7.analytics_.exitOngoingSession(_this7.getCachedCurrentTime());
+    });
+    this.player_.one(empPlayerEvents.ERROR, this.onErrorBeforeAssetBind);
+    this.player_.one(empPlayerEvents.ENTITLEMENT_CHANGE, this.onEntitlementChangeBind);
+  };
+
+  /**
+   * Callback when starting to load new media chunks
+   *
+   */
+
+
+  EMPAnalyticsConnector.prototype.onLoadStart = function onLoadStart(playSessionId) {
+    var _this8 = this;
+
+    var currentSessionId = playSessionId ? playSessionId : this.SessionId();
+    if (!currentSessionId) {
+      log$1('onLoadStart called but not session available.');
+      return;
+    }
+    if (!this.sessionCreated(currentSessionId)) {
+      this.createdSessions[currentSessionId] = true;
+      this.onGeneric('Created', this.analytics_.created, function () {
+        var options = _this8.player_.options();
+        var params = {
+          'version': _this8.playerVersion
+        };
+        if (options && options.autoplay) {
+          params.autoplay = options.autoplay;
+        }
+        if (_this8.entitlement() && _this8.entitlement().requestId) {
+          params.requestId = _this8.entitlement().requestId;
+        }
+        _this8.analytics_.created(currentSessionId, params);
+      }, false);
+      this.player_.off(empPlayerEvents.PLAYING, this.onResumedBind);
+      this.player_.off(empPlayerEvents.PLAYING, this.onPlayingAfterStartBind);
+      this.player_.one(empPlayerEvents.PLAYING, this.onPlayingAfterStartBind);
+    }
+  };
+
+  /**
+   * Callback when there is a playing event after load started
+   *
+   */
+
+
+  EMPAnalyticsConnector.prototype.onPlayingAfterStart = function onPlayingAfterStart() {
+    this.onPlayBind();
+    this.onPlayingBind();
+    this.player_.on(empPlayerEvents.PLAYING, this.onResumedBind);
+  };
+
+  /**
+   * Callback when there is a bitrate change in the playback
+   *
+   */
+
+
+  EMPAnalyticsConnector.prototype.onBitrateChange = function onBitrateChange() {
+    var _this9 = this;
+
+    this.onGeneric('BitrateChange', this.analytics_.bitrateChanged, function () {
+      var params = {
+        'bitrate': Math.max(0, Math.round(_this9.getBitrate() / 1000))
+      };
+      _this9.analytics_.bitrateChanged(_this9.SessionId(), _this9.OffsetTime(), params);
+    }, true);
+  };
+
+  /**
+   * Callback when playback enters a waiting state
+   *
+   */
+
+
+  EMPAnalyticsConnector.prototype.onWaiting = function onWaiting() {
+    var _this10 = this;
+
+    this.onGeneric('StartWaiting', this.analytics_.waiting, function () {
+      if (_this10.player_.hasStarted()) {
+        _this10.analytics_.waiting(_this10.SessionId(), _this10.OffsetTime());
+      }
+      _this10.allEvents_.map(function (eventName) {
+        if (eventName === empPlayerEvents.PLAY || eventName === empPlayerEvents.PLAYING || eventName === empPlayerEvents.ENDED || eventName === empPlayerEvents.ERROR || eventName === empPlayerEvents.DISPOSE || eventName === empPlayerEvents.SEEKED || eventName === empPlayerEvents.CHROMECAST_CASTING || eventName === empPlayerEvents.CHROMECAST_STOPPED) {
+          _this10.player_.one(eventName, _this10.onWaitingEndedBind);
+        }
+      });
+    }, true);
+  };
+
+  EMPAnalyticsConnector.prototype.OffsetTime = function OffsetTime() {
+    if (this.entitlement() && (this.entitlement().isStaticCachupAsLive || this.entitlement().isDynamicCachupAsLive)) {
+      return extplayer.getPlayheadTime(this.player_) / 1000;
+    }
+    return extplayer.baseCurrentTime(this.player_);
+  };
+
+  EMPAnalyticsConnector.prototype.startTimeLive = function startTimeLive() {
+    return extplayer.startTimeLive(this.player_);
+  };
+
+  EMPAnalyticsConnector.prototype.isLive = function isLive() {
+    return extplayer.isLive(this.player_);
+  };
+
+  EMPAnalyticsConnector.prototype.getBitrate = function getBitrate() {
+    return extplayer.getBitrate(this.player_);
+  };
+
+  EMPAnalyticsConnector.prototype.duration = function duration() {
+    if (this.entitlement() && (this.entitlement().isStaticCachupAsLive || this.entitlement().isDynamicCachupAsLive)) {
+      if (this.player_.getProgramDetails && this.player_.getProgramDetails()) {
+        return this.player_.getProgramDetails().duration / 1000;
+      }
+    }
+    return extplayer.duration(this.player_);
+  };
+
+  EMPAnalyticsConnector.prototype.entitlement = function entitlement(value) {
+    if (typeof value === 'undefined') {
+      return extplayer.getEntitlement(this.player_) || this.entitlement_;
+    }
+    this.entitlement_ = value;
+    return value;
+  };
+
+  /**
+   * Callback when playback leaves a waiting state
+   *
+   */
+
+
+  EMPAnalyticsConnector.prototype.onWaitingEnded = function onWaitingEnded() {
+    var _this11 = this;
+
+    this.allEvents_.map(function (eventNameOff) {
+      _this11.player_.off(eventNameOff, _this11.onWaitingEndedBind);
+    });
+    this.onGeneric('WaitingEnded', this.analytics_.waitingEnded, function () {
+      _this11.analytics_.waitingEnded(_this11.SessionId(), _this11.OffsetTime());
+    }, true);
+  };
+
+  /**
+   * Callback when playback exists
+   *
+   */
+
+
+  EMPAnalyticsConnector.prototype.onDispose = function onDispose(event, data) {
+    var _this12 = this;
+
+    this.onGeneric('Dispose', this.analytics_.dispose, function () {
+      if (_this12.hasSessionId() === false) {
+        return;
+      }
+      _this12.analytics_.dispose(_this12.SessionId(), _this12.getCachedCurrentTime());
+      _this12.clearTimers();
+    }, true, true);
+  };
+
+  EMPAnalyticsConnector.prototype.getCachedCurrentTime = function getCachedCurrentTime() {
+    if (this.player_) {
+      var cachedcurrentTime = this.player_.getCache().currentTime;
+      var currentTime = this.OffsetTime();
+      return currentTime ? currentTime : cachedcurrentTime;
+    }
+    return undefined;
+  };
+
+  /**
+   * Callback when playback is finished
+   *
+   */
+
+
+  EMPAnalyticsConnector.prototype.onEnded = function onEnded() {
+    var _this13 = this;
+
+    this.onGeneric('End of Stream', this.analytics_.endOfStream, function () {
+      _this13.analytics_.endOfStream(_this13.SessionId());
+      _this13.clearTimers();
+    }, true, true);
+  };
+
+  /**
+   * Callback when play command is triggered
+   *
+   */
+
+
+  EMPAnalyticsConnector.prototype.onPlay = function onPlay() {
+    var _this14 = this;
+
+    this.onGeneric('Play', this.analytics_.play, function () {
+      var tech = _this14.player_.techName_;
+      var techName = 'Unknown';
+      switch (tech) {
+        case 'EmpShaka':
+          techName = 'Shaka';
+          break;
+        case 'EmpDashif':
+          techName = 'DashIf';
+          break;
+        case 'EmpFlash':
+          techName = 'Flash';
+          break;
+        case 'EmpHLS':
+          techName = 'NativeHLS';
+          break;
+        case 'EmpHLS-MSE':
+          techName = 'HLS-MSE';
+          break;
+      }
+      var params = {
+        'techName': techName,
+        'version': _this14.playerVersion,
+        'techVersion': _this14.techVersion
+      };
+      _this14.analytics_.play(_this14.SessionId(), _this14.OffsetTime(), params);
+      _this14.registerCurrentTimeTimer();
+    }, false);
+  };
+
+  /**
+   * Callback when media is playing
+   *
+   */
+
+
+  EMPAnalyticsConnector.prototype.onPlaying = function onPlaying() {
+    var _this15 = this;
+
+    this.onGeneric('Playing', this.analytics_.playing, function () {
+      var params = {};
+      params.bitrate = Math.max(0, Math.round(_this15.getBitrate() / 1024));
+      if (_this15.isLive() === true) {
+        params.referenceTime = _this15.startTimeLive();
+      } else {
+        params.duration = _this15.duration();
+      }
+      if (_this15.entitlement() && _this15.entitlement().mediaLocator) {
+        params.mediaLocator = _this15.entitlement().mediaLocator;
+      }
+
+      if (params.mediaLocator && params.mediaLocator.indexOf('.isml') >= 0) {
+        params.referenceTime = _this15.INITIAL_REFERENCE_TIME;
+      }
+
+      _this15.analytics_.clearCustomAttributes();
+      (_this15.customAttributes || []).map(function (item) {
+        _this15.analytics_.setCustomAttribute(item.key, item.value);
+      });
+
+      _this15.analytics_.playing(_this15.SessionId(), _this15.OffsetTime(), params);
+    }, false);
+  };
+
+  /**
+   * Callback when media is seeked
+   *
+   */
+
+
+  EMPAnalyticsConnector.prototype.onSeeked = function onSeeked() {
+    var _this16 = this;
+
+    this.onGeneric('Seeked', this.analytics_.seek, function () {
+      _this16.analytics_.seek(_this16.SessionId(), _this16.OffsetTime());
+    }, true);
+  };
+
+  /**
+   * Callback when playback is paused
+   *
+   */
+
+
+  EMPAnalyticsConnector.prototype.onPause = function onPause() {
+    var _this17 = this;
+
+    this.onGeneric('Pause', this.analytics_.paused, function () {
+      if (_this17.player_.hasStarted() === false) {
+        return;
+      }
+      var sId = _this17.SessionId();
+      var refTim = parseInt((new Date() - 0) / 25);
+      if (_this17.mem[sId]['pause'][refTim]) {
+        return;
+      }
+      _this17.mem[sId]['pause'][refTim] = true;
+      _this17.analytics_.paused(sId, _this17.OffsetTime());
+    }, true);
+  };
+
+  /**
+   * Callback when playback is resumed
+   *
+   */
+
+
+  EMPAnalyticsConnector.prototype.onResume = function onResume() {
+    var _this18 = this;
+
+    this.onGeneric('Resume', this.analytics_.resume, function () {
+      var sId = _this18.SessionId();
+      var refTim = parseInt((new Date() - 0) / 25);
+      if (_this18.mem[sId]['resume'][refTim]) {
+        return;
+      }
+      _this18.mem[sId]['resume'][refTim] = true;
+      _this18.analytics_.resume(sId, _this18.OffsetTime());
+    }, true);
+  };
+
+  /**
+   * Callback when error occurs before loading the asset
+   *
+   */
+
+
+  EMPAnalyticsConnector.prototype.onErrorBeforeAsset = function onErrorBeforeAsset() {
+    this.entitlementLoaded_ = false;
+    this.onEntitlementChange(null, null, this.errorSessionId);
+    this.onError(null, this.errorSessionId);
+    this.clearTimers();
+    //this.entitlementLoaded_ = true;
+  };
+
+  /**
+   * Callback when error occurs
+   *
+   */
+  EMPAnalyticsConnector.prototype.onError = function onError() {
+    var _this19 = this;
+
+    var errorEvent = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+    var fallbackSessionId = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+    if (!fallbackSessionId && !this.entitlementLoaded_) {
+      return;
+    }
+    this.onGeneric('Error', this.analytics_.error, function () {
+      var err = _this19.player_.error();
+      var params = {};
+      if (err && err.code) {
+        params.errorCode = err.code;
+      }
+      if (err && err.message) {
+        params.errorMessage = err.message;
+      }
+      if (err && err.status) {
+        params.errorDetails = err.status + '';
+      }
+      if (err && err.stack) {
+        params.errorDetails = params.errorDetails ? params.errorDetails + '\n' + err.stack.toString() : err.stack.toString();
+      }
+
+      var options = _this19.player_.options();
+      if (_this19.player_.tech_) {
+        var streamType = _this19.player_.techName_ === 'EmpShaka' && options && options.empshaka ? options.empshaka.streamType : '';
+        params.errorInfo = _this19.player_.techName_ + (streamType ? '-' + streamType : '');
+      } else {
+        params.errorInfo = 'Unknown tech, techOrder: ' + options.techOrder.toString();
+      }
+      if (!err && errorEvent) {
+        params.errorCode = errorEvent.code;
+        params.errorMessage = errorEvent.message ? errorEvent.message : 'Browser Error';
+        if (errorEvent.status) {
+          params.errorDetails = errorEvent.status + '';
+        }
+        if (errorEvent.stack) {
+          params.errorDetails = params.errorDetails ? params.errorDetails + '\n' + errorEvent.stack.toString() : errorEvent.stack.toString();
+        }
+      }
+      var currentSessId = _this19.SessionId();
+      if (currentSessId || fallbackSessionId) {
+        _this19.analytics_.error(currentSessId || fallbackSessionId, _this19.OffsetTime(), params);
+      }
+      _this19.clearTimers();
+    }, false);
+  };
+
+  EMPAnalyticsConnector.prototype.onDrmSessionUpdate = function onDrmSessionUpdate(event, data) {
+    var _this20 = this;
+
+    log$1('onDrmSessionUpdate', event, data);
+    this.onGeneric('DrmSessionUpdate', this.analytics_.drmSessionUpdate, function () {
+      _this20.analytics_.drmSessionUpdate(_this20.SessionId(), {
+        'message': data.messageType,
+        'code': data.code,
+        'info': data.info
+      });
+    }, true);
+  };
+
+  /**
+   * Generic analytics function
+   *
+   */
+
+
+  EMPAnalyticsConnector.prototype.onGeneric = function onGeneric(eventName, eventFnc, callback, checkSessionCreation) {
+    var ignoreDisabled = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
+
+    if (this.disabled_ && !ignoreDisabled) {
+      log$1(eventName + ' not delivered: analytics disabled.');
+      return;
+    }
+    if (checkSessionCreation && !this.sessionCreated(this.SessionId())) {
+      log$1(eventName + ' was discarded.');
+    } else if (eventFnc && callback) {
+      callback();
+    }
+  };
+
+  /**
+   * Check if a session with given sessionId was already created
+   *
+   */
+
+
+  EMPAnalyticsConnector.prototype.sessionCreated = function sessionCreated(sessionId) {
+    return sessionId && this.createdSessions[sessionId];
+  };
+
+  /**
+   * Cleanup and unregister events to send to analytics
+   *
+   */
+
+
+  EMPAnalyticsConnector.prototype.dispose = function dispose() {
+    this.clearTimers();
+    if (this.analytics_) {
+      this.analytics_.exitOngoingSession(this.getCachedCurrentTime());
+      this.analytics_.dispatchNow(false);
+    }
+    window_1.removeEventListener('beforeunload', this.onWindowUnloadBind);
+    this.player_.off(empPlayerEvents.PLAY, this.onPlayBind);
+    this.player_.off(empPlayerEvents.PLAYING, this.onPlayingBind);
+    this.player_.off(empPlayerEvents.PLAYING, this.onResumedBind);
+    this.player_.off(empPlayerEvents.PAUSE, this.onPauseBind);
+    this.player_.off(empPlayerEvents.SEEKED, this.onSeekedBind);
+    this.player_.off(empPlayerEvents.ENTITLEMENT_LOAD_START, this.onEntitlementLoadStartBind);
+    this.player_.off(empPlayerEvents.ENTITLEMENT_CHANGE, this.onEntitlementChangeBind);
+    this.player_.off(empPlayerEvents.BITRATE_CHANGED, this.onBitrateChangeBind);
+    this.player_.off(empPlayerEvents.ENDED, this.onEndedBind);
+    this.player_.off(empPlayerEvents.DISPOSE, this.onDisposeBind);
+    this.player_.off(empPlayerEvents.STOPPED, this.onDisposeBind);
+    this.player_.off(empPlayerEvents.ERROR, this.onErrorBind);
+    this.player_.off(empPlayerEvents.ERROR, this.onErrorBeforeAssetBind);
+    this.player_.off(empPlayerEvents.WAITING, this.onWaitingBind);
+    this.player_.off(empPlayerEvents.CHROMECAST_CASTING, this.onChromeCastingStartBind);
+    this.player_.off(empPlayerEvents.CHROMECAST_STOPPED, this.onChromeCastingStopBind);
+    this.player_.off(empPlayerEvents.PROGRAM_CHANGED, this.onProgramChangeBind);
+    this.player_.off(empPlayerEvents.PLAYING, this.onPlayingAfterStartBind);
+    this.player_.off(empPlayerEvents.DRM_SESSION_UPDATE, this.onDrmSessionUpdateBind);
+  };
+
+  createClass(EMPAnalyticsConnector, [{
+    key: 'techVersion',
+    get: function get$$1() {
+      return extplayer.techVersion(this.player_);
+    }
+  }, {
+    key: 'playerVersion',
+    get: function get$$1() {
+      if (!this.player_.version) return window_1.videojs ? window_1.videojs.VERSION : '2.x.x';
+
+      return this.player_.version;
+    }
+  }, {
+    key: 'errorSessionId',
+    get: function get$$1() {
+      if (!this._errorSessionId) {
+        this._errorSessionId = 'error-' + Math.random().toString().split('.')[1];
+      }
+      return this._errorSessionId;
+    }
+  }]);
+  return EMPAnalyticsConnector;
+}();
+
+var empAnalytics_min = createCommonjsModule(function (module, exports) {
+!function(a){module.exports=a();}(function(){var a;return function b(a,c,d){function e(g,h){if(!c[g]){if(!a[g]){var i="function"==typeof commonjsRequire&&commonjsRequire;if(!h&&i)return i(g,!0);if(f)return f(g,!0);var j=new Error("Cannot find module '"+g+"'");throw j.code="MODULE_NOT_FOUND",j}var k=c[g]={exports:{}};a[g][0].call(k.exports,function(b){var c=a[g][1][b];return e(c?c:b)},k,k.exports,b,a,c,d);}return c[g].exports}for(var f="function"==typeof commonjsRequire&&commonjsRequire,g=0;g<d.length;g++)e(d[g]);return e}({1:[function(a,b,c){(function(a){var c;c="undefined"!=typeof window?window:"undefined"!=typeof a?a:"undefined"!=typeof self?self:{},b.exports=c;}).call(this,"undefined"!=typeof commonjsGlobal?commonjsGlobal:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{});},{}],2:[function(b,c,d){!function(e,f){"object"==typeof d&&"undefined"!=typeof c?f(d,b("worker-timers-broker")):"function"==typeof a&&a.amd?a(["exports","worker-timers-broker"],f):f(e.workerTimers={},e.workerTimersBroker);}(this,function(a,b){"use strict";var c='!function(r){var n={};function o(e){if(n[e])return n[e].exports;var t=n[e]={i:e,l:!1,exports:{}};return r[e].call(t.exports,t,t.exports,o),t.l=!0,t.exports}o.m=r,o.c=n,o.d=function(e,t,r){o.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:r})},o.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},o.t=function(t,e){if(1&e&&(t=o(t)),8&e)return t;if(4&e&&"object"==typeof t&&t&&t.__esModule)return t;var r=Object.create(null);if(o.r(r),Object.defineProperty(r,"default",{enumerable:!0,value:t}),2&e&&"string"!=typeof t)for(var n in t)o.d(r,n,function(e){return t[e]}.bind(null,n));return r},o.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return o.d(t,"a",t),t},o.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},o.p="",o(o.s=0)}([function(e,t,r){"use strict";r.r(t);r(1)},function(e,t,r){!function(){"use strict";var w=new Map,T=new Map,b=function(e,t){var r,n;if("performance"in self){var o=performance.now(),i=Math.max(0,o-t);r=o,n=e-i}else r=Date.now(),n=e;var a=r+n;return{expected:a,remainingDelay:n}},M=function e(t,r,n,o){var i="performance"in self?performance.now():Date.now();n<i?postMessage({id:null,method:"call",params:{timerId:r,timerType:o}}):t.set(r,setTimeout(e,n-i,t,r,n,o))};addEventListener("message",function(e){var t,r,n,o,i,a,u,s,c=e.data;try{if("clear"===c.method){var l=c.id,d=c.params,f=d.timerId,p=d.timerType;if("interval"===p)!function(e){var t=w.get(e);if(void 0===t)throw new Error(\'There is no interval scheduled with the given id "\'.concat(e,\'".\'));clearTimeout(t),w.delete(e)}(f),postMessage({error:null,id:l});else{if("timeout"!==p)throw new Error(\'The given type "\'.concat(p,\'" is not supported\'));!function(e){var t=T.get(e);if(void 0===t)throw new Error(\'There is no timeout scheduled with the given id "\'.concat(e,\'".\'));clearTimeout(t),T.delete(e)}(f),postMessage({error:null,id:l})}}else{if("set"!==c.method)throw new Error(\'The given method "\'.concat(c.method,\'" is not supported\'));var m=c.params,v=m.delay,h=m.now,g=m.timerId,y=m.timerType;if("interval"===y)i=g,a=b(v,h),u=a.expected,s=a.remainingDelay,w.set(i,setTimeout(M,s,w,i,u,"interval"));else{if("timeout"!==y)throw new Error(\'The given type "\'.concat(y,\'" is not supported\'));t=g,r=b(v,h),n=r.expected,o=r.remainingDelay,T.set(t,setTimeout(M,o,T,t,n,"timeout"))}}}catch(e){postMessage({error:{message:e.message},id:c.id,result:null})}})}()}]);',d=new Blob([c],{type:"application/javascript; charset=utf-8"}),e=URL.createObjectURL(d),f=b.load(e),g=f.clearInterval,h=f.clearTimeout,i=f.setInterval,j=f.setTimeout;URL.revokeObjectURL(e),a.clearInterval=g,a.clearTimeout=h,a.setInterval=i,a.setTimeout=j,Object.defineProperty(a,"__esModule",{value:!0});});},{"worker-timers-broker":3}],3:[function(b,c,d){!function(e,f){"object"==typeof d&&"undefined"!=typeof c?f(d,b("fast-unique-numbers")):"function"==typeof a&&a.amd?a(["exports","fast-unique-numbers"],f):f(e.workerTimersBroker={},e.fastUniqueNumbers);}(this,function(a,b){"use strict";var c=function(a){return void 0!==a.method&&"call"===a.method},d=function(a){return null===a.error&&"number"==typeof a.id},e=function(a){var e=new Map,f=new Map,g=new Map,h=new Worker(a);h.addEventListener("message",function(a){var b=a.data;if(c(b)){var h=b.params,i=h.timerId,j=h.timerType;if("interval"===j){var k=e.get(i);if("number"==typeof k){var l=g.get(k);if(void 0===l||l.timerId!==i||l.timerType!==j)throw new Error("The timer is in an undefined state.")}else{if("undefined"==typeof k)throw new Error("The timer is in an undefined state.");k();}}else if("timeout"===j){var m=f.get(i);if("number"==typeof m){var n=g.get(m);if(void 0===n||n.timerId!==i||n.timerType!==j)throw new Error("The timer is in an undefined state.")}else{if("undefined"==typeof m)throw new Error("The timer is in an undefined state.");m(),f["delete"](i);}}}else{if(!d(b)){var o=b.error.message;throw new Error(o)}var p=b.id,q=g.get(p);if(void 0===q)throw new Error("The timer is in an undefined state.");var r=q.timerId,s=q.timerType;g["delete"](p),"interval"===s?e["delete"](r):f["delete"](r);}});var i=function(a){var c=b.generateUniqueNumber(g);g.set(c,{timerId:a,timerType:"interval"}),e.set(a,c),h.postMessage({id:c,method:"clear",params:{timerId:a,timerType:"interval"}});},j=function(a){var c=b.generateUniqueNumber(g);g.set(c,{timerId:a,timerType:"timeout"}),f.set(a,c),h.postMessage({id:c,method:"clear",params:{timerId:a,timerType:"timeout"}});},k=function(a,c){var d=b.generateUniqueNumber(e);return e.set(d,function(){a(),"function"==typeof e.get(d)&&h.postMessage({id:null,method:"set",params:{delay:c,now:performance.now(),timerId:d,timerType:"interval"}});}),h.postMessage({id:null,method:"set",params:{delay:c,now:performance.now(),timerId:d,timerType:"interval"}}),d},l=function(a,c){var d=b.generateUniqueNumber(f);return f.set(d,a),h.postMessage({id:null,method:"set",params:{delay:c,now:performance.now(),timerId:d,timerType:"timeout"}}),d};return{clearInterval:i,clearTimeout:j,setInterval:k,setTimeout:l}};a.load=e,Object.defineProperty(a,"__esModule",{value:!0});});},{"fast-unique-numbers":4}],4:[function(b,c,d){!function(b,e){"object"==typeof d&&"undefined"!=typeof c?e(d):"function"==typeof a&&a.amd?a(["exports"],e):e(b.fastUniqueNumbers={});}(this,function(a){"use strict";var b=new WeakMap,c=Number.MAX_SAFE_INTEGER||9007199254740991,d=function(a,c){return b.set(a,c),c},e=function(a){var e=b.get(a),f=void 0===e?a.size:e>2147483648?0:e+1;if(!a.has(f))return d(a,f);if(a.size<1073741824){for(;a.has(f);)f=Math.floor(2147483648*Math.random());return d(a,f)}if(a.size>c)throw new Error("Congratulations, you created a collection of unique numbers which uses all available integers!");for(;a.has(f);)f=Math.floor(Math.random()*c);return d(a,f)},f=function(a){var b=e(a);return a.add(b),b};a.addUniqueNumber=f,a.generateUniqueNumber=e,Object.defineProperty(a,"__esModule",{value:!0});});},{}],5:[function(a,b,c){"use strict";function d(a){if(a&&a.__esModule)return a;var b={};if(null!=a)for(var c in a)Object.prototype.hasOwnProperty.call(a,c)&&(b[c]=a[c]);return b["default"]=a,b}function e(a){return a&&a.__esModule?a:{"default":a}}function f(a,b){if(!(a instanceof b))throw new TypeError("Cannot call a class as a function")}c.__esModule=!0;var g=function(){function a(a,b){for(var c=0;c<b.length;c++){var d=b[c];d.enumerable=d.enumerable||!1,d.configurable=!0,"value"in d&&(d.writable=!0),Object.defineProperty(a,d.key,d);}}return function(b,c,d){return c&&a(b.prototype,c),d&&a(b,d),b}}(),h=a("global/window"),i=e(h),j=a("./platform"),k=e(j),l=a("worker-timers"),m=d(l),n=function(){function a(b,c,d,e,g){var h=arguments.length<=5||void 0===arguments[5]?{}:arguments[5],i=arguments.length<=6||void 0===arguments[6]?{}:arguments[6];f(this,a),this.CYCLE_TIME=1e3,this.EVENT_PURGE_TIME_DEFAULT=3*this.CYCLE_TIME,this.TIME_WITHOUT_BEAT_DEFAULT=60*this.CYCLE_TIME,this.SERVER_URL_DEFAULT="",this.CUSTOMER_DEFAULT="",this.BUSINESS_UNIT_DEFAULT="",this.INCLUDE_DEVICE_METRICS_DEFAULT=!0,this.SESSION_TOKEN_DEFAULT="",this.SESSION_ID_DEFAULT="",this.DEBUG_DEFAULT=!1,this.MAX_RETRIES=20,this.DEVICE_CLOCK_CHECK_THRESHOLD=3e5,this.eventsSkeleton=this.initEventSkeleton(),this.customer_=c,this.businessUnit_=d,this.sessionToken_=e,this.serverURL_=b,this.includeDeviceMetrics_=!1,this.userId_=g,this.deviceInfoData_=h,this.props_=i||{},this.pendingRequest_=!1;}return a.prototype.init=function(){var a=this;this.cycleTimer&&("undefined"!=typeof Worker&&this.props_.disableWebWorkers!==!0?m.clearInterval(this.cycleTimer):clearInterval(this.cycleTimer)),"undefined"!=typeof Worker&&this.props_.disableWebWorkers!==!0?this.cycleTimer=m.setInterval(function(){return a.cycle()},this.CYCLE_TIME):this.cycleTimer=setInterval(function(){return a.cycle()},this.CYCLE_TIME),this.communicationCurrentTime=0,this.lastCommunicationTime=0,this.eventPool={};},a.prototype.clear=function(){this.eventPool={};},a.prototype.ok=function(a){var b=this.eventPool[a];return!!b&&(b.forbidden===!1&&b.retries<this.MAX_RETRIES)},a.prototype.created=function(a){var b=arguments.length<=1||void 0===arguments[1]?{}:arguments[1],c={type:"Created"};this.addEventToPool(a,c,b);},a.prototype.play=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"PlayerReady",currentTime:b};this.deviceAppInfo&&(c.deviceAppInfo=this.deviceAppInfo),this.addEventToPool(a,d,c);},a.prototype.playing=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"Started",currentTime:b};if(this.customAttributes){var e=Object.keys(this.customAttributes);e.length&&e.length>0&&(c.attributes=this.customAttributes);}this.addEventToPool(a,d,c),this.changeSessionState(a,"PLAYING");},a.prototype.paused=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"Paused",currentTime:b};this.addEventToPool(a,d,c,!0);},a.prototype.seek=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"ScrubbedTo",currentTime:b};this.addEventToPool(a,d,c,!0);},a.prototype.programChanged=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"ProgramChanged",currentTime:b};this.addEventToPool(a,d,c,!0);},a.prototype.startCasting=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"StartCasting",currentTime:b};this.addEventToPool(a,d,c,!0),this.changeSessionState(a,"FINISHED");},a.prototype.stopCasting=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"StopCasting",currentTime:b};this.addEventToPool(a,d,c,!0),this.changeSessionState(a,"FINISHED");},a.prototype.setCurrentTime=function(a,b){this.eventPool[a]&&(this.eventPool[a].currentTime=b);},a.prototype.handshake=function(a){var b=arguments.length<=1||void 0===arguments[1]?{}:arguments[1],c={type:"HandshakeStarted"};this.addEventToPool(a,c,b);},a.prototype.resume=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"Resumed",currentTime:b};this.addEventToPool(a,d,c,!0);},a.prototype.bitrateChanged=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"BitrateChanged",currentTime:b};this.addEventToPool(a,d,c,!0);},a.prototype.drmSessionUpdate=function(a){var b=arguments.length<=1||void 0===arguments[1]?{}:arguments[1],c={type:"DRM"};this.addEventToPool(a,c,b,!0);},a.prototype.endOfStream=function(a){var b=arguments.length<=1||void 0===arguments[1]?{}:arguments[1],c={type:"Completed"};this.addEventToPool(a,c,b,!0),this.changeSessionState(a,"FINISHED");},a.prototype.error=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"Error",currentTime:b};this.addEventToPool(a,d,c),this.changeSessionState(a,"FINISHED");},a.prototype.dispose=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d=this.eventPool[a];if(d&&"FINISHED"!==d.currentState){var e={type:"Aborted"};b&&(e.currentTime=b),this.addEventToPool(a,e,c,!0),this.changeSessionState(a,"FINISHED");}},a.prototype.waiting=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"BufferingStarted",currentTime:b};this.addEventToPool(a,d,c);},a.prototype.waitingEnded=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"BufferingEnded",currentTime:b};this.addEventToPool(a,d,c);},a.prototype.getSessionState=function(a){return this.eventPool[a]?this.eventPool[a].currentState||"IDLE":"IDLE"},a.prototype.dispatchNow=function(){var a=arguments.length<=0||void 0===arguments[0]||arguments[0];this.cycle(a,!0);},a.prototype.exitOngoingSession=function(a){var b=this,c=Object.keys(this.eventPool);c.map(function(c){b.eventPool[c]&&b.dispose(c,a);});},a.prototype.setCustomAttribute=function(a,b){this.customAttributes||this.resetAnalyticsCustomAttributes(),this.customAttributes[a]=b;},a.prototype.clearCustomAttributes=function(){this.customAttributes={};},a.prototype.removeSession=function(a){var b=!(arguments.length<=1||void 0===arguments[1])&&arguments[1];if(b===!0)delete this.eventPool[a];else{var c=this.eventPool[a];c&&(c.currentState="REMOVED");}},a.prototype.hasDataToSend=function(){for(var a=Object.keys(this.eventPool),b=0;b<a.length;++b)if(this.eventPool[a[b]].events.length>0)return!0;return!1},a.prototype.sendData=function(){var a=this,b=arguments.length<=0||void 0===arguments[0]||arguments[0],c=!(arguments.length<=1||void 0===arguments[1])&&arguments[1];if(!this.pendingRequest_){var d=!1;this.pendingRequest_=!0;var e=void 0;e="undefined"!=typeof Worker&&this.props_.disableWebWorkers!==!0?m.setTimeout(function(){a.pendingRequest_=!1,e=void 0;},2*this.EVENT_PURGE_TIME_DEFAULT):setTimeout(function(){a.pendingRequest_=!1,e=void 0;},2*this.EVENT_PURGE_TIME_DEFAULT);var f=Object.keys(this.eventPool);f.map(function(f){var g=a.eventPool[f];if(g){if(!f)return g.events=[],void a.removeSession(f,!0);if("PLAYING"===g.currentState&&0===g.events.length&&c&&g.events.push({EventType:"Playback.Heartbeat",Timestamp:(new Date).getTime(),OffsetTime:Math.floor(1e3*g.currentTime)}),"IDLE"!==g.currentState&&"REMOVED"!==g.currentState){if(0===g.events.length)return void("FINISHED"===g.currentState&&a.removeSession(f));var h={DispatchTime:(new Date).getTime(),Customer:a.customer_,BusinessUnit:a.businessUnit_,Payload:g.events,SessionId:f,ClockOffset:g.clockOffset};if(a.debugLog("Sending analytics - sessionId: "+f+" and params: ",h),g.retries>a.MAX_RETRIES||g.forbidden===!0)return void(g.events=[]);Math.abs(a.communicationCurrentDate-a.lastCommunicationDate)>a.DEVICE_CLOCK_CHECK_THRESHOLD&&a.initRequest(f).then(function(){}),d=!0,a.sendRequest(b,h,function(b,c){if(e)try{"undefined"!=typeof Worker&&a.props_.disableWebWorkers!==!0?(m.clearTimeout(e),e=void 0):(clearTimeout(e),e=void 0);}catch(d){}a.pendingRequest_=!1;var h=b&&b.httpCode?b.httpCode:200;"undefined"!=typeof c||200!==h?(401===h&&(g.forbidden=!0),a.debugLog("Error sending request to backend",c),g.retries++):(g.events=[],g.retries=0,"FINISHED"===g.currentState&&a.removeSession(f));});}}}),d||(this.pendingRequest_=!1);}},a.prototype.cycle=function(){var a=arguments.length<=0||void 0===arguments[0]||arguments[0],b=!(arguments.length<=1||void 0===arguments[1])&&arguments[1];this.communicationCurrentDate=new Date,this.communicationCurrentTime+=this.CYCLE_TIME,this.hasDataToSend()?(b||this.lastCommunicationTime+this.EVENT_PURGE_TIME_DEFAULT<this.communicationCurrentTime)&&(this.sendData(a),this.lastCommunicationTime=this.communicationCurrentTime,this.lastCommunicationDate=this.communicationCurrentDate):(b||this.lastCommunicationTime+this.TIME_WITHOUT_BEAT_DEFAULT<this.communicationCurrentTime)&&(this.sendData(a,!0),this.lastCommunicationTime=this.communicationCurrentTime,this.lastCommunicationDate=this.communicationCurrentDate);},a.prototype.sendRequest=function(a,b,c){var d=new XMLHttpRequest;d.open("POST",this.serverURL_+"/eventsink/send",!0),d.setRequestHeader("Content-type","application/json"),d.setRequestHeader("Authorization","Bearer "+this.sessionToken_),d.onload=function(){var a=JSON.parse(this.responseText);c(a);},d.onerror=function(a){c(null,a);},d.send(JSON.stringify(b));},a.prototype.initRequest=function(a){var b=this;return new Promise(function(c,d){var e=(new Date).getTime(),f=new XMLHttpRequest;f.open("POST",b.serverURL_+"/eventsink/init",!0),f.setRequestHeader("Content-type","application/json"),f.setRequestHeader("Authorization","Bearer "+b.sessionToken_),f.onload=function(){var d=(new Date).getTime(),g=JSON.parse(f.responseText);if(b.determineClockOffset(a,g,e,d),g&&g.settings){g.settings;g.settings.includeDeviceMetrics&&(b.includeDeviceMetrics_=!!g.settings.includeDeviceMetrics);}c();},f.onerror=function(a){b.debugLog("Unable to init. Aborting."),d(a);};var g={Customer:b.customer_,BusinessUnit:b.businessUnit_,SessionId:a};f.send(JSON.stringify(g));})},a.prototype.debugLog=function(a,b){b=b||"",this.debug_;},a.prototype.addDeviceInfoEvent=function(a){var b=this.eventPool[a];if(this.includeDeviceMetrics_&&b&&b.events&&b.events.length){var c={Timestamp:(new Date).getTime(),EventType:"Device.Info",DeviceModel:this.deviceInfoData_.deviceModel||"Desktop",UserAgent:this.deviceInfoData_.userAgent||i["default"].navigator.userAgent,Height:this.deviceInfoData_.screenHeight||i["default"].screen.height,Width:this.deviceInfoData_.screenWidth||i["default"].screen.width,Model:this.deviceInfoData_.model||i["default"].navigator.appName,Name:this.deviceInfoData_.deviceName||i["default"].navigator.product,OS:this.deviceInfoData_.deviceOS||k["default"].os.family,OSVersion:this.deviceInfoData_.deviceOSVersion||k["default"].os.version,Type:this.deviceInfoData_.type||"WEB"};(this.deviceInfoData_.deviceManufacturer||k["default"].manufacturer)&&(c.Manufacturer=this.deviceInfoData_.deviceManufacturer||k["default"].manufacturer),this.deviceInfoData_.deviceId&&(c.DeviceId=this.deviceInfoData_.deviceId),b.events.push(c);}},a.prototype.determineClockOffset=function(a,b,c,d){var e=this.eventPool[a];e&&(e.clockOffset=Math.floor((d-b.repliedTime+c-b.receivedTime)/2));},a.prototype.createPool=function(a){var b=this;return new Promise(function(c,d){b.eventPool[a]={currentState:"IDLE",currentTime:0,clockOffset:0,events:[],retries:0,forbidden:!1},b.initRequest(a).then(function(){b.addDeviceInfoEvent(a),c();})["catch"](function(a){d(a);});})},a.prototype.addEventToPool=function(a,b,c){var d=this,e=!(arguments.length<=3||void 0===arguments[3])&&arguments[3];if(!e||!this.eventPool[a]||"FINISHED"!==this.eventPool[a].currentState&&"REMOVED"!==this.eventPool[a].currentState){var f;this.eventPool[a]||(f=this.createPool(a)),f?f.then(function(){d.internalAddEventToPool(a,b,c);}):this.internalAddEventToPool(a,b,c);}},a.prototype.internalAddEventToPool=function(a,b,c){var d=this.eventsSkeleton[b.type];if(!d)return void this.debugLog("Unknown playback event: ",b);var e={Timestamp:(new Date).getTime(),EventType:"Playback."+d.event};d.includeOffset&&(e.OffsetTime=Math.floor(1e3*b.currentTime)),d.attributes&&"function"==typeof d.attributes&&(e=this.objectAssign(e,d.attributes(c))),this.eventPool[a].events.push(e),this.debugLog("added "+d.event+" to queue");},a.prototype.changeSessionState=function(a,b){var c,d=this;this.eventPool[a]||(c=this.createPool(a)),c?c.then(function(){d.eventPool[a].currentState=b;}):this.eventPool[a].currentState=b;},a.prototype.initEventSkeleton=function(){var b={};return b.Completed={event:"Completed",autoListener:!1},b.PlayerReady={event:"PlayerReady",autoListener:!1,attributes:function(b){var c={Technology:b.techName,PlayerVersion:b.version};return b.techVersion&&(c.TechVersion=b.techVersion),c.AnalyticsVersion=a.VERSION,b.deviceAppInfo&&(c.DeviceAppInfo=b.deviceAppInfo),b.playMode&&(c.PlayMode=b.playMode),c}},b.Resumed={event:"Resumed",autoListener:!1,includeOffset:!0},b.BufferingStarted={event:"BufferingStarted",includeOffset:!0},b.BufferingEnded={event:"BufferingEnded",includeOffset:!0},b.ScrubbedTo={event:"ScrubbedTo",includeOffset:!0},b.Created={event:"Created",attributes:function(a){var b={};return"undefined"!=typeof a.autoplay&&(b.AutoPlay=a.autoplay),a.techName&&(b.Technology=a.techName),a.player&&(b.Player=a.player),a.version&&(b.Version=a.version),a.requestId&&(b.RequestId=a.requestId),a.techVersion&&(b.TechVersion=a.techVersion),a.deviceAppInfo&&(b.DeviceAppInfo=a.deviceAppInfo),a.playMode&&(b.PlayMode=a.playMode),b}},b.StartCasting={event:"StartCasting",includeOffset:!0},b.StopCasting={event:"StopCasting",includeOffset:!0},b.Paused={event:"Paused",includeOffset:!0},b.BitrateChanged={event:"BitrateChanged",includeOffset:!0,attributes:function(a){return{Bitrate:a.bitrate}}},b.DRM={event:"DRM",includeOffset:!1,attributes:function c(a){var c={};return a.message&&(c.Message=a.message),a.code&&(c.Code=a.code),a.info&&(c.Info=a.info),c}},b.Error={event:"Error",includeOffset:!0,attributes:function d(a){var d={};return a.errorCode&&(d.Code=a.errorCode),a.errorMessage?d.Message=a.errorMessage:d.Message="Unknown Error",a.errorInfo&&(d.Info=a.errorInfo),a.errorDetails&&(d.Details=a.errorDetails),d}},b.HandshakeStarted={event:"HandshakeStarted",autoListener:!1,attributes:function e(a){if(!a.assetId)return{};var e={AssetId:a.assetId};return a.programId&&(e.ProgramId=a.programId),e}},b.ProgramChanged={event:"ProgramChanged",includeOffset:!0,autoListener:!1,attributes:function(a){return a.programId?{ProgramId:a.programId}:{}}},b.Aborted={event:"Aborted",autoListener:!1,includeOffset:!0},b.Started={event:"Started",autoListener:!1,includeOffset:!0,attributes:function f(a){var f={};return a.bitrate&&(f.Bitrate=a.bitrate),a.duration&&(f.VideoLength=1e3*a.duration),a.mediaLocator&&(f.MediaLocator=a.mediaLocator),a.attributes&&(f.Attributes=a.attributes),a.referenceTime&&(f.ReferenceTime=a.referenceTime),a.playMode&&(f.PlayMode=a.playMode),f}},b},a.prototype.objectAssign=function(a,b){for(var c,d,e=1;e<arguments.length;++e){d=arguments[e];for(c in d)Object.prototype.hasOwnProperty.call(d,c)&&(a[c]=d[c]);}return a},g(a,[{key:"debug",get:function(){return this.debug_},set:function(a){this.debug_=a;}},{key:"deviceAppInfo",get:function(){return this.deviceInfoData_?this.deviceInfoData_.deviceAppInfo:null}}]),a}();n.VERSION="2.0.93-7",c["default"]=n,b.exports=c["default"];},{"./platform":6,"global/window":1,"worker-timers":2}],6:[function(b,c,d){(function(b){"use strict";(function(){function e(a){return a=String(a),a.charAt(0).toUpperCase()+a.slice(1)}function f(a,b,c){var d={"10.0":"10",6.4:"10 Technical Preview",6.3:"8.1",6.2:"8",6.1:"7 / Server 2008 R2","6.0":"Vista / Server 2008",5.2:"XP 64-bit / Server 2003",5.1:"XP",5.01:"2000 SP1","5.0":"2000","4.0":"NT","4.90":"ME"};return b&&c&&/^Win/i.test(a)&&!/^Windows Phone /i.test(a)&&(d=d[/[\d.]+$/.exec(a)])&&(a="Windows "+d),a=String(a),b&&c&&(a=a.replace(RegExp(b,"i"),c)),a=h(a.replace(/ ce$/i," CE").replace(/\bhpw/i,"web").replace(/\bMacintosh\b/,"Mac OS").replace(/_PowerPC\b/i," OS").replace(/\b(OS X) [^ \d]+/i,"$1").replace(/\bMac (OS X)\b/,"$1").replace(/\/(\d)/," $1").replace(/_/g,".").replace(/(?: BePC|[ .]*fc[ \d.]+)$/i,"").replace(/\bx86\.64\b/gi,"x86_64").replace(/\b(Windows Phone) OS\b/,"$1").replace(/\b(Chrome OS \w+) [\d.]+\b/,"$1").split(" on ")[0])}function g(a,b){var c=-1,d=a?a.length:0;if("number"==typeof d&&d>-1&&d<=v)for(;++c<d;)b(a[c],c,a);else i(a,b);}function h(a){return a=n(a),/^(?:webOS|i(?:OS|P))/.test(a)?a:e(a)}function i(a,b){for(var c in a)z.call(a,c)&&b(a[c],c,a);}function j(a){return null==a?e(a):A.call(a).slice(8,-1)}function k(a,b){var c=null!=a?typeof a[b]:"number";return!(/^(?:boolean|number|string|undefined)$/.test(c)||"object"==c&&!a[b])}function l(a){return String(a).replace(/([ -])(?!$)/g,"$1?")}function m(a,b){var c=null;return g(a,function(d,e){c=b(c,d,e,a);}),c}function n(a){return String(a).replace(/^ +| +$/g,"")}function o(a){function b(b){return m(b,function(b,c){return b||RegExp("\\b"+(c.pattern||l(c))+"\\b","i").exec(a)&&(c.label||c)})}function c(b){return m(b,function(b,c,d){return b||(c[X]||c[/^[a-z]+(?: +[a-z]+\b)*/i.exec(X)]||RegExp("\\b"+l(d)+"(?:\\b|\\w*\\d)","i").exec(a))&&d})}function d(b){return m(b,function(b,c){return b||RegExp("\\b"+(c.pattern||l(c))+"\\b","i").exec(a)&&(c.label||c)})}function e(b){return m(b,function(b,c){var d=c.pattern||l(c);return!b&&(b=RegExp("\\b"+d+"(?:/[\\d.]+|[ \\w.]*)","i").exec(a))&&(b=f(b,d,c.label||c)),b})}function g(b){return m(b,function(b,c){var d=c.pattern||l(c);return!b&&(b=RegExp("\\b"+d+" *\\d+[.\\w_]*","i").exec(a)||RegExp("\\b"+d+"(?:; *(?:[a-z]+[_-])?[a-z]+\\d+|[^ ();-]*)","i").exec(a))&&((b=String(c.label&&!RegExp(d,"i").test(c.label)?c.label:b).split("/"))[1]&&!/[\d.]+/.test(b[0])&&(b[0]+=" "+b[1]),c=c.label||c,b=h(b[0].replace(RegExp(d,"i"),c).replace(RegExp("; *(?:"+c+"[_-])?","i")," ").replace(RegExp("("+c+")[-_.]?(\\w)","i"),"$1 $2"))),b})}function p(b){return m(b,function(b,c){return b||(RegExp(c+"(?:-[\\d.]+/|(?: for [\\w-]+)?[ /-])([\\d.]+[^ ();/_-]*)","i").exec(a)||0)[1]||null})}function s(){return this.description||""}var t=q,u=a&&"object"==typeof a&&"String"!=j(a);u&&(t=a,a=null);var v=t.navigator||{},y=v.userAgent||"";a||(a=y);var z,B,C=u||x==r,D=u?!!v.likeChrome:/\bChrome\b/.test(a)&&!/internal|\n/i.test(A.toString()),E="Object",F=u?E:"ScriptBridgingProxyObject",G=u?E:"Environment",H=u&&t.java?"JavaPackage":j(t.java),I=u?E:"RuntimeObject",J=/\bJava/.test(H)&&t.java,K=J&&j(t.environment)==G,L=J?"a":"α",M=J?"b":"β",N=t.document||{},O=t.operamini||t.opera,P=w.test(P=u&&O?O["[[Class]]"]:j(O))?P:O=null,Q=a,R=[],S=null,T=a==y,U=T&&O&&"function"==typeof O.version&&O.version(),V=b([{label:"EdgeHTML",pattern:"Edge"},"Trident",{label:"WebKit",pattern:"AppleWebKit"},"iCab","Presto","NetFront","Tasman","KHTML","Gecko"]),W=d(["Adobe AIR","Arora","Avant Browser","Breach","Camino","Epiphany","Fennec","Flock","Galeon","GreenBrowser","iCab","Iceweasel","K-Meleon","Konqueror","Lunascape","Maxthon",{label:"Microsoft Edge",pattern:"Edge"},"Midori","Nook Browser","PaleMoon","PhantomJS","Raven","Rekonq","RockMelt","SeaMonkey",{label:"Silk",pattern:"(?:Cloud9|Silk-Accelerated)"},"Sleipnir","SlimBrowser",{label:"SRWare Iron",pattern:"Iron"},"Sunrise","Swiftfox","WebPositive","Opera Mini",{label:"Opera Mini",pattern:"OPiOS"},"Opera",{label:"Opera",pattern:"OPR"},"Chrome",{label:"Chrome Mobile",pattern:"(?:CriOS|CrMo)"},{label:"Firefox",pattern:"(?:Firefox|Minefield)"},{label:"Firefox Mobile",pattern:"FxiOS"},{label:"IE",pattern:"IEMobile"},{label:"IE",pattern:"MSIE"},"Safari"]),X=g([{label:"BlackBerry",pattern:"BB10"},"BlackBerry",{label:"Galaxy S",pattern:"GT-I9000"},{label:"Galaxy S2",pattern:"GT-I9100"},{label:"Galaxy S3",pattern:"GT-I9300"},{label:"Galaxy S4",pattern:"GT-I9500"},"Google TV","Lumia","iPad","iPod","iPhone","Kindle",{label:"Kindle Fire",pattern:"(?:Cloud9|Silk-Accelerated)"},"Nexus","Nook","PlayBook","PlayStation 3","PlayStation 4","PlayStation Vita","TouchPad","Transformer",{label:"Wii U",pattern:"WiiU"},"Wii","Xbox One",{label:"Xbox 360",pattern:"Xbox"},"Xoom"]),Y=c({Apple:{iPad:1,iPhone:1,iPod:1},Amazon:{Kindle:1,"Kindle Fire":1},Asus:{Transformer:1},"Barnes & Noble":{Nook:1},BlackBerry:{PlayBook:1},Google:{"Google TV":1,Nexus:1},HP:{TouchPad:1},HTC:{},LG:{},Microsoft:{Xbox:1,"Xbox One":1},Motorola:{Xoom:1},Nintendo:{"Wii U":1,Wii:1},Nokia:{Lumia:1},Samsung:{"Galaxy S":1,"Galaxy S2":1,"Galaxy S3":1,"Galaxy S4":1},Sony:{"PlayStation 4":1,"PlayStation 3":1,"PlayStation Vita":1}}),Z=e(["Windows Phone ","Android","CentOS",{label:"Chrome OS",pattern:"CrOS"},"Debian","Fedora","FreeBSD","Gentoo","Haiku","Kubuntu","Linux Mint","OpenBSD","Red Hat","SuSE","Ubuntu","Xubuntu","Cygwin","Symbian OS","hpwOS","webOS ","webOS","Tablet OS","Linux","Mac OS X","Macintosh","Mac","Windows 98;","Windows "]);if(V&&(V=[V]),Y&&!X&&(X=g([Y])),(z=/\bGoogle TV\b/.exec(X))&&(X=z[0]),/\bSimulator\b/i.test(a)&&(X=(X?X+" ":"")+"Simulator"),"Opera Mini"==W&&/\bOPiOS\b/.test(a)&&R.push("running in Turbo/Uncompressed mode"),/^iP/.test(X)?(W||(W="Safari"),Z="iOS"+((z=/ OS ([\d_]+)/i.exec(a))?" "+z[1].replace(/_/g,"."):"")):"Konqueror"!=W||/buntu/i.test(Z)?Y&&"Google"!=Y&&(/Chrome/.test(W)&&!/\bMobile Safari\b/i.test(a)||/\bVita\b/.test(X))?(W="Android Browser",Z=/\bAndroid\b/.test(Z)?Z:"Android"):"Silk"==W?(/\bMobi/i.test(a)||(Z="Android",R.unshift("desktop mode")),/Accelerated *= *true/i.test(a)&&R.unshift("accelerated")):"PaleMoon"==W&&(z=/\bFirefox\/([\d.]+)\b/.exec(a))?R.push("identifying as Firefox "+z[1]):"Firefox"==W&&(z=/\b(Mobile|Tablet|TV)\b/i.exec(a))?(Z||(Z="Firefox OS"),X||(X=z[1])):W&&!(z=!/\bMinefield\b/i.test(a)&&/\b(?:Firefox|Safari)\b/.exec(W))||(W&&!X&&/[\/,]|^[^(]+?\)/.test(a.slice(a.indexOf(z+"/")+8))&&(W=null),(z=X||Y||Z)&&(X||Y||/\b(?:Android|Symbian OS|Tablet OS|webOS)\b/.test(Z))&&(W=/[a-z]+(?: Hat)?/i.exec(/\bAndroid\b/.test(Z)?Z:z)+" Browser")):Z="Kubuntu",U||(U=p(["(?:Cloud9|CriOS|CrMo|Edge|FxiOS|IEMobile|Iron|Opera ?Mini|OPiOS|OPR|Raven|Silk(?!/[\\d.]+$))","Version",l(W),"(?:Firefox|Minefield|NetFront)"])),(z="iCab"==V&&parseFloat(U)>3&&"WebKit"||/\bOpera\b/.test(W)&&(/\bOPR\b/.test(a)?"Blink":"Presto")||/\b(?:Midori|Nook|Safari)\b/i.test(a)&&!/^(?:Trident|EdgeHTML)$/.test(V)&&"WebKit"||!V&&/\bMSIE\b/i.test(a)&&("Mac OS"==Z?"Tasman":"Trident")||"WebKit"==V&&/\bPlayStation\b(?! Vita\b)/i.test(W)&&"NetFront")&&(V=[z]),"IE"==W&&(z=(/; *(?:XBLWP|ZuneWP)(\d+)/i.exec(a)||0)[1])?(W+=" Mobile",Z="Windows Phone "+(/\+$/.test(z)?z:z+".x"),R.unshift("desktop mode")):/\bWPDesktop\b/i.test(a)?(W="IE Mobile",Z="Windows Phone 8.x",R.unshift("desktop mode"),U||(U=(/\brv:([\d.]+)/.exec(a)||0)[1])):"IE"!=W&&"Trident"==V&&(z=/\brv:([\d.]+)/.exec(a))&&(W&&R.push("identifying as "+W+(U?" "+U:"")),W="IE",U=z[1]),T){if(k(t,"global"))if(J&&(z=J.lang.System,Q=z.getProperty("os.arch"),Z=Z||z.getProperty("os.name")+" "+z.getProperty("os.version")),C&&k(t,"system")&&(z=[t.system])[0]){Z||(Z=z[0].os||null);try{z[1]=t.require("ringo/engine").version,U=z[1].join("."),W="RingoJS";}catch($){z[0].global.system==t.system&&(W="Narwhal");}}else"object"==typeof t.process&&(z=t.process)?(W="Node.js",Q=z.arch,Z=z.platform,U=/[\d.]+/.exec(z.version)[0]):K&&(W="Rhino");else j(z=t.runtime)==F?(W="Adobe AIR",Z=z.flash.system.Capabilities.os):j(z=t.phantom)==I?(W="PhantomJS",U=(z=z.version||null)&&z.major+"."+z.minor+"."+z.patch):"number"==typeof N.documentMode&&(z=/\bTrident\/(\d+)/i.exec(a))&&(U=[U,N.documentMode],(z=+z[1]+4)!=U[1]&&(R.push("IE "+U[1]+" mode"),V&&(V[1]=""),U[1]=z),U="IE"==W?String(U[1].toFixed(1)):U[0]);Z=Z&&h(Z);}U&&(z=/(?:[ab]|dp|pre|[ab]\d+pre)(?:\d+\+?)?$/i.exec(U)||/(?:alpha|beta)(?: ?\d)?/i.exec(a+";"+(T&&v.appMinorVersion))||/\bMinefield\b/i.test(a)&&"a")&&(S=/b/i.test(z)?"beta":"alpha",U=U.replace(RegExp(z+"\\+?$"),"")+("beta"==S?M:L)+(/\d+\+?/.exec(z)||"")),"Fennec"==W||"Firefox"==W&&/\b(?:Android|Firefox OS)\b/.test(Z)?W="Firefox Mobile":"Maxthon"==W&&U?U=U.replace(/\.[\d.]+/,".x"):/\bXbox\b/i.test(X)?(Z=null,"Xbox 360"==X&&/\bIEMobile\b/.test(a)&&R.unshift("mobile mode")):!/^(?:Chrome|IE|Opera)$/.test(W)&&(!W||X||/Browser|Mobi/.test(W))||"Windows CE"!=Z&&!/Mobi/i.test(a)?"IE"==W&&T&&null===t.external?R.unshift("platform preview"):(/\bBlackBerry\b/.test(X)||/\bBB10\b/.test(a))&&(z=(RegExp(X.replace(/ +/g," *")+"/([.\\d]+)","i").exec(a)||0)[1]||U)?(z=[z,/BB10/.test(a)],Z=(z[1]?(X=null,Y="BlackBerry"):"Device Software")+" "+z[0],U=null):this!=i&&"Wii"!=X&&(T&&O||/Opera/.test(W)&&/\b(?:MSIE|Firefox)\b/i.test(a)||"Firefox"==W&&/\bOS X (?:\d+\.){2,}/.test(Z)||"IE"==W&&(Z&&!/^Win/.test(Z)&&U>5.5||/\bWindows XP\b/.test(Z)&&U>8||8==U&&!/\bTrident\b/.test(a)))&&!w.test(z=o.call(i,a.replace(w,"")+";"))&&z.name&&(z="ing as "+z.name+((z=z.version)?" "+z:""),w.test(W)?(/\bIE\b/.test(z)&&"Mac OS"==Z&&(Z=null),
+z="identify"+z):(z="mask"+z,W=P?h(P.replace(/([a-z])([A-Z])/g,"$1 $2")):"Opera",/\bIE\b/.test(z)&&(Z=null),T||(U=null)),V=["Presto"],R.push(z)):W+=" Mobile",(z=(/\bAppleWebKit\/([\d.]+\+?)/i.exec(a)||0)[1])&&(z=[parseFloat(z.replace(/\.(\d)$/,".0$1")),z],"Safari"==W&&"+"==z[1].slice(-1)?(W="WebKit Nightly",S="alpha",U=z[1].slice(0,-1)):U!=z[1]&&U!=(z[2]=(/\bSafari\/([\d.]+\+?)/i.exec(a)||0)[1])||(U=null),z[1]=(/\bChrome\/([\d.]+)/i.exec(a)||0)[1],537.36==z[0]&&537.36==z[2]&&parseFloat(z[1])>=28&&"WebKit"==V&&(V=["Blink"]),T&&(D||z[1])?(V&&(V[1]="like Chrome"),z=z[1]||(z=z[0],z<530?1:z<532?2:z<532.05?3:z<533?4:z<534.03?5:z<534.07?6:z<534.1?7:z<534.13?8:z<534.16?9:z<534.24?10:z<534.3?11:z<535.01?12:z<535.02?"13+":z<535.07?15:z<535.11?16:z<535.19?17:z<536.05?18:z<536.1?19:z<537.01?20:z<537.11?"21+":z<537.13?23:z<537.18?24:z<537.24?25:z<537.36?26:"Blink"!=V?"27":"28")):(V&&(V[1]="like Safari"),z=z[0],z=z<400?1:z<500?2:z<526?3:z<533?4:z<534?"4+":z<535?5:z<537?6:z<538?7:z<601?8:"8"),V&&(V[1]+=" "+(z+="number"==typeof z?".x":/[.+]/.test(z)?"":"+")),"Safari"==W&&(!U||parseInt(U)>45)&&(U=z)),"Opera"==W&&(z=/\bzbov|zvav$/.exec(Z))?(W+=" ",R.unshift("desktop mode"),"zvav"==z?(W+="Mini",U=null):W+="Mobile",Z=Z.replace(RegExp(" *"+z+"$"),"")):"Safari"==W&&/\bChrome\b/.exec(V&&V[1])&&(R.unshift("desktop mode"),W="Chrome Mobile",U=null,/\bOS X\b/.test(Z)?(Y="Apple",Z="iOS 4.3+"):Z=null),U&&0==U.indexOf(z=/[\d.]+$/.exec(Z))&&a.indexOf("/"+z+"-")>-1&&(Z=n(Z.replace(z,""))),V&&!/\b(?:Avant|Nook)\b/.test(W)&&(/Browser|Lunascape|Maxthon/.test(W)||"Safari"!=W&&/^iOS/.test(Z)&&/\bSafari\b/.test(V[1])||/^(?:Adobe|Arora|Breach|Midori|Opera|Phantom|Rekonq|Rock|Sleipnir|Web)/.test(W)&&V[1])&&(z=V[V.length-1])&&R.push(z),R.length&&(R=["("+R.join("; ")+")"]),Y&&X&&X.indexOf(Y)<0&&R.push("on "+Y),X&&R.push((/^on /.test(R[R.length-1])?"":"on ")+X),Z&&(z=/ ([\d.+]+)$/.exec(Z)||(B=/^[a-z]+ ([\d.+]+) \//i.exec(Z)),Z={architecture:32,family:z&&!B?Z.replace(z[0],""):Z,version:z?z[1]:null,toString:function(){var a=this.version;return this.family+(a&&!B?" "+a:"")+(64==this.architecture?" 64-bit":"")}}),(z=/\b(?:AMD|IA|Win|WOW|x86_|x)64\b/i.exec(Q))&&!/\bi686\b/i.test(Q)&&(Z&&(Z.architecture=64,Z.family=Z.family.replace(RegExp(" *"+z),"")),W&&(/\bWOW64\b/i.test(a)||T&&/\w(?:86|32)$/.test(v.cpuClass||v.platform)&&!/\bWin64; x64\b/i.test(a))&&R.unshift("32-bit")),a||(a=null);var _={};return _.description=a,_.layout=V&&V[0],_.manufacturer=Y,_.name=W,_.prerelease=S,_.product=X,_.ua=a,_.version=W&&U,_.os=Z||{architecture:null,family:null,version:null,toString:function(){return"null"}},_.parse=o,_.toString=s,_.version&&R.unshift(U),_.name&&R.unshift(W),Z&&W&&(Z!=String(Z).split(" ")[0]||Z!=W.split(" ")[0]&&!X)&&R.push(X?"("+Z+")":"on "+Z),R.length&&(_.description=R.join(" ")),_}var p={"function":!0,object:!0},q=p[typeof window]&&window||this,r=q,s=p[typeof d]&&d,t=p[typeof c]&&c&&!c.nodeType&&c,u=s&&t&&"object"==typeof b&&b;!u||u.global!==u&&u.window!==u&&u.self!==u||(q=u);var v=Math.pow(2,53)-1,w=/\bOpera/,x=this,y=Object.prototype,z=y.hasOwnProperty,A=y.toString;"function"==typeof a&&"object"==typeof a.amd&&a.amd?a(function(){return o()}):s&&t?i(o(),function(a,b){s[b]=a;}):q.platform=o();}).call(void 0);}).call(this,"undefined"!=typeof commonjsGlobal?commonjsGlobal:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{});},{}]},{},[5])(5)});
+});
+
+var empAnalyticsTmp = unwrapExports(empAnalytics_min);
+
+/**
+* @file emp-analytics.js
+* @module EmpAnalytics
+*/
+//Override if external defined for debug
+var EMPAnalytics = window_1.empAnalytics ? window_1.empAnalytics : empAnalyticsTmp;
+var Plugin = videojs$1.getPlugin('plugin');
+
+/**
+ * 
+ * @param {Player} player The `Player` that this class should be attached to.
+ * @param {Object=} options The key/value store of player options.
+ * @class AnalyticsPlugin
+ */
+
+var AnalyticsPlugin = function (_Plugin) {
+  inherits(AnalyticsPlugin, _Plugin);
+
+  function AnalyticsPlugin(player, options) {
+    classCallCheck(this, AnalyticsPlugin);
+
+    var _this = possibleConstructorReturn(this, _Plugin.call(this, player, options));
+
+    log$1('AnalyticsPlugin', 'create');
+    _this.analyticsConnector_ = null;
+    _this.options_ = options;
+    _this.onLoadStartBind = _this.onLoadStart_.bind(_this);
+    _this.player.on(empPlayerEvents.LOAD_START, _this.onLoadStartBind);
+    var client = detectClient();
+    _this.options_ = _this.options_ ? _this.options_ : {};
+    _this.options_.analytics = _this.options_.analytics ? _this.options_.analytics : {};
+    _this.options_.analytics.deviceInfo = _this.options_.analytics.deviceInfo ? _this.options_.analytics.deviceInfo : {};
+    _this.options_.analytics.deviceInfo = videojs$1.mergeOptions({
+      'deviceName': client.name,
+      'model': client.version
+    }, _this.options_.analytics.deviceInfo);
+    return _this;
+  }
+
+  /**
+   *  stop Analytics
+   */
+
+
+  AnalyticsPlugin.prototype.stop = function stop() {
+    if (this.analyticsConnector_ && this.analyticsConnector_.dispose) {
+      this.analyticsConnector_.dispose();
+      this.analyticsConnector_ = null;
+    }
+  };
+
+  /**
+   * stopCasting
+   */
+
+
+  AnalyticsPlugin.prototype.stopCasting = function stopCasting() {
+    if (this.analyticsConnector_ && this.analyticsConnector_.dispose) {
+      this.analyticsConnector_.onChromeCastingStop(true);
+      this.analyticsConnector_ = null;
+    }
+  };
+
+  /**
+   * dispose Analytics
+   */
+
+
+  AnalyticsPlugin.prototype.dispose = function dispose() {
+    log$1('AnalyticsPlugin', 'dispose');
+    this.player.off(empPlayerEvents.LOAD_START, this.onLoadStartBind);
+    this.stop();
+    _Plugin.prototype.dispose.call(this);
+  };
+
+  /**
+   * Set or get the key/value store of analytics options.
+   *
+   * @param {Object=} obj options
+   * @returns {Object=} options
+   */
+
+
+  AnalyticsPlugin.prototype.options = function options(obj) {
+    if (!obj) {
+      return this.options_;
+    }
+    this.options_ = videojs$1.mergeOptions(this.options_, obj);
+  };
+
+  /**
+   * Create a new Analytics session
+   * @param {Object=} obj options
+   */
+
+
+  AnalyticsPlugin.prototype.newAnalytics = function newAnalytics(opt) {
+    log$1('new EMPAnalytics');
+    //exposureApiURL, customer, businessUnit, sessionToken, userId, deviceInfoData = {}, props = {}
+
+    var analytics = new EMPAnalytics(opt.exposureApiURL, opt.customer, opt.businessUnit, opt.sessionToken, opt.userId, this.options_.analytics && this.options_.analytics.deviceInfo);
+    this.stop();
+    log$1('new EMPAnalyticsConnector');
+    this.analyticsConnector_ = new EMPAnalyticsConnector(this.player, analytics, this.options_);
+  };
+
+  /**
+   * Getter for analyticsConnector
+   *
+   */
+
+
+  /**
+   * Call onEntitlementLoadStart
+   */
+  AnalyticsPlugin.prototype.onEntitlementLoadStart = function onEntitlementLoadStart() {
+    this.analyticsConnector_ && this.analyticsConnector_.onEntitlementLoadStart();
+  };
+
+  /**
+   * Call onError
+   * @param {Error} e
+   */
+
+
+  AnalyticsPlugin.prototype.onError = function onError(e) {
+    this.analyticsConnector_ && this.analyticsConnector_.onError(e);
+  };
+
+  /**
+   * Call onWindowUnload
+   */
+
+
+  AnalyticsPlugin.prototype.onWindowUnload = function onWindowUnload() {
+    this.analyticsConnector_ && this.analyticsConnector_.onWindowUnload();
+  };
+
+  /**
+   *  Handle onLoadStart event 
+   * @param {object} event
+   * @private
+   */
+
+
+  AnalyticsPlugin.prototype.onLoadStart_ = function onLoadStart_(event) {
+    //if no entitlement stop analytics
+    if (!extplayer.getEntitlement(this.player)) {
+      this.stop();
+    }
+  };
+
+  AnalyticsPlugin.prototype.version = function version() {
+    if (EMPAnalytics) {
+      return EMPAnalytics.VERSION;
+    } else {
+      return _Plugin.prototype.version.call(this);
+    }
+  };
+
+  createClass(AnalyticsPlugin, [{
+    key: 'connector',
+    get: function get$$1() {
+      return this.analyticsConnector_;
+    }
+  }]);
+  return AnalyticsPlugin;
+}(Plugin);
+
+AnalyticsPlugin.VERSION = '2.1.95-228';
+
+if (videojs$1.getPlugin('analytics')) {
+  videojs$1.log.warn('A plugin named "analytics" already exists.');
+} else {
+  videojs$1.registerPlugin('analytics', AnalyticsPlugin);
 }
 
 /**
@@ -6673,12 +8853,15 @@ function canPlayEncrypted() {
  * @param {string}  [options.lastViewedTime=null] - Last viewed offset absolute time
  * @param {string}  [options.liveTime=null] - Last viewed offset liveTime
  * @param {Object}  [options.licenseServers] - licenseServers for dash
-
+ * @param {Object}  [options.requestId] - requestId for the play call
+ * @param {Object}  [options.adMediaLocator] - MediaLocator for ad override MediaLocator
+ * @param {Object}  [options.fairplayConfig] - fairplayConfig {certificateUrl, licenseAcquisitionUrl}
+ * @param {Object}  [options.widevineConfig]  - widevineConfig {certificateServer}
 
  */
 
 var Entitlement = function () {
-  function Entitlement(options) {
+  function Entitlement(options, serverTime) {
     classCallCheck(this, Entitlement);
 
     this.assetId = options.assetId || 0;
@@ -6688,12 +8871,17 @@ var Entitlement = function () {
     this.edrmConfig = options.edrmConfig || null;
     this.mediaLocator = options.mediaLocator || '';
     if (this.mediaLocator) {
-      this.src = this.mediaLocator.replace(/^(http:)/, '').replace(/^(https:)/, '');
+      if (location.hostname === 'localhost') {
+        this.src = this.mediaLocator;
+      } else {
+        this.src = this.mediaLocator.replace(/^(http:)/, '').replace(/^(https:)/, '');
+      }
     }
+    this.adMediaLocator = options.adMediaLocator || '';
     if (options.streamInfo) {
       this.streamInfo = options.streamInfo;
     } else {
-      this.setupStreamInfo(options.mediaLocator || '');
+      this.setupStreamInfo(serverTime);
     }
     this.mimeType = options.mimeType || '';
     this.entitlementType = options.entitlementType || '';
@@ -6721,20 +8909,36 @@ var Entitlement = function () {
       this.protection = {};
       this.protection.certificateUrl = options.fairplayConfig.certificateUrl || '';
       this.protection.licenseUrl = options.fairplayConfig.licenseAcquisitionUrl || '';
+      if (options.fairplayConfig.secondaryMediaLocator) {
+        this.protection.version = 'mrr';
+      } else {
+        this.protection.version = 'irdeto';
+      }
+    }
+    if (options.widevineConfig) {
+      this.certificateServer = options.widevineConfig.certificateUrl || '';
     }
     this.mdnRequestRouterUrl = options.mdnRequestRouterUrl || '';
     this.timeshiftEnabled = options.timeshiftEnabled;
     if (options.cencConfig) {
       this.licenseServers = options.cencConfig;
     }
+    this.requestId = options.requestId || '';
   }
 
-  Entitlement.prototype.setupStreamInfo = function setupStreamInfo() {
+  Entitlement.prototype.setupStreamInfo = function setupStreamInfo(serverTime) {
     this.streamInfo = { referenceTime: 0 };
     this.isDynamicCachupAsLive = false;
     this.isStaticCachupAsLive = false;
     if (this.mediaLocator) {
       var t = getParameterByName('t', this.mediaLocator);
+      if (!t) {
+        var dvr_window_length = getParameterByName('dvr_window_length', this.mediaLocator);
+        if (dvr_window_length) {
+          var nowDate = serverTime ? new Date(serverTime) : new Date();
+          t = new Date(nowDate.getTime() - dvr_window_length * 1000).toISOString().replace(/Z/g, "");
+        }
+      }
       if (t) {
         try {
           if (t && t.length === 47) {
@@ -6840,19 +9044,23 @@ var EntitlementError = function (_ExtendableError) {
     // Parse whatever we get
     var message = void 0;
     var fatal = true;
+    var code = EmpPlayerErrorCodes.ENTITLEMENT2;
     if (typeof error === 'string') {
       message = error;
     } else if (error instanceof Object) {
       message = error.message;
-
       if (error.fatal === false) {
         fatal = error.fatal;
+      }
+      if (error.code) {
+        code = error.code;
       }
     }
 
     var _this = possibleConstructorReturn(this, _ExtendableError.call(this, message));
 
     _this.fatal = fatal;
+    _this.code = code;
     return _this;
   }
 
@@ -6932,8 +9140,57 @@ var EntitlementEngine = function () {
     throw new EntitlementError('EntitlementEngine: getServerTime should be implemented in subclass.');
   };
 
+  /**
+  * Sync localtime with servertime
+  * @param {EntitlementEngine~getServerTimeCallback}  callback  Callback when localtime sync with servertime or an error occurs
+  */
+
+
+  EntitlementEngine.prototype.syncServerTime = function syncServerTime(callback) {
+    this.getServerTime(function (date, error) {
+      if (error) {
+        log$1.error('getServerTime', error);
+        date = new Date();
+      }
+      EntitlementEngine.ServerTimeDiff_ = date - new Date();
+      log$1('serverDiff', EntitlementEngine.ServerTimeDiff_);
+      if (callback) {
+        callback(EntitlementEngine.ServerTimeDiff_, error);
+      }
+    });
+  };
+
+  /**
+   * getCachedServerTime
+   * @returns {number}
+   */
+
+
   EntitlementEngine.prototype.getCachedServerTime = function getCachedServerTime() {
     return EntitlementEngine.ServerTimeDiff_ !== undefined ? Date.now() + EntitlementEngine.ServerTimeDiff_ : Date.now();
+  };
+
+  /**
+   * Get user preferences key/value pair of (audioLang, subtitlesLang)
+   *
+   * @param {EntitlementEngine~getPreferences}  callback  Callback with user Preferences
+   */
+
+
+  EntitlementEngine.prototype.getPreferences = function getPreferences(callback) {
+    throw new EntitlementError('EntitlementEngine: getPreferences should be implemented in subclass.');
+  };
+
+  /**
+  * Save user preferences (audioLang, subtitlesLang)
+  *
+  * @param {any} preferences key/value pair of (audioLang, subtitlesLang)
+  * @param {function} callback
+  */
+
+
+  EntitlementEngine.prototype.savePreferences = function savePreferences(preferences, callback) {
+    throw new EntitlementError('EntitlementEngine: savePreferences should be implemented in subclass.');
   };
 
   /**
@@ -6982,6 +9239,18 @@ var EntitlementEngine = function () {
   };
 
   /**
+  * 
+  * @param {String}    channelId Channel to fetch from
+  * @param {function}  callback Callback when entitlement is fetched
+  * @returns {object}   The program
+  */
+
+
+  EntitlementEngine.prototype.getChannelInfo = function getChannelInfo(channelId, callback) {
+    throw new EntitlementError('EntitlementEngine: getChannelInfo should be implemented in subclass.');
+  };
+
+  /**
    * Verifies if sessionToken is still valid
    * @param okFn - callback if session is ok
    * @param nokFn - callback if session is not ok
@@ -6990,6 +9259,18 @@ var EntitlementEngine = function () {
 
   EntitlementEngine.prototype.verifySession = function verifySession(okFn, nokFn) {
     throw new EntitlementError('EntitlementEngine: verifySession should be implemented in subclass.');
+  };
+
+  /**
+  * verify the entitlement
+  * @param {string} assetId
+  * @param {any} entitlement playRequest
+  * @param {function} callback
+  */
+
+
+  EntitlementEngine.prototype.verifyEntitlement = function verifyEntitlement(assetId, playRequest, callback) {
+    throw new EntitlementError('EntitlementEngine: verifyEntitlement should be implemented in subclass.');
   };
 
   /**
@@ -7081,8 +9362,11 @@ var EntitlementEngine = function () {
 
 
   EntitlementEngine.getEntitlementEngine = function getEntitlementEngine(name) {
+    name = name ? name : 'EricssonExposure';
     if (EntitlementEngine.engines_ && EntitlementEngine.engines_[name]) {
       return EntitlementEngine.engines_[name];
+    } else {
+      return null;
     }
   };
 
@@ -7090,9 +9374,6 @@ var EntitlementEngine = function () {
 }();
 
 EntitlementEngine.ServerTimeDiff_ = undefined;
-
-// Register ourselves
-EntitlementEngine.registerEntitlementEngine('EntitlementEngine', EntitlementEngine);
 
 var isFunction_1 = isFunction;
 
@@ -7239,7 +9520,7 @@ function forEachArray(array, iterator) {
     }
 }
 
-function isEmpty(obj){
+function isEmpty$1(obj){
     for(var i in obj){
         if(obj.hasOwnProperty(i)) return false
     }
@@ -7419,7 +9700,7 @@ function _createXHR(options) {
                 xhr.setRequestHeader(key, headers[key]);
             }
         }
-    } else if (options.headers && !isEmpty(options.headers)) {
+    } else if (options.headers && !isEmpty$1(options.headers)) {
         throw new Error("Headers cannot be set on an XDomainRequest object")
     }
 
@@ -7526,7 +9807,7 @@ var EricssonExposure = function (_EntitlementEngine) {
     var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     classCallCheck(this, EricssonExposure);
 
-    options = Object.assign({
+    options = assign({
       'exposureApiURL': 'https://exposure.emps.ebsd.ericsson.net',
       'exposureApiVersion': 'v1'
     }, options);
@@ -7616,7 +9897,7 @@ var EricssonExposure = function (_EntitlementEngine) {
           log$1.error('getServerTime', error);
           date = new Date();
         }
-        EntitlementEngine.ServerTimeDiff_ = new Date() - date;
+        EntitlementEngine.ServerTimeDiff_ = date - new Date();
         log$1('serverDiff', EntitlementEngine.ServerTimeDiff_);
       });
     }
@@ -7825,11 +10106,11 @@ var EricssonExposure = function (_EntitlementEngine) {
    */
 
   /**
-     * 
-     * @param {Object} response xhr response object
-     * @returns {EntitlementError} EntitlementError
-     * @private
-     */
+  * 
+  * @param {Object} response xhr response object
+  * @returns {EntitlementError} EntitlementError
+  * @private
+  */
 
 
   EricssonExposure.prototype.getErrorForResponse = function getErrorForResponse(response) {
@@ -7938,10 +10219,12 @@ var EricssonExposure = function (_EntitlementEngine) {
         return;
       }
 
-      var entitlement = new Entitlement(body);
+      var entitlement = new Entitlement(body, response.headers.date);
       entitlement.assetId = assetId;
       entitlement.playRequest = playRequest;
       entitlement.mimeType = playRequest.type;
+      var requestId = response.headers['x-request-id'];
+      entitlement.requestId = requestId ? requestId : '';
       if (entitlement.mdnRequestRouterUrl) {
         EricssonMDN.getBaseUrl(entitlement, callback);
       } else {
@@ -7950,7 +10233,15 @@ var EricssonExposure = function (_EntitlementEngine) {
     });
   };
 
-  EricssonExposure.prototype.setStreamReferenceTime = function setStreamReferenceTime(entitlement) {
+  /**
+   * Add StreamReferenceTime to entitlement
+   *
+   * @param {object} entitlement
+   * @private
+   */
+
+
+  EricssonExposure.prototype.setStreamReferenceTime_ = function setStreamReferenceTime_(entitlement) {
     if (entitlement.isDynamicCachupAsLive || entitlement.isStaticCachupAsLive) {
       if (entitlement.mimeType === 'application/dash+xml') {
         if (entitlement.isStaticCachupAsLive) {
@@ -8030,22 +10321,31 @@ var EricssonExposure = function (_EntitlementEngine) {
     if (programId) {
       programUrl = '/program/' + programId;
     }
+    var channelUrl = '';
+    if (channelId) {
+      channelUrl = '/channel/' + channelId;
+    }
 
-    var requestURL = this.options_['exposureApiURL'] + '/' + this.options_['exposureApiVersion'] + '/customer/' + customer + '/businessunit/' + businessUnit + '/entitlement/channel/' + channelId + programUrl + '/play';
+    var requestURL = this.options_['exposureApiURL'] + '/' + this.options_['exposureApiVersion'] + '/customer/' + customer + '/businessunit/' + businessUnit + '/entitlement' + channelUrl + programUrl + '/play';
     return xhr.post(requestURL, { json: playRequest, headers: this.requestHeaders }, function (error, response, body) {
       // Check and handles error
       if (_this6.checkForError(error, response, callback)) {
         return;
       }
 
-      var entitlement = new Entitlement(body);
-      entitlement.assetId = channelId;
+      var entitlement = new Entitlement(body, response.headers.date);
+      if (channelId) {
+        entitlement.assetId = channelId;
+        entitlement.channelId = channelId;
+      }
       if (programId) {
         entitlement.programId = programId;
       }
       entitlement.playRequest = playRequest;
       entitlement.mimeType = playRequest.type;
-      _this6.setStreamReferenceTime(entitlement);
+      _this6.setStreamReferenceTime_(entitlement);
+      var requestId = response.headers['x-request-id'];
+      entitlement.requestId = requestId ? requestId : '';
       if (entitlement.mdnRequestRouterUrl) {
         EricssonMDN.getBaseUrl(entitlement, callback);
       } else {
@@ -8073,6 +10373,11 @@ var EricssonExposure = function (_EntitlementEngine) {
       return;
     }
 
+    if (window.navigator.onLine === false) {
+      log$1('getServerTime offline');
+      callback(new Date());
+      return;
+    }
     var requestURL = this.options_['exposureApiURL'] + '/' + this.options_['exposureApiVersion'] + '/customer/' + customer + '/businessunit/' + businessUnit + '/time';
     return xhr.get(requestURL, null, function (error, response, body) {
       if (error) {
@@ -8087,9 +10392,8 @@ var EricssonExposure = function (_EntitlementEngine) {
   };
 
   /**
-   * Get user Preferences
+   * Get user preferences key/value pair of (audioLang, subtitlesLang)
    * @param {function} callback
-   * @returns {*}
    */
 
 
@@ -8109,9 +10413,10 @@ var EricssonExposure = function (_EntitlementEngine) {
   };
 
   /**
-   * Save user preferences
-   * @param {any} preferences
-   * @param {any} callback
+   * Save user preferences (audioLang, subtitlesLang)
+   *
+   * @param {any} preferences key/value pair of (audioLang, subtitlesLang)
+   * @param {function} callback
    */
 
 
@@ -8215,6 +10520,21 @@ var EricssonExposure = function (_EntitlementEngine) {
   };
 
   /**
+  *
+  * Get the Channel Info
+  * @param {String}    channelId Channel to fetch from
+  * @param {function} callback Callback when entitlement is fetched
+  * @returns {object}   The program
+  */
+
+
+  EricssonExposure.prototype.getChannelInfo = function getChannelInfo(channelId) {
+    var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+
+    this.getAssetInfo(channelId, callback);
+  };
+
+  /**
    * Get the Asset Info
    * @param assetId
    * @param callback
@@ -8238,9 +10558,10 @@ var EricssonExposure = function (_EntitlementEngine) {
   };
 
   /**
-   * verifyEntitlement
-   * @param {any} playRequest
-   * @param {any} callback
+   * verify the entitlement
+   * @param {string} assetId
+   * @param {any} entitlement playRequest
+   * @param {function} callback
    */
 
 
@@ -8308,6 +10629,7 @@ var EricssonExposure = function (_EntitlementEngine) {
   /**
    * Get Play request headers. Including apiKey if set
    * @return {Object}
+   * @private
    */
 
 
@@ -8316,7 +10638,7 @@ var EricssonExposure = function (_EntitlementEngine) {
     get: function get$$1() {
       var headers = { Authorization: 'Bearer ' + this.sessionToken };
       if (this.options_['apiKey']) {
-        headers = Object.assign({
+        headers = assign({
           'EMP-Auth': this.options_['apiKey']
         }, headers);
       }
@@ -8425,7 +10747,7 @@ var EntitlementRequest = function () {
   return EntitlementRequest;
 }();
 
-var Plugin = videojs.getPlugin('plugin');
+var Plugin$1 = videojs.getPlugin('plugin');
 
 /**
  *  ProgramService
@@ -8493,14 +10815,12 @@ var ProgramService = function (_Plugin) {
 
 
   ProgramService.prototype.onEntitlementChange = function onEntitlementChange(event, data) {
-    this.currentProgram_ = null;
-    this.currentVOD_ = null;
     var entitlement = data && data.entitlement;
     if (entitlement) {
       if (!(entitlement instanceof Entitlement)) {
         //From entitlement CC establish Entitlement object
         this.stop();
-        entitlement = Object.assign(new Entitlement({}), entitlement);
+        entitlement = assign(new Entitlement({}), entitlement);
       }
       this.entitlement(entitlement);
     }
@@ -8530,28 +10850,25 @@ var ProgramService = function (_Plugin) {
    */
 
 
-  ProgramService.prototype.stop = function (_stop) {
-    function stop() {
-      return _stop.apply(this, arguments);
-    }
-
-    stop.toString = function () {
-      return _stop.toString();
-    };
-
-    return stop;
-  }(function () {
-    stop('ProgramService stop');
+  ProgramService.prototype.stop = function stop() {
+    log$1('ProgramService stop');
     this.clearProgramChangeTimeout_();
-    this.currentProgram_ = null;
-    this.currentVOD_ = null;
     if (this.player) {
       this.player.off(empPlayerEvents.SEEKED, this.checkForProgramChangeBind);
       this.player.off(empPlayerEvents.PLAYING, this.checkForProgramChangeBind);
       this.player.off(empPlayerEvents.PAUSE, this.clearProgramChangeTimeoutBind);
       this.player.off(empPlayerEvents.PLAY, this.checkForProgramChangeBind);
     }
-  });
+    this.currentProgram_ = null;
+    this.currentVOD_ = null;
+  };
+
+  ProgramService.prototype.reset = function reset() {
+    this.stop();
+    this.currentProgram_ = null;
+    this.currentVOD_ = null;
+    this.entitlement_ = null;
+  };
 
   ProgramService.prototype.clearProgramChangeTimeout_ = function clearProgramChangeTimeout_(event, data) {
     if (this.programChangeTimeout_) {
@@ -8590,7 +10907,7 @@ var ProgramService = function (_Plugin) {
   };
 
   /**
-   * currentProgram
+   * current Program
    * @returns {object}
    */
 
@@ -8649,7 +10966,7 @@ var ProgramService = function (_Plugin) {
       serverDate.setSeconds(serverDate.getSeconds() - secondsBehind);
       dateTime = serverDate;
       log$1('checkForProgramChange', 'Live', secondsBehind);
-      if (this.currentProgram && dateTime.getTime() < this.currentProgram.end.getTime() && dateTime.getTime() >= this.currentProgram.start.getTime()) {
+      if (this.currentProgram && this.currentProgram.channelId === this.entitlement().channelId && dateTime.getTime() < this.currentProgram.end.getTime() && dateTime.getTime() >= this.currentProgram.start.getTime()) {
         log$1('checkForProgramChange', 'Same');
         dateTime = null;
         this.updateCurrentProgram_(this.currentProgram, false);
@@ -8688,13 +11005,48 @@ var ProgramService = function (_Plugin) {
       }
 
     this.exposure.getProgramInfo(assetId, dateTime, function (program, error) {
+      _this2.currentVOD_ = null;
       if (error) {
-        log$1.warn('getProgramInfo', 'No EPG found.', error);
-        _this2.pollingForEPG();
+        log$1('getProgramInfo', 'No EPG found.', error);
+        _this2.pollingForEPG_();
         return;
       }
       _this2.updateCurrentProgram_(program, event.type === 'startplayback');
     }, dateTime ? null : programId);
+  };
+
+  /**
+  * updateChannelInfo
+  * @param {object} program
+  * @param {Function=} callback when done
+  * @private
+  */
+
+
+  ProgramService.prototype.updateChannelInfo_ = function updateChannelInfo_(program, callback) {
+    var _this3 = this;
+
+    if (!program || !program.channelId) {
+      log$1.error('updateChannelInfo', 'program or channelId empty');
+      callback();
+      return;
+    }
+    if (this.currentChannelAsset_ && this.currentChannelAsset_.assetId === program.channelId) {
+      program.channelInfo = this.extractAssetMetadata(this.currentChannelAsset_);
+      callback();
+      return;
+    }
+    this.exposure.getChannelInfo(program.channelId, function (channelAsset, error) {
+      if (error) {
+        log$1.warn('updateChannelInfo', 'No ChannelInfo found.', error);
+        return;
+      }
+      log$1('updateChannelInfo', program.channelId);
+      _this3.currentChannelAsset_ = channelAsset;
+      program.channelInfo = _this3.extractAssetMetadata(_this3.currentChannelAsset_);
+      callback();
+      return;
+    });
   };
 
   /**
@@ -8705,19 +11057,21 @@ var ProgramService = function (_Plugin) {
 
 
   ProgramService.prototype.updateVOD_ = function updateVOD_(assetId) {
-    var _this3 = this;
+    var _this4 = this;
 
     this.exposure.getAssetInfo(assetId, function (asset, error) {
+      _this4.currentProgram_ = null;
       if (error) {
         log$1.warn('No AssetInfo found.', error);
+        _this4.currentVOD_ = null;
+        _this4.player.trigger(empPlayerEvents.ASSET_CHANGED, { 'asset': null });
         return;
       }
 
-      if (!_this3.currentVOD_ || _this3.currentVOD_.assetId !== asset.assetId) {
-        _this3.currentVOD_ = asset;
-        _this3.currentProgram_ = null;
+      if (!_this4.currentVOD_ || _this4.currentVOD_.assetId !== asset.assetId) {
+        _this4.currentVOD_ = asset;
         log$1('ASSET_CHANGED');
-        _this3.player.trigger(empPlayerEvents.ASSET_CHANGED, { 'asset': asset });
+        _this4.player.trigger(empPlayerEvents.ASSET_CHANGED, { 'asset': asset });
       }
     });
   };
@@ -8731,7 +11085,7 @@ var ProgramService = function (_Plugin) {
 
 
   ProgramService.prototype.updateCurrentProgram_ = function updateCurrentProgram_(program, startplayback) {
-    var _this4 = this;
+    var _this5 = this;
 
     log$1('updateCurrentProgram', program, startplayback);
     this.clearProgramChangeTimeout_();
@@ -8739,13 +11093,23 @@ var ProgramService = function (_Plugin) {
     // Program changed due to seek or other event
     if (!this.currentProgram_ || this.currentProgram_.programId !== program.programId) {
       this.currentVOD_ = null;
-      extplayer.setTechProgram(this.player, program);
-      this.player.trigger(empPlayerEvents.PROGRAM_CHANGED, { 'program': program });
-      this.player.trigger(empPlayerEvents.DURATION_CHANGE); //Update progressbar
       this.currentProgram_ = program;
       if (!startplayback) {
         this.verifyEntitlement();
       }
+      this.updateChannelInfo_(program, function () {
+        var asset = extplayer.currentAsset(_this5.player);
+        //Add channelId if played without channelId
+        if (!asset.channelId) {
+          extplayer.currentAsset(_this5.player, program.channelId, program.programId, program.channelId);
+          if (_this5.entitlement_ && !_this5.entitlement_.channelId) {
+            _this5.entitlement_.channelId = program.channelId;
+          }
+        }
+        extplayer.setTechProgram(_this5.player, program);
+        _this5.player.trigger(empPlayerEvents.PROGRAM_CHANGED, { 'program': program });
+        _this5.player.trigger(empPlayerEvents.DURATION_CHANGE); //Update progressbar
+      });
     }
 
     if (startplayback) {
@@ -8758,7 +11122,7 @@ var ProgramService = function (_Plugin) {
       if (this.entitlement().isStaticCachupAsLive || this.entitlement().isDynamicCachupAsLive) {
         var playHeadTime = extplayer.getPlayheadTime(this.player);
         if (!playHeadTime) {
-          log$1.error('updateCurrentProgram', 'no playHeadTime');
+          log$1('updateCurrentProgram', 'no playHeadTime', playHeadTime);
           return;
         }
         date = new Date(playHeadTime);
@@ -8771,6 +11135,10 @@ var ProgramService = function (_Plugin) {
 
       // Set a timer that fires after X seconds. where X is the amount of seconds it takes from NOW to get to program boundary
       var expiryDate = new Date(program.start.getTime() + program.duration);
+      var streamEnd = this.entitlement().streamInfo.end;
+      if (streamEnd && expiryDate.getTime() > streamEnd.getTime()) {
+        expiryDate = streamEnd;
+      }
       var timediff = expiryDate.getTime() - date.getTime();
 
       if (!timediff || timediff < this.MIN_PROGRAM_CHECK_TIMEOUT) {
@@ -8780,9 +11148,9 @@ var ProgramService = function (_Plugin) {
       this.programChangeCheckTimestamp_ = Date.now() + timediff;
       log$1('updateCurrentProgram', 'programChangeTimeout', new Date(this.programChangeCheckTimestamp_));
       this.programChangeTimeout_ = setTimeout(function () {
-        _this4.checkForProgramChange_({ type: 'programend' });
-        _this4.programChangeTimeout_ = null;
-      }, timediff);
+        _this5.checkForProgramChange_({ type: 'programend' });
+        _this5.programChangeTimeout_ = null;
+      }, timediff > 0x7FFFFFFF ? 0x7FFFFFFF : timediff);
     }
 
     this.player.off(empPlayerEvents.SEEKED, this.checkForProgramChangeBind);
@@ -8793,8 +11161,14 @@ var ProgramService = function (_Plugin) {
     this.player.one(empPlayerEvents.PAUSE, this.clearProgramChangeTimeoutBind);
   };
 
-  ProgramService.prototype.pollingForEPG = function pollingForEPG() {
-    var _this5 = this;
+  /**
+   * polling backend for new EPG
+   * @private
+   */
+
+
+  ProgramService.prototype.pollingForEPG_ = function pollingForEPG_() {
+    var _this6 = this;
 
     var previousProgram = this.currentProgram_;
     this.currentProgram_ = null;
@@ -8804,14 +11178,14 @@ var ProgramService = function (_Plugin) {
     var pollingRate = 5 * 60 * 1000;
     this.programChangeCheckTimestamp_ = Date.now() + pollingRate;
     this.programChangeTimeout_ = setTimeout(function () {
-      _this5.checkForProgramChange_({ type: 'pollingforepg' });
-      _this5.programChangeTimeout_ = null;
+      _this6.checkForProgramChange_({ type: 'pollingforepg' });
+      _this6.programChangeTimeout_ = null;
     }, pollingRate);
   };
 
   /**
    * get Next Program
-   * @param callback
+   * @param {Function=} callback with next program
    */
 
 
@@ -8819,6 +11193,7 @@ var ProgramService = function (_Plugin) {
     if (!this.currentProgram) {
       if (callback) {
         callback(null, { message: 'getNextProgram No Current Program' });
+        return;
       }
     }
     if (this.exposure.getCachedServerTime() < this.currentProgram.end.getTime()) {
@@ -8838,7 +11213,7 @@ var ProgramService = function (_Plugin) {
 
   /**
    * get Previous Program
-   * @param callback
+   * @param {Function=} callback with previous program
    */
 
 
@@ -8846,6 +11221,7 @@ var ProgramService = function (_Plugin) {
     if (!this.currentProgram) {
       if (callback) {
         callback(null, { message: 'getPreviousProgram No Current Program' });
+        return;
       }
     }
     var dateTime = new Date(this.currentProgram.startTime);
@@ -8862,7 +11238,7 @@ var ProgramService = function (_Plugin) {
   /**
    * get Program
    * @param date
-   * @param callback
+   * @param {Function=} callback with program
    */
 
 
@@ -8870,6 +11246,7 @@ var ProgramService = function (_Plugin) {
     if (!this.currentProgram) {
       if (callback) {
         callback(null, { message: 'getProgram No Current Program' });
+        return;
       }
     }
     this.exposure.getProgramInfo(this.currentProgram.channelId, dateTime, function (program, error) {
@@ -8887,7 +11264,7 @@ var ProgramService = function (_Plugin) {
 
 
   ProgramService.prototype.verifyEntitlement = function verifyEntitlement() {
-    var _this6 = this;
+    var _this7 = this;
 
     if (!this.currentProgram) {
       return;
@@ -8895,40 +11272,57 @@ var ProgramService = function (_Plugin) {
 
     this.exposure.verifyEntitlement(this.currentProgram.assetId, this.entitlement().playRequest, function (data, error) {
       if (error) {
-        _this6.player.error('verifyEntitlement ' + error.message);
-        extplayer.stop(_this6.player);
+        _this7.player.error('verifyEntitlement ' + error.message);
+        extplayer.stop(_this7.player);
         return;
       }
       if (!data || data.status !== 'SUCCESS') {
-        _this6.player.error(data ? data.status : 'verifyEntitlement no status');
-        extplayer.stop(_this6.player);
+        _this7.player.error(data ? data.status : 'verifyEntitlement no status');
+        extplayer.stop(_this7.player);
         return;
       }
       log$1('verifyEntitlement', data.status);
     });
   };
 
-  ProgramService.prototype.getAssetMetadata = function getAssetMetadata(assetId, callback) {
-    var _this7 = this;
+  /**
+   * 
+   * @param assetId
+   * @param {Function=} callback with asset metadata
+   */
 
-    var asset = this.currentProgram ? this.currentProgram : this.currentVOD;
-    if (!asset) {
+
+  ProgramService.prototype.getAssetMetadata = function getAssetMetadata(assetId, callback) {
+    var _this8 = this;
+
+    var asset = this.currentProgram ? this.currentProgram.asset : this.currentVOD;
+    if (!asset || asset.assetId != assetId) {
       this.exposure.getAssetMetadata_(assetId, function (asset, error) {
         if (error) {
           log$1.warn('getAssetMetadata', 'No data found.', error);
           callback(null, error);
           return;
         } else {
-          callback(_this7.extractMetadata_(asset));
+          callback(_this8.extractAssetMetadata(asset));
           return;
         }
       });
+    } else {
+      callback(this.extractAssetMetadata(asset));
     }
-    callback(this.extractMetadata_(asset));
     return;
   };
 
-  ProgramService.prototype.extractMetadata_ = function extractMetadata_(asset) {
+  /**
+  * Extract title, subtitle and images from asset
+  *
+  * @param {object} asset
+  * @returns {object} title, subtitle and images
+  */
+
+
+  ProgramService.prototype.extractAssetMetadata = function extractAssetMetadata(asset) {
+    //Used by CC sender and CC Reveiver
     var title = null;
     var subtitle = null;
     var images = null;
@@ -8961,8 +11355,6 @@ var ProgramService = function (_Plugin) {
         }
         var entitlementOptions = this.player.options_[exposureServiceName.toLowerCase()];
         if (!entitlementOptions) {
-          log$1.warn('Missing entitlementOptions in player options');
-          var error = new EmpPlayerError('Missing entitlementOptions in player options', EmpPlayerErrorCodes.ENTITLEMENT);
           return null;
         }
         var Exposure = EntitlementEngine.getEntitlementEngine(exposureServiceName);
@@ -8982,7 +11374,18 @@ var ProgramService = function (_Plugin) {
     }
 
     /**
-     * currentVOD
+     * current Channel Asset
+     * @returns {object}
+     */
+
+  }, {
+    key: 'currentChannelAsset',
+    get: function get$$1() {
+      return this.currentChannelAsset_;
+    }
+
+    /**
+     * current VOD Asset
      * @returns {object}
      */
 
@@ -8994,9 +11397,9 @@ var ProgramService = function (_Plugin) {
     }
   }]);
   return ProgramService;
-}(Plugin);
+}(Plugin$1);
 
-ProgramService.VERSION = '2.79.3';
+ProgramService.VERSION = '2.1.95-228';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -9004,7 +11407,7 @@ if (videojs.getPlugin('programService')) {
   videojs.registerPlugin('programService', ProgramService);
 }
 
-var Plugin$1 = videojs.getPlugin('plugin');
+var Plugin$2 = videojs.getPlugin('plugin');
 
 /**
  * ExpirationService
@@ -9170,9 +11573,9 @@ var EntitlementExpirationService = function (_Plugin) {
     }
   }]);
   return EntitlementExpirationService;
-}(Plugin$1);
+}(Plugin$2);
 
-EntitlementExpirationService.VERSION = '2.79.3';
+EntitlementExpirationService.VERSION = '2.1.95-228';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -9241,8 +11644,9 @@ var Tech$1 = videojs$1.getComponent('Tech');
 /**
  * Inject a Source handler for EMP streams
  * @param player
+ * @class EntitlementMiddleware
  */
-var EntitlementMiddleware = function EntitlementMiddleware(player) {
+var EntitlementMiddleware$1 = function EntitlementMiddleware(player) {
   return {
     setSource: function setSource(srcObj, next) {
       var options = player.options();
@@ -9273,6 +11677,20 @@ var EntitlementMiddleware = function EntitlementMiddleware(player) {
       }
 
       var exposure = EntitlementMiddleware.getExposure(entitlementOptions, exposureServiceName);
+      if (!entitlementOptions.sessionToken) {
+        //Try Anonymous login
+        exposure.login("", "", function (response) {
+          if (response.success) {
+            entitlementOptions.sessionToken = response.session.sessionToken;
+            player.trigger(empPlayerEvents.REPLAY);
+          } else {
+            log$1.error("Anonymous login fail", response.message);
+            var error = new EmpPlayerError('Anonymous login fail', EmpPlayerErrorCodes.ENTITLEMENT);
+            player.error(error);
+          }
+        }, "");
+        return;
+      }
       if (!options.analytics || !options.analytics.disable) {
         startAnalytics_(player, options, entitlementOptions, exposure);
       }
@@ -9293,12 +11711,12 @@ var EntitlementMiddleware = function EntitlementMiddleware(player) {
         }
       });
       if (techs.length === 0) {
-        var error = new EmpPlayerError('Unable to load asset: None of the playback technologies are supported', EmpPlayerErrorCodes.ENTITLEMENT);
-        player.error(error);
-        next(error);
+        var _error = new EmpPlayerError('Unable to load asset: None of the playback technologies are supported', EmpPlayerErrorCodes.ENTITLEMENT);
+        player.error(_error);
+        next(_error);
         return;
       }
-
+      var entitlementRequestError;
       //Start the tech selecting loop
       asyncLoop(techs.length, function (loop) {
         var i = loop.iteration();
@@ -9322,24 +11740,48 @@ var EntitlementMiddleware = function EntitlementMiddleware(player) {
             loop['break']();
             return;
           } else {
-            exposure.getEntitlement(entitlementRequest, tech.entitlementPlayRequest, function (entitlement, error) {
+            var techOptions = options[techs[i][0].toLowerCase()];
+            var playRequest = techOptions && techOptions.streamType && tech.entitlementPlayRequests ? tech.entitlementPlayRequests[techOptions.streamType] : tech.entitlementPlayRequest;
+            exposure.getEntitlement(entitlementRequest, playRequest, function (entitlement, error) {
               // If we have an fatal error during playcall break out of the loop else try next tech
               if (error) {
+                if (!player.options_.excludeTechs) {
+                  player.options_.excludeTechs = [];
+                }
+                player.options_.excludeTechs.push(techs[i][0]);
+                entitlementRequestError = new EmpPlayerError(error.message + '  ' + JSON.stringify(playRequest) + JSON.stringify(entitlementRequest), error.code, error.stack);
                 if (error.fatal) {
-                  var error = new EmpPlayerError(error, EmpPlayerErrorCodes.ENTITLEMENT);
-                  player.error(error);
+                  player.error(entitlementRequestError);
                   extplayer.stop(player);
-                  next(error);
+                  next(entitlementRequestError);
                   return;
                 }
                 loop.next();
               } else {
                 // Set the entitlement to use, and break out of the loop. No need to get other entitlements.
                 srcEntitlement = setupEntitlement(entitlement, tech);
-                startProgramService_(player, options, exposure, srcEntitlement, function () {
-                  next(null, srcEntitlement);
-                });
-                loop['break']();
+                if (srcEntitlement.adMediaLocator && player.yospace) {
+                  log$1("play adMediaLocator with yospace", srcEntitlement.adMediaLocator);
+                  player.yospace().start('VoD', srcEntitlement.adMediaLocator).then(function (mediaLocator) {
+                    log$1("yospace mediaLocator returned", mediaLocator);
+                    srcEntitlement.mediaLocator = mediaLocator;
+                    srcEntitlement.src = mediaLocator;
+                    startProgramService_(player, options, exposure, srcEntitlement, function () {
+                      next(null, srcEntitlement);
+                    });
+                    loop['break']();
+                  })['catch'](function (errMsg) {
+                    entitlementRequestError = new EmpPlayerError(errMsg, EmpPlayerErrorCodes.ENTITLEMENT);
+                    player.error(entitlementRequestError);
+                    extplayer.stop(player);
+                    srcEntitlement === null;
+                  });
+                } else {
+                  startProgramService_(player, options, exposure, srcEntitlement, function () {
+                    next(null, srcEntitlement);
+                  });
+                  loop['break']();
+                }
               }
             });
           }
@@ -9352,10 +11794,12 @@ var EntitlementMiddleware = function EntitlementMiddleware(player) {
         }
       }, function () {
         if (srcEntitlement === null) {
-          var error = new EmpPlayerError('No valid entitlement found for asset', EmpPlayerErrorCodes.ENTITLEMENT);
-          player.error(error);
+          if (!entitlementRequestError) {
+            entitlementRequestError = new EmpPlayerError('Unable to load asset: None of the playback technologies are supported', EmpPlayerErrorCodes.ENTITLEMENT);
+          }
+          player.error(entitlementRequestError);
           extplayer.stop(player);
-          next(error);
+          next(entitlementRequestError);
           return;
         }
       });
@@ -9410,50 +11854,35 @@ var EntitlementMiddleware = function EntitlementMiddleware(player) {
           player.programService().options({ 'exposure': exposure });
 
           if (srcEntitlement.isDynamicCachupAsLive && options.playFrom) {
-            var seekToProgramStart = options.playFrom === 'beginning' || !srcEntitlement.live && !player.options_.absoluteStartTime && !player.options_.startTime; //it's set by useLastViewedOffset or options.playFrom === 'startTime'
+            seekToProgramStart = options.playFrom === 'beginning' || !srcEntitlement.live && !player.options_.absoluteStartTime && !player.options_.startTime; //it's set by useLastViewedOffset or options.playFrom === 'startTime'
             if (seekToProgramStart) {
               //Use timeParams.start as startTime
               var startTime = srcEntitlement.streamInfo.start.getTime() + 100;
-              log$1('SET startTime', startTime);
-              if (player.techName_ === 'EmpShaka') {
+
+              if (srcEntitlement.mimeType === 'application/dash+xml') {
+                log$1('SET startTime', startTime);
                 player.options({
                   startTime: startTime / 1000
                 });
                 srcEntitlement.options.startTime = startTime / 1000;
               } else {
-                //EmpHLS
+                //HLS
+                log$1('SET startTime', 0.1);
                 player.options({
                   startTime: 0.1
                 });
                 srcEntitlement.options.startTime = 0.1;
               }
-              // Get startTime from program
-              //player.one(empPlayer.Events.PROGRAM_CHANGED, (event, data) => {
-              //  var program = data.program;
-              //  log('PROGRAM_CHANGED SET startTime', program.start)
-              //  if (player.techName_ === 'EmpShaka') {
-              //    player.options({
-              //      startTime: program.start.getTime() / 1000
-              //    });
-              //    srcEntitlement.options.startTime = program.start.getTime() / 1000;
-              //  }
-              //  else {
-              //    player.options({
-              //      startTime: 0.1
-              //    });
-              //    srcEntitlement.options.startTime = 0.1;
-              //  }
-              //  callback();
-              //});
             } else if (player.options_.absoluteStartTime) {
               //Don't play before program start
               if (player.options_.absoluteStartTime < srcEntitlement.streamInfo.start.getTime()) {
                 player.options_.absoluteStartTime = srcEntitlement.streamInfo.start.getTime();
               }
               var _startTime = player.options_.absoluteStartTime;
-              if (player.techName_ === 'EmpHLS') {
+              if (player.streamType === 'HLS') {
                 _startTime = player.options_.absoluteStartTime - srcEntitlement.streamInfo.start.getTime();
               }
+              _startTime = _startTime ? _startTime : 0.1;
 
               log$1('absoluteStartTime SET startTime', _startTime);
               player.options({
@@ -9488,9 +11917,7 @@ var EntitlementMiddleware = function EntitlementMiddleware(player) {
           }
           player.programService().start();
         }
-        //if (!seekToProgramStart) {
         callback();
-        //}
       }
 
       /**
@@ -9524,7 +11951,8 @@ var EntitlementMiddleware = function EntitlementMiddleware(player) {
           } else if (entitlement.lastViewedOffset) {
             log$1('lastViewedOffset', entitlement.lastViewedOffset / 1000);
             //TODO Use startTime when we have VOD in new A/V pipe
-            if (player.techName_ !== 'EmpShaka') {
+            if (player.streamType !== 'DASH') {
+              //HLS
               player.options({ 'startTime': entitlement.lastViewedOffset / 1000 });
             }
           }
@@ -9535,7 +11963,7 @@ var EntitlementMiddleware = function EntitlementMiddleware(player) {
         }
         player.trigger(empPlayerEvents.ENTITLEMENT_CHANGE, { 'entitlement': entitlement });
 
-        entitlement = Object.assign(new Entitlement({}), entitlement);
+        entitlement = assign(new Entitlement({}), entitlement);
         entitlement.type = entitlement.mimeType;
         // Grab tech-specific options from player options and add source.
         // Will be send to handleSource
@@ -9549,7 +11977,8 @@ var EntitlementMiddleware = function EntitlementMiddleware(player) {
           'startTime': player.options_.startTime,
           'absoluteStartTime': player.options_.absoluteStartTime,
           'audioLanguage': player.options_.audioLanguage,
-          'subtitleLanguage': player.options_.subtitleLanguage
+          'subtitleLanguage': player.options_.subtitleLanguage,
+          'liveDelay': player.options_.liveDelay
         };
         entitlement.options = playOptions;
         // Change to new entitlement EMP-10229
@@ -9569,11 +11998,17 @@ var EntitlementMiddleware = function EntitlementMiddleware(player) {
 * @static
 * @return {Boolean}      Wheter it is a entitlement engine or not
 */
-EntitlementMiddleware.isExposure = function (object) {
+EntitlementMiddleware$1.isExposure = function (object) {
   return EntitlementEngine.isEntitlementEngine(object);
 };
 
-EntitlementMiddleware.EntitlementClass = Entitlement;
+/**
+* Return EntitlementClass
+*
+* @static
+* @return {Class}  EntitlementClass
+*/
+EntitlementMiddleware$1.EntitlementClass = Entitlement;
 
 /**
 * Get an Exposure Service by name
@@ -9582,9 +12017,9 @@ EntitlementMiddleware.EntitlementClass = Entitlement;
 * @static
 * @returns {EntitlementEngine}
 */
-EntitlementMiddleware.getExposure = function (options, name) {
+EntitlementMiddleware$1.getExposure = function (options, name) {
   if (options) {
-    var Exposure = EntitlementEngine.getEntitlementEngine(name ? name : 'EricssonExposure');
+    var Exposure = EntitlementEngine.getEntitlementEngine(name);
     return new Exposure(options);
   } else {
     throw new EmpPlayerError('Missing exposureOptions', EmpPlayerErrorCodes.ENTITLEMENT);
@@ -9599,7 +12034,7 @@ EntitlementMiddleware.getExposure = function (options, name) {
 * @throws Error
 * @static
 */
-EntitlementMiddleware.registerExposure = function (name, entitlementEngine) {
+EntitlementMiddleware$1.registerExposure = function (name, entitlementEngine) {
   return EntitlementEngine.registerEntitlementEngine(name, entitlementEngine);
 };
 
@@ -9608,821 +12043,37 @@ EntitlementMiddleware.registerExposure = function (name, entitlementEngine) {
 * @static
 * @returns {*|log}
 */
-EntitlementMiddleware.getLog = function () {
+EntitlementMiddleware$1.getLog = function () {
   return log$1;
 };
 
-EntitlementMiddleware.VERSION = '2.79.3';
+EntitlementMiddleware$1.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
 
-// Register the plugin with video.js.
-videojs$1.use('video/emp', EntitlementMiddleware);
+EntitlementMiddleware$1.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
 
-var EMPAnalyticsConnector = function () {
-  function EMPAnalyticsConnector(player, analytics, analyticsConfig) {
-    classCallCheck(this, EMPAnalyticsConnector);
+EntitlementMiddleware$1.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
 
-    this.INITIAL_REFERENCE_TIME = 1;
-    this.player_ = player;
-    this.analytics_ = analytics;
-    this.sessionId_ = null;
-    this.customAttributes = analyticsConfig.analytics && analyticsConfig.analytics.customAttributes;
-    this.exposure = analyticsConfig.exposure;
-    this.currentTimeTimer = null;
-    this.onPlayBind = this.onPlay.bind(this);
-    this.onResumedBind = this.onResume.bind(this);
-    this.onPlayingBind = this.onPlaying.bind(this);
-    this.onPauseBind = this.onPause.bind(this);
-    this.onEndedBind = this.onEnded.bind(this);
-    this.onErrorBind = this.onError.bind(this);
-    this.onEntitlementLoadStartBind = this.onEntitlementLoadStart.bind(this);
-    this.onBitrateChangeBind = this.onBitrateChange.bind(this);
-    this.onDisposeBind = this.onDispose.bind(this);
-    this.onLoadStartBind = this.onLoadStart.bind(this);
-    this.onSeekedBind = this.onSeeked.bind(this);
-    this.onWaitingBind = this.onWaiting.bind(this);
-    this.onChromeCastingStartBind = this.onChromeCastingStart.bind(this);
-    this.onChromeCastingStopBind = this.onChromeCastingStop.bind(this);
-    this.onProgramChangeBind = this.onProgramChange.bind(this);
-    this.onWaitingEndedBind = this.onWaitingEnded.bind(this);
-    this.onErrorBeforeAssetBind = this.onErrorBeforeAsset.bind(this);
-    this.onEntitlementChangeBind = this.onEntitlementChange.bind(this);
-    this.onWindowUnloadBind = this.onWindowUnload.bind(this);
-    this.onPlayingAfterStartBind = this.onPlayingAfterStart.bind(this);
-    this.allEvents_ = Object.keys(empPlayerEvents).map(function (key) {
-      return empPlayerEvents[key];
-    });
-    this.init();
-    this.createdSessions = {};
-    this.mem = {};
-  }
+EntitlementMiddleware$1.VERSION = '2.1.95-228';
 
-  /**
-   * Retrieves ongoing playback session id
-   *
-   */
-
-
-  EMPAnalyticsConnector.prototype.SessionId = function SessionId(playSessionId) {
-    if (!playSessionId) {
-      if (!this.entitlement() || !this.entitlementLoaded_) {
-        return 'error-' + Math.random().toString().split('.')[1];
-      }
-    }
-
-    var sId = playSessionId ? playSessionId : this.entitlement().playSessionId;
-    if (!this.mem[sId]) {
-      this.mem[sId] = {
-        'pause': {},
-        'resume': {}
-      };
-    }
-    return sId;
-  };
-
-  EMPAnalyticsConnector.prototype.hasSessionId = function hasSessionId() {
-    if (!this.entitlement() || !this.entitlementLoaded_) {
-      return false;
-    }
-    return true;
-  };
-
-  /**
-   * Sends current playback time to analytics
-   *
-   */
-
-
-  EMPAnalyticsConnector.prototype.sendCurrentTime = function sendCurrentTime() {
-    var sessionId = this.SessionId();
-    if (sessionId && this.player_ && this.analytics_.getSessionState && this.analytics_.getSessionState(sessionId) === 'PLAYING') {
-      this.analytics_.setCurrentTime(sessionId, this.OffsetTime());
-    }
-  };
-
-  /**
-   * Registers a new timer
-   *
-   */
-
-
-  EMPAnalyticsConnector.prototype.registerCurrentTimeTimer = function registerCurrentTimeTimer() {
-    var _this = this;
-
-    this.clearTimers();
-    this.currentTimeTimer = setInterval(function () {
-      _this.sendCurrentTime();
-      var sessionId = _this.SessionId();
-      if (sessionId && _this.analytics_ && _this.analytics_.ok && _this.analytics_.ok(sessionId) === false) {
-        if (_this.exposure) {
-          _this.exposure.verifySession(null, function () {
-            if (_this.player_.el_) {
-              _this.player_.trigger(empPlayerEvents.ERROR, '401 INVALID_SESSION_TOKEN: The session token is no longer valid.');
-              extplayer.stop(_this.player_);
-            }
-            _this.clearTimers();
-          });
-        } else {
-          log$1.error('registerCurrentTimeTimer Exposure is undefined');
-        }
-      }
-    }, 1000);
-  };
-
-  /**
-   * Method to unregister and clear timers
-   *
-   */
-
-
-  EMPAnalyticsConnector.prototype.clearTimers = function clearTimers() {
-    if (this.currentTimeTimer) {
-      clearInterval(this.currentTimeTimer);
-    }
-    this.currentTimeTimer = null;
-  };
-
-  /**
-   * Initialization method
-   *
-   */
-
-
-  EMPAnalyticsConnector.prototype.init = function init() {
-    if (!this.player_ || !this.analytics_) {
-      log$1.warn('Warning: init failed . Possible causes: either player or analytics were not set.');
-      return;
-    }
-
-    this.disabled_ = false;
-    this.entitlementLoaded_ = false;
-    log$1('Initialization EmpAnalytics');
-    this.analytics_.init();
-    window_1.addEventListener('beforeunload', this.onWindowUnloadBind);
-    this.player_.on(empPlayerEvents.ENTITLEMENT_LOAD_START, this.onEntitlementLoadStartBind);
-    this.player_.on(empPlayerEvents.PAUSE, this.onPauseBind);
-    this.player_.on(empPlayerEvents.SEEKED, this.onSeekedBind);
-    this.player_.on(empPlayerEvents.ENDED, this.onEndedBind);
-    this.player_.on(empPlayerEvents.ERROR, this.onErrorBind);
-    this.player_.on(empPlayerEvents.DISPOSE, this.onDisposeBind);
-    this.player_.on(empPlayerEvents.STOPPED, this.onDisposeBind);
-    this.player_.on(empPlayerEvents.BITRATE_CHANGED, this.onBitrateChangeBind);
-    this.player_.on(empPlayerEvents.WAITING, this.onWaitingBind);
-    this.player_.on(empPlayerEvents.CHROMECAST_CASTING, this.onChromeCastingStartBind);
-    this.player_.on(empPlayerEvents.CHROMECAST_STOPPED, this.onChromeCastingStopBind);
-    this.player_.on(empPlayerEvents.PROGRAM_CHANGED, this.onProgramChangeBind);
-  };
-
-  /**
-   * Callback when user closes browser tab or refreshes the page
-   *
-   */
-
-
-  EMPAnalyticsConnector.prototype.onWindowUnload = function onWindowUnload() {
-    var _this2 = this;
-
-    this.onGeneric('WindowClose', this.analytics_.dispose, function () {
-      if (_this2.hasSessionId() === true) {
-        _this2.analytics_.dispose(_this2.SessionId(), _this2.getCachedCurrentTime());
-      }
-      _this2.analytics_.dispatchNow(false);
-    }, true);
-  };
-
-  /**
-   * Callback when chromecast starts casting
-   *
-   */
-
-
-  EMPAnalyticsConnector.prototype.onChromeCastingStart = function onChromeCastingStart() {
-    var _this3 = this;
-
-    this.onGeneric('StartCasting', this.analytics_.startCasting, function () {
-      if (_this3.hasSessionId() === false) {
-        return;
-      }
-      var sId = _this3.SessionId();
-      if (sId) {
-        _this3.analytics_.startCasting(_this3.SessionId(), _this3.OffsetTime());
-      }
-    }, false);
-    this.disabled_ = true;
-  };
-
-  /**
-   * Callback when chromecast stops casting and sender takes back playback session
-   *
-   */
-
-
-  EMPAnalyticsConnector.prototype.onChromeCastingStop = function onChromeCastingStop() {
-    var _this4 = this;
-
-    this.disabled_ = false;
-    this.onGeneric('StopCasting', this.analytics_.stopCasting, function () {
-      if (_this4.hasSessionId() === false) {
-        return;
-      }
-      _this4.analytics_.stopCasting(_this4.SessionId(), _this4.OffsetTime());
-    }, false);
-  };
-
-  /**
-   * Callback when Program Change
-   *
-   */
-
-
-  EMPAnalyticsConnector.prototype.onProgramChange = function onProgramChange(event, data) {
-    var _this5 = this;
-
-    var program = data ? data.program : null;
-    log$1('analytics', 'onProgramChange', program);
-    if (program && this.analytics_.programChanged) {
-      this.onGeneric('ProgramChange', this.analytics_.programChanged, function () {
-        _this5.analytics_.programChanged(_this5.SessionId(), _this5.OffsetTime(), { 'programId': program.programId });
-      }, true);
-    }
-  };
-
-  /**
-   * Callback when there is an event to change entitlement
-   *
-   */
-
-
-  EMPAnalyticsConnector.prototype.onEntitlementChange = function onEntitlementChange(event, data, errorId) {
-    var _this6 = this;
-
-    this.entitlementLoaded_ = true;
-    this.player_.off(empPlayerEvents.ERROR, this.onErrorBeforeAssetBind);
-    //entitlement method will cache entitlement
-    var entitlement = this.entitlement(data && data.entitlement);
-    this.onGeneric('HandShake', this.analytics_.handshake, function () {
-      var params = {};
-      if (entitlement && entitlement.assetId) {
-        params.assetId = entitlement.assetId;
-      }
-      if (entitlement && entitlement.programId) {
-        params.programId = entitlement.programId;
-      }
-      //Use this new playSessionId
-      var playSessionId = entitlement ? entitlement.playSessionId : errorId;
-      _this6.analytics_.handshake(_this6.SessionId(playSessionId), params);
-      _this6.onLoadStart(playSessionId);
-    }, false);
-  };
-
-  /**
-   * Callback when starting to load an entitlement
-   *
-   */
-
-
-  EMPAnalyticsConnector.prototype.onEntitlementLoadStart = function onEntitlementLoadStart() {
-    var _this7 = this;
-
-    this.entitlementLoaded_ = false;
-    this.onGeneric('ExitOngoingSession', this.analytics_.exitOngoingSession, function () {
-      return _this7.analytics_.exitOngoingSession(_this7.getCachedCurrentTime());
-    });
-    this.player_.one(empPlayerEvents.ERROR, this.onErrorBeforeAssetBind);
-    this.player_.one(empPlayerEvents.ENTITLEMENT_CHANGE, this.onEntitlementChangeBind);
-  };
-
-  /**
-   * Callback when starting to load new media chunks
-   *
-   */
-
-
-  EMPAnalyticsConnector.prototype.onLoadStart = function onLoadStart(playSessionId) {
-    var _this8 = this;
-
-    var currentSessionId = playSessionId ? playSessionId : this.SessionId();
-    if (!currentSessionId) {
-      log$1('onLoadStart called but not session available.');
-      return;
-    }
-    if (!this.sessionCreated(currentSessionId)) {
-      this.createdSessions[currentSessionId] = true;
-      this.onGeneric('Created', this.analytics_.created, function () {
-        var options = _this8.player_.options();
-        var params = {
-          'version': _this8.playerVersion
-        };
-        if (options && options.autoplay) {
-          params.autoplay = options.autoplay;
-        }
-        _this8.analytics_.created(currentSessionId, params);
-      }, false);
-      this.player_.off(empPlayerEvents.PLAYING, this.onResumedBind);
-      this.player_.off(empPlayerEvents.PLAYING, this.onPlayingAfterStartBind);
-      this.player_.one(empPlayerEvents.PLAYING, this.onPlayingAfterStartBind);
-    }
-  };
-
-  /**
-   * Callback when there is a playing event after load started
-   *
-   */
-
-
-  EMPAnalyticsConnector.prototype.onPlayingAfterStart = function onPlayingAfterStart() {
-    this.onPlayBind();
-    this.onPlayingBind();
-    this.player_.on(empPlayerEvents.PLAYING, this.onResumedBind);
-  };
-
-  /**
-   * Callback when there is a bitrate change in the playback
-   *
-   */
-
-
-  EMPAnalyticsConnector.prototype.onBitrateChange = function onBitrateChange() {
-    var _this9 = this;
-
-    this.onGeneric('BitrateChange', this.analytics_.bitrateChanged, function () {
-      var params = {
-        'bitrate': Math.max(0, Math.round(_this9.getBitrate() / 1024))
-      };
-      _this9.analytics_.bitrateChanged(_this9.SessionId(), _this9.OffsetTime(), params);
-    }, true);
-  };
-
-  /**
-   * Callback when playback enters a waiting state
-   *
-   */
-
-
-  EMPAnalyticsConnector.prototype.onWaiting = function onWaiting() {
-    var _this10 = this;
-
-    this.onGeneric('StartWaiting', this.analytics_.waiting, function () {
-      if (_this10.player_.hasStarted()) {
-        _this10.analytics_.waiting(_this10.SessionId(), _this10.OffsetTime());
-      }
-      _this10.allEvents_.map(function (eventName) {
-        if (eventName === empPlayerEvents.PLAY || eventName === empPlayerEvents.PLAYING || eventName === empPlayerEvents.ENDED || eventName === empPlayerEvents.ERROR || eventName === empPlayerEvents.DISPOSE || eventName === empPlayerEvents.SEEKED || eventName === empPlayerEvents.CHROMECAST_CASTING || eventName === empPlayerEvents.CHROMECAST_STOPPED) {
-          _this10.player_.one(eventName, _this10.onWaitingEndedBind);
-        }
-      });
-    }, true);
-  };
-
-  EMPAnalyticsConnector.prototype.OffsetTime = function OffsetTime() {
-    if (this.entitlement() && (this.entitlement().isStaticCachupAsLive || this.entitlement().isDynamicCachupAsLive)) {
-      return extplayer.getPlayheadTime(this.player_) / 1000;
-    }
-    return extplayer.baseCurrentTime(this.player_);
-  };
-
-  EMPAnalyticsConnector.prototype.startTimeLive = function startTimeLive() {
-    return extplayer.startTimeLive(this.player_);
-  };
-
-  EMPAnalyticsConnector.prototype.isLive = function isLive() {
-    return extplayer.isLive(this.player_);
-  };
-
-  EMPAnalyticsConnector.prototype.getBitrate = function getBitrate() {
-    return extplayer.getBitrate(this.player_);
-  };
-
-  EMPAnalyticsConnector.prototype.duration = function duration() {
-    if (this.entitlement() && (this.entitlement().isStaticCachupAsLive || this.entitlement().isDynamicCachupAsLive)) {
-      if (this.player_.getProgramDetails && this.player_.getProgramDetails()) {
-        return this.player_.getProgramDetails().duration / 1000;
-      }
-    }
-    return extplayer.duration(this.player_);
-  };
-
-  EMPAnalyticsConnector.prototype.entitlement = function entitlement(value) {
-    if (typeof value === 'undefined') {
-      return extplayer.getEntitlement(this.player_) || this.entitlement_;
-    }
-    this.entitlement_ = value;
-    return value;
-  };
-
-  /**
-   * Callback when playback leaves a waiting state
-   *
-   */
-
-
-  EMPAnalyticsConnector.prototype.onWaitingEnded = function onWaitingEnded() {
-    var _this11 = this;
-
-    this.allEvents_.map(function (eventNameOff) {
-      _this11.player_.off(eventNameOff, _this11.onWaitingEndedBind);
-    });
-    this.onGeneric('WaitingEnded', this.analytics_.waitingEnded, function () {
-      _this11.analytics_.waitingEnded(_this11.SessionId(), _this11.OffsetTime());
-    }, true);
-  };
-
-  /**
-   * Callback when playback exists
-   *
-   */
-
-
-  EMPAnalyticsConnector.prototype.onDispose = function onDispose() {
-    var _this12 = this;
-
-    this.onGeneric('Dispose', this.analytics_.dispose, function () {
-      if (_this12.hasSessionId() === false) {
-        return;
-      }
-      _this12.analytics_.dispose(_this12.SessionId(), _this12.getCachedCurrentTime());
-    }, true, true);
-  };
-
-  EMPAnalyticsConnector.prototype.getCachedCurrentTime = function getCachedCurrentTime() {
-    if (this.player_) {
-      var cachedcurrentTime = this.player_.getCache().currentTime;
-      var currentTime = this.OffsetTime();
-      return currentTime ? currentTime : cachedcurrentTime;
-    }
-    return undefined;
-  };
-
-  /**
-   * Callback when playback is finished
-   *
-   */
-
-
-  EMPAnalyticsConnector.prototype.onEnded = function onEnded() {
-    var _this13 = this;
-
-    this.onGeneric('End of Stream', this.analytics_.endOfStream, function () {
-      _this13.analytics_.endOfStream(_this13.SessionId());
-    }, true, true);
-  };
-
-  /**
-   * Callback when play command is triggered
-   *
-   */
-
-
-  EMPAnalyticsConnector.prototype.onPlay = function onPlay() {
-    var _this14 = this;
-
-    this.onGeneric('Play', this.analytics_.play, function () {
-      var tech = _this14.player_.techName_;
-      var techName = 'Unknown';
-      switch (tech) {
-        case 'EmpShaka':
-          techName = 'Shaka';
-          break;
-        case 'EmpDash':
-          techName = 'DashJS';
-          break;
-        case 'EmpFlash':
-          techName = 'Flash';
-          break;
-        case 'EmpHLS':
-          techName = 'NativeHLS';
-          break;
-      }
-      var params = {
-        'techName': techName,
-        'version': _this14.playerVersion,
-        'techVersion': _this14.techVersion
-      };
-      _this14.analytics_.play(_this14.SessionId(), _this14.OffsetTime(), params);
-      _this14.registerCurrentTimeTimer();
-    }, false);
-  };
-
-  /**
-   * Callback when media is playing
-   *
-   */
-
-
-  EMPAnalyticsConnector.prototype.onPlaying = function onPlaying() {
-    var _this15 = this;
-
-    this.onGeneric('Playing', this.analytics_.playing, function () {
-      var params = {};
-      params.bitrate = Math.max(0, Math.round(_this15.getBitrate() / 1024));
-      if (_this15.isLive() === true) {
-        params.referenceTime = _this15.startTimeLive();
-      } else {
-        params.duration = _this15.duration();
-      }
-      if (_this15.entitlement() && _this15.entitlement().mediaLocator) {
-        params.mediaLocator = _this15.entitlement().mediaLocator;
-      }
-
-      if (params.mediaLocator && params.mediaLocator.indexOf('.isml') >= 0) {
-        params.referenceTime = _this15.INITIAL_REFERENCE_TIME;
-      }
-
-      _this15.analytics_.clearCustomAttributes();
-      (_this15.customAttributes || []).map(function (item) {
-        _this15.analytics_.setCustomAttribute(item.key, item.value);
-      });
-
-      _this15.analytics_.playing(_this15.SessionId(), _this15.OffsetTime(), params);
-    }, false);
-  };
-
-  /**
-   * Callback when media is seeked
-   *
-   */
-
-
-  EMPAnalyticsConnector.prototype.onSeeked = function onSeeked() {
-    var _this16 = this;
-
-    this.onGeneric('Seeked', this.analytics_.seek, function () {
-      _this16.analytics_.seek(_this16.SessionId(), _this16.OffsetTime());
-    }, true);
-  };
-
-  /**
-   * Callback when playback is paused
-   *
-   */
-
-
-  EMPAnalyticsConnector.prototype.onPause = function onPause() {
-    var _this17 = this;
-
-    this.onGeneric('Pause', this.analytics_.paused, function () {
-      if (_this17.player_.hasStarted() === false) {
-        return;
-      }
-      var sId = _this17.SessionId();
-      var refTim = parseInt((new Date() - 0) / 25);
-      if (_this17.mem[sId]['pause'][refTim]) {
-        return;
-      }
-      _this17.mem[sId]['pause'][refTim] = true;
-      _this17.analytics_.paused(sId, _this17.OffsetTime());
-    }, true);
-  };
-
-  /**
-   * Callback when playback is resumed
-   *
-   */
-
-
-  EMPAnalyticsConnector.prototype.onResume = function onResume() {
-    var _this18 = this;
-
-    this.onGeneric('Resume', this.analytics_.resume, function () {
-      var sId = _this18.SessionId();
-      var refTim = parseInt((new Date() - 0) / 25);
-      if (_this18.mem[sId]['resume'][refTim]) {
-        return;
-      }
-      _this18.mem[sId]['resume'][refTim] = true;
-      _this18.analytics_.resume(sId, _this18.OffsetTime());
-    }, true);
-  };
-
-  /**
-   * Callback when error occurs before loading the asset
-   *
-   */
-
-
-  EMPAnalyticsConnector.prototype.onErrorBeforeAsset = function onErrorBeforeAsset() {
-    this.entitlementLoaded_ = false;
-    var errorId = 'error-' + Math.random().toString().split('.')[1];
-    this.onEntitlementChange(null, null, errorId);
-    this.onError(null, errorId);
-    //this.entitlementLoaded_ = true;
-  };
-
-  /**
-   * Callback when error occurs
-   *
-   */
-
-
-  EMPAnalyticsConnector.prototype.onError = function onError() {
-    var _this19 = this;
-
-    var errorEvent = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-    var fallbackSessionId = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-
-    if (!fallbackSessionId && !this.entitlementLoaded_) {
-      return;
-    }
-    this.onGeneric('Error', this.analytics_.error, function () {
-      var err = _this19.player_.error();
-      var params = {};
-      if (err && err.code) {
-        params.errorCode = err.code;
-      }
-      if (err && err.message) {
-        params.errorMessage = err.message;
-      }
-      if (!err && errorEvent) {
-        params.errorCode = errorEvent.code;
-        params.errorMessage = errorEvent.message ? errorEvent.message : 'Unknown Error';
-      }
-      var currentSessId = _this19.SessionId();
-      if (currentSessId || fallbackSessionId) {
-        _this19.analytics_.error(currentSessId || fallbackSessionId, _this19.OffsetTime(), params);
-      }
-    }, false);
-  };
-
-  /**
-   * Generic analytics function
-   *
-   */
-
-
-  EMPAnalyticsConnector.prototype.onGeneric = function onGeneric(eventName, eventFnc, callback, checkSessionCreation) {
-    var ignoreDisabled = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
-
-    if (this.disabled_ && !ignoreDisabled) {
-      log$1(eventName + ' not delivered: analytics disabled.');
-      return;
-    }
-    if (checkSessionCreation && !this.sessionCreated(this.SessionId())) {
-      log$1(eventName + ' was discarded.');
-    } else if (eventFnc && callback) {
-      callback();
-    }
-  };
-
-  /**
-   * Check if a session with given sessionId was already created
-   *
-   */
-
-
-  EMPAnalyticsConnector.prototype.sessionCreated = function sessionCreated(sessionId) {
-    return sessionId && this.createdSessions[sessionId];
-  };
-
-  /**
-   * Cleanup and unregister events to send to analytics
-   *
-   */
-
-
-  EMPAnalyticsConnector.prototype.dispose = function dispose() {
-    this.clearTimers();
-    if (this.analytics_) {
-      this.analytics_.exitOngoingSession(this.getCachedCurrentTime());
-      this.analytics_.dispatchNow(false);
-    }
-    window_1.removeEventListener('beforeunload', this.onWindowUnloadBind);
-    this.player_.off(empPlayerEvents.PLAY, this.onPlayBind);
-    this.player_.off(empPlayerEvents.PLAYING, this.onPlayingBind);
-    this.player_.off(empPlayerEvents.PLAYING, this.onResumedBind);
-    this.player_.off(empPlayerEvents.PAUSE, this.onPauseBind);
-    this.player_.off(empPlayerEvents.SEEKED, this.onSeekedBind);
-    this.player_.off(empPlayerEvents.ENTITLEMENT_LOAD_START, this.onEntitlementLoadStartBind);
-    this.player_.off(empPlayerEvents.ENTITLEMENT_CHANGE, this.onEntitlementChangeBind);
-    this.player_.off(empPlayerEvents.BITRATE_CHANGED, this.onBitrateChangeBind);
-    this.player_.off(empPlayerEvents.ENDED, this.onEndedBind);
-    this.player_.off(empPlayerEvents.DISPOSE, this.onDisposeBind);
-    this.player_.off(empPlayerEvents.STOPPED, this.onDisposeBind);
-    this.player_.off(empPlayerEvents.ERROR, this.onErrorBind);
-    this.player_.off(empPlayerEvents.ERROR, this.onErrorBeforeAssetBind);
-    this.player_.off(empPlayerEvents.WAITING, this.onWaitingBind);
-    this.player_.off(empPlayerEvents.CHROMECAST_CASTING, this.onChromeCastingStartBind);
-    this.player_.off(empPlayerEvents.CHROMECAST_STOPPED, this.onChromeCastingStopBind);
-    this.player_.off(empPlayerEvents.PROGRAM_CHANGED, this.onProgramChangeBind);
-    this.player_.off(empPlayerEvents.PLAYING, this.onPlayingAfterStartBind);
-  };
-
-  createClass(EMPAnalyticsConnector, [{
-    key: 'techVersion',
-    get: function get$$1() {
-      return extplayer.techVersion(this.player_);
-    }
-  }, {
-    key: 'playerVersion',
-    get: function get$$1() {
-      if (!this.player_.version) return window_1.videojs ? window_1.videojs.VERSION : '2.x.x';
-
-      return this.player_.version;
-    }
-  }]);
-  return EMPAnalyticsConnector;
-}();
-
-var empAnalytics_min = createCommonjsModule(function (module, exports) {
-!function(a){module.exports=a();}(function(){var a;return function b(a,c,d){function e(g,h){if(!c[g]){if(!a[g]){var i="function"==typeof commonjsRequire&&commonjsRequire;if(!h&&i)return i(g,!0);if(f)return f(g,!0);var j=new Error("Cannot find module '"+g+"'");throw j.code="MODULE_NOT_FOUND",j}var k=c[g]={exports:{}};a[g][0].call(k.exports,function(b){var c=a[g][1][b];return e(c?c:b)},k,k.exports,b,a,c,d);}return c[g].exports}for(var f="function"==typeof commonjsRequire&&commonjsRequire,g=0;g<d.length;g++)e(d[g]);return e}({1:[function(a,b,c){(function(a){"undefined"!=typeof window?b.exports=window:"undefined"!=typeof a?b.exports=a:"undefined"!=typeof self?b.exports=self:b.exports={};}).call(this,"undefined"!=typeof commonjsGlobal?commonjsGlobal:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{});},{}],2:[function(b,c,d){!function(b,e){"object"==typeof d&&"undefined"!=typeof c?e(d):"function"==typeof a&&a.amd?a(["exports"],e):e(b.workerTimersBroker=b.workerTimersBroker||{});}(this,function(a){"use strict";var b=function(a){return void 0!==a.method&&"call"===a.method},c=function(a){return null===a.error&&"number"==typeof a.id},d=Number.MAX_SAFE_INTEGER||Math.pow(2,53)-1,e=function(a){for(var b=Math.round(Math.random()*d);a.has(b);)b=Math.round(Math.random()*d);return b},f=function(a){var d=new Map,f=new Map,g=new Map,h=new Worker(a);h.addEventListener("message",function(a){var e=a.data;if(b(e)){var h=e.params,i=h.timerId,j=h.timerType;if("interval"===j){var k=d.get(i);if("number"==typeof k){var l=g.get(k);if(void 0===l||l.timerId!==i||l.timerType!==j)throw new Error("The timer is in an undefined state.")}else{if("undefined"==typeof k)throw new Error("The timer is in an undefined state.");k();}}else if("timeout"===j){var m=f.get(i);if("number"==typeof m){var n=g.get(m);if(void 0===n||n.timerId!==i||n.timerType!==j)throw new Error("The timer is in an undefined state.")}else{if("undefined"==typeof m)throw new Error("The timer is in an undefined state.");m(),f["delete"](i);}}}else{if(!c(e)){var o=e.error.message;throw new Error(o)}var p=e.id,q=g.get(p);if(void 0===q)throw new Error("The timer is in an undefined state.");var r=q.timerId,s=q.timerType;g["delete"](p),"interval"===s?d["delete"](r):f["delete"](r);}});var i=function(a){var b=e(g);g.set(b,{timerId:a,timerType:"interval"}),d.set(a,b),h.postMessage({id:b,method:"clear",params:{timerId:a,timerType:"interval"}});},j=function(a){var b=e(g);g.set(b,{timerId:a,timerType:"timeout"}),f.set(a,b),h.postMessage({id:b,method:"clear",params:{timerId:a,timerType:"timeout"}});},k=function(a,b){var c=e(d);return d.set(c,function(){a(),"function"==typeof d.get(c)&&h.postMessage({id:null,method:"set",params:{delay:b,now:performance.now(),timerId:c,timerType:"interval"}});}),h.postMessage({id:null,method:"set",params:{delay:b,now:performance.now(),timerId:c,timerType:"interval"}}),c},l=function(a,b){var c=e(f);return f.set(c,a),h.postMessage({id:null,method:"set",params:{delay:b,now:performance.now(),timerId:c,timerType:"timeout"}}),c};return{clearInterval:i,clearTimeout:j,setInterval:k,setTimeout:l}};a.load=f,Object.defineProperty(a,"__esModule",{value:!0});});},{}],3:[function(b,c,d){!function(e,f){"object"==typeof d&&"undefined"!=typeof c?f(d,b("worker-timers-broker")):"function"==typeof a&&a.amd?a(["exports","worker-timers-broker"],f):f(e.workerTimers=e.workerTimers||{},e.workerTimersBroker);}(this,function(a,b){"use strict";var c='!function(){"use strict";var e=new Map,t=new Map,r=function(t){var r=e.get(t);if(void 0===r)throw new Error(\'There is no interval scheduled with the given id "\'+t+\'".\');clearTimeout(r),e.delete(t)},i=function(e){var r=t.get(e);if(void 0===r)throw new Error(\'There is no timeout scheduled with the given id "\'+e+\'".\');clearTimeout(r),t.delete(e)},o=function(e,t){var r=void 0;if("performance"in self){var i=performance.now();e-=Math.max(0,i-t),r=i}else r=Date.now();return{delay:e,expected:r+e}},n=function e(t,r,i,o){var n="performance"in self?performance.now():Date.now();n>i?postMessage({id:null,method:"call",params:{timerId:r,timerType:o}}):t.set(r,setTimeout(e,i-n,t,r,i,o))},a=function(t,r,i){var a=void 0,s=o(t,i);t=s.delay,a=s.expected,e.set(r,setTimeout(n,t,e,r,a,"interval"))},s=function(e,r,i){var a=void 0,s=o(e,i);e=s.delay,a=s.expected,t.set(r,setTimeout(n,e,t,r,a,"timeout"))};addEventListener("message",function(e){var t=e.data;try{if("clear"===t.method){var o=t.id,n=t.params,d=n.timerId,l=n.timerType;if("interval"===l)r(d),postMessage({error:null,id:o});else{if("timeout"!==l)throw new Error(\'The given type "\'+l+\'" is not supported\');i(d),postMessage({error:null,id:o})}}else{if("set"!==t.method)throw new Error(\'The given method "\'+t.method+\'" is not supported\');var m=t.params,u=m.delay,p=m.now,v=m.timerId,c=m.timerType;if("interval"===c)a(u,v,p);else{if("timeout"!==c)throw new Error(\'The given type "\'+c+\'" is not supported\');s(u,v,p)}}}catch(e){postMessage({error:{message:e.message},id:t.id,result:null})}})}();',d=new Blob([c],{type:"application/javascript"}),e=URL.createObjectURL(d),f=b.load(e),g=f.clearInterval,h=f.clearTimeout,i=f.setInterval,j=f.setTimeout;a.clearInterval=g,a.clearTimeout=h,a.setInterval=i,a.setTimeout=j,Object.defineProperty(a,"__esModule",{value:!0});});},{"worker-timers-broker":2}],4:[function(a,b,c){"use strict";function d(a){if(a&&a.__esModule)return a;var b={};if(null!=a)for(var c in a)Object.prototype.hasOwnProperty.call(a,c)&&(b[c]=a[c]);return b["default"]=a,b}function e(a){return a&&a.__esModule?a:{"default":a}}function f(a,b){if(!(a instanceof b))throw new TypeError("Cannot call a class as a function")}c.__esModule=!0;var g=function(){function a(a,b){for(var c=0;c<b.length;c++){var d=b[c];d.enumerable=d.enumerable||!1,d.configurable=!0,"value"in d&&(d.writable=!0),Object.defineProperty(a,d.key,d);}}return function(b,c,d){return c&&a(b.prototype,c),d&&a(b,d),b}}(),h=a("global/window"),i=e(h),j=a("./platform"),k=e(j),l=a("worker-timers"),m=d(l),n=function(){function a(b,c,d,e,g){var h=arguments.length<=5||void 0===arguments[5]?{}:arguments[5],i=arguments.length<=6||void 0===arguments[6]?{}:arguments[6];f(this,a),this.CYCLE_TIME=1e3,this.EVENT_PURGE_TIME_DEFAULT=3*this.CYCLE_TIME,this.TIME_WITHOUT_BEAT_DEFAULT=60*this.CYCLE_TIME,this.SERVER_URL_DEFAULT="",this.CUSTOMER_DEFAULT="",this.BUSINESS_UNIT_DEFAULT="",this.INCLUDE_DEVICE_METRICS_DEFAULT=!0,this.SESSION_TOKEN_DEFAULT="",this.SESSION_ID_DEFAULT="",this.DEBUG_DEFAULT=!1,this.MAX_RETRIES=20,this.DEVICE_CLOCK_CHECK_THRESHOLD=3e5,this.eventsSkeleton=this.initEventSkeleton(),this.customer_=c,this.businessUnit_=d,this.sessionToken_=e,this.serverURL_=b,this.includeDeviceMetrics_=!1,this.userId_=g,this.deviceInfoData_=h,this.props_=i||{},this.pendingRequest_=!1;}return a.prototype.init=function(){var a=this;this.cycleTimer&&("undefined"!=typeof Worker&&this.props_.disableWebWorkers!==!0?m.clearInterval(this.cycle):clearInterval(this.cycle)),"undefined"!=typeof Worker&&this.props_.disableWebWorkers!==!0?this.cycleTimer=m.setInterval(function(){return a.cycle()},this.CYCLE_TIME):this.cycleTimer=setInterval(function(){return a.cycle()},this.CYCLE_TIME),this.communicationCurrentTime=0,this.lastCommunicationTime=0,this.eventPool={};},a.prototype.clear=function(){this.eventPool={};},a.prototype.ok=function(a){var b=this.eventPool[a];return!!b&&(b.forbidden===!1&&b.retries<this.MAX_RETRIES)},a.prototype.created=function(a){var b=arguments.length<=1||void 0===arguments[1]?{}:arguments[1],c={type:"Created"};this.addEventToPool(a,c,b);},a.prototype.play=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"PlayerReady",currentTime:b};this.deviceAppInfo&&(c.deviceAppInfo=this.deviceAppInfo),this.addEventToPool(a,d,c);},a.prototype.playing=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"Started",currentTime:b};if(this.customAttributes){var e=Object.keys(this.customAttributes);e.length&&e.length>0&&(c.attributes=this.customAttributes);}this.addEventToPool(a,d,c),this.changeSessionState(a,"PLAYING");},a.prototype.paused=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"Paused",currentTime:b};this.addEventToPool(a,d,c,!0);},a.prototype.seek=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"ScrubbedTo",currentTime:b};this.addEventToPool(a,d,c,!0);},a.prototype.startCasting=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"StartCasting",currentTime:b};this.addEventToPool(a,d,c,!0),this.changeSessionState(a,"DIRTY");},a.prototype.stopCasting=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"StopCasting",currentTime:b};this.addEventToPool(a,d,c,!0);},a.prototype.setCurrentTime=function(a,b){this.eventPool[a]&&(this.eventPool[a].currentTime=b);},a.prototype.handshake=function(a){var b=arguments.length<=1||void 0===arguments[1]?{}:arguments[1],c={type:"HandshakeStarted"};this.addEventToPool(a,c,b);},a.prototype.resume=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"Resumed",currentTime:b};this.addEventToPool(a,d,c,!0);},a.prototype.bitrateChanged=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"BitrateChanged",currentTime:b};this.addEventToPool(a,d,c,!0);},a.prototype.endOfStream=function(a){var b=arguments.length<=1||void 0===arguments[1]?{}:arguments[1],c={type:"Completed"};this.addEventToPool(a,c,b,!0),this.changeSessionState(a,"FINISHED");},a.prototype.error=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"Error",currentTime:b};this.changeSessionState(a,"DIRTY"),this.addEventToPool(a,d,c);},a.prototype.dispose=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"Aborted"};b&&(d.currentTime=b),this.addEventToPool(a,d,c,!0),this.changeSessionState(a,"FINISHED");},a.prototype.waiting=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"BufferingStarted",currentTime:b};this.addEventToPool(a,d,c);},a.prototype.waitingEnded=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"BufferingEnded",currentTime:b};this.addEventToPool(a,d,c);},a.prototype.getSessionState=function(a){return this.eventPool[a]?this.eventPool[a].currentState||"IDLE":"IDLE"},a.prototype.dispatchNow=function(){var a=arguments.length<=0||void 0===arguments[0]||arguments[0];this.cycle(a,!0);},a.prototype.exitOngoingSession=function(a){var b=this,c=Object.keys(this.eventPool);c.map(function(c){b.eventPool[c]&&b.dispose(c,a);});},a.prototype.setCustomAttribute=function(a,b){this.customAttributes||this.resetAnalyticsCustomAttributes(),this.customAttributes[a]=b;},a.prototype.clearCustomAttributes=function(){this.customAttributes={};},a.prototype.removeSession=function(a){var b=!(arguments.length<=1||void 0===arguments[1])&&arguments[1];if(b===!0)delete this.eventPool[a];else{var c=this.eventPool[a];c&&(c.currentState="REMOVED");}},a.prototype.hasDataToSend=function(){for(var a=Object.keys(this.eventPool),b=0;b<a.length;++b)if(this.eventPool[a[b]].events.length>0)return!0;return!1},a.prototype.sendData=function(){var a=this,b=arguments.length<=0||void 0===arguments[0]||arguments[0],c=!(arguments.length<=1||void 0===arguments[1])&&arguments[1];if(!this.pendingRequest_){var d=!1;this.pendingRequest_=!0;var e=void 0;e="undefined"!=typeof Worker&&this.props_.disableWebWorkers!==!0?m.setTimeout(function(){return a.pendingRequest_=!1},2*this.EVENT_PURGE_TIME_DEFAULT):setTimeout(function(){return a.pendingRequest_=!1},2*this.EVENT_PURGE_TIME_DEFAULT);var f=Object.keys(this.eventPool);f.map(function(f){var g=a.eventPool[f];if(g){if(!f)return g.events=[],void a.removeSession(f,!0);if("PLAYING"===g.currentState&&0===g.events.length&&c&&g.events.push({EventType:"Playback.Heartbeat",Timestamp:(new Date).getTime(),OffsetTime:Math.floor(1e3*g.currentTime)}),"IDLE"!==g.currentState&&"REMOVED"!==g.currentState){if(0===g.events.length)return void("FINISHED"===g.currentState&&a.removeSession(f));var h={DispatchTime:(new Date).getTime(),Customer:a.customer_,BusinessUnit:a.businessUnit_,Payload:g.events,SessionId:f,ClockOffset:g.clockOffset};if(a.debugLog("Sending analytics - sessionId: "+f+" and params: ",h),g.retries>a.MAX_RETRIES||g.forbidden===!0)return void(g.events=[]);Math.abs(a.communicationCurrentDate-a.lastCommunicationDate)>a.DEVICE_CLOCK_CHECK_THRESHOLD&&a.initRequest(f),d=!0,a.sendRequest(b,h,function(b,c){"undefined"!=typeof Worker&&a.props_.disableWebWorkers!==!0?m.clearTimeout(e):clearTimeout(e),a.pendingRequest_=!1;var d=b&&b.httpCode?b.httpCode:200;"undefined"!=typeof c||200!==d?(401===d&&(g.forbidden=!0),a.debugLog("Error sending request to backend",c),g.retries++):(g.events=[],g.retries=0,"FINISHED"===g.currentState&&a.removeSession(f));});}}}),d||(this.pendingRequest_=!1);}},a.prototype.cycle=function(){var a=arguments.length<=0||void 0===arguments[0]||arguments[0],b=!(arguments.length<=1||void 0===arguments[1])&&arguments[1];this.communicationCurrentDate=new Date,this.communicationCurrentTime+=this.CYCLE_TIME,this.hasDataToSend()?(b||this.lastCommunicationTime+this.EVENT_PURGE_TIME_DEFAULT<this.communicationCurrentTime)&&(this.sendData(a),this.lastCommunicationTime=this.communicationCurrentTime,this.lastCommunicationDate=this.communicationCurrentDate):(b||this.lastCommunicationTime+this.TIME_WITHOUT_BEAT_DEFAULT<this.communicationCurrentTime)&&(this.sendData(a,!0),this.lastCommunicationTime=this.communicationCurrentTime,this.lastCommunicationDate=this.communicationCurrentDate);},a.prototype.sendRequest=function(a,b,c){var d=new XMLHttpRequest;d.open("POST",this.serverURL_+"/eventsink/send",a),d.setRequestHeader("Content-type","application/json"),d.setRequestHeader("Authorization","Bearer "+this.sessionToken_),d.onload=function(){var a=JSON.parse(this.responseText);c(a);},d.onerror=function(a){c(null,a);},d.send(JSON.stringify(b));},a.prototype.initRequest=function(a,b,c){var d=this,e=(new Date).getTime(),f=new XMLHttpRequest;f.open("POST",this.serverURL_+"/eventsink/init",!0),f.setRequestHeader("Content-type","application/json"),f.setRequestHeader("Authorization","Bearer "+this.sessionToken_),f.onload=function(){var c=(new Date).getTime(),g=JSON.parse(f.responseText);if(d.determineClockOffset(a,g,e,c),g&&g.settings){g.settings;g.settings.includeDeviceMetrics&&(d.includeDeviceMetrics_=!!g.settings.includeDeviceMetrics);}b&&b();},f.onerror=function(a){d.debugLog("Unable to init. Aborting."),c&&c();};var g={Customer:this.customer_,BusinessUnit:this.businessUnit_,SessionId:a};f.send(JSON.stringify(g));},a.prototype.debugLog=function(a,b){b=b||"",this.debug_;},a.prototype.addDeviceInfoEvent=function(a){var b=this.eventPool[a];if(this.includeDeviceMetrics_&&b&&b.events&&b.events.length){var c={Timestamp:(new Date).getTime(),EventType:"Device.Info",DeviceModel:this.deviceInfoData_.deviceModel||"Desktop",UserAgent:this.deviceInfoData_.userAgent||i["default"].navigator.userAgent,Height:this.deviceInfoData_.screenHeight||i["default"].screen.height,Width:this.deviceInfoData_.screenWidth||i["default"].screen.width,Model:this.deviceInfoData_.model||i["default"].navigator.appName,Name:this.deviceInfoData_.deviceName||i["default"].navigator.product,OS:this.deviceInfoData_.deviceOS||k["default"].os.family,OSVersion:this.deviceInfoData_.deviceOSVersion||k["default"].os.version,Type:this.deviceInfoData_.type||"WEB"};(this.deviceInfoData_.deviceManufacturer||k["default"].manufacturer)&&(c.Manufacturer=this.deviceInfoData_.deviceManufacturer||k["default"].manufacturer),this.deviceInfoData_.deviceId&&(c.DeviceId=this.deviceInfoData_.deviceId),b.events.push(c);}},a.prototype.determineClockOffset=function(a,b,c,d){var e=this.eventPool[a];e&&(e.clockOffset=Math.floor((d-b.repliedTime+c-b.receivedTime)/2));},a.prototype.createPool=function(a){var b=this;this.eventPool[a]={currentState:"IDLE",currentTime:0,clockOffset:0,events:[],retries:0,forbidden:!1},this.initRequest(a,function(){return b.addDeviceInfoEvent(a)});},a.prototype.addEventToPool=function(a,b,c){var d=!(arguments.length<=3||void 0===arguments[3])&&arguments[3];if(!d||!this.eventPool[a]||"FINISHED"!==this.eventPool[a].currentState&&"REMOVED"!==this.eventPool[a].currentState){this.eventPool[a]||this.createPool(a);var e=this.eventsSkeleton[b.type];if(!e)return void this.debugLog("Unknown playback event: ",b);var f={Timestamp:(new Date).getTime(),EventType:"Playback."+e.event};e.includeOffset&&(f.OffsetTime=Math.floor(1e3*b.currentTime)),e.attributes&&"function"==typeof e.attributes&&(f=this.objectAssign(f,e.attributes(c))),this.eventPool[a].events.push(f),this.debugLog("added "+e.event+" to queue");}},a.prototype.changeSessionState=function(a,b){this.eventPool[a]||this.createPool(a),this.eventPool[a].currentState=b;},a.prototype.initEventSkeleton=function(){var a={};return a.Completed={event:"Completed",autoListener:!1},a.PlayerReady={event:"PlayerReady",autoListener:!1,attributes:function(a){var b={Technology:a.techName,PlayerVersion:a.version};return a.techVersion&&(b.TechVersion=a.techVersion),a.deviceAppInfo&&(b.DeviceAppInfo=a.deviceAppInfo),a.playMode&&(b.PlayMode=a.playMode),b}},a.Resumed={event:"Resumed",autoListener:!1,includeOffset:!0},a.BufferingStarted={event:"BufferingStarted",includeOffset:!0},a.BufferingEnded={event:"BufferingEnded",includeOffset:!0},a.ScrubbedTo={event:"ScrubbedTo",includeOffset:!0},a.Created={event:"Created",attributes:function(a){var b={};return"undefined"!=typeof a.autoplay&&(b.AutoPlay=a.autoplay),a.techName&&(b.Technology=a.techName),a.player&&(b.Player=a.player),a.version&&(b.Version=a.version),a.techVersion&&(b.TechVersion=a.techVersion),a.deviceAppInfo&&(b.DeviceAppInfo=a.deviceAppInfo),a.playMode&&(b.PlayMode=a.playMode),b}},a.StartCasting={event:"StartCasting",includeOffset:!0},a.StopCasting={event:"StopCasting",includeOffset:!0},a.Paused={event:"Paused",includeOffset:!0},a.BitrateChanged={event:"BitrateChanged",includeOffset:!0,attributes:function(a){return{Bitrate:a.bitrate}}},a.Error={event:"Error",includeOffset:!0,attributes:function b(a){var b={};return a.errorCode&&(b.Code=a.errorCode),a.errorMessage?b.Message=a.errorMessage:b.Message="Unknown Error",b}},a.HandshakeStarted={event:"HandshakeStarted",autoListener:!1,attributes:function c(a){if(!a.assetId)return{};var c={AssetId:a.assetId};return a.programId&&(c.ProgramId=a.programId),c}},a.Aborted={event:"Aborted",autoListener:!1,includeOffset:!0},a.Started={event:"Started",autoListener:!1,includeOffset:!0,attributes:function d(a){var d={};if(a.bitrate&&(d.Bitrate=a.bitrate),a.duration&&(d.VideoLength=1e3*a.duration),a.mediaLocator){var b=a.mediaLocator.split("?");d.MediaLocator=b[0];}return a.attributes&&(d.Attributes=a.attributes),a.referenceTime&&(d.ReferenceTime=a.referenceTime),a.playMode&&(d.PlayMode=a.playMode),d}},a},a.prototype.objectAssign=function(a,b){for(var c,d,e=1;e<arguments.length;++e){d=arguments[e];for(c in d)Object.prototype.hasOwnProperty.call(d,c)&&(a[c]=d[c]);}return a},g(a,[{key:"debug",get:function(){return this.debug_},set:function(a){this.debug_=a;}},{key:"deviceAppInfo",get:function(){return this.deviceInfoData_?this.deviceInfoData_.deviceAppInfo:null}}]),a}();c["default"]=n,b.exports=c["default"];},{"./platform":5,"global/window":1,"worker-timers":3}],5:[function(b,c,d){(function(b){"use strict";(function(){function e(a){return a=String(a),a.charAt(0).toUpperCase()+a.slice(1)}function f(a,b,c){var d={"10.0":"10",6.4:"10 Technical Preview",6.3:"8.1",6.2:"8",6.1:"7 / Server 2008 R2","6.0":"Vista / Server 2008",5.2:"XP 64-bit / Server 2003",5.1:"XP",5.01:"2000 SP1","5.0":"2000","4.0":"NT","4.90":"ME"};return b&&c&&/^Win/i.test(a)&&!/^Windows Phone /i.test(a)&&(d=d[/[\d.]+$/.exec(a)])&&(a="Windows "+d),a=String(a),b&&c&&(a=a.replace(RegExp(b,"i"),c)),a=h(a.replace(/ ce$/i," CE").replace(/\bhpw/i,"web").replace(/\bMacintosh\b/,"Mac OS").replace(/_PowerPC\b/i," OS").replace(/\b(OS X) [^ \d]+/i,"$1").replace(/\bMac (OS X)\b/,"$1").replace(/\/(\d)/," $1").replace(/_/g,".").replace(/(?: BePC|[ .]*fc[ \d.]+)$/i,"").replace(/\bx86\.64\b/gi,"x86_64").replace(/\b(Windows Phone) OS\b/,"$1").replace(/\b(Chrome OS \w+) [\d.]+\b/,"$1").split(" on ")[0])}function g(a,b){var c=-1,d=a?a.length:0;if("number"==typeof d&&d>-1&&d<=v)for(;++c<d;)b(a[c],c,a);else i(a,b);}function h(a){return a=n(a),/^(?:webOS|i(?:OS|P))/.test(a)?a:e(a)}function i(a,b){for(var c in a)z.call(a,c)&&b(a[c],c,a);}function j(a){return null==a?e(a):A.call(a).slice(8,-1)}function k(a,b){var c=null!=a?typeof a[b]:"number";return!(/^(?:boolean|number|string|undefined)$/.test(c)||"object"==c&&!a[b])}function l(a){return String(a).replace(/([ -])(?!$)/g,"$1?")}function m(a,b){var c=null;return g(a,function(d,e){c=b(c,d,e,a);}),c}function n(a){return String(a).replace(/^ +| +$/g,"")}function o(a){function b(b){return m(b,function(b,c){return b||RegExp("\\b"+(c.pattern||l(c))+"\\b","i").exec(a)&&(c.label||c)})}function c(b){return m(b,function(b,c,d){return b||(c[X]||c[/^[a-z]+(?: +[a-z]+\b)*/i.exec(X)]||RegExp("\\b"+l(d)+"(?:\\b|\\w*\\d)","i").exec(a))&&d})}function d(b){return m(b,function(b,c){return b||RegExp("\\b"+(c.pattern||l(c))+"\\b","i").exec(a)&&(c.label||c)})}function e(b){return m(b,function(b,c){var d=c.pattern||l(c);return!b&&(b=RegExp("\\b"+d+"(?:/[\\d.]+|[ \\w.]*)","i").exec(a))&&(b=f(b,d,c.label||c)),b})}function g(b){return m(b,function(b,c){var d=c.pattern||l(c);return!b&&(b=RegExp("\\b"+d+" *\\d+[.\\w_]*","i").exec(a)||RegExp("\\b"+d+"(?:; *(?:[a-z]+[_-])?[a-z]+\\d+|[^ ();-]*)","i").exec(a))&&((b=String(c.label&&!RegExp(d,"i").test(c.label)?c.label:b).split("/"))[1]&&!/[\d.]+/.test(b[0])&&(b[0]+=" "+b[1]),c=c.label||c,b=h(b[0].replace(RegExp(d,"i"),c).replace(RegExp("; *(?:"+c+"[_-])?","i")," ").replace(RegExp("("+c+")[-_.]?(\\w)","i"),"$1 $2"))),b})}function p(b){return m(b,function(b,c){return b||(RegExp(c+"(?:-[\\d.]+/|(?: for [\\w-]+)?[ /-])([\\d.]+[^ ();/_-]*)","i").exec(a)||0)[1]||null})}function s(){return this.description||""}var t=q,u=a&&"object"==typeof a&&"String"!=j(a);u&&(t=a,a=null);var v=t.navigator||{},y=v.userAgent||"";a||(a=y);var z,B,C=u||x==r,D=u?!!v.likeChrome:/\bChrome\b/.test(a)&&!/internal|\n/i.test(A.toString()),E="Object",F=u?E:"ScriptBridgingProxyObject",G=u?E:"Environment",H=u&&t.java?"JavaPackage":j(t.java),I=u?E:"RuntimeObject",J=/\bJava/.test(H)&&t.java,K=J&&j(t.environment)==G,L=J?"a":"α",M=J?"b":"β",N=t.document||{},O=t.operamini||t.opera,P=w.test(P=u&&O?O["[[Class]]"]:j(O))?P:O=null,Q=a,R=[],S=null,T=a==y,U=T&&O&&"function"==typeof O.version&&O.version(),V=b([{label:"EdgeHTML",pattern:"Edge"},"Trident",{label:"WebKit",pattern:"AppleWebKit"},"iCab","Presto","NetFront","Tasman","KHTML","Gecko"]),W=d(["Adobe AIR","Arora","Avant Browser","Breach","Camino","Epiphany","Fennec","Flock","Galeon","GreenBrowser","iCab","Iceweasel","K-Meleon","Konqueror","Lunascape","Maxthon",{label:"Microsoft Edge",pattern:"Edge"},"Midori","Nook Browser","PaleMoon","PhantomJS","Raven","Rekonq","RockMelt","SeaMonkey",{label:"Silk",pattern:"(?:Cloud9|Silk-Accelerated)"},"Sleipnir","SlimBrowser",{label:"SRWare Iron",pattern:"Iron"},"Sunrise","Swiftfox","WebPositive","Opera Mini",{label:"Opera Mini",pattern:"OPiOS"},"Opera",{label:"Opera",pattern:"OPR"},"Chrome",{label:"Chrome Mobile",pattern:"(?:CriOS|CrMo)"},{label:"Firefox",pattern:"(?:Firefox|Minefield)"},{label:"Firefox Mobile",pattern:"FxiOS"},{label:"IE",pattern:"IEMobile"},{label:"IE",pattern:"MSIE"},"Safari"]),X=g([{label:"BlackBerry",pattern:"BB10"},"BlackBerry",{label:"Galaxy S",pattern:"GT-I9000"},{label:"Galaxy S2",pattern:"GT-I9100"},{label:"Galaxy S3",pattern:"GT-I9300"},{label:"Galaxy S4",pattern:"GT-I9500"},"Google TV","Lumia","iPad","iPod","iPhone","Kindle",{label:"Kindle Fire",pattern:"(?:Cloud9|Silk-Accelerated)"},"Nexus","Nook","PlayBook","PlayStation 3","PlayStation 4","PlayStation Vita","TouchPad","Transformer",{label:"Wii U",pattern:"WiiU"},"Wii","Xbox One",{label:"Xbox 360",pattern:"Xbox"},"Xoom"]),Y=c({Apple:{iPad:1,iPhone:1,iPod:1},Amazon:{Kindle:1,"Kindle Fire":1},Asus:{Transformer:1},"Barnes & Noble":{Nook:1},BlackBerry:{PlayBook:1},Google:{"Google TV":1,Nexus:1},HP:{TouchPad:1},HTC:{},LG:{},Microsoft:{Xbox:1,"Xbox One":1},Motorola:{Xoom:1},Nintendo:{"Wii U":1,Wii:1},Nokia:{Lumia:1},Samsung:{"Galaxy S":1,"Galaxy S2":1,"Galaxy S3":1,"Galaxy S4":1},Sony:{"PlayStation 4":1,"PlayStation 3":1,"PlayStation Vita":1}}),Z=e(["Windows Phone ","Android","CentOS",{label:"Chrome OS",pattern:"CrOS"},"Debian","Fedora","FreeBSD","Gentoo","Haiku","Kubuntu","Linux Mint","OpenBSD","Red Hat","SuSE","Ubuntu","Xubuntu","Cygwin","Symbian OS","hpwOS","webOS ","webOS","Tablet OS","Linux","Mac OS X","Macintosh","Mac","Windows 98;","Windows "]);if(V&&(V=[V]),Y&&!X&&(X=g([Y])),(z=/\bGoogle TV\b/.exec(X))&&(X=z[0]),/\bSimulator\b/i.test(a)&&(X=(X?X+" ":"")+"Simulator"),"Opera Mini"==W&&/\bOPiOS\b/.test(a)&&R.push("running in Turbo/Uncompressed mode"),/^iP/.test(X)?(W||(W="Safari"),Z="iOS"+((z=/ OS ([\d_]+)/i.exec(a))?" "+z[1].replace(/_/g,"."):"")):"Konqueror"!=W||/buntu/i.test(Z)?Y&&"Google"!=Y&&(/Chrome/.test(W)&&!/\bMobile Safari\b/i.test(a)||/\bVita\b/.test(X))?(W="Android Browser",Z=/\bAndroid\b/.test(Z)?Z:"Android"):"Silk"==W?(/\bMobi/i.test(a)||(Z="Android",R.unshift("desktop mode")),/Accelerated *= *true/i.test(a)&&R.unshift("accelerated")):"PaleMoon"==W&&(z=/\bFirefox\/([\d.]+)\b/.exec(a))?R.push("identifying as Firefox "+z[1]):"Firefox"==W&&(z=/\b(Mobile|Tablet|TV)\b/i.exec(a))?(Z||(Z="Firefox OS"),X||(X=z[1])):W&&!(z=!/\bMinefield\b/i.test(a)&&/\b(?:Firefox|Safari)\b/.exec(W))||(W&&!X&&/[\/,]|^[^(]+?\)/.test(a.slice(a.indexOf(z+"/")+8))&&(W=null),(z=X||Y||Z)&&(X||Y||/\b(?:Android|Symbian OS|Tablet OS|webOS)\b/.test(Z))&&(W=/[a-z]+(?: Hat)?/i.exec(/\bAndroid\b/.test(Z)?Z:z)+" Browser")):Z="Kubuntu",U||(U=p(["(?:Cloud9|CriOS|CrMo|Edge|FxiOS|IEMobile|Iron|Opera ?Mini|OPiOS|OPR|Raven|Silk(?!/[\\d.]+$))","Version",l(W),"(?:Firefox|Minefield|NetFront)"])),(z="iCab"==V&&parseFloat(U)>3&&"WebKit"||/\bOpera\b/.test(W)&&(/\bOPR\b/.test(a)?"Blink":"Presto")||/\b(?:Midori|Nook|Safari)\b/i.test(a)&&!/^(?:Trident|EdgeHTML)$/.test(V)&&"WebKit"||!V&&/\bMSIE\b/i.test(a)&&("Mac OS"==Z?"Tasman":"Trident")||"WebKit"==V&&/\bPlayStation\b(?! Vita\b)/i.test(W)&&"NetFront")&&(V=[z]),"IE"==W&&(z=(/; *(?:XBLWP|ZuneWP)(\d+)/i.exec(a)||0)[1])?(W+=" Mobile",Z="Windows Phone "+(/\+$/.test(z)?z:z+".x"),R.unshift("desktop mode")):/\bWPDesktop\b/i.test(a)?(W="IE Mobile",Z="Windows Phone 8.x",R.unshift("desktop mode"),U||(U=(/\brv:([\d.]+)/.exec(a)||0)[1])):"IE"!=W&&"Trident"==V&&(z=/\brv:([\d.]+)/.exec(a))&&(W&&R.push("identifying as "+W+(U?" "+U:"")),W="IE",U=z[1]),T){if(k(t,"global"))if(J&&(z=J.lang.System,Q=z.getProperty("os.arch"),Z=Z||z.getProperty("os.name")+" "+z.getProperty("os.version")),C&&k(t,"system")&&(z=[t.system])[0]){Z||(Z=z[0].os||null);try{z[1]=t.require("ringo/engine").version,U=z[1].join("."),W="RingoJS";}catch($){z[0].global.system==t.system&&(W="Narwhal");}}else"object"==typeof t.process&&(z=t.process)?(W="Node.js",Q=z.arch,Z=z.platform,U=/[\d.]+/.exec(z.version)[0]):K&&(W="Rhino");else j(z=t.runtime)==F?(W="Adobe AIR",Z=z.flash.system.Capabilities.os):j(z=t.phantom)==I?(W="PhantomJS",U=(z=z.version||null)&&z.major+"."+z.minor+"."+z.patch):"number"==typeof N.documentMode&&(z=/\bTrident\/(\d+)/i.exec(a))&&(U=[U,N.documentMode],(z=+z[1]+4)!=U[1]&&(R.push("IE "+U[1]+" mode"),V&&(V[1]=""),U[1]=z),U="IE"==W?String(U[1].toFixed(1)):U[0]);Z=Z&&h(Z);}U&&(z=/(?:[ab]|dp|pre|[ab]\d+pre)(?:\d+\+?)?$/i.exec(U)||/(?:alpha|beta)(?: ?\d)?/i.exec(a+";"+(T&&v.appMinorVersion))||/\bMinefield\b/i.test(a)&&"a")&&(S=/b/i.test(z)?"beta":"alpha",U=U.replace(RegExp(z+"\\+?$"),"")+("beta"==S?M:L)+(/\d+\+?/.exec(z)||"")),"Fennec"==W||"Firefox"==W&&/\b(?:Android|Firefox OS)\b/.test(Z)?W="Firefox Mobile":"Maxthon"==W&&U?U=U.replace(/\.[\d.]+/,".x"):/\bXbox\b/i.test(X)?(Z=null,"Xbox 360"==X&&/\bIEMobile\b/.test(a)&&R.unshift("mobile mode")):!/^(?:Chrome|IE|Opera)$/.test(W)&&(!W||X||/Browser|Mobi/.test(W))||"Windows CE"!=Z&&!/Mobi/i.test(a)?"IE"==W&&T&&null===t.external?R.unshift("platform preview"):(/\bBlackBerry\b/.test(X)||/\bBB10\b/.test(a))&&(z=(RegExp(X.replace(/ +/g," *")+"/([.\\d]+)","i").exec(a)||0)[1]||U)?(z=[z,/BB10/.test(a)],Z=(z[1]?(X=null,Y="BlackBerry"):"Device Software")+" "+z[0],U=null):this!=i&&"Wii"!=X&&(T&&O||/Opera/.test(W)&&/\b(?:MSIE|Firefox)\b/i.test(a)||"Firefox"==W&&/\bOS X (?:\d+\.){2,}/.test(Z)||"IE"==W&&(Z&&!/^Win/.test(Z)&&U>5.5||/\bWindows XP\b/.test(Z)&&U>8||8==U&&!/\bTrident\b/.test(a)))&&!w.test(z=o.call(i,a.replace(w,"")+";"))&&z.name&&(z="ing as "+z.name+((z=z.version)?" "+z:""),w.test(W)?(/\bIE\b/.test(z)&&"Mac OS"==Z&&(Z=null),z="identify"+z):(z="mask"+z,W=P?h(P.replace(/([a-z])([A-Z])/g,"$1 $2")):"Opera",/\bIE\b/.test(z)&&(Z=null),T||(U=null)),V=["Presto"],R.push(z)):W+=" Mobile",(z=(/\bAppleWebKit\/([\d.]+\+?)/i.exec(a)||0)[1])&&(z=[parseFloat(z.replace(/\.(\d)$/,".0$1")),z],"Safari"==W&&"+"==z[1].slice(-1)?(W="WebKit Nightly",S="alpha",U=z[1].slice(0,-1)):U!=z[1]&&U!=(z[2]=(/\bSafari\/([\d.]+\+?)/i.exec(a)||0)[1])||(U=null),z[1]=(/\bChrome\/([\d.]+)/i.exec(a)||0)[1],537.36==z[0]&&537.36==z[2]&&parseFloat(z[1])>=28&&"WebKit"==V&&(V=["Blink"]),T&&(D||z[1])?(V&&(V[1]="like Chrome"),z=z[1]||(z=z[0],z<530?1:z<532?2:z<532.05?3:z<533?4:z<534.03?5:z<534.07?6:z<534.1?7:z<534.13?8:z<534.16?9:z<534.24?10:z<534.3?11:z<535.01?12:z<535.02?"13+":z<535.07?15:z<535.11?16:z<535.19?17:z<536.05?18:z<536.1?19:z<537.01?20:z<537.11?"21+":z<537.13?23:z<537.18?24:z<537.24?25:z<537.36?26:"Blink"!=V?"27":"28")):(V&&(V[1]="like Safari"),z=z[0],z=z<400?1:z<500?2:z<526?3:z<533?4:z<534?"4+":z<535?5:z<537?6:z<538?7:z<601?8:"8"),V&&(V[1]+=" "+(z+="number"==typeof z?".x":/[.+]/.test(z)?"":"+")),"Safari"==W&&(!U||parseInt(U)>45)&&(U=z)),"Opera"==W&&(z=/\bzbov|zvav$/.exec(Z))?(W+=" ",R.unshift("desktop mode"),"zvav"==z?(W+="Mini",U=null):W+="Mobile",Z=Z.replace(RegExp(" *"+z+"$"),"")):"Safari"==W&&/\bChrome\b/.exec(V&&V[1])&&(R.unshift("desktop mode"),W="Chrome Mobile",U=null,/\bOS X\b/.test(Z)?(Y="Apple",Z="iOS 4.3+"):Z=null),U&&0==U.indexOf(z=/[\d.]+$/.exec(Z))&&a.indexOf("/"+z+"-")>-1&&(Z=n(Z.replace(z,""))),V&&!/\b(?:Avant|Nook)\b/.test(W)&&(/Browser|Lunascape|Maxthon/.test(W)||"Safari"!=W&&/^iOS/.test(Z)&&/\bSafari\b/.test(V[1])||/^(?:Adobe|Arora|Breach|Midori|Opera|Phantom|Rekonq|Rock|Sleipnir|Web)/.test(W)&&V[1])&&(z=V[V.length-1])&&R.push(z),R.length&&(R=["("+R.join("; ")+")"]),Y&&X&&X.indexOf(Y)<0&&R.push("on "+Y),X&&R.push((/^on /.test(R[R.length-1])?"":"on ")+X),Z&&(z=/ ([\d.+]+)$/.exec(Z)||(B=/^[a-z]+ ([\d.+]+) \//i.exec(Z)),Z={architecture:32,family:z&&!B?Z.replace(z[0],""):Z,version:z?z[1]:null,toString:function(){var a=this.version;return this.family+(a&&!B?" "+a:"")+(64==this.architecture?" 64-bit":"")}}),(z=/\b(?:AMD|IA|Win|WOW|x86_|x)64\b/i.exec(Q))&&!/\bi686\b/i.test(Q)&&(Z&&(Z.architecture=64,Z.family=Z.family.replace(RegExp(" *"+z),"")),W&&(/\bWOW64\b/i.test(a)||T&&/\w(?:86|32)$/.test(v.cpuClass||v.platform)&&!/\bWin64; x64\b/i.test(a))&&R.unshift("32-bit")),a||(a=null);var _={};return _.description=a,_.layout=V&&V[0],_.manufacturer=Y,_.name=W,_.prerelease=S,_.product=X,_.ua=a,_.version=W&&U,_.os=Z||{architecture:null,family:null,version:null,toString:function(){return"null"}},_.parse=o,_.toString=s,_.version&&R.unshift(U),_.name&&R.unshift(W),Z&&W&&(Z!=String(Z).split(" ")[0]||Z!=W.split(" ")[0]&&!X)&&R.push(X?"("+Z+")":"on "+Z),R.length&&(_.description=R.join(" ")),_}var p={"function":!0,object:!0},q=p[typeof window]&&window||this,r=q,s=p[typeof d]&&d,t=p[typeof c]&&c&&!c.nodeType&&c,u=s&&t&&"object"==typeof b&&b;!u||u.global!==u&&u.window!==u&&u.self!==u||(q=u);var v=Math.pow(2,53)-1,w=/\bOpera/,x=this,y=Object.prototype,z=y.hasOwnProperty,A=y.toString;
-"function"==typeof a&&"object"==typeof a.amd&&a.amd?a(function(){return o()}):s&&t?i(o(),function(a,b){s[b]=a;}):q.platform=o();}).call(void 0);}).call(this,"undefined"!=typeof commonjsGlobal?commonjsGlobal:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{});},{}]},{},[4])(4)});
-});
-
-var empAnalyticsTmp = unwrapExports(empAnalytics_min);
-
-/**
-* @file emp-analytics.js
-* @module EmpAnalytics
-*/
-//Override if external defined for debug
-var EMPAnalytics = window_1.empAnalytics ? window_1.empAnalytics : empAnalyticsTmp;
-var Plugin$2 = videojs$1.getPlugin('plugin');
-
-var AnalyticsPlugin = function (_Plugin) {
-  inherits(AnalyticsPlugin, _Plugin);
-
-  function AnalyticsPlugin(player, options) {
-    classCallCheck(this, AnalyticsPlugin);
-
-    var _this = possibleConstructorReturn(this, _Plugin.call(this, player, options));
-
-    log$1('AnalyticsPlugin', 'create');
-    _this.analyticsConnector_ = null;
-    _this.options_ = options;
-    _this.onLoadStartBind = _this.onLoadStart_.bind(_this);
-    _this.player.on(empPlayerEvents.LOAD_START, _this.onLoadStartBind);
-    return _this;
-  }
-
-  AnalyticsPlugin.prototype.stop = function stop() {
-    if (this.analyticsConnector_ && this.analyticsConnector_.dispose) {
-      this.analyticsConnector_.dispose();
-      this.analyticsConnector_ = null;
-    }
-  };
-
-  AnalyticsPlugin.prototype.dispose = function dispose() {
-    log$1('AnalyticsPlugin', 'dispose');
-    this.player.off(empPlayerEvents.LOAD_START, this.onLoadStartBind);
-    this.stop();
-    _Plugin.prototype.dispose.call(this);
-  };
-
-  AnalyticsPlugin.prototype.options = function options(obj) {
-    if (!obj) {
-      return this.options_;
-    }
-    this.options_ = obj;
-  };
-
-  AnalyticsPlugin.prototype.newAnalytics = function newAnalytics(opt) {
-    log$1('new EMPAnalytics');
-    //exposureApiURL, customer, businessUnit, sessionToken, userId, deviceInfoData = {}, props = {}
-    var analytics = new EMPAnalytics(opt.exposureApiURL, opt.customer, opt.businessUnit, opt.sessionToken, opt.userId, this.options_.analytics && this.options_.analytics.deviceInfo);
-    this.stop();
-    log$1('new EMPAnalyticsConnector');
-    this.analyticsConnector_ = new EMPAnalyticsConnector(this.player, analytics, this.options_);
-  };
-
-  /**
-   * Getter for analyticsConnector
-   *
-   */
-
-
-  AnalyticsPlugin.prototype.onEntitlementLoadStart = function onEntitlementLoadStart() {
-    this.analyticsConnector_ && this.analyticsConnector_.onEntitlementLoadStart();
-  };
-
-  AnalyticsPlugin.prototype.onError = function onError(e) {
-    this.analyticsConnector_ && this.analyticsConnector_.onError(e);
-  };
-
-  AnalyticsPlugin.prototype.onLoadStart_ = function onLoadStart_(event) {
-    //if no entitlement stop analytics
-    if (!extplayer.getEntitlement(this.player)) {
-      this.stop();
-    }
-  };
-
-  createClass(AnalyticsPlugin, [{
-    key: 'connector',
-    get: function get$$1() {
-      return this.analyticsConnector_;
-    }
-  }]);
-  return AnalyticsPlugin;
-}(Plugin$2);
-
-AnalyticsPlugin.VERSION = '2.79.3';
-
-if (videojs$1.getPlugin('analytics')) {
-  videojs$1.log.warn('A plugin named "analytics" already exists.');
+if (videojs$1.EntitlementMiddleware) {
+  videojs$1.log.warn('EntitlementMiddleware already exists.');
 } else {
-  videojs$1.registerPlugin('analytics', AnalyticsPlugin);
+  // Register the plugin with video.js.
+  videojs$1.use('video/emp', EntitlementMiddleware$1);
+  videojs$1.EntitlementMiddleware = EntitlementMiddleware$1;
 }
 
 /**
  * @file emp-player.js
  * @module empPlayer
+ */
+//Override if external defined for debug
+var EntitlementMiddleware = window.empEntitlement ? window.empEntitlement : EntitlementMiddleware$1;
+
+/**
+ * empPlayer - Extend videojs class
+ *
+ * @class empPlayer
  */
 var empPlayer = videojs$1;
 
@@ -10443,23 +12094,76 @@ empPlayer.canPlayUnencrypted = canPlayUnencrypted;
 empPlayer.canPlayEncrypted = canPlayEncrypted;
 
 /**
- * Get an entitlement engine by name
- *
- * @param {String} name Name of the entitlement engine
- * @static
- * @returns {EntitlementEngine}
- */
+* Get an Exposure Service by name
+*
+* @param {String} name Name of the entitlement engine
+* @static
+* @returns {EntitlementEngine}
+*/
+empPlayer.getExposure = EntitlementMiddleware.getExposure;
+
+/**
+* Get an entitlement engine by name
+*
+* @param {String} name Name of the entitlement engine
+* @static
+* @returns {EntitlementEngine}
+*/
 empPlayer.getEntitlementEngine = EntitlementMiddleware.getEntitlementEngine;
+
+/**
+* Register an Exposure Service
+*
+* @param {String} name     Name of the entitlement engine
+* @param entitlementEngine The entitlement engine to register
+* @throws Error
+* @static
+*/
 empPlayer.registerEntitlementEngine = EntitlementMiddleware.registerEntitlementEngine;
+
+/**
+* Return whether the past argument is an Exposure Service or not
+*
+* @param {Object} object An item to check
+* @static
+* @return {Boolean}      Wheter it is a entitlement engine or not
+*/
 empPlayer.isEntitlementEngine = EntitlementMiddleware.isEntitlementEngine;
+
+/**
+* Return EntitlementClass
+*
+* @static
+* @return {Class}  EntitlementClass
+*/
 empPlayer.EntitlementClass = EntitlementMiddleware.EntitlementClass;
 
+/**
+* get the EMP log object
+* @static
+* @returns {*|log}
+*/
 empPlayer.log = log$1;
 
+/**
+* get plugin
+* @static
+* @returns {*}
+*/
 empPlayer.plugin = videojs$1.plugin;
 
+/**
+* get videojs
+* @static
+* @returns {*}
+*/
 empPlayer.videojs = videojs$1;
 
+/**
+* get EntitlementMiddleware
+* @static
+* @returns {*} EntitlementMiddleware
+*/
 empPlayer.EntitlementMiddleware = EntitlementMiddleware;
 
 /**
@@ -10479,7 +12183,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.79.3';
+empPlayer.VERSION = '2.1.95-228';
 
 /*
  * Universal Module Definition (UMD)
