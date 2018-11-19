@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.95-230 
+ * EMP-Player 2.1.95-231 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -5581,6 +5581,8 @@ var Player = function (_VjsPlayer) {
       options.techOrder = Player.AutoTechArray('EmpShaka');
     } else if (options.techOrder === 'auto-dashif' || Array.isArray(options.techOrder) && options.techOrder.length === 1 && options.techOrder[0] === 'auto-dashif') {
       options.techOrder = Player.AutoTechArray('EmpDashif');
+    } else if (Array.isArray(options.techOrder)) {
+      options.techOrder = Player.GetValidAutoTechOrder(options.techOrder);
     }
 
     //element data-setup
@@ -5743,6 +5745,8 @@ var Player = function (_VjsPlayer) {
       obj.techOrder = Player.AutoTechArray('EmpShaka');
     } else if (obj.techOrder === 'auto-dashif' || Array.isArray(obj.techOrder) && obj.techOrder.length === 1 && obj.techOrder[0] === 'auto-dashif') {
       obj.techOrder = Player.AutoTechArray('EmpDashif');
+    } else if (Array.isArray(obj.techOrder)) {
+      obj.techOrder = Player.GetValidAutoTechOrder(obj.techOrder);
     }
 
     if (obj.startTime !== undefined) {
@@ -7684,7 +7688,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.1.95-230';
+      return '2.1.95-231';
     }
 
     /**
@@ -7741,10 +7745,15 @@ Player.AutoTechArray = function (chosenDashTech) {
   if (Player.SupportFairplay_()) {
     autoTechOrder = ['EmpHLS', chosenDashTech, 'Html5'];
   }
+  var validAutoTechOrder = Player.GetValidAutoTechOrder(autoTechOrder);
+  return validAutoTechOrder;
+};
+
+Player.GetValidAutoTechOrder = function (techOrder) {
   var validAutoTechOrder = [];
-  for (var i = 0; i < autoTechOrder.length; i++) {
-    if (Tech.techs_.hasOwnProperty(autoTechOrder[i])) {
-      validAutoTechOrder.push(autoTechOrder[i]);
+  for (var i = 0; i < techOrder.length; i++) {
+    if (Tech.techs_.hasOwnProperty(techOrder[i])) {
+      validAutoTechOrder.push(techOrder[i]);
     }
   }
   return validAutoTechOrder;
@@ -8820,7 +8829,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin);
 
-AnalyticsPlugin.VERSION = '2.1.95-230';
+AnalyticsPlugin.VERSION = '2.1.95-231';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -11400,7 +11409,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin$1);
 
-ProgramService.VERSION = '2.1.95-230';
+ProgramService.VERSION = '2.1.95-231';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -11576,7 +11585,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$2);
 
-EntitlementExpirationService.VERSION = '2.1.95-230';
+EntitlementExpirationService.VERSION = '2.1.95-231';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -12054,7 +12063,7 @@ EntitlementMiddleware$1.registerEntitlementEngine = EntitlementEngine.registerEn
 
 EntitlementMiddleware$1.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
 
-EntitlementMiddleware$1.VERSION = '2.1.95-230';
+EntitlementMiddleware$1.VERSION = '2.1.95-231';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -12184,7 +12193,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.1.95-230';
+empPlayer.VERSION = '2.1.95-231';
 
 /*
  * Universal Module Definition (UMD)
