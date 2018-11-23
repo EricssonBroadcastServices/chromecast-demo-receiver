@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.95-236 
+ * EMP-Player 2.1.95-237 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -2584,12 +2584,7 @@ var EmpMouseTimeDisplay = function (_MouseTimeDisplay) {
     this.rafId_ = this.requestAnimationFrame(function () {
       var duration = _this2.player_.duration();
       var content = void 0;
-      if (_this2.player().isLive()) {
-        content = '-' + formatTime(duration - seekBarPoint * duration, duration);
-      } else {
-        content = formatTime(seekBarPoint * duration, duration);
-      }
-
+      content = formatTime(seekBarPoint * duration, duration);
       _this2.el_.style.left = seekBarRect.width * seekBarPoint + 'px';
       _this2.getChild('timeTooltip').update(seekBarRect, seekBarPoint, content);
     });
@@ -2770,7 +2765,6 @@ var SeekBar = function (_Slider) {
 
     var _this = possibleConstructorReturn(this, _Slider.call(this, player, options));
 
-    _this.lastStep = 0;
     _this.markers = [];
 
     _this.update = throttle(bind(_this, _this.update), UPDATE_REFRESH_INTERVAL);
@@ -2913,7 +2907,8 @@ var SeekBar = function (_Slider) {
    */
 
 
-  SeekBar.prototype.update = function update(event) {
+  SeekBar.prototype.update = function update(event, data) {
+    //log('seek-bar-update', event, data);
     var percent = _Slider.prototype.update.call(this);
 
     this.update_(this.getCurrentTime_(), percent);
@@ -2932,7 +2927,17 @@ var SeekBar = function (_Slider) {
 
 
   SeekBar.prototype.getCurrentTime_ = function getCurrentTime_() {
-    return this.player_.scrubbing() ? this.player_.getCache().currentTime : this.player_.currentTime();
+    //log('seek-bar-getCurrentTime', this.player_.scrubbing() ? 'Cache currentTime' : 'currentTime');
+    if (this.player_.scrubbing()) {
+      if (this.player_.getCache().currentTime >= 0) {
+        return this.player_.getCache().currentTime;
+      } else {
+        return this.player_.getCache().currentTime;
+      }
+    } else {
+      this.player_.getCache().currentTime = this.player_.currentTime();
+      return this.player_.currentTime();
+    }
   };
 
   /**
@@ -3014,7 +3019,22 @@ var SeekBar = function (_Slider) {
       newTime = newTime - 0.1;
     }
 
-    this.throttleSetCurrentTime(newTime);
+    this.setCurrentTime(newTime);
+  };
+
+  SeekBar.prototype.setCurrentTime = function setCurrentTime(newTime) {
+    var start = this.player_.buffered().start(0);
+    var end = this.player_.buffered().end(0);
+    if (newTime >= start && newTime <= end) {
+      this.player_.currentTime(newTime);
+      this.player_.getCache().currentTime = newTime;
+    } else if (this.player_.scrubbing()) {
+      this.player_.getCache().currentTime = newTime;
+      this.player_.getCache().currentTime = newTime;
+    } else {
+      this.player_.currentTime(newTime);
+      this.player_.getCache().currentTime = newTime;
+    }
   };
 
   /**
@@ -3029,7 +3049,17 @@ var SeekBar = function (_Slider) {
     if (this.seekTimeoutId_ != null) {
       window_1.clearTimeout(this.seekTimeoutId_);
     }
-    this.seekTimeoutId_ = window_1.setTimeout(this.onSeekInputTimeout_.bind(this, newTime), 1000);
+    var start = this.player_.buffered().start(0);
+    var end = this.player_.buffered().end(0);
+    if (newTime >= start && newTime <= end) {
+      this.player_.scrubbing(false);
+      this.player_.currentTime(newTime);
+      this.player_.getCache().currentTime = newTime;
+    } else {
+      this.player_.scrubbing(true);
+      this.player_.getCache().currentTime = newTime;
+      this.seekTimeoutId_ = window_1.setTimeout(this.onSeekInputTimeout_.bind(this, newTime), 1000);
+    }
   };
 
   /**
@@ -3040,10 +3070,11 @@ var SeekBar = function (_Slider) {
 
 
   SeekBar.prototype.onSeekInputTimeout_ = function onSeekInputTimeout_(newTime) {
-    this.lastStep = 0;
     this.seekTimeoutId_ = null;
     // Set new time (tell player to seek to new time)
+    this.player_.scrubbing(false);
     this.player_.currentTime(newTime);
+    this.player_.getCache().currentTime = newTime;
   };
 
   SeekBar.prototype.enable = function enable() {
@@ -3082,6 +3113,7 @@ var SeekBar = function (_Slider) {
     _Slider.prototype.handleMouseUp.call(this, event);
 
     this.player_.scrubbing(false);
+    this.setCurrentTime(this.player_.getCache().currentTime);
   };
 
   /**
@@ -3090,8 +3122,7 @@ var SeekBar = function (_Slider) {
 
 
   SeekBar.prototype.stepForward = function stepForward() {
-    this.lastStep += STEP_SECONDS;
-    this.throttleSetCurrentTime(this.player_.currentTime() + this.lastStep);
+    this.throttleSetCurrentTime(this.player_.getCache().currentTime + STEP_SECONDS);
   };
 
   /**
@@ -3100,8 +3131,7 @@ var SeekBar = function (_Slider) {
 
 
   SeekBar.prototype.stepBack = function stepBack() {
-    this.lastStep -= STEP_SECONDS;
-    this.throttleSetCurrentTime(this.player_.currentTime() + this.lastStep);
+    this.throttleSetCurrentTime(this.player_.getCache().currentTime - STEP_SECONDS);
   };
 
   /**
@@ -7199,7 +7229,9 @@ var Player = function (_VjsPlayer) {
         this.duration(Infinity);
         //log('currentTimeN', this.hasClass('vjs-live'));
       }
-      this.cache_.currentTime = currentTime;
+      if (!this.scrubbing()) {
+        this.cache_.currentTime = currentTime;
+      }
       return this.cache_.currentTime;
     } else {
       if (typeof seconds !== 'undefined') {
@@ -7211,7 +7243,9 @@ var Player = function (_VjsPlayer) {
         this.techCall_('setCurrentTime', seconds);
         return;
       } else {
-        this.cache_.currentTime = this.techGet_('currentTime') || 0;
+        if (!this.scrubbing()) {
+          this.cache_.currentTime = this.techGet_('currentTime') || 0;
+        }
         return this.cache_.currentTime;
       }
     }
@@ -7694,7 +7728,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.1.95-236';
+      return '2.1.95-237';
     }
 
     /**
@@ -8835,7 +8869,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin);
 
-AnalyticsPlugin.VERSION = '2.1.95-236';
+AnalyticsPlugin.VERSION = '2.1.95-237';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -11418,7 +11452,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin$1);
 
-ProgramService.VERSION = '2.1.95-236';
+ProgramService.VERSION = '2.1.95-237';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -11594,7 +11628,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$2);
 
-EntitlementExpirationService.VERSION = '2.1.95-236';
+EntitlementExpirationService.VERSION = '2.1.95-237';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -12074,7 +12108,7 @@ EntitlementMiddleware$1.registerEntitlementEngine = EntitlementEngine.registerEn
 
 EntitlementMiddleware$1.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
 
-EntitlementMiddleware$1.VERSION = '2.1.95-236';
+EntitlementMiddleware$1.VERSION = '2.1.95-237';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -12204,7 +12238,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.1.95-236';
+empPlayer.VERSION = '2.1.95-237';
 
 /*
  * Universal Module Definition (UMD)
