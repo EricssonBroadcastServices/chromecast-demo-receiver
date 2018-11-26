@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.95-237 
+ * EMP-Player 2.1.96-238 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -3023,9 +3023,11 @@ var SeekBar = function (_Slider) {
   };
 
   SeekBar.prototype.setCurrentTime = function setCurrentTime(newTime) {
+    var src = this.player_.src() ? this.player_.src() : '';
+    var isDownload = src.indexOf('offline:') === 0;
     var start = this.player_.buffered().start(0);
     var end = this.player_.buffered().end(0);
-    if (newTime >= start && newTime <= end) {
+    if (isDownload || newTime >= start && newTime <= end) {
       this.player_.currentTime(newTime);
       this.player_.getCache().currentTime = newTime;
     } else if (this.player_.scrubbing()) {
@@ -7728,7 +7730,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.1.95-237';
+      return '2.1.96-238';
     }
 
     /**
@@ -8869,7 +8871,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin);
 
-AnalyticsPlugin.VERSION = '2.1.95-237';
+AnalyticsPlugin.VERSION = '2.1.96-238';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -11452,7 +11454,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin$1);
 
-ProgramService.VERSION = '2.1.95-237';
+ProgramService.VERSION = '2.1.96-238';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -11628,7 +11630,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$2);
 
-EntitlementExpirationService.VERSION = '2.1.95-237';
+EntitlementExpirationService.VERSION = '2.1.96-238';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -12108,7 +12110,7 @@ EntitlementMiddleware$1.registerEntitlementEngine = EntitlementEngine.registerEn
 
 EntitlementMiddleware$1.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
 
-EntitlementMiddleware$1.VERSION = '2.1.95-237';
+EntitlementMiddleware$1.VERSION = '2.1.96-238';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -12238,7 +12240,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.1.95-237';
+empPlayer.VERSION = '2.1.96-238';
 
 /*
  * Universal Module Definition (UMD)
