@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.96-238 
+ * EMP-Player 2.1.96-239 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -7730,7 +7730,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.1.96-238';
+      return '2.1.96-239';
     }
 
     /**
@@ -8871,7 +8871,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin);
 
-AnalyticsPlugin.VERSION = '2.1.96-238';
+AnalyticsPlugin.VERSION = '2.1.96-239';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -10977,9 +10977,13 @@ var ProgramService = function (_Plugin) {
       log$1.error('checkForProgramChange', 'event was not provided.');
       return;
     }
+
     log$1('checkForProgramChange', event.type);
     //Not need update a program or real VOD
     if (!this.entitlement().live && !this.entitlement().isStaticCachupAsLive && !this.entitlement().isDynamicCachupAsLive && event.type === empPlayerEvents.SEEKED) {
+      return;
+    }
+    if (!this.player || !this.player.options_) {
       return;
     }
     if (this.player.options_.absoluteStartTime && event.type === empPlayerEvents.SEEKED) {
@@ -11141,6 +11145,9 @@ var ProgramService = function (_Plugin) {
 
     log$1('updateCurrentProgram', program, startplayback);
     this.clearProgramChangeTimeout_();
+    if (!this.player) {
+      return;
+    }
 
     // Program changed due to seek or other event
     if (!this.currentProgram_ || this.currentProgram_.programId !== program.programId) {
@@ -11150,6 +11157,9 @@ var ProgramService = function (_Plugin) {
         this.verifyEntitlement();
       }
       this.updateChannelInfo_(program, function () {
+        if (!_this5.player) {
+          return;
+        }
         var asset = extplayer.currentAsset(_this5.player);
         //Add channelId if played without channelId
         if (!asset.channelId) {
@@ -11454,7 +11464,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin$1);
 
-ProgramService.VERSION = '2.1.96-238';
+ProgramService.VERSION = '2.1.96-239';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -11630,7 +11640,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$2);
 
-EntitlementExpirationService.VERSION = '2.1.96-238';
+EntitlementExpirationService.VERSION = '2.1.96-239';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -12110,7 +12120,7 @@ EntitlementMiddleware$1.registerEntitlementEngine = EntitlementEngine.registerEn
 
 EntitlementMiddleware$1.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
 
-EntitlementMiddleware$1.VERSION = '2.1.96-238';
+EntitlementMiddleware$1.VERSION = '2.1.96-239';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -12240,7 +12250,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.1.96-238';
+empPlayer.VERSION = '2.1.96-239';
 
 /*
  * Universal Module Definition (UMD)
