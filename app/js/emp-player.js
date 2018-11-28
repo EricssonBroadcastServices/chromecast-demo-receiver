@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.96-241 
+ * EMP-Player 2.1.96-242 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -7733,7 +7733,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.1.96-241';
+      return '2.1.96-242';
     }
 
     /**
@@ -8874,7 +8874,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin);
 
-AnalyticsPlugin.VERSION = '2.1.96-241';
+AnalyticsPlugin.VERSION = '2.1.96-242';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -8924,6 +8924,7 @@ var Entitlement = function () {
     this.playTokenExpiration = options.playTokenExpiration || '';
     this.productId = options.productId || '';
     this.edrmConfig = options.edrmConfig || null;
+    this.live = options.live || false;
     this.mediaLocator = options.mediaLocator || '';
     if (this.mediaLocator) {
       if (location.hostname === 'localhost') {
@@ -8940,7 +8941,6 @@ var Entitlement = function () {
     }
     this.mimeType = options.mimeType || '';
     this.entitlementType = options.entitlementType || '';
-    this.live = options.live || false;
     this.playSessionId = options.playSessionId || '';
     this.analyticsConfig = options.analyticsConfig || null;
     this.lastViewedOffset = options.lastViewedOffset || null;
@@ -8992,6 +8992,9 @@ var Entitlement = function () {
         if (dvr_window_length) {
           var nowDate = serverTime ? new Date(serverTime) : new Date();
           t = new Date(nowDate.getTime() - dvr_window_length * 1000).toISOString().replace(/Z/g, "");
+        } else if (this.live) {
+          var _nowDate = serverTime ? new Date(serverTime) : new Date();
+          t = new Date(_nowDate.getTime() - 7200 * 1000).toISOString().replace(/Z/g, "");
         }
       }
       if (t) {
@@ -11467,7 +11470,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin$1);
 
-ProgramService.VERSION = '2.1.96-241';
+ProgramService.VERSION = '2.1.96-242';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -11643,7 +11646,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$2);
 
-EntitlementExpirationService.VERSION = '2.1.96-241';
+EntitlementExpirationService.VERSION = '2.1.96-242';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -12123,7 +12126,7 @@ EntitlementMiddleware$1.registerEntitlementEngine = EntitlementEngine.registerEn
 
 EntitlementMiddleware$1.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
 
-EntitlementMiddleware$1.VERSION = '2.1.96-241';
+EntitlementMiddleware$1.VERSION = '2.1.96-242';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -12253,7 +12256,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.1.96-241';
+empPlayer.VERSION = '2.1.96-242';
 
 /*
  * Universal Module Definition (UMD)
