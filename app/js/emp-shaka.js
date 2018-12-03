@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.96-244 
+ * EMP-Player 2.1.96-245 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -1653,8 +1653,8 @@ var EmpTech = function () {
       this.clearInterval(this.durationInterval);
       this.durationInterval = null;
       this.preDuration_ = 0;
+      this.trigger(empPlayerEvents.DURATION_CHANGE);
     }
-    this.trigger(empPlayerEvents.DURATION_CHANGE);
   };
 
   /**
@@ -4062,7 +4062,7 @@ var DownloadService = function (_Plugin) {
   return DownloadService;
 }(Plugin);
 
-DownloadService.VERSION = '2.1.96-244';
+DownloadService.VERSION = '2.1.96-245';
 
 if (videojs.getPlugin('DownloadService')) {
   videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -4653,7 +4653,7 @@ var EmpShaka = function (_Html) {
 
 
   EmpShaka.prototype.live = function live() {
-    if (this.shakaPlayer_) {
+    if (this.shakaPlayer_ && !this.loading_) {
       return this.shakaPlayer_.isLive();
     } else if (this.options_ && this.options_.source) {
       return this.options_.source.live;
@@ -4672,17 +4672,12 @@ var EmpShaka = function (_Html) {
 
   EmpShaka.prototype.duration = function duration() {
     if (this.live()) {
-      if (this.timeShiftEnabled()) {
-        if (!this.shakaPlayer_) {
-          return 0;
-        }
-        var seekRange = this.shakaPlayer_.seekRange();
-        var duration = seekRange.end;
-        return duration;
-        // No progress control
-      } else {
-        return Infinity;
+      if (!this.shakaPlayer_) {
+        return 0;
       }
+      var seekRange = this.shakaPlayer_.seekRange();
+      var duration = seekRange.end;
+      return duration;
     }
     return _Html.prototype.duration.call(this);
   };
@@ -5463,7 +5458,7 @@ EmpShaka.prototype['featuresNativeTextTracks'] = false;
 
 Tech.withSourceHandlers(EmpShaka);
 
-EmpShaka.VERSION = '2.1.96-244';
+EmpShaka.VERSION = '2.1.96-245';
 
 // Unset source handlers set by Html5 super class.
 // We do not intent to support any sources other then sources allowed by nativeSourceHandler
