@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.96-252 
+ * EMP-Player 2.1.97-253 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -7735,7 +7735,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.1.96-252';
+      return '2.1.97-253';
     }
 
     /**
@@ -8876,7 +8876,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin);
 
-AnalyticsPlugin.VERSION = '2.1.96-252';
+AnalyticsPlugin.VERSION = '2.1.97-253';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -8889,7 +8889,9 @@ if (videojs$1.getPlugin('analytics')) {
  *
  * @class Entitlement
  * @param {Object}  [options]              - Object of option names and values
- * @param {string}  [options.assetId=0]    - asset identifier
+ * @param {string}  [options.assetId]      - asset identifier
+ * @param {string}  [options.programId]     - program identifier
+ * @param {string}  [options.channelId]     - channel identifier
  * @param {string}  [options.playToken=''] - play token string to be used to authenticate the DRM license requests
  * @param {string}  [options.mediaLocator=''] - stream locator to be used by the underlying playback technology
  * @param {Object}  [options.edrmConfig=null] - EDRM configuration object as provided by EMP Exposure API
@@ -8918,15 +8920,87 @@ if (videojs$1.getPlugin('analytics')) {
  */
 
 var Entitlement = function () {
-  function Entitlement(options, serverTime) {
+  function Entitlement() {
     classCallCheck(this, Entitlement);
 
-    this.assetId = options.assetId || 0;
-    this.playToken = options.playToken || '';
-    this.playTokenExpiration = options.playTokenExpiration || '';
-    this.productId = options.productId || '';
+    // derived properties
+    this.channelId;
+    this.assetId;
+    this.programId;
+    this.productId = '';
+    this.mimeType = '';
+    this.playRequest = null;
+    this.requestId = '';
+
+    // properties from play call
+    this.edrmConfig = null;
+    this.live = false;
+    this.playSessionId = '';
+    this.analyticsConfig = null;
+    this.lastViewedOffset = null;
+    this.lastViewedTime = null;
+    this.liveTime = null;
+    this.entitlementType = '';
+    var licenseExpirationTimestamp = Date.parse(null);
+    this.licenseExpiration = null;
+    this.licenseExpirationReason = '';
+    this.minBitrate = 0;
+    this.maxBitrate = 0;
+    this.maxResWidth = 0;
+    this.maxResHeight = 0;
+    this.rwEnabled = true;
+    this.ffEnabled = true;
+    this.airplayBlocked = false;
+    this.mdnRequestRouterUrl = '';
+    this.timeshiftEnabled = true;
+    this.formats = null;
+
+    // processed properties from play call
+    this.mediaLocator = '';
+    this.src = '';
+    this.adMediaLocator = '';
+    this.streamInfo = null;
+    this.playToken = '';
+    this.playTokenExpiration = '';
+    this.protection = null;
+    this.certificateServer = null;
+    this.licenseServers = null;
+  }
+
+  Entitlement.prototype.commonInitiate = function commonInitiate(options) {
+    // properties from play call
     this.edrmConfig = options.edrmConfig || null;
     this.live = options.live || false;
+    this.playSessionId = options.playSessionId || '';
+    this.analyticsConfig = options.analyticsConfig || null;
+    this.entitlementType = options.entitlementType || '';
+
+    this.mdnRequestRouterUrl = options.mdnRequestRouterUrl || '';
+    this.playToken = options.playToken || '';
+    this.playTokenExpiration = options.playTokenExpiration || '';
+  };
+
+  Entitlement.prototype.initiateV1 = function initiateV1(options, serverTime) {
+    this.commonInitiate(options);
+    this.minBitrate = options.minBitrate || 0;
+    this.maxBitrate = options.maxBitrate || 0;
+    this.maxResWidth = options.maxResWidth || 0;
+    this.maxResHeight = options.maxResHeight || 0;
+    this.rwEnabled = options.rwEnabled === undefined ? true : options.rwEnabled;
+    this.ffEnabled = options.ffEnabled === undefined ? true : options.ffEnabled;
+    this.airplayBlocked = options.airplayBlocked === undefined ? false : options.airplayBlocked;
+    this.timeshiftEnabled = options.timeshiftEnabled || true;
+    this.lastViewedOffset = options.lastViewedOffset || null;
+    this.lastViewedTime = options.lastViewedTime || null;
+    this.liveTime = options.liveTime || null;
+
+    var licenseExpirationTimestamp = Date.parse(options.licenseExpiration || null);
+    if (isNaN(licenseExpirationTimestamp) === false) {
+      this.licenseExpiration = new Date(licenseExpirationTimestamp);
+    }
+    this.licenseExpirationReason = options.licenseExpirationReason || '';
+
+    // processed properties from play call
     this.mediaLocator = options.mediaLocator || '';
     if (this.mediaLocator) {
       if (location.hostname === 'localhost') {
@@ -8941,27 +9015,7 @@ var Entitlement = function () {
     } else {
       this.setupStreamInfo(serverTime);
     }
-    this.mimeType = options.mimeType || '';
-    this.entitlementType = options.entitlementType || '';
-    this.playSessionId = options.playSessionId || '';
-    this.analyticsConfig = options.analyticsConfig || null;
-    this.lastViewedOffset = options.lastViewedOffset || null;
-    this.lastViewedTime = options.lastViewedTime || null;
-    this.liveTime = options.liveTime || null;
 
-    var licenseExpirationTimestamp = Date.parse(options.licenseExpiration || null);
-    if (isNaN(licenseExpirationTimestamp) === false) {
-      this.licenseExpiration = new Date(licenseExpirationTimestamp);
-    }
-    this.licenseExpirationReason = options.licenseExpirationReason || '';
-    this.playRequest = options.playRequest || null;
-    this.minBitrate = options.minBitrate || 0;
-    this.maxBitrate = options.maxBitrate || 0;
-    this.maxResWidth = options.maxResWidth || 0;
-    this.maxResHeight = options.maxResHeight || 0;
-    this.rwEnabled = options.rwEnabled === undefined ? true : options.rwEnabled;
-    this.ffEnabled = options.ffEnabled === undefined ? true : options.ffEnabled;
-    this.airplayBlocked = options.airplayBlocked === undefined ? false : options.airplayBlocked;
     if (options.fairplayConfig) {
       this.protection = {};
       this.protection.certificateUrl = options.fairplayConfig.certificateUrl || '';
@@ -8975,13 +9029,102 @@ var Entitlement = function () {
     if (options.widevineConfig) {
       this.certificateServer = options.widevineConfig.certificateUrl || '';
     }
-    this.mdnRequestRouterUrl = options.mdnRequestRouterUrl || '';
-    this.timeshiftEnabled = options.timeshiftEnabled;
+
     if (options.cencConfig) {
       this.licenseServers = options.cencConfig;
     }
-    this.requestId = options.requestId || '';
-  }
+  };
+
+  Entitlement.prototype.initiateV2 = function initiateV2(options) {
+    this.commonInitiate(options);
+    this.formats = options.formats || null;
+    this.channel = options.channel || false;
+    this.program = options.program || false;
+
+    if (options.entitlements) {
+      var entitlements = options.entitlements;
+      this.minBitrate = entitlements.minBitrate || 0;
+      this.maxBitrate = entitlements.maxBitrate || 0;
+      this.maxResWidth = entitlements.maxResWidth || 0;
+      this.maxResHeight = entitlements.maxResHeight || 0;
+      this.rwEnabled = entitlements.rwEnabled === undefined ? true : entitlements.rwEnabled;
+      this.ffEnabled = entitlements.ffEnabled === undefined ? true : entitlements.ffEnabled;
+      this.airplayBlocked = entitlements.airplayEnabled === undefined ? true : !entitlements.airplayEnabled;
+      this.timeshiftEnabled = entitlements.timeshiftEnabled || true;
+    }
+    if (options.bookmarks) {
+      var bookmarks = options.bookmarks;
+      this.lastViewedOffset = bookmarks.lastViewedOffset || null;
+      this.lastViewedTime = bookmarks.lastViewedTime || null;
+      this.liveTime = bookmarks.liveTime || null;
+    }
+  };
+
+  Entitlement.prototype.setupMediaLocator = function setupMediaLocator(format) {
+    this.mediaLocator = format.mediaLocator || '';
+    if (this.mediaLocator) {
+      if (location.hostname === 'localhost') {
+        this.src = this.mediaLocator;
+      } else {
+        this.src = this.mediaLocator.replace(/^(http:)/, '').replace(/^(https:)/, '');
+      }
+    }
+    this.adMediaLocator = format.adMediaLocator || '';
+    var licenseExpirationTimestamp = Date.parse(format.licenseExpiration || null);
+    if (isNaN(licenseExpirationTimestamp) === false) {
+      this.licenseExpiration = new Date(licenseExpirationTimestamp);
+    }
+    this.licenseExpirationReason = format.licenseExpirationReason || '';
+  };
+
+  Entitlement.prototype.selectFormat = function selectFormat(playRequest) {
+    var _this = this;
+
+    var formats = void 0;
+    this.mediaLocator = '';
+    this.src = '';
+    this.playRequest = playRequest;
+    this.mimeType = playRequest.type;
+    switch (playRequest.format) {
+      case 'DASH':
+        formats = this.formats.filter(function (obj) {
+          return obj.format === 'DASH';
+        });
+        if (formats.length > 0) {
+          var format = formats[0];
+          this.setupMediaLocator(format);
+
+          if (format.drm) {
+            this.licenseServers = format.drm;
+            if (format.drm['com.widevine.alpha']) {
+              this.certificateServer = format.drm['com.widevine.alpha'].certificateUrl;
+            }
+            this.licenseServers = {};
+            Object.keys(format.drm).forEach(function (key) {
+              _this.licenseServers[key] = format.drm[key].licenseServerUrl;
+            });
+          }
+        }
+        break;
+      case 'HLS':
+        formats = this.formats.filter(function (obj) {
+          return obj.format === 'HLS';
+        });
+        if (formats.length > 0) {
+          var _format = formats[0];
+          this.setupMediaLocator(_format);
+
+          if (_format.drm && _format.drm['com.apple.fps']) {
+            this.protection = {};
+            this.protection.certificateUrl = _format.drm['com.apple.fps'].certificateUrl || '';
+            this.protection.licenseUrl = _format.drm['com.apple.fps'].licenseServerUrl || '';
+            this.protection.version = 'irdeto';
+          }
+        }
+        break;
+      default:
+    }
+  };
 
   Entitlement.prototype.setupStreamInfo = function setupStreamInfo(serverTime) {
     this.streamInfo = { referenceTime: 0 };
@@ -10111,6 +10254,48 @@ var EricssonExposure = function (_EntitlementEngine) {
   };
 
   /**
+   * Get Entitlement version 2
+   *
+   * Called by the player to get an entitlement. Entitlement requests contain an assetId and an optional programId.
+   * If the programId exists, the assetId is the channelId. if the programId doesn't exist the assetId is the assetId.
+   *
+   * The callback should be called when the requests completes, if it fails it should contain an EntitlementError
+   * Exception object as it's second parameter.
+   *
+   * if it succeeds it should return the Entitlement as the first parameter.
+   *
+   * The Entitlement should contain the following parameters:
+   *
+   * playToken - Playtoken required for drm
+   * mediaLocator - URL of playlist file (for example for dash or hls playback) or mediaId for flash playback.
+   *
+   * @param {EntitlementRequest}    entitlementRequest  Entitlement request to execute
+   * @param {Object}                playRequest         Playrequest object containing information about the required
+   *                                                    attributes of the entitlement (e.g. { drm: 'EDRM', 'format': 'HLS' }
+   * @param {function}             callback            Callback when entitlement is fetched or an error occurs
+   */
+
+
+  EricssonExposure.prototype.getV2Entitlement = function getV2Entitlement(entitlementRequest, playRequest, preEntitlement, callback) {
+    if (typeof entitlementRequest === 'undefined') {
+      throw new EntitlementError('No request specified.');
+    }
+    if (typeof entitlementRequest.assetId === 'undefined') {
+      throw new EntitlementError('No assetId specified.');
+    }
+
+    if (typeof playRequest === 'undefined') {
+      throw new EntitlementError('Media not found.');
+    }
+
+    if (!playRequest.drm || !playRequest.format) {
+      throw new EntitlementError('Invalid playrequest specified.');
+    }
+
+    this.getV2Asset_(entitlementRequest, playRequest, preEntitlement, callback);
+  };
+
+  /**
    * Get Entitlement
    *
    * Called by the player to get an entitlement. Entitlement requests contain an assetId and an optional programId.
@@ -10247,18 +10432,109 @@ var EricssonExposure = function (_EntitlementEngine) {
   };
 
   /**
+   * Get VOD entitlement version 2
+   *
+   * @param {EntitlementRequest}    entitlementRequest  Entitlement request to execute
+   * @param {Object}    playRequest Playrequest payload
+   * @param {Entitlement}    preEntitlement  pre Entitlement
+   * @param {Function=} callback    Callback when entitlement is fetched
+   * @private
+   */
+
+
+  EricssonExposure.prototype.getV2Asset_ = function getV2Asset_(entitlementRequest, playRequest, preEntitlement) {
+    var _this4 = this;
+
+    var callback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : function () {};
+
+    var customer = this.customer;
+    var businessUnit = this.businessUnit;
+    if (!customer) {
+      throw new EntitlementError('Customer was not provided.');
+    }
+
+    if (!businessUnit) {
+      throw new EntitlementError('Business unit was not provided.');
+    }
+
+    if (preEntitlement && preEntitlement.formats) {
+      preEntitlement.selectFormat(playRequest);
+      if (preEntitlement.mediaLocator) {
+        callback(preEntitlement, null);
+      } else {
+        var entitlementError = new EntitlementError(playRequest.format + ' not avalible');
+        entitlementError.fatal = false;
+        callback(preEntitlement, entitlementError);
+      }
+    } else {
+      var assetId = entitlementRequest.programId ? entitlementRequest.programId : entitlementRequest.assetId;
+      var requestURL = this.options_['exposureApiURL'] + '/' + 'v2' + '/customer/' + customer + '/businessunit/' + businessUnit + '/entitlement/' + assetId + '/play';
+      return xhr.post(requestURL, { headers: this.requestHeaders }, function (error, response, body) {
+
+        if (error) {
+          log$1.warn('Fallback to Entitlement request v1');
+          if (entitlementRequest.programId !== null || entitlementRequest.channelId) {
+            _this4.getProgram_(entitlementRequest.assetId, entitlementRequest.programId, playRequest, callback);
+          } else {
+            _this4.getAsset_(entitlementRequest.assetId, playRequest, callback);
+          }
+          return;
+        }
+        // Check and handles error
+        if (_this4.checkForError(error, response, callback)) {
+          return;
+        }
+        var options = JSON.parse(body);
+        var entitlement = new Entitlement();
+        entitlement.initiateV2(options);
+        entitlement.selectFormat(playRequest);
+        entitlement.setupStreamInfo(response.headers.date);
+
+        if (entitlementRequest.assetId) {
+          entitlement.assetId = entitlementRequest.assetId;
+        }
+        if (entitlementRequest.channelId) {
+          entitlement.assetId = entitlementRequest.channelId;
+          entitlement.channelId = entitlementRequest.channelId;
+        }
+        if (entitlementRequest.programId) {
+          entitlement.programId = entitlementRequest.programId;
+        }
+        if (entitlementRequest.assetId && entitlement.program) {
+          entitlement.programId = entitlementRequest.programId ? entitlementRequest.programId : entitlementRequest.assetId;
+          entitlement.assetId = entitlementRequest.channelId;
+        }
+        if (entitlementRequest.assetId && entitlement.channel) {
+          entitlement.assetId = entitlementRequest.assetId;
+          entitlement.channelId = entitlementRequest.assetId;
+          entitlement.programId = entitlementRequest.programId;
+        }
+
+        var requestId = response.headers['x-request-id'];
+        entitlement.requestId = requestId ? requestId : '';
+        if (entitlement.mediaLocator) {
+          callback(entitlement, null);
+        } else {
+          var _entitlementError = new EntitlementError(playRequest.format + ' not avalible');
+          _entitlementError.fatal = false;
+          callback(entitlement, _entitlementError);
+        }
+      });
+    }
+  };
+
+  /**
    * Get VOD entitlement
    *
    * @param {String}    assetId     Asset to fetch
    * @param {Object}    playRequest Playrequest payload
    * @param {Function=} callback    Callback when entitlement is fetched
-   * @returns {*}  The asset
    * @private
    */
 
 
   EricssonExposure.prototype.getAsset_ = function getAsset_(assetId, playRequest) {
-    var _this4 = this;
+    var _this5 = this;
 
     var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
 
@@ -10275,11 +10551,12 @@ var EricssonExposure = function (_EntitlementEngine) {
     var requestURL = this.options_['exposureApiURL'] + '/' + this.options_['exposureApiVersion'] + '/customer/' + customer + '/businessunit/' + businessUnit + '/entitlement/' + assetId + '/play';
     return xhr.post(requestURL, { json: playRequest, headers: this.requestHeaders }, function (error, response, body) {
       // Check and handles error
-      if (_this4.checkForError(error, response, callback)) {
+      if (_this5.checkForError(error, response, callback)) {
         return;
       }
 
-      var entitlement = new Entitlement(body, response.headers.date);
+      var entitlement = new Entitlement();
+      entitlement.initiateV1(body, response.headers.date);
       entitlement.assetId = assetId;
       entitlement.playRequest = playRequest;
       entitlement.mimeType = playRequest.type;
@@ -10326,7 +10603,7 @@ var EricssonExposure = function (_EntitlementEngine) {
 
 
   EricssonExposure.prototype.getAssetMetadata_ = function getAssetMetadata_(assetId, callback) {
-    var _this5 = this;
+    var _this6 = this;
 
     var customer = this.customer;
     var businessUnit = this.businessUnit;
@@ -10341,7 +10618,7 @@ var EricssonExposure = function (_EntitlementEngine) {
     var requestURL = this.options_['exposureApiURL'] + '/' + this.options_['exposureApiVersion'] + '/customer/' + customer + '/businessunit/' + businessUnit + '/content/asset/' + assetId;
     return xhr.get(requestURL, null, function (error, response, body) {
       // Check and handles error
-      if (_this5.checkForError(error, response, callback)) {
+      if (_this6.checkForError(error, response, callback)) {
         return;
       }
 
@@ -10357,13 +10634,12 @@ var EricssonExposure = function (_EntitlementEngine) {
    * @param {String}    programId Program to fetch
    * @param {Object}    playRequest Playrequest payload
    * @param {function} callback Callback when entitlement is fetched
-   * @returns {object}   The program
    * @private
    */
 
 
   EricssonExposure.prototype.getProgram_ = function getProgram_(channelId, programId, playRequest) {
-    var _this6 = this;
+    var _this7 = this;
 
     var callback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : function () {};
 
@@ -10389,11 +10665,12 @@ var EricssonExposure = function (_EntitlementEngine) {
     var requestURL = this.options_['exposureApiURL'] + '/' + this.options_['exposureApiVersion'] + '/customer/' + customer + '/businessunit/' + businessUnit + '/entitlement' + channelUrl + programUrl + '/play';
     return xhr.post(requestURL, { json: playRequest, headers: this.requestHeaders }, function (error, response, body) {
       // Check and handles error
-      if (_this6.checkForError(error, response, callback)) {
+      if (_this7.checkForError(error, response, callback)) {
         return;
       }
 
-      var entitlement = new Entitlement(body, response.headers.date);
+      var entitlement = new Entitlement();
+      entitlement.initiateV1(body, response.headers.date);
       if (channelId) {
         entitlement.assetId = channelId;
         entitlement.channelId = channelId;
@@ -10403,7 +10680,7 @@ var EricssonExposure = function (_EntitlementEngine) {
       }
       entitlement.playRequest = playRequest;
       entitlement.mimeType = playRequest.type;
-      _this6.setStreamReferenceTime_(entitlement);
+      _this7.setStreamReferenceTime_(entitlement);
       var requestId = response.headers['x-request-id'];
       entitlement.requestId = requestId ? requestId : '';
       if (entitlement.mdnRequestRouterUrl) {
@@ -10458,13 +10735,13 @@ var EricssonExposure = function (_EntitlementEngine) {
 
 
   EricssonExposure.prototype.getPreferences = function getPreferences(callback) {
-    var _this7 = this;
+    var _this8 = this;
 
     var customer = this.customer;
     var businessUnit = this.businessUnit;
     var requestURL = this.options_['exposureApiURL'] + '/' + this.options_['exposureApiVersion'] + '/customer/' + customer + '/businessunit/' + businessUnit + '/preferences';
     return xhr.get(requestURL, { headers: this.requestHeaders }, function (error, response, body) {
-      if (_this7.checkForError(error, response, callback)) {
+      if (_this8.checkForError(error, response, callback)) {
         return;
       }
       var json = JSON.parse(body);
@@ -10481,7 +10758,7 @@ var EricssonExposure = function (_EntitlementEngine) {
 
 
   EricssonExposure.prototype.savePreferences = function savePreferences(preferences, callback) {
-    var _this8 = this;
+    var _this9 = this;
 
     var customer = this.customer;
     var businessUnit = this.businessUnit;
@@ -10495,7 +10772,7 @@ var EricssonExposure = function (_EntitlementEngine) {
     var requestURL = this.options_['exposureApiURL'] + '/' + this.options_['exposureApiVersion'] + '/customer/' + customer + '/businessunit/' + businessUnit + '/preferences';
     return xhr.post(requestURL, { json: data, headers: this.requestHeaders }, function (error, response, body) {
       // Check and handles error
-      if (_this8.checkForError(error, response, callback)) {
+      if (_this9.checkForError(error, response, callback)) {
         return;
       }
       callback(true);
@@ -10513,7 +10790,7 @@ var EricssonExposure = function (_EntitlementEngine) {
 
 
   EricssonExposure.prototype.getEPG = function getEPG(channelId, from, to, callback) {
-    var _this9 = this;
+    var _this10 = this;
 
     var customer = this.customer;
     var businessUnit = this.businessUnit;
@@ -10523,7 +10800,7 @@ var EricssonExposure = function (_EntitlementEngine) {
     requestURL += '?from=' + from + '&to=' + to;
 
     return xhr.get(requestURL, null, function (error, response, body) {
-      if (_this9.checkForError(error, response, callback)) {
+      if (_this10.checkForError(error, response, callback)) {
         return;
       }
       var json = JSON.parse(body);
@@ -10602,7 +10879,7 @@ var EricssonExposure = function (_EntitlementEngine) {
 
 
   EricssonExposure.prototype.getAssetInfo = function getAssetInfo(assetId, callback) {
-    var _this10 = this;
+    var _this11 = this;
 
     var customer = this.customer;
     var businessUnit = this.businessUnit;
@@ -10614,7 +10891,7 @@ var EricssonExposure = function (_EntitlementEngine) {
         return;
       }
       // Check and handles error
-      if (_this10.checkForError(error, response, callback)) {
+      if (_this11.checkForError(error, response, callback)) {
         return;
       }
 
@@ -10632,7 +10909,7 @@ var EricssonExposure = function (_EntitlementEngine) {
 
 
   EricssonExposure.prototype.verifyEntitlement = function verifyEntitlement(assetId, playRequest) {
-    var _this11 = this;
+    var _this12 = this;
 
     var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
 
@@ -10654,7 +10931,7 @@ var EricssonExposure = function (_EntitlementEngine) {
     var requestURL = this.options_['exposureApiURL'] + '/' + this.options_['exposureApiVersion'] + '/customer/' + customer + '/businessunit/' + businessUnit + '/entitlement/' + assetId + '?drm=' + playRequest.drm + '&format=' + playRequest.format;
     return xhr.get(requestURL, { headers: this.requestHeaders }, function (error, response, body) {
       // Check and handles error
-      if (_this11.checkForError(error, response, callback)) {
+      if (_this12.checkForError(error, response, callback)) {
         return;
       }
       if ((typeof callback === 'undefined' ? 'undefined' : _typeof(callback)) !== undefined) {
@@ -10671,7 +10948,7 @@ var EricssonExposure = function (_EntitlementEngine) {
 
 
   EricssonExposure.prototype.verifySession = function verifySession(okFn, nokFn) {
-    var _this12 = this;
+    var _this13 = this;
 
     var customer = this.customer;
     var businessUnit = this.businessUnit;
@@ -10680,7 +10957,7 @@ var EricssonExposure = function (_EntitlementEngine) {
 
     return xhr.get(requestURL, { headers: this.requestHeaders }, function (error, response, body) {
       // Check and handles error
-      if (_this12.checkForError(error, response)) {
+      if (_this13.checkForError(error, response)) {
         if (nokFn) {
           nokFn();
         }
@@ -11485,7 +11762,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin$1);
 
-ProgramService.VERSION = '2.1.96-252';
+ProgramService.VERSION = '2.1.97-253';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -11661,7 +11938,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$2);
 
-EntitlementExpirationService.VERSION = '2.1.96-252';
+EntitlementExpirationService.VERSION = '2.1.97-253';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -11737,6 +12014,7 @@ var EntitlementMiddleware$1 = function EntitlementMiddleware(player) {
     setSource: function setSource(srcObj, next) {
       var options = player.options();
       var srcEntitlement = null;
+      var preEntitlement = null;
       var entitlementRequest = null;
       if (player.programService) {
         player.programService().stop();
@@ -11828,7 +12106,7 @@ var EntitlementMiddleware$1 = function EntitlementMiddleware(player) {
           } else {
             var techOptions = options[techs[i][0].toLowerCase()];
             var playRequest = techOptions && techOptions.streamType && tech.entitlementPlayRequests ? tech.entitlementPlayRequests[techOptions.streamType] : tech.entitlementPlayRequest;
-            exposure.getEntitlement(entitlementRequest, playRequest, function (entitlement, error) {
+            exposure.getV2Entitlement(entitlementRequest, playRequest, preEntitlement, function (entitlement, error) {
               // If we have an fatal error during playcall break out of the loop else try next tech
               if (error) {
                 if (!player.options_.excludeTechs) {
@@ -11842,10 +12120,12 @@ var EntitlementMiddleware$1 = function EntitlementMiddleware(player) {
                   next(entitlementRequestError);
                   return;
                 }
+                preEntitlement = entitlement;
                 loop.next();
               } else {
                 // Set the entitlement to use, and break out of the loop. No need to get other entitlements.
                 srcEntitlement = setupEntitlement(entitlement, tech);
+                extplayer.currentAsset(player, entitlement.assetId, entitlement.programId, entitlement.channelId);
                 if (srcEntitlement.adMediaLocator && player.yospace) {
                   log$1("play adMediaLocator with yospace", srcEntitlement.adMediaLocator);
                   player.yospace().start('VoD', srcEntitlement.adMediaLocator).then(function (mediaLocator) {
@@ -12141,7 +12421,7 @@ EntitlementMiddleware$1.registerEntitlementEngine = EntitlementEngine.registerEn
 
 EntitlementMiddleware$1.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
 
-EntitlementMiddleware$1.VERSION = '2.1.96-252';
+EntitlementMiddleware$1.VERSION = '2.1.97-253';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -12271,7 +12551,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.1.96-252';
+empPlayer.VERSION = '2.1.97-253';
 
 /*
  * Universal Module Definition (UMD)
