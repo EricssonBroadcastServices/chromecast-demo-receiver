@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.97-254 
+ * EMP-Player 2.1.97-255 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -7735,7 +7735,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.1.97-254';
+      return '2.1.97-255';
     }
 
     /**
@@ -8876,7 +8876,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin);
 
-AnalyticsPlugin.VERSION = '2.1.97-254';
+AnalyticsPlugin.VERSION = '2.1.97-255';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -8970,7 +8970,6 @@ var Entitlement = function () {
   Entitlement.prototype.commonInitiate = function commonInitiate(options) {
     // properties from play call
     this.edrmConfig = options.edrmConfig || null;
-    this.live = options.live || false;
     this.playSessionId = options.playSessionId || '';
     this.analyticsConfig = options.analyticsConfig || null;
     this.entitlementType = options.entitlementType || '';
@@ -8993,6 +8992,7 @@ var Entitlement = function () {
     this.lastViewedOffset = options.lastViewedOffset || null;
     this.lastViewedTime = options.lastViewedTime || null;
     this.liveTime = options.liveTime || null;
+    this.live = options.live || false;
 
     var licenseExpirationTimestamp = Date.parse(options.licenseExpiration || null);
     if (isNaN(licenseExpirationTimestamp) === false) {
@@ -9038,25 +9038,43 @@ var Entitlement = function () {
   Entitlement.prototype.initiateV2 = function initiateV2(options) {
     this.commonInitiate(options);
     this.formats = options.formats || null;
-    this.channel = options.channel || false;
-    this.program = options.program || false;
 
-    if (options.entitlements) {
-      var entitlements = options.entitlements;
-      this.minBitrate = entitlements.minBitrate || 0;
-      this.maxBitrate = entitlements.maxBitrate || 0;
-      this.maxResWidth = entitlements.maxResWidth || 0;
-      this.maxResHeight = entitlements.maxResHeight || 0;
-      this.rwEnabled = entitlements.rwEnabled === undefined ? true : entitlements.rwEnabled;
-      this.ffEnabled = entitlements.ffEnabled === undefined ? true : entitlements.ffEnabled;
-      this.airplayBlocked = entitlements.airplayEnabled === undefined ? true : !entitlements.airplayEnabled;
-      this.timeshiftEnabled = entitlements.timeshiftEnabled || true;
+    if (options.contractractRestrictions) {
+      var contractractRestrictions = options.contractractRestrictions;
+      this.minBitrate = contractractRestrictions.minBitrate || 0;
+      this.maxBitrate = contractractRestrictions.maxBitrate || 0;
+      this.maxResWidth = contractractRestrictions.maxResWidth || 0;
+      this.maxResHeight = contractractRestrictions.maxResHeight || 0;
+      this.rwEnabled = contractractRestrictions.rwEnabled === undefined ? true : contractractRestrictions.rwEnabled;
+      this.ffEnabled = contractractRestrictions.ffEnabled === undefined ? true : contractractRestrictions.ffEnabled;
+      this.airplayBlocked = contractractRestrictions.airplayEnabled === undefined ? true : !contractractRestrictions.airplayEnabled;
+      this.timeshiftEnabled = contractractRestrictions.timeshiftEnabled || true;
     }
     if (options.bookmarks) {
       var bookmarks = options.bookmarks;
       this.lastViewedOffset = bookmarks.lastViewedOffset || null;
       this.lastViewedTime = bookmarks.lastViewedTime || null;
       this.liveTime = bookmarks.liveTime || null;
+    }
+    if (options.streamInfo) {
+      var streamInfo = options.streamInfo;
+      this.streamInfo = { referenceTime: 0 };
+      this.live = streamInfo.live || false; //TODO: remove
+      this.streamInfo.live = streamInfo.live || false;
+      this.streamInfo.channel = streamInfo.channel || false;
+      this.streamInfo.program = streamInfo.program || false;
+      this.streamInfo.vod = streamInfo.vod || false;
+      this.streamInfo['static'] = streamInfo['static'] || false;
+      this.isDynamicCachupAsLive = !streamInfo['static'] && streamInfo.start !== undefined;
+      this.isStaticCachupAsLive = streamInfo['static'] && streamInfo.end !== undefined;
+      if (streamInfo.start) {
+        this.streamInfo.start = new Date(streamInfo.start * 1000);
+        this.streamInfo.startTime = this.streamInfo.start.getTime();
+      }
+      if (streamInfo.end) {
+        this.streamInfo.end = new Date(streamInfo.end * 1000);
+        this.streamInfo.endTime = this.streamInfo.end.getTime();
+      }
     }
   };
 
@@ -10293,6 +10311,12 @@ var EricssonExposure = function (_EntitlementEngine) {
     }
 
     this.getV2Asset_(entitlementRequest, playRequest, preEntitlement, callback);
+
+    //if (entitlementRequest.programId !== null || entitlementRequest.channelId) {
+    //  this.getProgram_(entitlementRequest.assetId, entitlementRequest.programId, playRequest, callback);
+    //} else {
+    //  this.getAsset_(entitlementRequest.assetId, playRequest, callback);
+    //}
   };
 
   /**
@@ -10469,7 +10493,7 @@ var EricssonExposure = function (_EntitlementEngine) {
     } else {
       var assetId = entitlementRequest.programId ? entitlementRequest.programId : entitlementRequest.assetId;
       var requestURL = this.options_['exposureApiURL'] + '/' + 'v2' + '/customer/' + customer + '/businessunit/' + businessUnit + '/entitlement/' + assetId + '/play';
-      return xhr.post(requestURL, { headers: this.requestHeaders }, function (error, response, body) {
+      return xhr.get(requestURL, { headers: this.requestHeaders }, function (error, response, body) {
 
         if (error) {
           log$1.warn('Fallback to Entitlement request v1');
@@ -10488,7 +10512,7 @@ var EricssonExposure = function (_EntitlementEngine) {
         var entitlement = new Entitlement();
         entitlement.initiateV2(options);
         entitlement.selectFormat(playRequest);
-        entitlement.setupStreamInfo(response.headers.date);
+        //entitlement.setupStreamInfo(response.headers.date);
 
         if (entitlementRequest.assetId) {
           entitlement.assetId = entitlementRequest.assetId;
@@ -10500,14 +10524,18 @@ var EricssonExposure = function (_EntitlementEngine) {
         if (entitlementRequest.programId) {
           entitlement.programId = entitlementRequest.programId;
         }
-        if (entitlementRequest.assetId && entitlement.program) {
+        if (entitlementRequest.assetId && entitlement.streamInfo.program) {
           entitlement.programId = entitlementRequest.programId ? entitlementRequest.programId : entitlementRequest.assetId;
           entitlement.assetId = entitlementRequest.channelId;
         }
-        if (entitlementRequest.assetId && entitlement.channel) {
+        if (entitlementRequest.assetId && entitlement.streamInfo.channel) {
           entitlement.assetId = entitlementRequest.assetId;
           entitlement.channelId = entitlementRequest.assetId;
           entitlement.programId = entitlementRequest.programId;
+        }
+
+        if (entitlement.streamInfo.program || entitlement.streamInfo.channel) {
+          _this4.setStreamReferenceTime_(entitlement);
         }
 
         var requestId = response.headers['x-request-id'];
@@ -11762,7 +11790,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin$1);
 
-ProgramService.VERSION = '2.1.97-254';
+ProgramService.VERSION = '2.1.97-255';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -11938,7 +11966,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$2);
 
-EntitlementExpirationService.VERSION = '2.1.97-254';
+EntitlementExpirationService.VERSION = '2.1.97-255';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -12421,7 +12449,7 @@ EntitlementMiddleware$1.registerEntitlementEngine = EntitlementEngine.registerEn
 
 EntitlementMiddleware$1.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
 
-EntitlementMiddleware$1.VERSION = '2.1.97-254';
+EntitlementMiddleware$1.VERSION = '2.1.97-255';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -12551,7 +12579,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.1.97-254';
+empPlayer.VERSION = '2.1.97-255';
 
 /*
  * Universal Module Definition (UMD)
