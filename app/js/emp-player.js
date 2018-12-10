@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.97-256 
+ * EMP-Player 2.1.97-257 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -7735,7 +7735,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.1.97-256';
+      return '2.1.97-257';
     }
 
     /**
@@ -8876,7 +8876,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin);
 
-AnalyticsPlugin.VERSION = '2.1.97-256';
+AnalyticsPlugin.VERSION = '2.1.97-257';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -9061,9 +9061,10 @@ var Entitlement = function () {
       this.streamInfo = { referenceTime: 0 };
       this.live = streamInfo.live || false; //TODO: remove
       this.streamInfo.live = streamInfo.live || false;
-      this.streamInfo.channel = streamInfo.channel || false;
-      this.streamInfo.program = streamInfo.program || false;
-      this.streamInfo.vod = streamInfo.vod || false;
+      this.channelId = streamInfo.channelId || undefined; //TODO: remove
+      this.programId = streamInfo.programId || undefined; //TODO: remove
+      this.streamInfo.channelId = streamInfo.channelId || undefined;
+      this.streamInfo.programId = streamInfo.programId || undefined;
       this.streamInfo['static'] = streamInfo['static'] || false;
       this.isDynamicCachupAsLive = !streamInfo['static'] && streamInfo.start !== undefined;
       this.isStaticCachupAsLive = streamInfo['static'] && streamInfo.end !== undefined;
@@ -10517,24 +10518,25 @@ var EricssonExposure = function (_EntitlementEngine) {
         if (entitlementRequest.assetId) {
           entitlement.assetId = entitlementRequest.assetId;
         }
-        if (entitlementRequest.channelId) {
-          entitlement.assetId = entitlementRequest.channelId;
-          entitlement.channelId = entitlementRequest.channelId;
+        //TODO: start using assetId don't have channelId as assetId
+        if (entitlement.channelId) {
+          entitlement.assetId = entitlement.channelId;
+          //entitlement.channelId = entitlementRequest.channelId;
         }
-        if (entitlementRequest.programId) {
-          entitlement.programId = entitlementRequest.programId;
-        }
-        if (entitlementRequest.assetId && entitlement.streamInfo.program) {
-          entitlement.programId = entitlementRequest.programId ? entitlementRequest.programId : entitlementRequest.assetId;
-          entitlement.assetId = entitlementRequest.channelId;
-        }
-        if (entitlementRequest.assetId && entitlement.streamInfo.channel) {
-          entitlement.assetId = entitlementRequest.assetId;
-          entitlement.channelId = entitlementRequest.assetId;
-          entitlement.programId = entitlementRequest.programId;
-        }
+        //if (entitlementRequest.programId) {
+        //  entitlement.programId = entitlementRequest.programId;
+        //}
+        //if (entitlementRequest.assetId && entitlement.streamInfo.program) {
+        //  entitlement.programId = entitlementRequest.programId ? entitlementRequest.programId : entitlementRequest.assetId;
+        //  entitlement.assetId = entitlementRequest.channelId;
+        //}
+        //if (entitlementRequest.assetId && entitlement.streamInfo.channel) {
+        //  entitlement.assetId = entitlementRequest.assetId;
+        //  entitlement.channelId = entitlementRequest.assetId;
+        //  entitlement.programId = entitlementRequest.programId;
+        //}
 
-        if (entitlement.streamInfo.program || entitlement.streamInfo.channel) {
+        if (entitlement.channelId || entitlement.programId) {
           _this4.setStreamReferenceTime_(entitlement);
         }
 
@@ -11790,7 +11792,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin$1);
 
-ProgramService.VERSION = '2.1.97-256';
+ProgramService.VERSION = '2.1.97-257';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -11966,7 +11968,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$2);
 
-EntitlementExpirationService.VERSION = '2.1.97-256';
+EntitlementExpirationService.VERSION = '2.1.97-257';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -12134,7 +12136,7 @@ var EntitlementMiddleware$1 = function EntitlementMiddleware(player) {
           } else {
             var techOptions = options[techs[i][0].toLowerCase()];
             var playRequest = techOptions && techOptions.streamType && tech.entitlementPlayRequests ? tech.entitlementPlayRequests[techOptions.streamType] : tech.entitlementPlayRequest;
-            exposure.getV2Entitlement(entitlementRequest, playRequest, preEntitlement, function (entitlement, error) {
+            exposure.getEntitlement(entitlementRequest, playRequest, function (entitlement, error) {
               // If we have an fatal error during playcall break out of the loop else try next tech
               if (error) {
                 if (!player.options_.excludeTechs) {
@@ -12449,7 +12451,7 @@ EntitlementMiddleware$1.registerEntitlementEngine = EntitlementEngine.registerEn
 
 EntitlementMiddleware$1.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
 
-EntitlementMiddleware$1.VERSION = '2.1.97-256';
+EntitlementMiddleware$1.VERSION = '2.1.97-257';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -12579,7 +12581,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.1.97-256';
+empPlayer.VERSION = '2.1.97-257';
 
 /*
  * Universal Module Definition (UMD)
