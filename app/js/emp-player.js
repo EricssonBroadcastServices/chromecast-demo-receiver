@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.97-259 
+ * EMP-Player 2.1.97-260 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -796,9 +796,6 @@ function parseSrc(src) {
     asset = JSON.parse(src);
   } catch (e) {
     asset.assetId = src;
-  }
-  if (asset.channelId) {
-    asset.assetId = asset.channelId;
   }
   return asset;
 }
@@ -1927,7 +1924,7 @@ var extplayer = {
   loadAsset: function loadAsset(player, assetId, programId, channelId) {
     var callback = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : function () {};
 
-    var asset = { 'assetId': assetId ? assetId : channelId, 'programId': programId, 'channelId': channelId };
+    var asset = { 'assetId': assetId, 'programId': programId, 'channelId': channelId };
     player.one(empPlayerEvents.LOADED_DATA, function () {
       //Clone of entitlement
       callback(player.entitlement);
@@ -1945,7 +1942,7 @@ var extplayer = {
         return asset;
       } else if (srcObj && srcObj.assetId) {
         return {
-          assetId: srcObj.channelId ? srcObj.channelId : srcObj.assetId,
+          assetId: srcObj.assetId,
           programId: srcObj.programId,
           channelId: srcObj.channelId
         };
@@ -2211,7 +2208,7 @@ var extplayer = {
           } else {
             playbackProperties.playFrom = 'beginning';
           }
-          player.startPlayback(null, program.channelId, program.programId, playbackProperties);
+          player.startPlayback(program.assetId, program.channelId, program.programId, playbackProperties);
         }
       });
     }
@@ -2231,7 +2228,7 @@ var extplayer = {
           } else {
             var playbackProperties = {};
             playbackProperties.playFrom = 'beginning';
-            player.startPlayback(null, program.channelId, program.programId, playbackProperties);
+            player.startPlayback(program.assetId, program.channelId, program.programId, playbackProperties);
           }
         });
       }
@@ -2252,7 +2249,7 @@ var extplayer = {
           var playbackProperties = {};
           playbackProperties.playFrom = 'startTime';
           playbackProperties.startTime = startTime;
-          player.startPlayback(null, program.channelId, program.programId, playbackProperties);
+          player.startPlayback(program.assetId, program.channelId, program.programId, playbackProperties);
         }
       });
     }
@@ -6055,12 +6052,12 @@ var Player = function (_VjsPlayer) {
           this.options_.autoplay = true;
         }
         this.options_.absoluteStartTime = this.previousAbsoluteStartTime_;
-        if (data.source.channelId) {
-          var asset = { 'channelId': data.source.channelId, 'programId': data.source.programId };
+        if (data.source.assetId) {
+          var asset = { 'assetId': data.source.assetId };
           _VjsPlayer.prototype.src.call(this, { 'type': 'video/emp', 'src': JSON.stringify(asset) });
           return;
-        } else if (data.source.assetId) {
-          var _asset = { 'assetId': data.source.assetId };
+        } else if (data.source.channelId) {
+          var _asset = { 'channelId': data.source.channelId, 'programId': data.source.programId };
           _VjsPlayer.prototype.src.call(this, { 'type': 'video/emp', 'src': JSON.stringify(_asset) });
           return;
         }
@@ -6096,7 +6093,7 @@ var Player = function (_VjsPlayer) {
   Player.prototype.resetAndRestartFormPlayhead = function resetAndRestartFormPlayhead() {
     var program = this.getProgramDetails();
     if (program) {
-      extplayer.currentAsset(this, null, program.programId, program.channelId);
+      extplayer.currentAsset(this, program.assetId, program.programId, program.channelId);
     }
     var startTime = this.getAbsoluteTime();
     log$1('resetAndRestartFormPlayhead', startTime);
@@ -6907,7 +6904,7 @@ var Player = function (_VjsPlayer) {
 
     log$1.warn('loadAsset() has been deprecated with new USP a/v pipe use startPlayback() or src() instead');
     this.options({ 'playFrom': undefined });
-    extplayer.loadAsset(this, assetId, programId, null, callback);
+    extplayer.loadAsset(this, assetId, programId, programId ? assetId : undefined, callback);
   };
 
   /**
@@ -6925,7 +6922,11 @@ var Player = function (_VjsPlayer) {
       playbackProperties = {};
     }
     if (!assetId && !channelId && !programId) {
-      log$1.error('assetId or channelId or programId is undefined');
+      log$1.error('startPlayback: assetId or channelId or programId is undefined');
+      return;
+    }
+    if (!assetId && !channelId && programId) {
+      log$1.error('startPlayback: with only programId is not supported');
       return;
     }
     if (!playbackProperties.playFrom) {
@@ -7735,7 +7736,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.1.97-259';
+      return '2.1.97-260';
     }
 
     /**
@@ -8194,6 +8195,7 @@ var EMPAnalyticsConnector = function () {
         var asset = extplayer.currentAsset(_this6.player_);
         if (asset) {
           params.assetId = asset.assetId;
+          params.channelId = asset.channelId;
           params.programId = asset.programId;
         }
       }
@@ -8876,7 +8878,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin);
 
-AnalyticsPlugin.VERSION = '2.1.97-259';
+AnalyticsPlugin.VERSION = '2.1.97-260';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -8924,7 +8926,7 @@ var Entitlement = function () {
     classCallCheck(this, Entitlement);
 
     // derived properties
-    this.channelId;
+    this.channelId = 0;
     this.assetId;
     this.programId;
     this.productId = '';
@@ -9334,11 +9336,10 @@ var EntitlementEngine = function () {
    * playToken - Playtoken required for drm
    * mediaLocator - URL of playlist file (for example for dash or hls playback) or mediaId for flash playback.
    *
-   * @param {EntitlementRequest}     entitlementRequest  Entitlement request to execute
-   * @param {Object}                 playRequest         Playrequest object containing information about the required
-   *                                                     attributes of the entitlement
-   * @param {EntitlementEngine~getEntitlementCallback} callback            Callback when entitlement is fetched or an error occurs
-   * @throws {EntitlementError}
+   * @param {EntitlementRequest}    entitlementRequest  Entitlement request to execute
+   * @param {Object}                playRequest         Playrequest object containing information about the required
+   *                                                    attributes of the entitlement (e.g. { drm: 'EDRM', 'format': 'HLS' }
+   * @param {function}             callback            Callback when entitlement is fetched or an error occurs
    */
 
 
@@ -9347,10 +9348,49 @@ var EntitlementEngine = function () {
   };
 
   /**
-   * This callback is called whenever a new Entitlement object is fetched from the backend
-   * @callback EntitlementEngine~getEntitlementCallback
-   * @param {Entitlement} entitlement Entitlement object
-   */
+  * Get Entitlement version 2
+  *
+  * Called by the player to get an entitlement. Entitlement requests contain an assetId and an optional programId.
+  * If the programId exists, the assetId is the channelId. if the programId doesn't exist the assetId is the assetId.
+  *
+  * The callback should be called when the requests completes, if it fails it should contain an EntitlementError
+  * Exception object as it's second parameter.
+  *
+  * if it succeeds it should return the Entitlement as the first parameter.
+  *
+  * The Entitlement should contain the following parameters:
+  *
+  * playToken - Playtoken required for drm
+  * mediaLocator - URL of playlist file (for example for dash or hls playback) or mediaId for flash playback.
+  * 
+  * @param {EntitlementRequest}    entitlementRequest  Entitlement request to execute
+  * @param {Object}                playRequest         Playrequest object containing information about the required
+  *                                                    attributes of the entitlement (e.g. { drm: 'EDRM', 'format': 'HLS' }
+  * @param {function}             callback             Callback when entitlement is fetched or an error occurs
+  * @param {Entitlement}          preEntitlement       Previous Entitlement after error
+  */
+
+
+  EntitlementEngine.prototype.getV2Entitlement = function getV2Entitlement(entitlementRequest, playRequest, callback, preEntitlement) {
+    throw new EntitlementError('EntitlementEngine: getV2Entitlement should be implemented in subclass.');
+  };
+
+  /**
+  * Get VOD entitlement version 2
+  *
+  * @param {EntitlementRequest}    entitlementRequest  Entitlement request to execute
+  * @param {Object}    playRequest Playrequest payload
+  * @param {Entitlement}    preEntitlement  pre Entitlement
+  * @param {Function=} callback    Callback when entitlement is fetched
+  * @private
+  */
+
+
+  EntitlementEngine.prototype.getV2Asset_ = function getV2Asset_(entitlementRequest, playRequest, preEntitlement) {
+    var callback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : function () {};
+
+    throw new EntitlementError('EntitlementEngine: getV2Asset_ should be implemented in subclass.');
+  };
 
   /**
    * Returns the exact servertime
@@ -10287,20 +10327,18 @@ var EricssonExposure = function (_EntitlementEngine) {
    *
    * playToken - Playtoken required for drm
    * mediaLocator - URL of playlist file (for example for dash or hls playback) or mediaId for flash playback.
-   *
+   * 
    * @param {EntitlementRequest}    entitlementRequest  Entitlement request to execute
    * @param {Object}                playRequest         Playrequest object containing information about the required
    *                                                    attributes of the entitlement (e.g. { drm: 'EDRM', 'format': 'HLS' }
-   * @param {function}             callback            Callback when entitlement is fetched or an error occurs
+   * @param {function}             callback             Callback when entitlement is fetched or an error occurs
+   * @param {Entitlement}          preEntitlement       Previous Entitlement after error
    */
 
 
-  EricssonExposure.prototype.getV2Entitlement = function getV2Entitlement(entitlementRequest, playRequest, preEntitlement, callback) {
+  EricssonExposure.prototype.getV2Entitlement = function getV2Entitlement(entitlementRequest, playRequest, callback, preEntitlement) {
     if (typeof entitlementRequest === 'undefined') {
       throw new EntitlementError('No request specified.');
-    }
-    if (typeof entitlementRequest.assetId === 'undefined') {
-      throw new EntitlementError('No assetId specified.');
     }
 
     if (typeof playRequest === 'undefined') {
@@ -10311,13 +10349,11 @@ var EricssonExposure = function (_EntitlementEngine) {
       throw new EntitlementError('Invalid playrequest specified.');
     }
 
-    this.getV2Asset_(entitlementRequest, playRequest, preEntitlement, callback);
-
-    //if (entitlementRequest.programId !== null || entitlementRequest.channelId) {
-    //  this.getProgram_(entitlementRequest.assetId, entitlementRequest.programId, playRequest, callback);
-    //} else {
-    //  this.getAsset_(entitlementRequest.assetId, playRequest, callback);
-    //}
+    if (!entitlementRequest.assetId && entitlementRequest.programId) {
+      this.getProgram_(entitlementRequest.channelId, entitlementRequest.programId, playRequest, callback);
+    } else {
+      this.getV2Asset_(entitlementRequest, playRequest, preEntitlement, callback);
+    }
   };
 
   /**
@@ -10348,10 +10384,6 @@ var EricssonExposure = function (_EntitlementEngine) {
       throw new EntitlementError('No request specified.');
     }
 
-    if (typeof entitlementRequest.assetId === 'undefined') {
-      throw new EntitlementError('No assetId specified.');
-    }
-
     if (typeof playRequest === 'undefined') {
       throw new EntitlementError('Media not found.');
     }
@@ -10361,7 +10393,7 @@ var EricssonExposure = function (_EntitlementEngine) {
     }
 
     if (entitlementRequest.programId !== null || entitlementRequest.channelId) {
-      this.getProgram_(entitlementRequest.assetId, entitlementRequest.programId, playRequest, callback);
+      this.getProgram_(entitlementRequest.channelId, entitlementRequest.programId, playRequest, callback);
     } else {
       this.getAsset_(entitlementRequest.assetId, playRequest, callback);
     }
@@ -10472,14 +10504,18 @@ var EricssonExposure = function (_EntitlementEngine) {
 
     var callback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : function () {};
 
-    var customer = this.customer;
-    var businessUnit = this.businessUnit;
-    if (!customer) {
-      throw new EntitlementError('Customer was not provided.');
+    if (!this.customer) {
+      throw new EntitlementError('getV2Asset_: Customer was not provided.');
     }
 
-    if (!businessUnit) {
-      throw new EntitlementError('Business unit was not provided.');
+    if (!this.businessUnit) {
+      throw new EntitlementError('getV2Asset_: Business unit was not provided.');
+    }
+
+    var assetId = entitlementRequest.assetId ? entitlementRequest.assetId : entitlementRequest.channelId;
+
+    if (!assetId) {
+      throw new EntitlementError('getV2Asset_: No assetId or channelId specified.');
     }
 
     if (preEntitlement && preEntitlement.formats) {
@@ -10492,17 +10528,12 @@ var EricssonExposure = function (_EntitlementEngine) {
         callback(preEntitlement, entitlementError);
       }
     } else {
-      var assetId = entitlementRequest.programId ? entitlementRequest.programId : entitlementRequest.assetId;
-      var requestURL = this.options_['exposureApiURL'] + '/' + 'v2' + '/customer/' + customer + '/businessunit/' + businessUnit + '/entitlement/' + assetId + '/play';
+      var requestURL = this.options_['exposureApiURL'] + '/' + 'v2' + '/customer/' + this.customer + '/businessunit/' + this.businessUnit + '/entitlement/' + assetId + '/play';
       return xhr.get(requestURL, { headers: this.requestHeaders }, function (error, response, body) {
 
         if (error) {
           log$1.warn('Fallback to Entitlement request v1');
-          if (entitlementRequest.programId !== null || entitlementRequest.channelId) {
-            _this4.getProgram_(entitlementRequest.assetId, entitlementRequest.programId, playRequest, callback);
-          } else {
-            _this4.getAsset_(entitlementRequest.assetId, playRequest, callback);
-          }
+          _this4.getEntitlement(entitlementRequest, playRequest, callback);
           return;
         }
         // Check and handles error
@@ -10513,28 +10544,8 @@ var EricssonExposure = function (_EntitlementEngine) {
         var entitlement = new Entitlement();
         entitlement.initiateV2(options);
         entitlement.selectFormat(playRequest);
-        //entitlement.setupStreamInfo(response.headers.date);
 
-        if (entitlementRequest.assetId) {
-          entitlement.assetId = entitlementRequest.assetId;
-        }
-        //TODO: start using assetId don't have channelId as assetId
-        if (entitlement.channelId) {
-          entitlement.assetId = entitlement.channelId;
-          //entitlement.channelId = entitlementRequest.channelId;
-        }
-        //if (entitlementRequest.programId) {
-        //  entitlement.programId = entitlementRequest.programId;
-        //}
-        //if (entitlementRequest.assetId && entitlement.streamInfo.program) {
-        //  entitlement.programId = entitlementRequest.programId ? entitlementRequest.programId : entitlementRequest.assetId;
-        //  entitlement.assetId = entitlementRequest.channelId;
-        //}
-        //if (entitlementRequest.assetId && entitlement.streamInfo.channel) {
-        //  entitlement.assetId = entitlementRequest.assetId;
-        //  entitlement.channelId = entitlementRequest.assetId;
-        //  entitlement.programId = entitlementRequest.programId;
-        //}
+        entitlement.assetId = assetId;
 
         if (entitlement.channelId || entitlement.programId) {
           _this4.setStreamReferenceTime_(entitlement);
@@ -10571,11 +10582,15 @@ var EricssonExposure = function (_EntitlementEngine) {
     var customer = this.customer;
     var businessUnit = this.businessUnit;
     if (!customer) {
-      throw new EntitlementError('Customer was not provided.');
+      throw new EntitlementError('getAsset_: Customer was not provided.');
     }
 
     if (!businessUnit) {
-      throw new EntitlementError('Business unit was not provided.');
+      throw new EntitlementError('getAsset_: Business unit was not provided.');
+    }
+
+    if (!assetId) {
+      throw new EntitlementError('getAsset_: assetId was not provided.');
     }
 
     var requestURL = this.options_['exposureApiURL'] + '/' + this.options_['exposureApiVersion'] + '/customer/' + customer + '/businessunit/' + businessUnit + '/entitlement/' + assetId + '/play';
@@ -10635,17 +10650,19 @@ var EricssonExposure = function (_EntitlementEngine) {
   EricssonExposure.prototype.getAssetMetadata_ = function getAssetMetadata_(assetId, callback) {
     var _this6 = this;
 
-    var customer = this.customer;
-    var businessUnit = this.businessUnit;
-    if (!customer) {
-      throw new EntitlementError('Customer was not provided.');
+    if (!this.customer) {
+      throw new EntitlementError('getAssetMetadata_: Customer was not provided.');
     }
 
-    if (!businessUnit) {
-      throw new EntitlementError('Business unit was not provided.');
+    if (!this.businessUnit) {
+      throw new EntitlementError('getAssetMetadata_: Business unit was not provided.');
     }
 
-    var requestURL = this.options_['exposureApiURL'] + '/' + this.options_['exposureApiVersion'] + '/customer/' + customer + '/businessunit/' + businessUnit + '/content/asset/' + assetId;
+    if (!assetId) {
+      throw new EntitlementError('getAssetMetadata_: assetId was not provided.');
+    }
+
+    var requestURL = this.options_['exposureApiURL'] + '/' + this.options_['exposureApiVersion'] + '/customer/' + this.customer + '/businessunit/' + this.businessUnit + '/content/asset/' + assetId;
     return xhr.get(requestURL, null, function (error, response, body) {
       // Check and handles error
       if (_this6.checkForError(error, response, callback)) {
@@ -10676,11 +10693,15 @@ var EricssonExposure = function (_EntitlementEngine) {
     var customer = this.customer;
     var businessUnit = this.businessUnit;
     if (!customer) {
-      throw new EntitlementError('Customer was not provided.');
+      throw new EntitlementError('getProgram_: Customer was not provided.');
     }
 
     if (!businessUnit) {
-      throw new EntitlementError('Business unit was not provided.');
+      throw new EntitlementError('getProgram_: Business unit was not provided.');
+    }
+
+    if (!channelId && !programId) {
+      throw new EntitlementError('getProgram_: channelId or programId was not provided.');
     }
 
     var programUrl = '';
@@ -10946,16 +10967,16 @@ var EricssonExposure = function (_EntitlementEngine) {
     var customer = this.customer;
     var businessUnit = this.businessUnit;
     if (!customer) {
-      throw new EntitlementError('Customer was not provided.');
+      throw new EntitlementError('verifyEntitlement: Customer was not provided.');
     }
     if (!businessUnit) {
-      throw new EntitlementError('Business unit was not provided.');
+      throw new EntitlementError('verifyEntitlement: Business unit was not provided.');
     }
     if (!assetId) {
-      throw new EntitlementError('assetId was not provided.');
+      throw new EntitlementError('verifyEntitlement: assetId was not provided.');
     }
     if (!playRequest) {
-      throw new EntitlementError('playRequest was not provided.');
+      throw new EntitlementError('verifyEntitlement: playRequest was not provided.');
     }
 
     var requestURL = this.options_['exposureApiURL'] + '/' + this.options_['exposureApiVersion'] + '/customer/' + customer + '/businessunit/' + businessUnit + '/entitlement/' + assetId + '?drm=' + playRequest.drm + '&format=' + playRequest.format;
@@ -11324,13 +11345,13 @@ var ProgramService = function (_Plugin) {
       }
     }
 
-    var assetId = this.entitlement().assetId;
+    var channelId = this.entitlement().channelId;
     var isLive = this.entitlement().live;
     var programId = this.entitlement().programId;
 
     //VOD
     if (!isLive && !programId) {
-      this.updateVOD_(assetId);
+      this.updateVOD_(this.entitlement().assetId);
       return;
     }
 
@@ -11384,7 +11405,7 @@ var ProgramService = function (_Plugin) {
         }
       }
 
-    this.exposure.getProgramInfo(assetId, dateTime, function (program, error) {
+    this.exposure.getProgramInfo(channelId, dateTime, function (program, error) {
       _this2.currentVOD_ = null;
       if (error) {
         log$1('getProgramInfo', 'No EPG found.', error);
@@ -11488,15 +11509,14 @@ var ProgramService = function (_Plugin) {
         if (!_this5.player) {
           return;
         }
-        var asset = extplayer.currentAsset(_this5.player);
-        //Add channelId if played without channelId
-        if (!asset.channelId) {
-          extplayer.currentAsset(_this5.player, program.channelId, program.programId, program.channelId);
-          if (_this5.entitlement_ && !_this5.entitlement_.channelId) {
-            _this5.entitlement_.channelId = program.channelId;
-            _this5.entitlement_.assetId = program.channelId;
-          }
+
+        extplayer.currentAsset(_this5.player, program.assetId, program.programId, program.channelId);
+        if (_this5.entitlement_) {
+          _this5.entitlement_.channelId = program.channelId;
+          _this5.entitlement_.assetId = program.assetId;
+          _this5.entitlement_.programId = program.programId;
         }
+
         extplayer.setTechProgram(_this5.player, program);
         _this5.player.removeClass('vjs-live');
         _this5.player.trigger(empPlayerEvents.PROGRAM_CHANGED, { 'program': program });
@@ -11792,7 +11812,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin$1);
 
-ProgramService.VERSION = '2.1.97-259';
+ProgramService.VERSION = '2.1.97-260';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -11968,7 +11988,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$2);
 
-EntitlementExpirationService.VERSION = '2.1.97-259';
+EntitlementExpirationService.VERSION = '2.1.97-260';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -12136,7 +12156,7 @@ var EntitlementMiddleware$1 = function EntitlementMiddleware(player) {
           } else {
             var techOptions = options[techs[i][0].toLowerCase()];
             var playRequest = techOptions && techOptions.streamType && tech.entitlementPlayRequests ? tech.entitlementPlayRequests[techOptions.streamType] : tech.entitlementPlayRequest;
-            exposure.getEntitlement(entitlementRequest, playRequest, function (entitlement, error) {
+            exposure.getV2Entitlement(entitlementRequest, playRequest, function (entitlement, error) {
               // If we have an fatal error during playcall break out of the loop else try next tech
               if (error) {
                 if (!player.options_.excludeTechs) {
@@ -12179,7 +12199,7 @@ var EntitlementMiddleware$1 = function EntitlementMiddleware(player) {
                   loop['break']();
                 }
               }
-            });
+            }), preEntitlement;
           }
         }
         //If we get other error try next tech
@@ -12451,7 +12471,7 @@ EntitlementMiddleware$1.registerEntitlementEngine = EntitlementEngine.registerEn
 
 EntitlementMiddleware$1.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
 
-EntitlementMiddleware$1.VERSION = '2.1.97-259';
+EntitlementMiddleware$1.VERSION = '2.1.97-260';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -12581,7 +12601,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.1.97-259';
+empPlayer.VERSION = '2.1.97-260';
 
 /*
  * Universal Module Definition (UMD)
