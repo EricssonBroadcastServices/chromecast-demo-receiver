@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.98-261 
+ * EMP-Player 2.1.98-262 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -6047,10 +6047,10 @@ var Player = function (_VjsPlayer) {
       if (this.options_.techOrder.length > this.options_.excludeTechs.length) {
         this.error(null);
         this.resetWithoutReload_();
-        this.options_.autoplay = this.options_.autoplay;
         if (this.hasStarted()) {
           this.options_.autoplay = true;
         }
+        this.autoplay(this.options_.autoplay);
         this.options_.absoluteStartTime = this.previousAbsoluteStartTime_;
         if (data.source.assetId) {
           var asset = { 'assetId': data.source.assetId };
@@ -6921,7 +6921,7 @@ var Player = function (_VjsPlayer) {
 
 
   Player.prototype.startPlaybackV2 = function startPlaybackV2(assetId, playbackProperties) {
-    this.startPlayback(assetId, undefined, undefined, playbackProperties);
+    this.startPlayback(assetId, '', '', playbackProperties);
   };
 
   /**
@@ -6949,10 +6949,13 @@ var Player = function (_VjsPlayer) {
     if (!playbackProperties.playFrom) {
       playbackProperties.playFrom = 'defaultBehaviour';
     }
-    var options = { 'playFrom': playbackProperties.playFrom };
+    var options = { 'playFrom': playbackProperties.playFrom, 'autoplay': true };
 
     if (playbackProperties.autoplay !== undefined) {
       options.autoplay = playbackProperties.autoplay;
+    }
+    if (options.autoplay) {
+      this.autoplay(options.autoplay);
     }
     if (playbackProperties.startTime && playbackProperties.playFrom === 'startTime') {
       options.absoluteStartTime = playbackProperties.startTime;
@@ -7753,7 +7756,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.1.98-261';
+      return '2.1.98-262';
     }
 
     /**
@@ -8895,7 +8898,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin);
 
-AnalyticsPlugin.VERSION = '2.1.98-261';
+AnalyticsPlugin.VERSION = '2.1.98-262';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -11829,7 +11832,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin$1);
 
-ProgramService.VERSION = '2.1.98-261';
+ProgramService.VERSION = '2.1.98-262';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -12005,7 +12008,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$2);
 
-EntitlementExpirationService.VERSION = '2.1.98-261';
+EntitlementExpirationService.VERSION = '2.1.98-262';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -12488,7 +12491,7 @@ EntitlementMiddleware$1.registerEntitlementEngine = EntitlementEngine.registerEn
 
 EntitlementMiddleware$1.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
 
-EntitlementMiddleware$1.VERSION = '2.1.98-261';
+EntitlementMiddleware$1.VERSION = '2.1.98-262';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -12618,7 +12621,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.1.98-261';
+empPlayer.VERSION = '2.1.98-262';
 
 /*
  * Universal Module Definition (UMD)
