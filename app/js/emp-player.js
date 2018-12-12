@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.97-260 
+ * EMP-Player 2.1.98-261 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -6902,17 +6902,34 @@ var Player = function (_VjsPlayer) {
   Player.prototype.loadAsset = function loadAsset(assetId, programId) {
     var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
 
-    log$1.warn('loadAsset() has been deprecated with new USP a/v pipe use startPlayback() or src() instead');
+    log$1.warn('loadAsset() has been deprecated with new US a/v pipe use startPlayback() or src() instead');
     this.options({ 'playFrom': undefined });
-    extplayer.loadAsset(this, assetId, programId, programId ? assetId : undefined, callback);
+    if (!assetId && programId) {
+      log$1.error('loadAsset: with only programId is not supported');
+      callback();
+      return;
+    }
+    extplayer.loadAsset(this, programId ? undefined : assetId, programId, programId ? assetId : undefined, callback);
   };
 
   /**
-   * Start The Play back is autoplay else load the stream
+  * Load an asset for playback
+  *
+  * @param {any} assetId   Identifier of the asset to load (VOD, Channel or Program)
+  * @param {any} playbackProperties (optional) Playback properties
+  */
+
+
+  Player.prototype.startPlaybackV2 = function startPlaybackV2(assetId, playbackProperties) {
+    this.startPlayback(assetId, undefined, undefined, playbackProperties);
+  };
+
+  /**
+   * Load an asset for playback
    *
-   * @param {any} assetId   Identifier of the asset to load
-   * @param {any} channelId Identifier of the channel to load
-   * @param {any} programId (optional) Identifier of the program to load
+   * @param {any} assetId   Identifier of the asset to load (VOD, Channel or Program)
+   * @param {any} channelId (optional) Identifier of the channel to load
+   * @param {any} programId (optional) Identifier of the program to load (channelId is mandatory with programId)
    * @param {any} playbackProperties (optional) Playback properties
    */
 
@@ -7736,7 +7753,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.1.97-260';
+      return '2.1.98-261';
     }
 
     /**
@@ -8878,7 +8895,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin);
 
-AnalyticsPlugin.VERSION = '2.1.97-260';
+AnalyticsPlugin.VERSION = '2.1.98-261';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -11812,7 +11829,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin$1);
 
-ProgramService.VERSION = '2.1.97-260';
+ProgramService.VERSION = '2.1.98-261';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -11988,7 +12005,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$2);
 
-EntitlementExpirationService.VERSION = '2.1.97-260';
+EntitlementExpirationService.VERSION = '2.1.98-261';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -12199,7 +12216,7 @@ var EntitlementMiddleware$1 = function EntitlementMiddleware(player) {
                   loop['break']();
                 }
               }
-            }), preEntitlement;
+            }, preEntitlement);
           }
         }
         //If we get other error try next tech
@@ -12471,7 +12488,7 @@ EntitlementMiddleware$1.registerEntitlementEngine = EntitlementEngine.registerEn
 
 EntitlementMiddleware$1.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
 
-EntitlementMiddleware$1.VERSION = '2.1.97-260';
+EntitlementMiddleware$1.VERSION = '2.1.98-261';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -12601,7 +12618,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.1.97-260';
+empPlayer.VERSION = '2.1.98-261';
 
 /*
  * Universal Module Definition (UMD)
