@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.98-263 
+ * EMP-Player 2.1.98-275 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -7756,7 +7756,7 @@ var Player = function (_VjsPlayer) {
   createClass(Player, [{
     key: 'version',
     get: function get$$1() {
-      return '2.1.98-263';
+      return '2.1.98-275';
     }
 
     /**
@@ -8898,7 +8898,7 @@ var AnalyticsPlugin = function (_Plugin) {
   return AnalyticsPlugin;
 }(Plugin);
 
-AnalyticsPlugin.VERSION = '2.1.98-263';
+AnalyticsPlugin.VERSION = '2.1.98-275';
 
 if (videojs$1.getPlugin('analytics')) {
   videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -9061,16 +9061,16 @@ var Entitlement = function () {
     this.commonInitiate(options);
     this.formats = options.formats || null;
 
-    if (options.contractractRestrictions) {
-      var contractractRestrictions = options.contractractRestrictions;
-      this.minBitrate = contractractRestrictions.minBitrate || 0;
-      this.maxBitrate = contractractRestrictions.maxBitrate || 0;
-      this.maxResWidth = contractractRestrictions.maxResWidth || 0;
-      this.maxResHeight = contractractRestrictions.maxResHeight || 0;
-      this.rwEnabled = contractractRestrictions.rwEnabled === undefined ? true : contractractRestrictions.rwEnabled;
-      this.ffEnabled = contractractRestrictions.ffEnabled === undefined ? true : contractractRestrictions.ffEnabled;
-      this.airplayBlocked = contractractRestrictions.airplayEnabled === undefined ? true : !contractractRestrictions.airplayEnabled;
-      this.timeshiftEnabled = contractractRestrictions.timeshiftEnabled || true;
+    if (options.contractRestrictions) {
+      var contractRestrictions = options.contractRestrictions;
+      this.minBitrate = contractRestrictions.minBitrate || 0;
+      this.maxBitrate = contractRestrictions.maxBitrate || 0;
+      this.maxResWidth = contractRestrictions.maxResWidth || 0;
+      this.maxResHeight = contractRestrictions.maxResHeight || 0;
+      this.rwEnabled = contractRestrictions.rwEnabled === undefined ? true : contractRestrictions.rwEnabled;
+      this.ffEnabled = contractRestrictions.ffEnabled === undefined ? true : contractRestrictions.ffEnabled;
+      this.airplayBlocked = contractRestrictions.airplayEnabled === undefined ? true : !contractRestrictions.airplayEnabled;
+      this.timeshiftEnabled = contractRestrictions.timeshiftEnabled || true;
     }
     if (options.bookmarks) {
       var bookmarks = options.bookmarks;
@@ -10442,8 +10442,16 @@ var EricssonExposure = function (_EntitlementEngine) {
 
     var statusCode = response.statusCode;
     var message = '';
-    if (response.body) {
-      message = response.body.message;
+    if (!(statusCode >= 200 && statusCode <= 299)) {
+      if (response.body && response.body.message) {
+        message = response.body.message;
+      } else if (response.body) {
+        try {
+          message = JSON.parse(response.body).message;
+        } catch (e) {
+          message = response.body;
+        }
+      }
     }
 
     // Try to match known errors
@@ -10552,12 +10560,15 @@ var EricssonExposure = function (_EntitlementEngine) {
       return xhr.get(requestURL, { headers: this.requestHeaders }, function (error, response, body) {
 
         if (error) {
-          log$1.warn('Fallback to Entitlement request v1');
+          log$1.warn('Fallback to Entitlement request v1', error);
           _this4.getEntitlement(entitlementRequest, playRequest, callback);
           return;
         }
         // Check and handles error
-        if (_this4.checkForError(error, response, callback)) {
+        error = _this4.checkForError(error, response);
+        if (error) {
+          log$1.warn('Fallback to Entitlement request v1', error.message);
+          _this4.getEntitlement(entitlementRequest, playRequest, callback);
           return;
         }
         var options = JSON.parse(body);
@@ -11832,7 +11843,7 @@ var ProgramService = function (_Plugin) {
   return ProgramService;
 }(Plugin$1);
 
-ProgramService.VERSION = '2.1.98-263';
+ProgramService.VERSION = '2.1.98-275';
 
 if (videojs.getPlugin('programService')) {
   videojs.log.warn('A plugin named "programService" already exists.');
@@ -12008,7 +12019,7 @@ var EntitlementExpirationService = function (_Plugin) {
   return EntitlementExpirationService;
 }(Plugin$2);
 
-EntitlementExpirationService.VERSION = '2.1.98-263';
+EntitlementExpirationService.VERSION = '2.1.98-275';
 
 if (videojs.getPlugin('entitlementExpirationService')) {
   videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -12491,7 +12502,7 @@ EntitlementMiddleware$1.registerEntitlementEngine = EntitlementEngine.registerEn
 
 EntitlementMiddleware$1.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
 
-EntitlementMiddleware$1.VERSION = '2.1.98-263';
+EntitlementMiddleware$1.VERSION = '2.1.98-275';
 
 if (videojs$1.EntitlementMiddleware) {
   videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -12621,7 +12632,7 @@ empPlayer.extend = videojs$1.extend;
  */
 empPlayer.Events = empPlayerEvents;
 
-empPlayer.VERSION = '2.1.98-263';
+empPlayer.VERSION = '2.1.98-275';
 
 /*
  * Universal Module Definition (UMD)
