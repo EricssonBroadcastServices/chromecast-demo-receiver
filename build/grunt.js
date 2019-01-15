@@ -100,19 +100,6 @@ module.exports = function(grunt) {
       },
       docs: { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/docs', src: ['**/**'], dest: 'dist/docs/', expand: true, filter: 'isFile' },
     },
-    ftp_push: {
-      stage: {
-        options: {
-          authKey: "chromecast-azure-stage",
-          host: "waws-prod-am2-121.ftp.azurewebsites.windows.net",
-          dest: "/site/wwwroot/chromecast-demo-receiver/stage/",
-          port: 21
-        },
-        files: [
-          { expand: true, cwd: 'dist/', src: ['**/*'] }
-        ]
-      }
-    },
     ftpush: {
       stage: {
         auth: {
@@ -147,7 +134,6 @@ module.exports = function(grunt) {
   // load all the npm grunt tasks
   require('load-grunt-tasks')(grunt);
   grunt.loadNpmTasks('chg');
-  grunt.loadNpmTasks('grunt-ftp-push');
 
   grunt.registerTask('build', [
     'clean:build',
@@ -157,10 +143,8 @@ module.exports = function(grunt) {
     'copy:docs'
   ]);
 
-  //TODO remove ftp-push with ftppush it's better but need changes in jenkins
 
   grunt.registerTask('default', ['build']);
-  grunt.registerTask('cloud:stage', ['build', 'ftp_push']);
   grunt.registerTask('deploy', ['build', 'ftpush']);
   grunt.registerTask('update', ['shell:updateNPM', 'copy:fromNPM']);
   grunt.loadTasks('build/tasks');
