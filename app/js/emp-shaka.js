@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.98-275 
+ * EMP-Player 2.1.98-276 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -1725,6 +1725,23 @@ var EmpTech = function () {
 
     if (!source.src) {
       return false;
+    }
+
+    //Videojs make childNodes toLowerCase
+    if (source.licenseserver) {
+      source.licenseServer = source.licenseserver;
+    } else if (source.licenseservers) {
+      if (isString(source.licenseservers)) {
+        source.licenseServers = JSON.parse(source.licenseservers);
+      } else {
+        source.licenseServers = source.licenseservers;
+      }
+    }
+    if (source.certificateserver) {
+      source.certificateServer = source.certificateserver;
+    }
+    if (source.playtoken) {
+      source.playToken = source.playtoken;
     }
 
     // Don't fetch certificate if IE or Edge or CC
@@ -3873,6 +3890,23 @@ var DownloadService = function (_Plugin) {
       };
     }
 
+    //Videojs make childNodes toLowerCase
+    if (source.licenseserver) {
+      source.licenseServer = source.licenseserver;
+    } else if (source.licenseservers) {
+      if (isString(source.licenseservers)) {
+        source.licenseServers = JSON.parse(source.licenseservers);
+      } else {
+        source.licenseServers = source.licenseservers;
+      }
+    }
+    if (source.certificateserver) {
+      source.certificateServer = source.certificateserver;
+    }
+    if (source.playtoken) {
+      source.playToken = source.playtoken;
+    }
+
     if (source.licenseServer) {
       config.drm.servers = {
         'com.widevine.alpha': source.licenseServer,
@@ -4061,7 +4095,7 @@ var DownloadService = function (_Plugin) {
   return DownloadService;
 }(Plugin);
 
-DownloadService.VERSION = '2.1.98-275';
+DownloadService.VERSION = '2.1.98-276';
 
 if (videojs.getPlugin('DownloadService')) {
   videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -5457,7 +5491,7 @@ EmpShaka.prototype['featuresNativeTextTracks'] = false;
 
 Tech.withSourceHandlers(EmpShaka);
 
-EmpShaka.VERSION = '2.1.98-275';
+EmpShaka.VERSION = '2.1.98-276';
 
 // Unset source handlers set by Html5 super class.
 // We do not intent to support any sources other then sources allowed by nativeSourceHandler
