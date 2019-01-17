@@ -162,3 +162,8 @@ https://github.com/google/shaka-player/releases
 - New HtML5 player 2.1.98
 - **EMP-12315** Use the new entitlement service V2.
 - Remove Dashif as supported tech
+
+## 2.1.99
+
+### New features
+- Latest HtML5-player 2.1.99
