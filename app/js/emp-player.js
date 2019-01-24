@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.100-291 
+ * EMP-Player 2.1.100-292 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -874,7 +874,6 @@
     ENTITLEMENT2: 103,
     SHAKA_TECH: 200,
     HLS_TECH: 300,
-    FLASH_TECH: 400,
     CHROMECAST_TECH: 500,
     HLS_MSE_TECH: 10000,
     DASHIF_TECH: 20000
@@ -6350,7 +6349,7 @@
      * > **NOTE**: It's the raw duration from the video element
      *
      * > **NOTE**: The video must have started loading before the duration can be
-     * known, and in the case of Flash, may not be known until the video starts
+     * known, 
      * playing.
      *
      * @fires Player#durationchange
@@ -6563,7 +6562,7 @@
     ;
 
     _proto.initialSeekToAbsoluteStartTime_ = function initialSeekToAbsoluteStartTime_() {
-      var entitlement = extplayer.getEntitlement(this); //dash and hls/flash live streams have different stream startTime and different currentTime
+      var entitlement = extplayer.getEntitlement(this); //dash and hls live streams have different stream startTime and different currentTime
       //absoluteStartTime is slower, use startTime in the most cases
 
       if (this.options_.absoluteStartTime && this.timeShiftEnabled()) {
@@ -7774,7 +7773,7 @@
     _createClass(Player, [{
       key: "version",
       get: function get() {
-        return '2.1.100-291';
+        return '2.1.100-292';
       }
       /**
        * Get entitlement
@@ -7899,15 +7898,7 @@
 
     if (undefined !== hlsMseTech && hlsMseTech.isSupported()) {
       return Promise.resolve(true);
-    } // test if Flash is supported
-
-    /*
-    let flashTech = videojs.getTech('EmpFlash');
-    if (undefined !== flashTech && flashTech.isSupported()) {
-      return Promise.resolve(true);
     }
-    */
-
 
     return Promise.resolve(false);
   }
@@ -7975,15 +7966,7 @@
 
     if (undefined !== hlsTech && hlsTech.isSupported() && window_1.WebKitMediaKeys && hlsTech.getKeySystem && window_1.WebKitMediaKeys.isTypeSupported(hlsTech.getKeySystem(), 'video/mp4')) {
       ptable.push(true);
-    } // test if Flash + EDRM is supported
-
-    /* 
-    let flashTech = videojs.getTech('EmpFlash');
-    if (undefined !== flashTech && flashTech.isSupported()) {
-      ptable.push(true);
-    }
-    */
-    // If no playback technology is available, resolve to false
+    } // If no playback technology is available, resolve to false
 
 
     if (0 === ptable.length) {
@@ -8521,10 +8504,6 @@
             techName = 'DashIf';
             break;
 
-          case 'EmpFlash':
-            techName = 'Flash';
-            break;
-
           case 'EmpHLS':
             techName = 'NativeHLS';
             break;
@@ -9001,7 +8980,7 @@
     return AnalyticsPlugin;
   }(Plugin);
 
-  AnalyticsPlugin.VERSION = '2.1.100-291';
+  AnalyticsPlugin.VERSION = '2.1.100-292';
 
   if (videojs$1.getPlugin('analytics')) {
     videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -9344,7 +9323,6 @@
       get: function get() {
         return {
           DASH: 'DASH',
-          FLASH: 'FLASH',
           HLS: 'HLS'
         };
       }
@@ -9500,7 +9478,7 @@
      * The Entitlement should contain the following parameters:
      *
      * playToken - Playtoken required for drm
-     * mediaLocator - URL of playlist file (for example for dash or hls playback) or mediaId for flash playback.
+     * mediaLocator - URL of playlist file 
      *
      * @param {EntitlementRequest}    entitlementRequest  Entitlement request to execute
      * @param {Object}                playRequest         Playrequest object containing information about the required
@@ -9528,7 +9506,7 @@
     * The Entitlement should contain the following parameters:
     *
     * playToken - Playtoken required for drm
-    * mediaLocator - URL of playlist file (for example for dash or hls playback) or mediaId for flash playback.
+    * mediaLocator - URL of playlist file 
     * 
     * @param {EntitlementRequest}    entitlementRequest  Entitlement request to execute
     * @param {Object}                playRequest         Playrequest object containing information about the required
@@ -10563,7 +10541,7 @@
      * The Entitlement should contain the following parameters:
      *
      * playToken - Playtoken required for drm
-     * mediaLocator - URL of playlist file (for example for dash or hls playback) or mediaId for flash playback.
+     * mediaLocator - URL of playlist file 
      * 
      * @param {EntitlementRequest}    entitlementRequest  Entitlement request to execute
      * @param {Object}                playRequest         Playrequest object containing information about the required
@@ -10606,7 +10584,7 @@
      * The Entitlement should contain the following parameters:
      *
      * playToken - Playtoken required for drm
-     * mediaLocator - URL of playlist file (for example for dash or hls playback) or mediaId for flash playback.
+     * mediaLocator - URL of playlist file 
      *
      * @param {EntitlementRequest}    entitlementRequest  Entitlement request to execute
      * @param {Object}                playRequest         Playrequest object containing information about the required
@@ -11635,14 +11613,13 @@
       } // If called, due to SEEK or other events, clear previous timer that could cause this method to be called.
 
 
-      this.clearProgramChangeTimeout_(); //For Flash and Cast
+      this.clearProgramChangeTimeout_(); //For Cast
 
       if (extplayer.supportsEpgProgramChange(this.player)) {
         var program = extplayer.program(this.player);
 
         if (program) {
-          log$1('updateCurrentProgram from player'); //TODO fetch epg for flash
-
+          log$1('updateCurrentProgram from player');
           return;
         }
       }
@@ -12167,7 +12144,7 @@
     return ProgramService;
   }(Plugin$1);
 
-  ProgramService.VERSION = '2.1.100-291';
+  ProgramService.VERSION = '2.1.100-292';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -12357,7 +12334,7 @@
     return EntitlementExpirationService;
   }(Plugin$2);
 
-  EntitlementExpirationService.VERSION = '2.1.100-291';
+  EntitlementExpirationService.VERSION = '2.1.100-292';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -12884,7 +12861,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.100-291';
+  EntitlementMiddleware.VERSION = '2.1.100-292';
 
   if (videojs$1.EntitlementMiddleware) {
     videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -13013,7 +12990,7 @@
    */
 
   empPlayer$1.Events = empPlayerEvents;
-  empPlayer$1.VERSION = '2.1.100-291';
+  empPlayer$1.VERSION = '2.1.100-292';
   /*
    * Universal Module Definition (UMD)
    *
