@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.100-292 
+ * EMP-Player 2.1.100-294 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -1301,32 +1301,13 @@
 
       if (!source.src) {
         return false;
-      } //Videojs make childNodes toLowerCase
-
-
-      if (source.licenseserver) {
-        source.licenseServer = source.licenseserver;
-      } else if (source.licenseservers) {
-        if (isString(source.licenseservers)) {
-          source.licenseServers = JSON.parse(source.licenseservers);
-        } else {
-          source.licenseServers = source.licenseservers;
-        }
-      }
-
-      if (source.certificateserver) {
-        source.certificateServer = source.certificateserver;
-      }
-
-      if (source.playtoken) {
-        source.playToken = source.playtoken;
       } // Don't fetch certificate if IE or Edge or CC
 
 
       if (window.document.documentMode || /Edge/.test(window.navigator.userAgent) || IS_CHROMECAST || IS_ANDROID) {
         this.certificate_ = null;
       } else {
-        if (source.certificateServer && !this.certificate_ && (source.licenseServer || source.licenseServers && !isEmpty(source.licenseServers))) {
+        if (source.certificateServer && !this.certificate_ && (source.licenseServer || source.keySystems && !isEmpty(source.keySystems))) {
           this.fetchWidevineCertificate(source.certificateServer, function (cert, error) {
             if (cert) {
               if (_this2.name_ === 'EmpDashif') {
@@ -1373,7 +1354,7 @@
 
       this.currentProgram_ = null;
 
-      if (source.licenseServer || source.licenseServers) {
+      if (source.licenseServer || source.keySystems) {
         this.playToken = source.playToken;
       }
 
@@ -4041,25 +4022,6 @@
             }
           }
         };
-      } //Videojs make childNodes toLowerCase
-
-
-      if (source.licenseserver) {
-        source.licenseServer = source.licenseserver;
-      } else if (source.licenseservers) {
-        if (isString(source.licenseservers)) {
-          source.licenseServers = JSON.parse(source.licenseservers);
-        } else {
-          source.licenseServers = source.licenseservers;
-        }
-      }
-
-      if (source.certificateserver) {
-        source.certificateServer = source.certificateserver;
-      }
-
-      if (source.playtoken) {
-        source.playToken = source.playtoken;
       }
 
       if (source.licenseServer) {
@@ -4068,8 +4030,8 @@
           'com.microsoft.playready': source.licenseServer,
           'com.adobe.primetime': source.licenseServer
         };
-      } else if (source.licenseServers) {
-        config.drm.servers = source.licenseServers;
+      } else if (source.keySystems) {
+        config.drm.servers = source.keySystems;
       }
 
       this.player.tech_.shakaPlayer_.configure(config);
@@ -4259,7 +4221,7 @@
     return DownloadService;
   }(Plugin);
 
-  DownloadService.VERSION = '2.1.100-292';
+  DownloadService.VERSION = '2.1.100-294';
 
   if (videojs.getPlugin('DownloadService')) {
     videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -4530,8 +4492,8 @@
           'com.microsoft.playready': source.licenseServer,
           'com.adobe.primetime': source.licenseServer
         };
-      } else if (source.licenseServers) {
-        config.drm.servers = source.licenseServers;
+      } else if (source.keySystems) {
+        config.drm.servers = source.keySystems;
       }
 
       if (this.certificate_) {
@@ -5802,7 +5764,7 @@
 
   EmpShaka.prototype['featuresNativeTextTracks'] = false;
   Tech$1.withSourceHandlers(EmpShaka);
-  EmpShaka.VERSION = '2.1.100-292'; // Unset source handlers set by Html5 super class.
+  EmpShaka.VERSION = '2.1.100-294'; // Unset source handlers set by Html5 super class.
   // We do not intent to support any sources other then sources allowed by nativeSourceHandler
 
   EmpShaka.sourceHandlers = [];

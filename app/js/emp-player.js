@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.100-292 
+ * EMP-Player 2.1.100-294 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -793,6 +793,22 @@
 
   function isEmpty(value) {
     return keys(value).length === 0;
+  }
+  /**
+   * 
+   * @param {Object} obj
+   * @param {Object} newKeys
+   * @returns {Object}
+   */
+
+  function renameKeys(obj, newKeys) {
+    var newObj = {};
+    Object.keys(obj).forEach(function (key) {
+      var value = obj[key];
+      var newKey = newKeys[key] || key;
+      newObj[newKey] = value;
+    });
+    return newObj;
   }
 
   /*global
@@ -2119,7 +2135,7 @@
       return result;
     },
     setTechProgram: function setTechProgram(player, program) {
-      if (player.tech_ || player.tech_['program'] !== undefined) {
+      if (player.tech_ && player.tech_['program'] !== undefined) {
         player.techCall_('program', program);
       }
     }
@@ -5511,6 +5527,7 @@
 
       options = videojs$1.mergeOptions({
         'entitlement-engine': 'EricssonExposure',
+        'sources': tagOptions.sources ? tagOptions.sources : undefined,
         'techOrder': tagOptions.techOrder ? tagOptions.techOrder : Player.AutoTechArray('EmpShaka'),
         'maxBitrate': tagOptions.maxBitrate ? tagOptions.maxBitrate : 0,
         'timeShiftDisabled': tagOptions.timeShiftDisabled ? tagOptions.timeShiftDisabled : false,
@@ -5519,7 +5536,24 @@
         'absoluteStartTime': tagOptions.absoluteStartTime ? tagOptions.absoluteStartTime : undefined,
         'persistTextTrackSettings': tagOptions.persistTextTrackSettings ? tagOptions.persistTextTrackSettings : !IS_IE_OR_EDGE,
         'textTrackSettings': tagOptions.textTrackSettings ? tagOptions.textTrackSettings : !IS_IE_OR_EDGE
-      }, options);
+      }, options); // Fix that HTML attribute is lowercase 
+
+      if (options.sources) {
+        for (var i = 0; i < options.sources.length; i++) {
+          var newKeys = {
+            licenseserver: "licenseServer",
+            certificateserver: "certificateServer",
+            playtoken: "playToken",
+            keysystems: "keySystems"
+          };
+          options.sources[i] = renameKeys(options.sources[i], newKeys);
+
+          if (isString(options.sources[i].keySystems)) {
+            options.sources[i].keySystems = JSON.parse(options.sources[i].keySystems);
+          }
+        }
+      }
+
       _this = _VjsPlayer.call(this, tag, options, ready) || this;
 
       _this.monkeyPatchingTextMenu_();
@@ -5532,6 +5566,11 @@
 
       if (_this.castPlugin) {
         _this.castPlugin();
+      } // For Html5 tech with videojs-contrib-eme
+
+
+      if (_this.eme) {
+        _this.eme();
       }
 
       _this.on(empPlayerEvents.ENDED, function () {
@@ -5971,7 +6010,7 @@
       var techs = this.getAvalibleTechs_(excludeTechs); //TODO: Fix reset for hls
       //Not for CHROMECAST and not for encrypted streams and tech left to try
 
-      if (data.source && !data.source.licenseServer && (!data.source.licenseServers || isEmpty(data.source.licenseServers)) && !data.source.protection && !IS_CHROMECAST && techs.length > 0) {
+      if (data.source && !data.source.licenseServer && (!data.source.keySystems || isEmpty(data.source.keySystems)) && !data.source.protection && !IS_CHROMECAST && techs.length > 0) {
         if (data.error.code !== 6001) {
           log$1.error('handleRecoverableError', data.techName, data.message);
           this.analytics && this.analytics().onError({
@@ -7773,7 +7812,7 @@
     _createClass(Player, [{
       key: "version",
       get: function get() {
-        return '2.1.100-292';
+        return '2.1.100-294';
       }
       /**
        * Get entitlement
@@ -8980,7 +9019,7 @@
     return AnalyticsPlugin;
   }(Plugin);
 
-  AnalyticsPlugin.VERSION = '2.1.100-292';
+  AnalyticsPlugin.VERSION = '2.1.100-294';
 
   if (videojs$1.getPlugin('analytics')) {
     videojs$1.log.warn('A plugin named "analytics" already exists.');
@@ -9015,7 +9054,7 @@
    * @param {string}  [options.lastViewedOffset=null] - Last viewed offset
    * @param {string}  [options.lastViewedTime=null] - Last viewed offset absolute time
    * @param {string}  [options.liveTime=null] - Last viewed offset liveTime
-   * @param {Object}  [options.licenseServers] - licenseServers for dash
+   * @param {Object}  [options.keySystems] - keySystems for dash
    * @param {Object}  [options.requestId] - requestId for the play call
    * @param {Object}  [options.adMediaLocator] - MediaLocator for ad override MediaLocator
    * @param {Object}  [options.fairplayConfig] - fairplayConfig {certificateUrl, licenseAcquisitionUrl}
@@ -9065,7 +9104,7 @@
       this.playTokenExpiration = '';
       this.protection = undefined;
       this.certificateServer = undefined;
-      this.licenseServers = undefined;
+      this.keySystems = undefined;
     }
 
     var _proto = Entitlement.prototype;
@@ -9130,7 +9169,15 @@
           this.protection.version = 'mrr';
         } else {
           this.protection.version = 'irdeto';
-        }
+        } // For Html5 tech with videojs-contrib-eme
+
+
+        this.keySystems = {
+          'com.apple.fps.1_0': {
+            'certificateUri': options.fairplayConfig.certificateUrl || '',
+            'licenseUri': options.fairplayConfig.licenseAcquisitionUrl || ''
+          }
+        };
       }
 
       if (options.widevineConfig) {
@@ -9138,7 +9185,7 @@
       }
 
       if (options.cencConfig) {
-        this.licenseServers = options.cencConfig;
+        this.keySystems = options.cencConfig;
       }
     };
 
@@ -9236,15 +9283,15 @@
             this.setupMediaLocator(format);
 
             if (format.drm) {
-              this.licenseServers = format.drm;
+              this.keySystems = format.drm;
 
               if (format.drm['com.widevine.alpha']) {
                 this.certificateServer = format.drm['com.widevine.alpha'].certificateUrl;
               }
 
-              this.licenseServers = {};
+              this.keySystems = {};
               Object.keys(format.drm).forEach(function (key) {
-                _this.licenseServers[key] = format.drm[key].licenseServerUrl;
+                _this.keySystems[key] = format.drm[key].licenseServerUrl;
               });
             }
           }
@@ -9264,7 +9311,14 @@
               this.protection = {};
               this.protection.certificateUrl = _format.drm['com.apple.fps'].certificateUrl || '';
               this.protection.licenseUrl = _format.drm['com.apple.fps'].licenseServerUrl || '';
-              this.protection.version = 'irdeto';
+              this.protection.version = 'irdeto'; // For Html5 tech with videojs-contrib-eme
+
+              this.keySystems = {
+                'com.apple.fps.1_0': {
+                  'certificateUri': _format.drm['com.apple.fps'].certificateUrl || '',
+                  'licenseUri': _format.drm['com.apple.fps'].licenseServerUrl || ''
+                }
+              };
             }
           }
 
@@ -9289,11 +9343,11 @@
 
           if (dvr_window_length) {
             var nowDate = serverTime ? new Date(serverTime) : new Date();
-            t = new Date(nowDate.getTime() - dvr_window_length * 1000).toISOString().replace(/Z/g, "");
+            t = new Date(nowDate.getTime() - dvr_window_length * 1000).toISOString().replace(/Z/g, '');
           } else if (this.live) {
             var _nowDate = serverTime ? new Date(serverTime) : new Date();
 
-            t = new Date(_nowDate.getTime() - 7200 * 1000).toISOString().replace(/Z/g, "");
+            t = new Date(_nowDate.getTime() - 7200 * 1000).toISOString().replace(/Z/g, '');
           }
         }
 
@@ -12144,7 +12198,7 @@
     return ProgramService;
   }(Plugin$1);
 
-  ProgramService.VERSION = '2.1.100-292';
+  ProgramService.VERSION = '2.1.100-294';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -12334,7 +12388,7 @@
     return EntitlementExpirationService;
   }(Plugin$2);
 
-  EntitlementExpirationService.VERSION = '2.1.100-292';
+  EntitlementExpirationService.VERSION = '2.1.100-294';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -12473,7 +12527,7 @@
           var techName = _ref[0],
               tech = _ref[1];
 
-          if (tech && techName !== "Html5" && techName !== "EmpCast") {
+          if (tech && tech.entitlementPlayRequest) {
             return tech.isSupported();
           }
         });
@@ -12496,7 +12550,7 @@
             return;
           }
 
-          var tech = techs[i][1]; // Get reference to the tech object
+          var tech = techs[i][1]; // Get reference to the tech object       
 
           if (player.tech_ && player.techName_ !== techs[i][0]) {
             player.techCall_('reset');
@@ -12861,7 +12915,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.100-292';
+  EntitlementMiddleware.VERSION = '2.1.100-294';
 
   if (videojs$1.EntitlementMiddleware) {
     videojs$1.log.warn('EntitlementMiddleware already exists.');
@@ -12990,7 +13044,7 @@
    */
 
   empPlayer$1.Events = empPlayerEvents;
-  empPlayer$1.VERSION = '2.1.100-292';
+  empPlayer$1.VERSION = '2.1.100-294';
   /*
    * Universal Module Definition (UMD)
    *
