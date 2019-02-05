@@ -167,3 +167,10 @@ https://github.com/google/shaka-player/releases
 
 ### New features
 - Latest HtML5-player 2.1.99
+
+## 2.1.100
+
+### New features
+- Latest HtML5-player 2.1.100
+- **EMP-11617** Update videojs to 7.4.1 [CHANGELOG](https://github.com/videojs/video.js/blob/master/CHANGELOG.md)
+- **EMP-12394** Update shaka to 2.5  (Drift is now tolerated in live streams)
