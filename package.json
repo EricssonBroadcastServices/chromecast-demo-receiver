@@ -1,6 +1,6 @@
 {
   "name": "emp-chromecast-receiver-demo-app",
-  "version": "2.1.98-333",
+  "version": "2.1.100-1",
   "description": "EMP Demo Receiver 2",
   "main": "./dist/js/emp-receiver-demo-app.min.js",
   "author": "Patrik Carlander",
