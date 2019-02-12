@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.100-312 
+ * EMP-Player 2.1.101-313 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -361,7 +361,7 @@
   function jf(b,c,d,e){return t(function g(){var h,k,l,m,p,r,w,x,A,P;return v(g,function(g){switch(g.j){case 1:if(e&&(h=e.toLowerCase(),k=ef[h]))return g["return"](k);l=new Qa(b);m=l.da.split("/");p=m.pop();r=p.split(".");return 1<r.length&&(w=r.pop().toLowerCase(),x=ff[w])?g["return"](x):u(g,kf(b,c,d),2);case 2:A=g.u;if(P=ef[A])return g["return"](P);throw new B(2,4,4E3,b);}})})}
   function kf(b,c,d){return t(function f(){var g,h,k;return v(f,function(f){switch(f.j){case 1:return g=Ab([b],d),g.method="HEAD",u(f,c.request(0,g).promise,2);case 2:return h=f.u,k=h.headers["content-type"],f["return"](k?k.toLowerCase():"")}})})}function T(b,c){this.f=b;this.Sb=c;this.h=this.g=Infinity;this.a=1;this.b=this.c=null;this.l=0;this.m=!0;this.i=0;}y("shaka.media.PresentationTimeline",T);T.prototype.T=function(){return this.g};T.prototype.getDuration=T.prototype.T;T.prototype.ma=function(b){this.g=b;};T.prototype.setDuration=T.prototype.ma;T.prototype.te=function(){return this.f};T.prototype.getPresentationStartTime=T.prototype.te;T.prototype.Ed=function(b){this.l=b;};T.prototype.setClockOffset=T.prototype.Ed;
   T.prototype.vb=function(b){this.m=b;};T.prototype.setStatic=T.prototype.vb;T.prototype.Bc=function(b){this.h=b;};T.prototype.setSegmentAvailabilityDuration=T.prototype.Bc;T.prototype.zf=function(b){this.Sb=b;};T.prototype.setDelay=T.prototype.zf;T.prototype.ke=function(){return this.Sb};T.prototype.getDelay=T.prototype.ke;
-  T.prototype.Xa=function(b,c){if(0!=b.length){var d=b[b.length-1].endTime+c;this.oc(b[0].startTime+c);this.a=b.reduce(function(b,c){return Math.max(b,c.endTime-c.startTime)},this.a);this.b=Math.max(this.b,d);null!=this.f&&(this.f=(Date.now()+this.l)/1E3-this.b-this.a);}};T.prototype.notifySegments=T.prototype.Xa;T.prototype.oc=function(b){this.c=null==this.c?b:Math.min(this.c,b);};T.prototype.notifyMinSegmentStartTime=T.prototype.oc;T.prototype.nc=function(b){this.a=Math.max(this.a,b);};
+  T.prototype.Xa=function(b,c){if(0!=b.length){var d=b[b.length-1].endTime+c;this.oc(b[0].startTime+c);this.a=b.reduce(function(b,c){return Math.max(b,c.endTime-c.startTime)},this.a);this.b=Math.max(this.b,d);null!=this.f&&(this.f=(Date.now()+this.l)/1E3-this.b-this.a);}};T.prototype.notifySegments=T.prototype.Xa;T.prototype.oc=function(b){this.c=null==this.c?b:Math.max(this.c,b);};T.prototype.notifyMinSegmentStartTime=T.prototype.oc;T.prototype.nc=function(b){this.a=Math.max(this.a,b);};
   T.prototype.notifyMaxSegmentDuration=T.prototype.nc;T.prototype.offset=function(b){null!=this.c&&(this.c+=b);null!=this.b&&(this.b+=b);};T.prototype.offset=T.prototype.offset;T.prototype.U=function(){return Infinity==this.g&&!this.m};T.prototype.isLive=T.prototype.U;T.prototype.Ha=function(){return Infinity!=this.g&&!this.m};T.prototype.isInProgress=T.prototype.Ha;T.prototype.lb=function(){if(Infinity==this.h)return this.i;var b=this.Ta()-this.h;return Math.max(this.i,b)};
   T.prototype.getSegmentAvailabilityStart=T.prototype.lb;T.prototype.Gd=function(b){this.i=b;};T.prototype.setUserSeekStart=T.prototype.Gd;T.prototype.Ta=function(){return this.U()||this.Ha()?Math.min(Math.max(0,(Date.now()+this.l)/1E3-this.a-this.f),this.g):this.g};T.prototype.getSegmentAvailabilityEnd=T.prototype.Ta;T.prototype.kb=function(b){var c=Math.max(this.c,this.i);if(Infinity==this.h)return c;var d=this.Ta()-this.h;b=Math.min(d+b,this.qa());return Math.max(c,b)};
   T.prototype.getSafeSeekRangeStart=T.prototype.kb;T.prototype.Sa=function(){return this.kb(0)};T.prototype.getSeekRangeStart=T.prototype.Sa;T.prototype.qa=function(){var b=this.U()||this.Ha()?this.Sb:0;return Math.max(0,this.Ta()-b)};T.prototype.getSeekRangeEnd=T.prototype.qa;T.prototype.Kd=function(){return null==this.f||null!=this.b?!1:!0};T.prototype.usingPresentationStartTime=T.prototype.Kd;function lf(){this.a=this.b=null;this.h=[];this.c=null;this.l=[];this.i=1;this.m={};this.o=0;this.s=new Ha(5);this.g=null;this.f=new wb;}y("shaka.dash.DashParser",lf);n=lf.prototype;n.configure=function(b){this.b=b;};n.start=function(b,c){this.h=[b];this.a=c;return mf(this).then(function(b){this.a&&nf(this,b);return this.c}.bind(this))};n.stop=function(){this.b=this.a=null;this.h=[];this.c=null;this.l=[];this.m={};null!=this.g&&(window.clearTimeout(this.g),this.g=null);return this.f.destroy()};
@@ -514,7 +514,7 @@
   function ej(b,c){var d=b.filter(function(b){return "variant"==b.type}),e=[],f=Ad(c,d.map(function(b){return b.language}));f&&(e=d.filter(function(b){return I(b.language)==f}));0==e.length&&(e=d.filter(function(b){return b.primary}));0==e.length&&(d.map(function(b){return b.language}),e=d);var g=e.filter(function(b){return b.height&&480>=b.height});g.length&&(g.sort(function(b,c){return c.height-b.height}),e=g.filter(function(b){return b.height==g[0].height}));d=[];if(e.length){var h=Math.floor(e.length/
   2);e.sort(function(b,c){return b.bandwidth-c.bandwidth});d.push(e[h]);}e=q(b);for(h=e.next();!h.done;h=e.next())h=h.value,"text"==h.type&&d.push(h);return d}function gj(b){this.c=b;this.a=null;this.b=[];}function hj(b){function c(b){return {timestamp:b.timestamp,state:b.state,duration:b.duration}}for(var d=[],e=q(b.b),f=e.next();!f.done;f=e.next())d.push(c(f.value));b.a&&d.push(c(b.a));return d}function ij(b,c){return c?"buffering":b.c.ended?"ended":b.c.paused?"paused":"playing"}function jj(){this.b=this.c=null;this.a=[];}function kj(b,c,d){b.b!=c&&(b.b=c,b.a.push({timestamp:Date.now()/1E3,id:c.id,type:"text",fromAdaptation:d,bandwidth:null}));}function lj(b){this.l=this.A=NaN;this.b=this.h=0;this.i=this.v=this.f=this.g=this.o=this.s=NaN;this.c=null;this.m=new gj(b);this.a=new jj;}function mj(b,c){var d=Date.now()/1E3,e=null==b.c?0:d-b.c;c?b.b+=e:b.h+=e;b.c=d;}function Y(b,c){var d=this;E.call(this);this.f=null;this.gb=!1;this.o=new Eb;this.Wb=this.g=this.va=this.c=this.m=this.a=this.R=this.ha=this.i=this.s=this.h=this.A=null;this.Lc=1E9;this.Ab=new Set;this.eb=!1;this.oa=!0;this.M=this.Cb=this.$=null;this.Kc=!1;this.Jc=0;this.D=null;this.v=new Hg;this.b=nj(this);this.Bb={width:Infinity,height:Infinity};this.l=null;this.yb=new Pg(this.b.preferredAudioLanguage,this.b.preferredVariantRole,this.b.preferredAudioChannelCount);this.P=this.b.preferredTextLanguage;
   this.cb=this.b.preferredTextRole;c&&c(this);this.A=oj(this);b&&this.Db(b,!0);this.fb=new Wi(function(){d.o&&(d.o.L(),d.o=null);var b=[];d.A&&(b.push(d.A.destroy()),d.A=null);d.gb=!1;d.o=null;d.g=null;d.Wb=null;d.b=null;return Promise.all(b)});G(this.o,window,"online",function(){d.yc();});}Ga(Y,E);y("shaka.Player",Y);function pj(b){if(!b.$)return Promise.resolve();var c=Promise.resolve();b.m&&(c=b.m.stop(),b.m=null);return Promise.all([c,b.$()])}
-  Y.prototype.destroy=function(){var b=this;return t(function d(){return v(d,function(d){switch(d.j){case 1:return u(d,b.detach(),2);case 2:return u(d,b.fb.destroy(),0)}})})};Y.prototype.destroy=Y.prototype.destroy;Y.version="v2.5.0-b2";var qj=["2","5"];Ed=new function(b){this.a=b;this.c=Fd;this.b=Gd;}(new Cd(Number(qj[0]),Number(qj[1])));var rj=["output-restricted","internal-error"],sj={};Y.registerSupportPlugin=function(b,c){sj[b]=c;};
+  Y.prototype.destroy=function(){var b=this;return t(function d(){return v(d,function(d){switch(d.j){case 1:return u(d,b.detach(),2);case 2:return u(d,b.fb.destroy(),0)}})})};Y.prototype.destroy=Y.prototype.destroy;Y.version="v2.5.0-b2-1";var qj=["2","5"];Ed=new function(b){this.a=b;this.c=Fd;this.b=Gd;}(new Cd(Number(qj[0]),Number(qj[1])));var rj=["output-restricted","internal-error"],sj={};Y.registerSupportPlugin=function(b,c){sj[b]=c;};
   Y.isBrowserSupported=function(){return !!window.Promise&&!!window.Uint8Array&&!!Array.prototype.forEach&&!!window.MediaSource&&!!MediaSource.isTypeSupported&&!!window.MediaKeys&&!!window.navigator&&!!window.navigator.requestMediaKeySystemAccess&&!!window.MediaKeySystemAccess&&!!window.MediaKeySystemAccess.prototype.getConfiguration};Y.probeSupport=function(){return Gc().then(function(b){var c=gf(),d=kd();b={manifest:c,media:d,drm:b};for(var e in sj)b[e]=sj[e]();return b})};
   Y.prototype.Db=function(b,c){var d=this;return t(function f(){return v(f,function(f){switch(f.j){case 1:void 0===c&&(c=!0);if(!d.f){f.B(2);break}return u(f,d.detach(),2);case 2:d.f=b;G(d.o,d.f,"error",d.Xe.bind(d));if(c)return d.s=tj(d),u(f,d.s.o,0);f.B(0);}})})};Y.prototype.attach=Y.prototype.Db;Y.prototype.detach=function(){var b=this;return t(function d(){return v(d,function(d){switch(d.j){case 1:return b.f?u(d,b.xb(!1),2):d["return"]();case 2:b.o.ua(b.f,"error"),b.f=null,d.j=0;}})})};
   Y.prototype.detach=Y.prototype.detach;function uj(b,c,d){return t(function f(){var g;return v(f,function(f){switch(f.j){case 1:return u(f,hf(c,b.A,b.b.manifest.retryParameters,d),2);case 2:return g=f.u,f["return"](new g)}})})}
@@ -4283,7 +4283,7 @@
     return DownloadService;
   }(Plugin);
 
-  DownloadService.VERSION = '2.1.100-312';
+  DownloadService.VERSION = '2.1.101-313';
 
   if (videojs.getPlugin('DownloadService')) {
     videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -4525,7 +4525,9 @@
           timeout: 0
         },
         failureCallback: this.streamingFailureCallback.bind(this),
-        ignoreTextStreamFailures: true
+        ignoreTextStreamFailures: true,
+        jumpLargeGaps: true //startAtSegmentBoundary: true
+
       };
 
       if (IS_ANDROID) {
@@ -4585,14 +4587,6 @@
       if (this.options_.startTime > 0) {
         startTime = this.options_.startTime;
       }
-
-      if (this.options_.startTime > 2.1) {
-        startTime = this.options_.startTime;
-      } // In order to start from the beginning of static stream set 2.1s as startTime
-      // Shaka 2.5 can't start in the middle of a segment
-      else if (this.options_.source && !this.options_.source.isDynamicCachupAsLive && this.options_.source.mediaLocator) {
-          startTime = 2.1;
-        }
 
       log$1('before load stream');
       this.loading_ = true; //Block load call if loading 
@@ -5858,7 +5852,7 @@
 
   EmpShaka.prototype['featuresNativeTextTracks'] = false;
   Tech$1.withSourceHandlers(EmpShaka);
-  EmpShaka.VERSION = '2.1.100-312'; // Unset source handlers set by Html5 super class.
+  EmpShaka.VERSION = '2.1.101-313'; // Unset source handlers set by Html5 super class.
   // We do not intent to support any sources other then sources allowed by nativeSourceHandler
 
   EmpShaka.sourceHandlers = [];
