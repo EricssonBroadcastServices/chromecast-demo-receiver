@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.101-313 
+ * EMP-Player 2.1.101-314 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -162,7 +162,7 @@
   var window_1 = win;
 
   var videojsTmp = window_1.videojs;
-  var videojs$1 = videojsTmp;
+  var videojs = videojsTmp;
 
   /**
    * EmpPlayerEvents - Holds all available player events
@@ -779,7 +779,7 @@
    * results in `'object'`.
    *
    * @param  {Object} value
-   * @return {Boolean}
+   * @return {boolean}
    */
 
   function isObject(value) {
@@ -787,18 +787,19 @@
   }
   /**
    * Check is Object is isEmpty
+   *
    * @param {Object} value
-   * @returns {Boolean}
+   * @return {boolean}
    */
 
   function isEmpty(value) {
     return keys(value).length === 0;
   }
   /**
-   * 
+   *
    * @param {Object} obj
    * @param {Object} newKeys
-   * @returns {Object}
+   * @return {Object}
    */
 
   function renameKeys(obj, newKeys) {
@@ -811,7 +812,7 @@
     return newObj;
   }
 
-  /*global
+  /* global
     document, atob
   */
   function isString(val) {
@@ -869,10 +870,17 @@
   }
   function getParameterByName(name, url) {
     name = name.replace(/[\[\]]/g, '\\$&');
-    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
-        results = regex.exec(url);
-    if (!results) return null;
-    if (!results[2]) return '';
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
+    var results = regex.exec(url);
+
+    if (!results) {
+      return null;
+    }
+
+    if (!results[2]) {
+      return '';
+    }
+
     return decodeURIComponent(results[2].replace(/\+/g, ' '));
   }
 
@@ -940,7 +948,7 @@
 
   var logToBrowserConsole = false;
 
-  var log_temp = function log_temp() {
+  var logTemp = function logTemp() {
     if (logToBrowserConsole) {
       _log(null, arguments);
     }
@@ -948,7 +956,10 @@
 
 
   if (window_1.EMP_DEBUG_LOG) {
-    log_temp = window_1.console && window_1.console.log && console.log.bind(console) || function () {};
+    /* eslint-disable */
+    logTemp = window_1.console && window_1.console.log && console.log.bind(console) || function () {};
+    /* eslint-enable */
+
   }
   /**
    * Log plain debug messages
@@ -956,18 +967,18 @@
    */
 
 
-  var log$1 = log_temp;
+  var log = logTemp;
   /**
    * Keep a history of log messages
    * @type {Array}
    */
 
-  log$1.history = [];
+  log.history = [];
   /**
    * Log error messages
    */
 
-  log$1.error = function () {
+  log.error = function () {
     _log('error', arguments);
   };
   /**
@@ -975,7 +986,7 @@
    */
 
 
-  log$1.warn = function () {
+  log.warn = function () {
     _log('warn', arguments);
   };
   /**
@@ -983,24 +994,27 @@
    */
 
 
-  log$1.debug = function () {
+  log.debug = function () {
     _log('debug', arguments);
   }; // Allway log if EMP_DEBUG_LOG and with correct stack trace
 
 
   if (window_1.EMP_DEBUG_LOG) {
     var noop = function noop() {};
+    /* eslint-disable */
 
-    log$1.debug = window_1.console && window_1.console.debug && console.debug.bind(console) || noop;
-    log$1.warn = window_1.WARN = window_1.console && window_1.console.warn && console.warn.bind(console) || noop;
-    log$1.error = window_1.ERROR = window_1.console && window_1.console.error && console.error.bind(console) || noop;
+
+    log.debug = window_1.console && window_1.console.debug && console.debug.bind(console) || noop;
+    log.warn = window_1.WARN = window_1.console && window_1.console.warn && console.warn.bind(console) || noop;
+    log.error = window_1.ERROR = window_1.console && window_1.console.error && console.error.bind(console) || noop;
+    /* eslint-enable */
   }
   /**
    * setLogToBrowserConsole and debug mode
    */
 
 
-  log$1.setLogToBrowserConsole = function (value) {
+  log.setLogToBrowserConsole = function (value) {
     if (value === void 0) {
       value = false;
     }
@@ -1010,7 +1024,7 @@
   /**
    * Log messages to the console and history based on the type of message
    *
-   * @param {String} type The type of message, or 'null' for 'log'
+   * @param {string} type The type of message, or 'null' for 'log'
    * @param {Object} args The arguments to be passed to the log
    * @private
    * @method _log
@@ -1024,11 +1038,11 @@
 
     var noop = function noop() {};
 
-    var console = window_1['console'] || {
-      'log': noop,
-      'warn': noop,
-      'error': noop,
-      'trace': noop
+    var console = window_1.console || {
+      log: noop,
+      warn: noop,
+      error: noop,
+      trace: noop
     };
 
     if (type) {
@@ -1037,7 +1051,7 @@
     } else {
       type = 'log';
     } // add to history
-    //log.history.push(argsArray);
+    // log.history.push(argsArray);
     // add console prefix after adding to history
 
 
@@ -1059,7 +1073,7 @@
   /**
    * Get the next unique ID
    *
-   * @return {String}
+   * @return {string}
    * @function newGUID
    */
 
@@ -1111,7 +1125,7 @@
    * @param  {Function} fn
    *         The function to be throttled.
    *
-   * @param  {Number}   wait
+   * @param  {number}   wait
    *         The number of milliseconds by which to throttle.
    *
    * @return {Function}
@@ -1132,28 +1146,8 @@
     return throttled;
   };
 
-  var minDoc = {};
-
-  var topLevel = typeof commonjsGlobal !== 'undefined' ? commonjsGlobal :
-      typeof window !== 'undefined' ? window : {};
-
-
-  var doccy;
-
-  if (typeof document !== 'undefined') {
-      doccy = document;
-  } else {
-      doccy = topLevel['__GLOBAL_DOCUMENT_CACHE@4'];
-
-      if (!doccy) {
-          doccy = topLevel['__GLOBAL_DOCUMENT_CACHE@4'] = minDoc;
-      }
-  }
-
-  var document_1 = doccy;
-
-  var MenuItem = videojs$1.getComponent('MenuItem');
-  var Component = videojs$1.getComponent('Component');
+  var MenuItem = videojs.getComponent('MenuItem');
+  var Component = videojs.getComponent('Component');
   /**
    * The specific menu item type for selecting a bitrate
    *
@@ -1171,10 +1165,10 @@
     function BitrateMenuItem(player, options) {
       var _this;
 
-      var bitrate = options['bitrate']; // Modify options for parent MenuItem class's init.
+      var bitrate = options.bitrate; // Modify options for parent MenuItem class's init.
 
-      options['label'] = bitrate === 0 ? 'auto' : Math.max(0, Math.round(bitrate / 1000)) + ' kbps';
-      options['selected'] = bitrate === 0;
+      options.label = bitrate === 0 ? 'auto' : Math.max(0, Math.round(bitrate / 1000)) + ' kbps';
+      options.selected = bitrate === 0;
       _this = _MenuItem.call(this, player, options) || this;
       _this.bitrate = bitrate;
 
@@ -1206,8 +1200,8 @@
 
   Component.registerComponent('BitrateMenuItem', BitrateMenuItem);
 
-  var MenuButton = videojs$1.getComponent('MenuButton');
-  var Component$1 = videojs$1.getComponent('Component');
+  var MenuButton = videojs.getComponent('MenuButton');
+  var Component$1 = videojs.getComponent('Component');
   /**
    * The base class for buttons that toggle specific bitrate
    *
@@ -1228,8 +1222,6 @@
       _this = _MenuButton.call(this, player, options) || this;
 
       _this.el_.setAttribute('aria-label', 'Bitrate menu');
-
-      var bitrates = _this.player_.bitrates();
 
       _this.hide();
 
@@ -1258,7 +1250,7 @@
     /**
      * Allow sub components to stack CSS class names
      *
-     * @return {String} The constructed class name
+     * @return {string} The constructed class name
      * @method buildCSSClass
      */
 
@@ -1267,15 +1259,15 @@
 
     _proto.buildCSSClass = function buildCSSClass() {
       return "vjs-bitrate-button " + _MenuButton.prototype.buildCSSClass.call(this);
-    } //buildWrapperCSSClass() {
+    } // buildWrapperCSSClass() {
     //  return `vjs-bitrate-button ${super.buildWrapperCSSClass()}`;
-    //}
+    // }
 
     /**
      * Create sub-menu items
      *
      * @param {Array=} items
-     * @returns {Array} Array of BitrateMenuItems
+     * @return {Array} Array of BitrateMenuItems
      */
     ;
 
@@ -1294,8 +1286,8 @@
       if (bitrates.length > 0) {
         // add an AUTO menu item
         items.push(new BitrateMenuItem(this.player_, {
-          'selectable': true,
-          'bitrate': 0
+          selectable: true,
+          bitrate: 0
         }));
       }
 
@@ -1303,8 +1295,8 @@
         var bitrate = bitrates[i];
         items.push(new BitrateMenuItem(this.player_, {
           // MenuItem is selectable
-          'selectable': true,
-          'bitrate': bitrate
+          selectable: true,
+          bitrate: bitrate
         }));
       }
 
@@ -1317,6 +1309,26 @@
 
   BitrateButton.prototype.controlText_ = 'Bitrate';
   Component$1.registerComponent('BitrateButton', BitrateButton);
+
+  var minDoc = {};
+
+  var topLevel = typeof commonjsGlobal !== 'undefined' ? commonjsGlobal :
+      typeof window !== 'undefined' ? window : {};
+
+
+  var doccy;
+
+  if (typeof document !== 'undefined') {
+      doccy = document;
+  } else {
+      doccy = topLevel['__GLOBAL_DOCUMENT_CACHE@4'];
+
+      if (!doccy) {
+          doccy = topLevel['__GLOBAL_DOCUMENT_CACHE@4'] = minDoc;
+      }
+  }
+
+  var document_1 = doccy;
 
   function clean (s) {
     return s.replace(/\n\r?\s*/g, '')
@@ -1377,7 +1389,7 @@
   /**
    * Whether the current DOM interface appears to be real.
    *
-   * @return {Boolean}
+   * @return {boolean}
    */
 
 
@@ -1442,7 +1454,7 @@
       // same object, but that doesn't work so well.
 
       if (propName.indexOf('aria-') !== -1 || propName === 'role' || propName === 'type') {
-        log$1.warn(tsml(_templateObject(), propName, val));
+        log.warn(tsml(_templateObject(), propName, val));
         el.setAttribute(propName, val); // Handle textContent since it's not supported everywhere and we have a
         // method for it.
       } else if (propName === 'textContent') {
@@ -1548,7 +1560,7 @@
    * The content for an element can be passed in multiple types and
    * combinations, whose behavior is as follows:
    *
-   * @param {String|Element|TextNode|Array|Function} content
+   * @param {string|Element|TextNode|Array|Function} content
    *        - String: Normalized into a text node.
    *        - Element/TextNode: Passed through.
    *        - Array: A one-dimensional array of strings, elements, nodes, or functions
@@ -1594,7 +1606,7 @@
    *        Element to append normalized content to.
    *
    *
-   * @param {String|Element|TextNode|Array|Function} content
+   * @param {string|Element|TextNode|Array|Function} content
    *        See the `content` argument of {@link dom:normalizeContent}
    *
    * @return {Element}
@@ -1610,11 +1622,16 @@
 
   var extplayer = {
     bitrates: function bitrates(player) {
-      if (!player.tech_ || player.tech_['bitrates'] === undefined) return [];
+      if (!player.tech_ || player.tech_.bitrates === undefined) {
+        return [];
+      }
+
       return player.techGet_('bitrates');
     },
     bitrate: function bitrate(player, value) {
-      if (!player.tech_ || player.tech_['bitrate'] === undefined) return 0;
+      if (!player.tech_ || player.tech_.bitrate === undefined) {
+        return 0;
+      }
 
       if (value !== undefined) {
         player.techCall_('bitrate', value);
@@ -1623,7 +1640,10 @@
       return player.techGet_('bitrate');
     },
     canRestart: function canRestart(player) {
-      if (!player.tech_ || player.tech_['canRestart'] === undefined) return true;
+      if (!player.tech_ || player.tech_.canRestart === undefined) {
+        return true;
+      }
+
       return player.techGet_('canRestart');
     },
     restart: function restart(player, useLastViewedOffset, absoluteStartTime) {
@@ -1686,12 +1706,12 @@
       }
 
       var asset = {
-        'assetId': assetId,
-        'programId': programId,
-        'channelId': channelId
+        assetId: assetId,
+        programId: programId,
+        channelId: channelId
       };
       player.one(empPlayerEvents.LOADED_DATA, function () {
-        //Clone of entitlement
+        // Clone of entitlement
         callback(player.entitlement);
       });
 
@@ -1700,8 +1720,8 @@
       }
 
       player.src({
-        'type': 'video/emp',
-        'src': JSON.stringify(asset)
+        type: 'video/emp',
+        src: JSON.stringify(asset)
       });
     },
     currentAsset: function currentAsset(player, assetId, programId, channelId) {
@@ -1722,13 +1742,13 @@
         return null;
       }
 
-      log$1('Update currentAsset', assetId, programId, channelId);
+      log('Update currentAsset', assetId, programId, channelId);
 
       if (player.cache_.source && player.cache_.source.type === 'video/emp') {
         player.cache_.source.src = JSON.stringify({
-          'assetId': assetId,
-          'programId': programId,
-          'channelId': channelId
+          assetId: assetId,
+          programId: programId,
+          channelId: channelId
         });
       } else if (player.cache_.source && player.cache_.source.assetId) {
         player.cache_.source.assetId = assetId;
@@ -1736,20 +1756,23 @@
         player.cache_.source.channelId = channelId;
       } else {
         var _asset = {
-          'assetId': assetId,
-          'programId': programId,
-          'channelId': channelId
+          assetId: assetId,
+          programId: programId,
+          channelId: channelId
         };
         player.cache_.source = {
-          'type': 'video/emp',
-          'src': JSON.stringify(_asset)
+          type: 'video/emp',
+          src: JSON.stringify(_asset)
         };
       }
 
       player.cache_.sources = [player.cache_.source];
     },
     getAbsoluteTime: function getAbsoluteTime(player) {
-      if (!player.tech_ || player.tech_['getAbsoluteTime'] === undefined) return new Date(0);
+      if (!player.tech_ || player.tech_.getAbsoluteTime === undefined) {
+        return new Date(0);
+      }
+
       var nowDate = this.getServerTime(player);
       var value = player.tech_.getAbsoluteTime(nowDate);
 
@@ -1765,19 +1788,24 @@
 
       if (value && value.getTime) {
         return value;
-      } else {
-        return new Date(0);
       }
+
+      return new Date(0);
     },
     getPlayheadTime: function getPlayheadTime(player) {
       var value = this.getAbsoluteTime(player);
 
       if (value) {
         return value.getTime();
-      } else return 0;
+      }
+
+      return 0;
     },
     timeBehindLive: function timeBehindLive(player) {
-      if (!player.tech_ || player.tech_['timeBehindLive'] === undefined) return 0;
+      if (!player.tech_ || player.tech_.timeBehindLive === undefined) {
+        return 0;
+      }
+
       var value = 0;
       var nowdate = this.getServerTime(player);
       var entitlement = this.getEntitlement(player);
@@ -1794,7 +1822,7 @@
       var liveDelay = 0;
 
       if (this.isLive(player)) {
-        if (player.tech_ && player.tech_['liveDelay'] !== undefined) {
+        if (player.tech_ && player.tech_.liveDelay !== undefined) {
           liveDelay = player.tech_.liveDelay();
         } else {
           liveDelay = (this.getServerTime(player) - this.getSeekTimerange(player).end) / 1000;
@@ -1811,7 +1839,7 @@
       player.sourceChanging_ = false;
       player.cache_.sources = [];
 
-      if (!player.tech_ || player.tech_['stop'] === undefined) {
+      if (!player.tech_ || player.tech_.stop === undefined) {
         player.techCall_('stopTrackingCurrentTime');
 
         if (afterStopCallback) {
@@ -1823,17 +1851,31 @@
       }
     },
     timeShiftEnabled: function timeShiftEnabled(player) {
-      if (!player.tech_ || player.tech_['timeShiftEnabled'] === undefined) return true;
+      if (!player.tech_ || player.tech_.timeShiftEnabled === undefined) {
+        return true;
+      }
+
       return player.techGet_('timeShiftEnabled');
     },
     baseCurrentTime: function baseCurrentTime(player) {
-      if (!player.tech_ || player.tech_['baseCurrentTime'] === undefined) return player.currentTime();else return player.techGet_('baseCurrentTime');
+      if (!player.tech_ || player.tech_.baseCurrentTime === undefined) {
+        return player.currentTime();
+      }
+
+      return player.techGet_('baseCurrentTime');
     },
     baseDuration: function baseDuration(player) {
-      if (!player.tech_ || player.tech_['duration'] === undefined) return 0;else return player.techGet_('duration');
+      if (!player.tech_ || player.tech_.duration === undefined) {
+        return 0;
+      }
+
+      return player.techGet_('duration');
     },
     startTimeLive: function startTimeLive(player) {
-      if (!player.tech_ || player.tech_['startTimeLive'] === undefined) return 0;
+      if (!player.tech_ || player.tech_.startTimeLive === undefined) {
+        return 0;
+      }
+
       var nowdate = this.getServerTime(player);
       var value = player.tech_.startTimeLive(nowdate);
       var entitlement = this.getEntitlement(player);
@@ -1849,20 +1891,25 @@
       return value;
     },
     driftingTime: function driftingTime(player) {
-      if (!player.tech_ || !this.isLive(player) || player.techName_ !== 'EmpShaka') return NaN;
+      if (!player.tech_ || !this.isLive(player) || player.techName_ !== 'EmpShaka') {
+        return NaN;
+      }
+
       var entitlement = this.getEntitlement(player);
 
       if (!entitlement) {
         return NaN;
       }
 
-      var nowdate = this.getServerTime(player);
       var drifting = player.tech_.getPresentationStartTime();
       drifting = (entitlement.streamInfo.referenceTime - drifting) / 1000;
       return Math.round(drifting);
     },
     isLive: function isLive(player) {
-      if (!player.tech_ || player.tech_['live'] === undefined) return false;
+      if (!player.tech_ || player.tech_.live === undefined) {
+        return false;
+      }
+
       return player.techGet_('live');
     },
     isCatchupAsLive: function isCatchupAsLive(player) {
@@ -1870,19 +1917,25 @@
       return !this.isLive(player) && entitlement && entitlement.live;
     },
     getBitrate: function getBitrate(player) {
-      if (!player.tech_ || player.tech_['getBitrate'] === undefined) return 0;
+      if (!player.tech_ || player.tech_.getBitrate === undefined) {
+        return 0;
+      }
+
       return player.techGet_('getBitrate');
     },
     duration: function duration(player, seconds) {
-      if (!player.tech_ || player.tech_['duration'] === undefined) {
+      if (!player.tech_ || player.tech_.duration === undefined) {
         return player.duration(seconds);
-      } else {
-        player.duration(seconds);
-        return player.techGet_('duration');
       }
+
+      player.duration(seconds);
+      return player.techGet_('duration');
     },
     techVersion: function techVersion(player) {
-      if (!player.tech_ || player.tech_['techVersion'] === undefined) return '2.x.x';
+      if (!player.tech_ || player.tech_.techVersion === undefined) {
+        return '2.x.x';
+      }
+
       return player.techGet_('techVersion');
     },
     canSeekTo: function canSeekTo(player, position) {
@@ -1893,24 +1946,28 @@
       var entitlement = this.getEntitlement(player);
 
       if (entitlement && player.cache_ && entitlement.ffEnabled === false) {
-        if (player.cache_.currentTime <= position) return false;
+        if (player.cache_.currentTime <= position) {
+          return false;
+        }
       }
 
       if (entitlement && player.cache_ && entitlement.rwEnabled === false) {
-        if (player.cache_.currentTime >= position) return false;
+        if (player.cache_.currentTime >= position) {
+          return false;
+        }
       }
 
       return true;
     },
     remainingTime: function remainingTime(player) {
-      if (!player.tech_ || player.tech_['remainingTime'] === undefined) {
+      if (!player.tech_ || player.tech_.remainingTime === undefined) {
         var duration = player.duration();
 
         if (duration === Infinity || duration === 0) {
           return Infinity;
-        } else {
-          return duration - player.currentTime();
         }
+
+        return duration - player.currentTime();
       }
 
       return player.techGet_('remainingTime');
@@ -1928,7 +1985,7 @@
       return false;
     },
     setAbsoluteTime: function setAbsoluteTime(player, date) {
-      if (!player.tech_ || player.tech_['setAbsoluteTime'] === undefined) {
+      if (!player.tech_ || player.tech_.setAbsoluteTime === undefined) {
         var seconds = (date.getTime() - new Date(0)) / 1000;
         player.currentTime(seconds);
         return;
@@ -1941,11 +1998,11 @@
 
         if (entitlement && entitlement.isStaticCachupAsLive) {
           if (date.getTime() < entitlement.streamInfo.start.getTime()) {
-            log$1('setAbsoluteTime', 'playPreviousProgram');
+            log('setAbsoluteTime', 'playPreviousProgram');
             this.playProgram(player, date);
             date = 0;
           } else if (date.getTime() >= entitlement.streamInfo.end.getTime()) {
-            log$1('setAbsoluteTime', 'playNextProgram');
+            log('setAbsoluteTime', 'playNextProgram');
             this.playProgram(player, date);
             return;
           } else {
@@ -1956,16 +2013,16 @@
           return;
         } else if (entitlement && entitlement.isDynamicCachupAsLive) {
           if (date.getTime() < entitlement.streamInfo.start.getTime()) {
-            log$1('setAbsoluteTime', 'playPreviousProgram');
-            this.playProgram(player, date); //Go to start of stream as a fallback
+            log('setAbsoluteTime', 'playPreviousProgram');
+            this.playProgram(player, date); // Go to start of stream as a fallback
 
             if (player.streamType === 'HLS') {
               player.techCall_('setCurrentTime', 0);
               return;
-            } else {
-              //DASH
-              date = new Date(entitlement.streamInfo.start.getTime());
-            }
+            } // DASH
+
+
+            date = new Date(entitlement.streamInfo.start.getTime());
           } else if (player.streamType === 'HLS') {
             date = date - entitlement.streamInfo.start.getTime();
             player.techCall_('setCurrentTime', date / 1000);
@@ -1975,17 +2032,17 @@
       }
 
       player.techCall_('setAbsoluteTime', {
-        'date': date,
-        'nowDate': nowDate
+        date: date,
+        nowDate: nowDate
       });
     },
     gotoLive: function gotoLive(player) {
       if (player.sourceChanging_) {
-        log$1('gotoLive ignore sourceChanging');
+        log('gotoLive ignore sourceChanging');
         return;
       }
 
-      if (player.tech_['gotoLive']) {
+      if (player.tech_.gotoLive) {
         player.techCall_('gotoLive');
       } else {
         var entitlement = this.getEntitlement(player);
@@ -2002,7 +2059,7 @@
           var duration = player.duration();
           player.currentTime(duration);
         } else {
-          log$1.warn('Not suppoted for VOD');
+          log.warn('Not suppoted for VOD');
         }
       }
     },
@@ -2010,16 +2067,22 @@
       this.setAbsoluteTime(player, new Date(unixTime));
     },
     supportsEpgProgramChange: function supportsEpgProgramChange(player) {
-      if (!player.tech_ || player.tech_['supportsEpgProgramChange'] === undefined) return;
+      if (!player.tech_ || player.tech_.supportsEpgProgramChange === undefined) {
+        return;
+      }
+
       return player.techGet_('supportsEpgProgramChange');
     },
     program: function program(player) {
-      if (!player.tech_ || player.tech_['program'] === undefined) return null;
+      if (!player.tech_ || player.tech_.program === undefined) {
+        return null;
+      }
+
       return player.techGet_('program');
     },
     playPreviousProgram: function playPreviousProgram(player, theEnd) {
       if (player.sourceChanging_) {
-        log$1('playPreviousProgram ignore sourceChanging');
+        log('playPreviousProgram ignore sourceChanging');
         return;
       }
 
@@ -2028,7 +2091,7 @@
         player.programService().getPreviousProgram(function (program, error) {
           if (error) {
             player.sourceChanging_ = false;
-            log$1.warn('playPreviousProgram', error);
+            log.warn('playPreviousProgram', error);
           } else {
             var playbackProperties = {};
 
@@ -2048,7 +2111,7 @@
     },
     playNextProgram: function playNextProgram(player) {
       if (player.sourceChanging_) {
-        log$1('playNextProgram ignore sourceChanging');
+        log('playNextProgram ignore sourceChanging');
         return;
       }
 
@@ -2058,7 +2121,7 @@
           player.programService().getNextProgram(function (program, error) {
             if (error) {
               player.sourceChanging_ = false;
-              log$1.warn('playNextProgram', error);
+              log.warn('playNextProgram', error);
             } else {
               var playbackProperties = {};
               playbackProperties.playFrom = 'beginning';
@@ -2070,7 +2133,7 @@
     },
     playProgram: function playProgram(player, startTime) {
       if (player.sourceChanging_) {
-        log$1('playProgram ignore sourceChanging');
+        log('playProgram ignore sourceChanging');
         return;
       }
 
@@ -2079,7 +2142,7 @@
         player.programService().getProgram(startTime, function (program, error) {
           if (error) {
             player.sourceChanging_ = false;
-            log$1.warn('getProgram', error);
+            log.warn('getProgram', error);
           } else {
             var playbackProperties = {};
             playbackProperties.playFrom = 'startTime';
@@ -2114,7 +2177,11 @@
         start: 0,
         end: 0
       };
-      if (!player.tech_ || player.tech_['seekable'] === undefined || player.seeking()) return result;
+
+      if (!player.tech_ || player.tech_.seekable === undefined || player.seeking()) {
+        return result;
+      }
+
       var seekable = player.techGet_('seekable');
 
       if (seekable && seekable.length > 0) {
@@ -2144,7 +2211,11 @@
         start: 0,
         end: 0
       };
-      if (!player.tech_ || player.tech_['buffered'] === undefined || player.seeking()) return result;
+
+      if (!player.tech_ || player.tech_.buffered === undefined || player.seeking()) {
+        return result;
+      }
+
       var buffered = player.techGet_('buffered');
 
       if (buffered && buffered.length > 0) {
@@ -2155,14 +2226,14 @@
       return result;
     },
     setTechProgram: function setTechProgram(player, program) {
-      if (player.tech_ && player.tech_['program'] !== undefined) {
+      if (player.tech_ && player.tech_.program !== undefined) {
         player.techCall_('program', program);
       }
     }
   };
 
-  var Button = videojs$1.getComponent('Button');
-  var Component$2 = videojs$1.getComponent('Component');
+  var Button = videojs.getComponent('Button');
+  var Component$2 = videojs.getComponent('Component');
   /**
    * Displays the live indicator
    *
@@ -2176,6 +2247,7 @@
 
     /**
      * Create a live button
+     *
      * @param {Player|Object} player
      * @param {Object=} options
      */
@@ -2239,10 +2311,8 @@
 
     _proto.timeUpdate = function timeUpdate() {
       if (this.player().isLive() || this.entitlement && this.entitlement.isStaticCachupAsLive) {
-        var currentTime = this.player().currentTime();
-        var duration = this.player().duration();
-        var edgeMargin = 20; // margin for what is considered the live edge
-
+        // margin for what is considered the live edge
+        var edgeMargin = 20;
         var timeBehindLive = this.player().timeBehindLive();
 
         if (this.player().isLive() && timeBehindLive < edgeMargin) {
@@ -2276,9 +2346,9 @@
    * Supplying a guide (in seconds) will force a number of leading zeros
    * to cover the length of the guide
    *
-   * @param  {Number} seconds Number of seconds to be turned into a string
-   * @param  {Number} guide   Number (in seconds) to model the string after
-   * @return {String}         Time formatted as H:MM:SS or M:SS
+   * @param  {number} seconds Number of seconds to be turned into a string
+   * @param  {number} guide   Number (in seconds) to model the string after
+   * @return {string}         Time formatted as H:MM:SS or M:SS
    * @private
    * @function formatTime
    */
@@ -2310,7 +2380,7 @@
     return h + m + s;
   }
 
-  var Component$3 = videojs$1.getComponent('Component');
+  var Component$3 = videojs.getComponent('Component');
   /**
    * EmpMarker gui element for ad markers
    *
@@ -2378,20 +2448,20 @@
           this.removeClass('emp-ad-past');
         }
 
-        var percent_startTime = element.offset / this.player_.duration();
+        var percentStartTime = element.offset / this.player_.duration();
 
-        if (percent_startTime >= 1) {
-          percent_startTime = 1;
+        if (percentStartTime >= 1) {
+          percentStartTime = 1;
         }
 
-        var percent_duration = element.duration / this.player_.duration();
+        var percentDuration = element.duration / this.player_.duration();
 
-        if (percent_duration >= 1) {
-          percent_duration = 1;
+        if (percentDuration >= 1) {
+          percentDuration = 1;
         }
 
-        this.el_.style.left = (percent_startTime * 100).toFixed(2) + '%';
-        this.el_.style.width = (percent_duration * 100).toFixed(2) + '%';
+        this.el_.style.left = (percentStartTime * 100).toFixed(2) + '%';
+        this.el_.style.width = (percentDuration * 100).toFixed(2) + '%';
         this.show();
       }
     };
@@ -2405,8 +2475,8 @@
 
   Component$3.registerComponent('EmpMarker', EmpMarker);
 
-  var Component$4 = videojs$1.getComponent('Component');
-  var MouseTimeDisplay = videojs$1.getComponent('MouseTimeDisplay');
+  var Component$4 = videojs.getComponent('Component');
+  var MouseTimeDisplay = videojs.getComponent('MouseTimeDisplay');
   /**
    * The Mouse Time Display component shows the time you will seek to
    * when hovering over the progress bar
@@ -2421,6 +2491,7 @@
 
     /**
      * Create a time display component
+     *
      * @param {Player|Object} player
      * @param {Object=} options
      */
@@ -2453,8 +2524,7 @@
       this.rafId_ = this.requestAnimationFrame(function () {
         var duration = _this.player_.duration();
 
-        var content;
-        content = formatTime(seekBarPoint * duration, duration);
+        var content = formatTime(seekBarPoint * duration, duration);
         _this.el_.style.left = seekBarRect.width * seekBarPoint + "px";
 
         _this.getChild('timeTooltip').update(seekBarRect, seekBarPoint, content);
@@ -2546,9 +2616,9 @@
   var TOUCH_ENABLED = isReal() && ('ontouchstart' in window_1 || window_1.DocumentTouch && window_1.document instanceof window_1.DocumentTouch);
   var BACKGROUND_SIZE_SUPPORTED = isReal() && 'backgroundSize' in window_1.document.createElement('video').style;
   function detectClient() {
-    var ua = navigator.userAgent,
-        tem,
-        M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*([0-9.]+)/i) || [];
+    var ua = window_1.navigator.userAgent;
+    var tem;
+    var M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*([0-9.]+)/i) || [];
 
     if (/trident/i.test(M[1])) {
       tem = /\brv[ :]+([0-9.]+)/g.exec(ua) || [];
@@ -2561,7 +2631,7 @@
     if (M[1] === 'Chrome') {
       tem = ua.match(/\b(OPR|Edge)\/([0-9.]+)/);
 
-      if (tem != null) {
+      if (tem !== null) {
         var app = tem.slice(1).toString().split(',');
         return {
           name: app[0].replace('OPR', 'Opera'),
@@ -2570,46 +2640,20 @@
       }
     }
 
-    M = M[2] ? [M[1], M[2]] : [navigator.appName, navigator.appVersion, '-?'];
-    if ((tem = ua.match(/version\/([0-9.]+)/i)) != null) M.splice(1, 1, tem[1]);
+    M = M[2] ? [M[1], M[2]] : [window_1.navigator.appName, window_1.navigator.appVersion, '-?'];
+
+    if ((tem = ua.match(/version\/([0-9.]+)/i)) !== null) {
+      M.splice(1, 1, tem[1]);
+    }
+
     return {
       name: M[0],
       version: M[1]
     };
   }
 
-  /**
-   * Returns whether an object is `Promise`-like (i.e. has a `then` method).
-   *
-   * @param  {Object}  value
-   *         An object that may or may not be `Promise`-like.
-   *
-   * @return {Boolean}
-   *         Whether or not the object is `Promise`-like.
-   */
-  function isPromise(value) {
-    return value !== undefined && typeof value.then === 'function';
-  }
-  /**
-   * Silence a Promise-like object.
-   *
-   * This is useful for avoiding non-harmful, but potentially confusing "uncaught
-   * play promise" rejection error messages.
-   *
-   * @param  {Object} value
-   *         An object that may or may not be `Promise`-like.
-   */
-
-  function silencePromise(value) {
-    if (isPromise(value)) {
-      value.then(null, function (e) {});
-    }
-  }
-
-  var Component$5 = videojs$1.getComponent('Component');
-  var Slider = videojs$1.getComponent('Slider');
-  var LoadProgressBar = videojs$1.getComponent('LoadProgressBar');
-  var PlayProgressBar = videojs$1.getComponent('PlayProgressBar');
+  var Component$5 = videojs.getComponent('Component');
+  var Slider = videojs.getComponent('Slider'); // The number of seconds the `step*` functions move the timeline.
 
   var STEP_SECONDS = 5; // The interval at which the bar should update as it progresses.
 
@@ -2700,8 +2744,8 @@
           _ref = _i.value;
         }
 
-        var marker = _ref;
-        this.removeChild(marker);
+        var _marker = _ref;
+        this.removeChild(_marker);
       }
 
       if (data && data.timeline) {
@@ -2720,14 +2764,12 @@
           var element = _ref2;
 
           if (element.type === 'advert') {
-            var _marker = new EmpMarker(this.player_, {
-              'element': element
+            var marker = new EmpMarker(this.player_, {
+              element: element
             });
-
-            this.markers.push(_marker);
-            this.addChild(_marker);
-
-            _marker.updateVisibility();
+            this.markers.push(marker);
+            this.addChild(marker);
+            marker.updateVisibility();
           }
         }
       }
@@ -2780,13 +2822,12 @@
      *
      * @listens Player#timeupdate
      *
-     * @returns {number}
+     * @return {number}
      *          The current percent at a number from 0-1
      */
     ;
 
     _proto.update = function update(event, data) {
-      //log('seek-bar-update', event, data);
       var percent = _Slider.prototype.update.call(this);
 
       this.update_(this.getCurrentTime_(), percent);
@@ -2804,17 +2845,16 @@
     ;
 
     _proto.getCurrentTime_ = function getCurrentTime_() {
-      //log('seek-bar-getCurrentTime', this.player_.scrubbing() ? 'Cache currentTime' : 'currentTime');
       if (this.player_.scrubbing()) {
         if (this.player_.getCache().currentTime >= 0) {
           return this.player_.getCache().currentTime;
-        } else {
-          return this.player_.getCache().currentTime;
         }
-      } else {
-        this.player_.getCache().currentTime = this.player_.currentTime();
-        return this.player_.currentTime();
+
+        return this.player_.getCache().currentTime;
       }
+
+      this.player_.getCache().currentTime = this.player_.currentTime();
+      return this.player_.currentTime();
     }
     /**
      * We want the seek bar to be full on ended
@@ -2919,7 +2959,7 @@
     ;
 
     _proto.throttleSetCurrentTime = function throttleSetCurrentTime(newTime) {
-      if (this.seekTimeoutId_ != null) {
+      if (this.seekTimeoutId_ !== null) {
         window_1.clearTimeout(this.seekTimeoutId_);
       }
 
@@ -3073,8 +3113,36 @@
   SeekBar.prototype.playerEvent = 'timeupdate';
   Component$5.registerComponent('SeekBar', SeekBar);
 
-  var Button$1 = videojs$1.getComponent('Button');
-  var Component$6 = videojs$1.getComponent('Component');
+  /**
+   * Returns whether an object is `Promise`-like (i.e. has a `then` method).
+   *
+   * @param  {Object}  value
+   *         An object that may or may not be `Promise`-like.
+   *
+   * @return {boolean}
+   *         Whether or not the object is `Promise`-like.
+   */
+  function isPromise(value) {
+    return value !== undefined && typeof value.then === 'function';
+  }
+  /**
+   * Silence a Promise-like object.
+   *
+   * This is useful for avoiding non-harmful, but potentially confusing "uncaught
+   * play promise" rejection error messages.
+   *
+   * @param  {Object} value
+   *         An object that may or may not be `Promise`-like.
+   */
+
+  function silencePromise(value) {
+    if (isPromise(value)) {
+      value.then(null, function (e) {});
+    }
+  }
+
+  var Button$1 = videojs.getComponent('Button');
+  var Component$6 = videojs.getComponent('Component');
   /**
    * Displays a button to jump back to the beginning of the current asset / program
    *
@@ -3088,6 +3156,7 @@
 
     /**
      * Create a restart button
+     *
      * @param {Player|Object} player
      * @param {Object=} options
      */
@@ -3108,7 +3177,7 @@
       });
 
       _this.on(_this.player(), empPlayerEvents.ERROR, function () {
-        return _this.shouldRestart_ = true;
+        _this.shouldRestart_ = true;
       });
 
       return _this;
@@ -3116,7 +3185,7 @@
     /**
      * Allow sub components to stack CSS class names
      *
-     * @return {String} The constructed class name
+     * @return {string} The constructed class name
      * @method buildCSSClass
      */
 
@@ -3159,8 +3228,8 @@
   EmpRestartButton.prototype.controlText_ = 'Restart';
   Component$6.registerComponent('EmpRestartButton', EmpRestartButton);
 
-  var Button$2 = videojs$1.getComponent('Button');
-  var Component$7 = videojs$1.getComponent('Component');
+  var Button$2 = videojs.getComponent('Button');
+  var Component$7 = videojs.getComponent('Component');
   /**
    * Displays a button to jump forward a few seconds
    *
@@ -3174,6 +3243,7 @@
 
     /**
      * Create a fast-forward button
+     *
      * @param {Player} player
      * @param {Object} [options] - Object of option names and values
      * @param {integer} [options.seconds=30] - The number of seconds to jump forward.
@@ -3182,7 +3252,7 @@
       var _this;
 
       options = assign({
-        'seconds': 30
+        seconds: 30
       }, options);
       _this = _Button.call(this, player, options) || this;
 
@@ -3234,7 +3304,7 @@
     /**
      * Allow sub components to stack CSS class names
      *
-     * @return {String} The constructed class name
+     * @return {string} The constructed class name
      * @method buildCSSClass
      */
     ;
@@ -3268,8 +3338,8 @@
   EmpForwardButton.prototype.controlText_ = 'Forward';
   Component$7.registerComponent('EmpForwardButton', EmpForwardButton);
 
-  var Button$3 = videojs$1.getComponent('Button');
-  var Component$8 = videojs$1.getComponent('Component');
+  var Button$3 = videojs.getComponent('Button');
+  var Component$8 = videojs.getComponent('Component');
   /**
    * Displays a button to jump back a few seconds
    *
@@ -3283,6 +3353,7 @@
 
     /**
      * Create a rewind button
+     *
      * @param {Player|Object} player
      * @param {Object[]} [options] - Object of option names and values
      * @param {integer} [options[].seconds=30] - The number of seconds to jump back.
@@ -3291,7 +3362,7 @@
       var _this;
 
       options = assign({
-        'seconds': 30
+        seconds: 30
       }, options);
       _this = _Button.call(this, player, options) || this;
 
@@ -3343,7 +3414,7 @@
     /**
      * Allow sub components to stack CSS class names
      *
-     * @return {String} The constructed class name
+     * @return {string} The constructed class name
      * @method buildCSSClass
      */
     ;
@@ -3377,8 +3448,8 @@
   EmpRewindButton.prototype.controlText_ = 'Rewind';
   Component$8.registerComponent('EmpRewindButton', EmpRewindButton);
 
-  var Button$4 = videojs$1.getComponent('Button');
-  var Component$9 = videojs$1.getComponent('Component');
+  var Button$4 = videojs.getComponent('Button');
+  var Component$9 = videojs.getComponent('Component');
   /**
    * Displays a button to jump back to the beginning of the current asset / program and request a new entitlement
    *
@@ -3392,6 +3463,7 @@
 
     /**
      * Create a rewind button
+     *
      * @param {Player|Object} player
      * @param {Object=} options
      */
@@ -3401,7 +3473,7 @@
     /**
      * Allow sub components to stack CSS class names
      *
-     * @return {String} The constructed class name
+     * @return {string} The constructed class name
      * @method buildCSSClass
      */
 
@@ -3423,9 +3495,8 @@
   EmpReloadButton.prototype.controlText_ = 'Reload';
   Component$9.registerComponent('EmpReloadButton', EmpReloadButton);
 
-  var RemainingTimeDisplay = videojs$1.getComponent('RemainingTimeDisplay');
-  var Component$a = videojs$1.getComponent('Component');
-  var UPDATE_REFRESH_INTERVAL$1 = !IS_CHROMECAST && !window.EMP_DEBUG_CHROMECAST ? 30 : 1000;
+  var Component$a = videojs.getComponent('Component');
+  var UPDATE_REFRESH_INTERVAL$1 = !IS_CHROMECAST && !window_1.EMP_DEBUG_CHROMECAST ? 30 : 1000;
   /**
    * Displays the time left or the current time in the video
    *
@@ -3439,6 +3510,7 @@
 
     /**
      * Create a fast-forward button
+     *
      * @param {Player} player
      * @param {Object} [options] - Object of option names and values
      * @param {string} [options.mode=remainingTime] - _remainingTime_ displays a countdown timer and _currentTime_ the current time of a live stream
@@ -3475,7 +3547,7 @@
     _proto.createEl = function createEl$$1() {
       var classNameStr = 'emp-time vjs-time-control vjs-remaining-time vjs-control';
 
-      if (this.options_ && this.options_.mode == 'remainingTime') {
+      if (this.options_ && this.options_.mode === 'remainingTime') {
         classNameStr += ' emp-remaining-time';
       } else {
         classNameStr += ' emp-currentTime-time';
@@ -3553,8 +3625,8 @@
   Component$a.registerComponent('EmpTimeDisplay', EmpTimeDisplay);
   Component$a.registerComponent('EmpTimeDisplay2', EmpTimeDisplay);
 
-  var Button$5 = videojs$1.getComponent('Button');
-  var Component$b = videojs$1.getComponent('Component');
+  var Button$5 = videojs.getComponent('Button');
+  var Component$b = videojs.getComponent('Component');
   /**
    * The button component for stopping playback
    *
@@ -3568,6 +3640,7 @@
 
     /**
      * Create a button to stop playback
+     *
      * @param {Player|Object} player - Player object
      * @param {Object=} options - Object of option names and values
      * @param {Function=} ready - Ready callback function
@@ -3621,7 +3694,7 @@
     /**
      * Allow sub components to stack CSS class names
      *
-     * @return {String} The constructed class name
+     * @return {string} The constructed class name
      * @method buildCSSClass
      */
     ;
@@ -3637,8 +3710,8 @@
   EmpStopButton.prototype.controlText_ = 'stop';
   Component$b.registerComponent('EmpStopButton', EmpStopButton);
 
-  var PlayToggle = videojs$1.getComponent('PlayToggle');
-  var Component$c = videojs$1.getComponent('Component');
+  var PlayToggle = videojs.getComponent('PlayToggle');
+  var Component$c = videojs.getComponent('Component');
   /**
    * The button component for the play toggle
    *
@@ -3652,6 +3725,7 @@
 
     /**
      * Create a button to stop playback
+     *
      * @param {Player|Object} player - Player object
      * @param {Object=} options - Object of option names and values
      * @param {Function=} ready - Ready callback function
@@ -3700,7 +3774,7 @@
     /**
      * Allow sub components to stack CSS class names
      *
-     * @return {String} The constructed class name
+     * @return {string} The constructed class name
      * @method buildCSSClass
      */
     ;
@@ -3716,8 +3790,7 @@
   EmpPlayToggle.prototype.controlText_ = 'playToggle';
   Component$c.registerComponent('EmpPlayToggle', EmpPlayToggle);
 
-  var Component$d = videojs$1.getComponent('Component');
-  var Button$6 = videojs$1.getComponent('Button');
+  var Button$6 = videojs.getComponent('Button');
 
   var AirplayToggle =
   /*#__PURE__*/
@@ -3742,12 +3815,12 @@
     _proto.initAirPlay = function initAirPlay() {
       var player = this.player();
 
-      if (window.WebKitPlaybackTargetAvailabilityEvent) {
+      if (window_1.WebKitPlaybackTargetAvailabilityEvent) {
         var videoEl = player.el().getElementsByTagName('video')[0];
         videoEl.addEventListener('webkitplaybacktargetavailabilitychanged', function (event) {
           switch (event.availability) {
             case 'available':
-              log$1('Airplay available');
+              log('Airplay available');
               player.on('loadeddata', function () {
                 if (player.controlBar.childNameIndex_.hasOwnProperty('AirplayToggle')) {
                   if (this.entitlement && this.entitlement.airplayBlocked) {
@@ -3760,7 +3833,7 @@
               break;
 
             case 'not-available':
-              log$1('Airplay not-available');
+              log('Airplay not-available');
               break;
           }
         });
@@ -3776,7 +3849,7 @@
         this.player().el().getElementsByTagName('video')[0].webkitShowPlaybackTargetPicker();
         this.player().trigger(empPlayerEvents.AIRPLAY_START);
       } else {
-        log$1('Airplay Blocked');
+        log('Airplay Blocked');
       }
     };
 
@@ -3791,10 +3864,10 @@
   }(Button$6);
 
   AirplayToggle.prototype.controlText_ = 'Airplay';
-  videojs$1.registerComponent('AirplayToggle', AirplayToggle);
+  videojs.registerComponent('AirplayToggle', AirplayToggle);
 
-  var Button$7 = videojs$1.getComponent('Button');
-  var Component$e = videojs$1.getComponent('Component');
+  var Button$7 = videojs.getComponent('Button');
+  var Component$d = videojs.getComponent('Component');
   /**
    * Displays a button to jump forward a few seconds
    *
@@ -3808,6 +3881,7 @@
 
     /**
      * Create a fast-forward button
+     *
      * @param {Player} player
      * @param {Object} [options] - Object of option names and values
      */
@@ -3816,7 +3890,7 @@
 
       _this = _Button.call(this, player, options) || this;
 
-      _this.controlText("Next program");
+      _this.controlText('Next program');
 
       _this.updateShowing();
 
@@ -3858,7 +3932,7 @@
     /**
      * Allow sub components to stack CSS class names
      *
-     * @return {String} The constructed class name
+     * @return {string} The constructed class name
      * @method buildCSSClass
      */
     ;
@@ -3886,10 +3960,10 @@
   }(Button$7);
 
   EmpNextButton.prototype.controlText_ = 'Next';
-  Component$e.registerComponent('EmpNextButton', EmpNextButton);
+  Component$d.registerComponent('EmpNextButton', EmpNextButton);
 
-  var Button$8 = videojs$1.getComponent('Button');
-  var Component$f = videojs$1.getComponent('Component');
+  var Button$8 = videojs.getComponent('Button');
+  var Component$e = videojs.getComponent('Component');
   /**
    * Displays a button to jump back a few seconds
    *
@@ -3903,6 +3977,7 @@
 
     /**
      * Create a rewind button
+     *
      * @param {Player|Object} player
      * @param {Object[]} [options] - Object of option names and values
      */
@@ -3911,7 +3986,7 @@
 
       _this = _Button.call(this, player, options) || this;
 
-      _this.controlText("Previous Program");
+      _this.controlText('Previous Program');
 
       _this.updateShowing();
 
@@ -3948,7 +4023,7 @@
     /**
      * Allow sub components to stack CSS class names
      *
-     * @return {String} The constructed class name
+     * @return {string} The constructed class name
      * @method buildCSSClass
      */
     ;
@@ -3977,10 +4052,10 @@
   }(Button$8);
 
   EmpPreviousButton.prototype.controlText_ = 'Previous';
-  Component$f.registerComponent('EmpPreviousButton', EmpPreviousButton);
+  Component$e.registerComponent('EmpPreviousButton', EmpPreviousButton);
 
-  var ControlBar = videojs$1.getComponent('ControlBar');
-  var Component$g = videojs$1.getComponent('Component');
+  var ControlBar = videojs.getComponent('ControlBar');
+  var Component$f = videojs.getComponent('Component');
   /**
    * Container of main controls
    *
@@ -4003,39 +4078,39 @@
   EmpControlBar.prototype.options_ = {
     loadEvent: 'play',
     children: {
-      'empPlayToggle': {},
-      'empReloadButton': {},
-      'empStopButton': {},
-      'empPreviousButton': {},
-      'empRewindButton': {},
-      'empForwardButton': {},
-      'empNextButton': {},
-      'volumePanel': {
-        'inline': false
+      empPlayToggle: {},
+      empReloadButton: {},
+      empStopButton: {},
+      empPreviousButton: {},
+      empRewindButton: {},
+      empForwardButton: {},
+      empNextButton: {},
+      volumePanel: {
+        inline: false
       },
-      'empTimeDisplay': {
-        'mode': 'currentTime'
+      empTimeDisplay: {
+        mode: 'currentTime'
       },
-      'timeDivider': {},
-      'durationDisplay': {},
-      'empLiveDisplay': {},
-      'progressControl': {},
-      'empTimeDisplay2': {
-        'mode': 'remainingTime'
+      timeDivider: {},
+      durationDisplay: {},
+      empLiveDisplay: {},
+      progressControl: {},
+      empTimeDisplay2: {
+        mode: 'remainingTime'
       },
-      'customControlSpacer': {},
-      'empRestartButton': {},
-      'playbackRateMenuButton': {},
-      'chaptersButton': {},
-      'bitrateButton': {},
-      'audioTrackButton': {},
-      'subsCapsButton': {},
-      'airplayToggle': {},
-      'fullscreenToggle': {}
+      customControlSpacer: {},
+      empRestartButton: {},
+      playbackRateMenuButton: {},
+      chaptersButton: {},
+      bitrateButton: {},
+      audioTrackButton: {},
+      subsCapsButton: {},
+      airplayToggle: {},
+      fullscreenToggle: {}
     }
   }; // loadProgressBar > seekBar > mouseTimeDisplay uses a reference to 'controlbar' so we need to override the name for compatibility with our own controlbar
 
-  Component$g.registerComponent('ControlBar', EmpControlBar);
+  Component$f.registerComponent('ControlBar', EmpControlBar);
 
   /**
    * @file time-ranges.js
@@ -4045,11 +4120,12 @@
    * return the start and end times for a range
    * TimeRanges are returned by the buffered() method
    *
-   * @param  {(Number|Array)} Start of a single range or an array of ranges
-   * @param  {Number} End of a single range
+   * @param  {(number|Array)} Start of a single range or an array of ranges
+   * @param  {number} End of a single range
    * @private
    * @method createTimeRanges
    */
+
   function createTimeRanges(start, end) {
     if (Array.isArray(start)) {
       return createTimeRangesObj(start);
@@ -4096,7 +4172,7 @@
     }
   }
 
-  var Component$h = videojs$1.getComponent('Component');
+  var Component$g = videojs.getComponent('Component');
   var darkGray = '#222';
   var lightGray = '#ccc';
   var fontMap = {
@@ -4146,15 +4222,18 @@
    * @private
    */
 
-
+  /*
   function tryUpdateStyle(el, style, rule) {
     try {
       el.style[style] = rule;
     } catch (e) {
+
       // Satisfies linter.
       return;
     }
   }
+  */
+
   /**
    * The component for displaying text track cues.
    *
@@ -4323,7 +4402,11 @@
 
     _proto.removeStyles = function removeStyles(styleName) {
       var styleElement = document_1.getElementById(styleName);
-      if (styleElement) document_1.getElementsByTagName('head')[0].removeChild(styleElement);
+
+      if (styleElement) {
+        document_1.getElementsByTagName('head')[0].removeChild(styleElement);
+      }
+
       return styleElement;
     };
 
@@ -4337,7 +4420,16 @@
     };
 
     _proto.getStyle = function getStyle(overrides) {
-      var color, backgroundColor, textShadow, fontSize, height, top, bottom, fontVariant, fontFamily, windowColor;
+      var color;
+      var backgroundColor;
+      var textShadow;
+      var fontSize;
+      var height;
+      var top;
+      var bottom;
+      var fontVariant;
+      var fontFamily;
+      var windowColor;
 
       if (overrides.color) {
         color = 'color: ' + overrides.color;
@@ -4365,7 +4457,7 @@
 
       if (overrides.edgeStyle) {
         if (overrides.edgeStyle === 'dropshadow') {
-          //textShadow = 'text-shadow: ' + `2px 2px 3px ${darkGray}, 2px 2px 4px ${darkGray}, 2px 2px 5px ${darkGray}`;
+          // textShadow = 'text-shadow: ' + `2px 2px 3px ${darkGray}, 2px 2px 4px ${darkGray}, 2px 2px 5px ${darkGray}`;
           textShadow = 'text-shadow: ' + '0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black, black 0.1em 0.1em 0.2em';
         } else if (overrides.edgeStyle === 'raised') {
           textShadow = 'text-shadow: ' + ("1px 1px " + darkGray + ", 2px 2px " + darkGray + ", 3px 3px " + darkGray);
@@ -4377,7 +4469,7 @@
       }
 
       if (overrides.fontPercent && overrides.fontPercent !== 1) {
-        //fontSize = 92;
+        // fontSize = 92;
         fontSize = 'font-size: ' + overrides.fontPercent + 'em';
         height = 'height: ' + 'auto';
         top = 'top: ' + 'auto';
@@ -4408,10 +4500,10 @@
       }
 
       if (backgroundColor) {
-        return "video::-webkit-media-text-track-display-backdrop {" + backgroundColor + " !important;" + "overflow: visible !important;}";
+        return 'video::-webkit-media-text-track-display-backdrop {' + backgroundColor + ' !important;' + 'overflow: visible !important;}';
       }
 
-      return "";
+      return '';
     }
     /**
      * Update the displayed TextTrack when a either a {@link Player#texttrackchange} or
@@ -4445,29 +4537,28 @@
 
           this.clearDisplay();
           return;
-        } else {
-          this.removeStyles(styleName);
         }
+
+        this.removeStyles(styleName);
       } else {
         // remove texttrack settings dialogs
         this.writeStyles('style_no_texttrack_settings', '.vjs-texttrack-settings {display: none;}');
-      } //Shaka and HLS handle text tracks
+      } // Shaka and HLS handle text tracks
 
 
       return;
-      var tracks = this.player_.textTracks();
-      this.clearDisplay(); // Track display prioritization model: if multiple tracks are 'showing',
+      /*
+       const tracks = this.player_.textTracks();
+       this.clearDisplay();
+       // Track display prioritization model: if multiple tracks are 'showing',
       //  display the first 'subtitles' or 'captions' track which is 'showing',
       //  otherwise display the first 'descriptions' track which is 'showing'
-
-      var descriptionsTrack = null;
-      var captionsSubtitlesTrack = null;
-      var i = tracks.length;
-
-      while (i--) {
-        var track = tracks[i];
-
-        if (track.mode === 'showing') {
+       let descriptionsTrack = null;
+      let captionsSubtitlesTrack = null;
+      let i = tracks.length;
+       while (i--) {
+        const track = tracks[i];
+         if (track.mode === 'showing') {
           if (track.kind === 'descriptions') {
             descriptionsTrack = track;
           } else {
@@ -4475,20 +4566,18 @@
           }
         }
       }
-
-      if (captionsSubtitlesTrack) {
+       if (captionsSubtitlesTrack) {
         if (this.getAttribute('aria-live') !== 'off') {
           this.setAttribute('aria-live', 'off');
         }
-
         this.updateForTrack(captionsSubtitlesTrack);
       } else if (descriptionsTrack) {
         if (this.getAttribute('aria-live') !== 'assertive') {
           this.setAttribute('aria-live', 'assertive');
         }
-
         this.updateForTrack(descriptionsTrack);
       }
+      */
     }
     /**
      * Add an {@link Texttrack} to to the {@link Tech}s {@link TextTrackList}.
@@ -4499,86 +4588,86 @@
     ;
 
     _proto.updateForTrack = function updateForTrack(track) {
-      //Shaka and HLS handle text tracks
+      // Shaka and HLS handle text tracks
       return;
-
-      if (typeof window_1.WebVTT !== 'function' || !track.activeCues) {
+      /*
+      if (typeof window.WebVTT !== 'function' || !track.activeCues) {
         return;
       }
-
-      var overrides;
-
-      if (this.player_.textTrackSettings) {
+       let overrides;
+       if (this.player_.textTrackSettings) {
         overrides = this.player_.textTrackSettings.getValues();
       }
-
-      var cues = [];
-
-      for (var _i = 0; _i < track.activeCues.length; _i++) {
-        cues.push(track.activeCues[_i]);
+      const cues = [];
+       for (let i = 0; i < track.activeCues.length; i++) {
+        cues.push(track.activeCues[i]);
       }
-
-      window_1.WebVTT.processCues(window_1, cues, this.el_);
-
-      if (overrides) {
+       window.WebVTT.processCues(window, cues, this.el_);
+       if (overrides) {
         return;
       }
-
-      var i = cues.length;
-
-      while (i--) {
-        var cue = cues[i];
-
-        if (!cue) {
+       let i = cues.length;
+       while (i--) {
+        const cue = cues[i];
+         if (!cue) {
           continue;
         }
-
-        var cueDiv = cue.displayState;
-
-        if (overrides.color) {
+         const cueDiv = cue.displayState;
+         if (overrides.color) {
           cueDiv.firstChild.style.color = overrides.color;
         }
-
         if (overrides.textOpacity) {
-          tryUpdateStyle(cueDiv.firstChild, 'color', constructColor(overrides.color || '#fff', overrides.textOpacity));
+          tryUpdateStyle(
+            cueDiv.firstChild,
+            'color',
+            constructColor(
+              overrides.color || '#fff',
+              overrides.textOpacity
+            )
+          );
         }
-
         if (overrides.backgroundColor) {
           cueDiv.firstChild.style.backgroundColor = overrides.backgroundColor;
         }
-
         if (overrides.backgroundOpacity) {
-          tryUpdateStyle(cueDiv.firstChild, 'backgroundColor', constructColor(overrides.backgroundColor || '#000', overrides.backgroundOpacity));
+          tryUpdateStyle(
+            cueDiv.firstChild,
+            'backgroundColor',
+            constructColor(
+              overrides.backgroundColor || '#000',
+              overrides.backgroundOpacity
+            )
+          );
         }
-
         if (overrides.windowColor) {
           if (overrides.windowOpacity) {
-            tryUpdateStyle(cueDiv, 'backgroundColor', constructColor(overrides.windowColor, overrides.windowOpacity));
+            tryUpdateStyle(
+              cueDiv,
+              'backgroundColor',
+              constructColor(overrides.windowColor, overrides.windowOpacity)
+            );
           } else {
             cueDiv.style.backgroundColor = overrides.windowColor;
           }
         }
-
         if (overrides.edgeStyle) {
           if (overrides.edgeStyle === 'dropshadow') {
-            cueDiv.firstChild.style.textShadow = "2px 2px 3px " + darkGray + ", 2px 2px 4px " + darkGray + ", 2px 2px 5px " + darkGray;
+            cueDiv.firstChild.style.textShadow = `2px 2px 3px ${darkGray}, 2px 2px 4px ${darkGray}, 2px 2px 5px ${darkGray}`;
           } else if (overrides.edgeStyle === 'raised') {
-            cueDiv.firstChild.style.textShadow = "1px 1px " + darkGray + ", 2px 2px " + darkGray + ", 3px 3px " + darkGray;
+            cueDiv.firstChild.style.textShadow = `1px 1px ${darkGray}, 2px 2px ${darkGray}, 3px 3px ${darkGray}`;
           } else if (overrides.edgeStyle === 'depressed') {
-            cueDiv.firstChild.style.textShadow = "1px 1px " + lightGray + ", 0 1px " + lightGray + ", -1px -1px " + darkGray + ", 0 -1px " + darkGray;
+            cueDiv.firstChild.style.textShadow = `1px 1px ${lightGray}, 0 1px ${lightGray}, -1px -1px ${darkGray}, 0 -1px ${darkGray}`;
           } else if (overrides.edgeStyle === 'uniform') {
-            cueDiv.firstChild.style.textShadow = "0 0 4px " + darkGray + ", 0 0 4px " + darkGray + ", 0 0 4px " + darkGray + ", 0 0 4px " + darkGray;
+            cueDiv.firstChild.style.textShadow = `0 0 4px ${darkGray}, 0 0 4px ${darkGray}, 0 0 4px ${darkGray}, 0 0 4px ${darkGray}`;
           }
         }
-
         if (overrides.fontPercent && overrides.fontPercent !== 1) {
-          var fontSize = window_1.parseFloat(cueDiv.style.fontSize);
-          cueDiv.style.fontSize = fontSize * overrides.fontPercent + 'px';
+          const fontSize = window.parseFloat(cueDiv.style.fontSize);
+           cueDiv.style.fontSize = (fontSize * overrides.fontPercent) + 'px';
           cueDiv.style.height = 'auto';
           cueDiv.style.top = 'auto';
           cueDiv.style.bottom = '2px';
         }
-
         if (overrides.fontFamily && overrides.fontFamily !== 'default') {
           if (overrides.fontFamily === 'small-caps') {
             cueDiv.firstChild.style.fontVariant = 'small-caps';
@@ -4587,15 +4676,16 @@
           }
         }
       }
+      */
     };
 
     return TextTrackDisplay;
-  }(Component$h);
+  }(Component$g);
 
-  Component$h.registerComponent('TextTrackDisplay', TextTrackDisplay);
+  Component$g.registerComponent('TextTrackDisplay', TextTrackDisplay);
 
-  var Component$i = videojs$1.getComponent('Component');
-  var ModalDialog = videojs$1.getComponent('ModalDialog');
+  var Component$h = videojs.getComponent('Component');
+  var ModalDialog = videojs.getComponent('ModalDialog');
   var LOCAL_STORAGE_KEY = 'vjs-text-track-settings';
   var COLOR_BLACK = ['#000', 'Black'];
   var COLOR_BLUE = ['#00F', 'Blue'];
@@ -5032,7 +5122,7 @@
       try {
         values = JSON.parse(window_1.localStorage.getItem(LOCAL_STORAGE_KEY));
       } catch (err) {
-        log$1.warn(err);
+        log.warn(err);
       }
 
       if (values) {
@@ -5045,9 +5135,9 @@
     ;
 
     _proto.saveSettings = function saveSettings() {
-      var values = this.getValues(); //override textTrackStyle with dialog values
+      var values = this.getValues(); // override textTrackStyle with dialog values
 
-      this.player_.options_.textTrackStyle = undefined; //send to CC if casting
+      this.player_.options_.textTrackStyle = undefined; // send to CC if casting
 
       if (this.player_.techName_ === 'EmpCast') {
         this.player_.techCall_('sendTextTrackStyle', values);
@@ -5064,7 +5154,7 @@
           window_1.localStorage.removeItem(LOCAL_STORAGE_KEY);
         }
       } catch (err) {
-        log$1.warn(err);
+        log.warn(err);
       }
     }
     /**
@@ -5103,9 +5193,9 @@
     return TextTrackSettings;
   }(ModalDialog);
 
-  Component$i.registerComponent('TextTrackSettings', TextTrackSettings);
+  Component$h.registerComponent('TextTrackSettings', TextTrackSettings);
 
-  var Component$j = videojs$1.getComponent('Component');
+  var Component$i = videojs.getComponent('Component');
   /**
    * EmpMediaInfoBar Show media-title, media-artwork, media-resolution and media-subtitle
    *
@@ -5158,14 +5248,14 @@
 
           if (opt.mediaInfo) {
             _this.updateMediaInformation_({
-              'title': opt.mediaInfo.title,
-              'subtitle': opt.mediaInfo.subtitle,
-              'images': opt.mediaInfo.artworkUrl ? [{
-                'url': opt.mediaInfo.artworkUrl
+              title: opt.mediaInfo.title,
+              subtitle: opt.mediaInfo.subtitle,
+              images: opt.mediaInfo.artworkUrl ? [{
+                url: opt.mediaInfo.artworkUrl
               }] : [],
-              'channelInfo': {
-                'images': opt.mediaInfo.logoUrl ? [{
-                  'url': opt.mediaInfo.logoUrl
+              channelInfo: {
+                images: opt.mediaInfo.logoUrl ? [{
+                  url: opt.mediaInfo.logoUrl
                 }] : []
               }
             });
@@ -5217,7 +5307,7 @@
     /**
      * Allow sub components to stack CSS class names
      *
-     * @return {String} The constructed class name
+     * @return {string} The constructed class name
      * @method buildCSSClass
      */
 
@@ -5244,9 +5334,10 @@
     }
     /**
     * Select the image to display for the asset
+     *
     * @param {Array} images image objects
     * @param {string} imageType image type in backend
-    * @returns {image} image object
+    * @return {image} image object
     */
     ;
 
@@ -5315,7 +5406,7 @@
           mediaLogoEl.style.display = 'none';
           mediaLogoEl.style.backgroundImage = 'none';
         }
-      } //Show the control and mediainfo bar
+      } // Show the control and mediainfo bar
 
 
       this.player().userActive(true);
@@ -5336,27 +5427,27 @@
         var html = '';
 
         if (opt.mediaInfo.artworkEnable) {
-          html += "<div class=\"emp-media-artwork\"></div>";
+          html += '<div class="emp-media-artwork"></div>';
         }
 
         if (opt.mediaInfo.titleEnable || opt.mediaInfo.subtitleEnable) {
-          html += "<div class=\"emp-media-text\">";
+          html += '<div class="emp-media-text">';
         }
 
         if (opt.mediaInfo.titleEnable) {
-          html += "<div class=\"emp-media-title\"></div>";
+          html += '<div class="emp-media-title"></div>';
         }
 
         if (opt.mediaInfo.subtitleEnable) {
-          html += "<div class=\"emp-media-subtitle\"></div>";
+          html += '<div class="emp-media-subtitle"></div>';
         }
 
         if (opt.mediaInfo.titleEnable || opt.mediaInfo.subtitleEnable) {
-          html += "</div>";
+          html += '</div>';
         }
 
         if (opt.mediaInfo.logoEnable) {
-          html += "<div class=\"emp-media-logo\"></div>";
+          html += '<div class="emp-media-logo"></div>';
         }
 
         this.el_.innerHTML = html;
@@ -5366,10 +5457,10 @@
     };
 
     return EmpMediaInfoBar;
-  }(Component$j);
+  }(Component$i);
 
   EmpMediaInfoBar.prototype.controlText_ = 'MediaInfo';
-  Component$j.registerComponent('EmpMediaInfoBar', EmpMediaInfoBar);
+  Component$i.registerComponent('EmpMediaInfoBar', EmpMediaInfoBar);
 
   /**
    * A Custom `MediaError` class which mimics the standard HTML5 `MediaError` class.
@@ -5406,7 +5497,7 @@
       // do not expose it as an own/enumerable property of the object.
       if (typeof value.code === 'number') {
         this.code = value.code;
-      } //Videojs bug fix message and status be removed
+      } // Videojs bug fix message and status be removed
 
 
       if (value.message) {
@@ -5488,9 +5579,9 @@
     MediaError.prototype[MediaError.errorTypes[errNum]] = errNum;
   } // jsdocs for instance/static members added above
 
-  var VjsPlayer = videojs$1.getComponent('Player');
-  var Tech = videojs$1.getComponent('Tech');
-  var CaptionSettingsMenuItem = videojs$1.getComponent('CaptionSettingsMenuItem'); // Shaka polyfill this
+  var VjsPlayer = videojs.getComponent('Player');
+  var Tech = videojs.getComponent('Tech');
+  var CaptionSettingsMenuItem = videojs.getComponent('CaptionSettingsMenuItem'); // Shaka polyfill this
 
   if (window_1.vttjs) {
     window_1.vttjs.restore();
@@ -5522,9 +5613,9 @@
         ready = function ready() {};
       }
 
-      //options.nativeTextTracks = true;
-      //options.empshaka.nativeTextTracks = true; 
-      //absoluteStartTime override startTime
+      // options.nativeTextTracks = true;
+      // options.empshaka.nativeTextTracks = true;
+      // absoluteStartTime override startTime
       if (options.absoluteStartTime) {
         options.startTime = 0;
       }
@@ -5539,13 +5630,13 @@
         options.techOrder = Player.AutoTechArray('EmpDashif');
       } else if (Array.isArray(options.techOrder)) {
         options.techOrder = Player.GetValidAutoTechOrder(options.techOrder);
-      } //element data-setup
+      } // element data-setup
 
 
       var tagOptions = Player.getTagSettings(tag); // Add default options for every player instance
       // default options are overidden by options set in the options parameter
 
-      options = videojs$1.mergeOptions({
+      options = videojs.mergeOptions({
         'entitlement-engine': 'EricssonExposure',
         'sources': tagOptions.sources ? tagOptions.sources : undefined,
         'techOrder': tagOptions.techOrder ? tagOptions.techOrder : Player.AutoTechArray('EmpShaka'),
@@ -5556,15 +5647,15 @@
         'absoluteStartTime': tagOptions.absoluteStartTime ? tagOptions.absoluteStartTime : undefined,
         'persistTextTrackSettings': tagOptions.persistTextTrackSettings ? tagOptions.persistTextTrackSettings : !IS_IE_OR_EDGE,
         'textTrackSettings': tagOptions.textTrackSettings ? tagOptions.textTrackSettings : !IS_IE_OR_EDGE
-      }, options); // Fix that HTML attribute is lowercase 
+      }, options); // Fix that HTML attribute is lowercase
 
       if (options.sources) {
         for (var i = 0; i < options.sources.length; i++) {
           var newKeys = {
-            licenseserver: "licenseServer",
-            certificateserver: "certificateServer",
-            playtoken: "playToken",
-            keysystems: "keySystems"
+            licenseserver: 'licenseServer',
+            certificateserver: 'certificateServer',
+            playtoken: 'playToken',
+            keysystems: 'keySystems'
           };
           options.sources[i] = renameKeys(options.sources[i], newKeys);
 
@@ -5578,7 +5669,7 @@
 
       _this.monkeyPatchingTextMenu_();
 
-      if (window_1.empPlayer && log$1.islogToBrowserConsole) {
+      if (window_1.empPlayer && log.islogToBrowserConsole) {
         window_1.empPlayer.setInstance(_assertThisInitialized(_assertThisInitialized(_this)));
       }
 
@@ -5594,7 +5685,7 @@
       }
 
       _this.on(empPlayerEvents.ENDED, function () {
-        log$1('ENDED');
+        log('ENDED');
         _this.ended_ = true;
         _this.sourceChanging_ = false;
 
@@ -5608,7 +5699,9 @@
           _this.loadNextSource();
         }
 
-        _this.yospace && _this.yospace().stop();
+        if (_this.yospace) {
+          _this.yospace().stop();
+        }
       });
 
       _this.on(empPlayerEvents.DISPOSE, function () {
@@ -5648,7 +5741,9 @@
           _this.entitlementExpirationService().stop();
         }
 
-        _this.yospace && _this.yospace().stop();
+        if (_this.yospace) {
+          _this.yospace().stop();
+        }
       });
 
       _this.on(empPlayerEvents.CAN_PLAY, function () {
@@ -5659,19 +5754,19 @@
         _this.addClass('vjs-has-started');
 
         _this.ended_ = false; // Don't set referenceTime
-        //if (this.programService) {
+        // if (this.programService) {
         //  var entitlement = this.programService().entitlement();
         //  if (entitlement) {
         //    entitlement.streamInfo.referenceTime = this.startTimeLive();
         //  }
-        //}
+        // }
       });
 
       _this.on(empPlayerEvents.REPLAY, function () {
         if (_this.cache_ && _this.cache_.source && _this.cache_.source.yospaceUrl) {
           _this.src({
-            'src': _this.cache_.source.yospaceUrl,
-            'type': 'application/yospace'
+            src: _this.cache_.source.yospaceUrl,
+            type: 'application/yospace'
           });
         } else if (_this.cache_ && _this.cache_.source) {
           _this.src(_this.cache_.source);
@@ -5679,7 +5774,7 @@
       });
 
       _this.on(empPlayerEvents.FIRST_PLAY, function () {
-        log$1('FIRST_PLAY');
+        log('FIRST_PLAY');
 
         if (_this.options_.startTime && _this.techName_ === 'Html5') {
           _this.currentTime(_this.options_.startTime);
@@ -5699,6 +5794,7 @@
     }
     /**
      * Monkey-Patching text track menu to add CaptionSettingsMenuItem for HLS
+     *
      * @private
      */
 
@@ -5708,7 +5804,10 @@
     _proto.monkeyPatchingTextMenu_ = function monkeyPatchingTextMenu_() {
       if (this.controlBar && this.controlBar.subsCapsButton) {
         var originalCreateItems = this.controlBar.subsCapsButton.createItems;
+        /* eslint-disable */
+
         var self = this;
+        /* eslint-disable */
 
         this.controlBar.subsCapsButton.createItems = function () {
           var oriItems = originalCreateItems.apply(this, arguments);
@@ -5720,12 +5819,12 @@
             }
           }
 
-          if (items && items.length > 1 && items[0].name() !== "CaptionSettingsMenuItem" && self.techName_ === 'EmpHLS' && self.options_.textTrackSettings) {
+          if (items && items.length > 1 && items[0].name() !== 'CaptionSettingsMenuItem' && self.techName_ === 'EmpHLS' && self.options_.textTrackSettings) {
             items.unshift(new CaptionSettingsMenuItem(this.player_, {
               kind: this.label_
             }));
             this.hideThreshold_ += 1;
-          } else if (items && items.length > 1 && items[0].name() === "CaptionSettingsMenuItem" && self.techName_ === 'EmpDashif') {
+          } else if (items && items.length > 1 && items[0].name() === 'CaptionSettingsMenuItem' && self.techName_ === 'EmpDashif') {
             items.shift();
             this.hideThreshold_ -= 1;
           }
@@ -5737,16 +5836,22 @@
 
 
       if (IS_EDGE) {
-        var textTrackMenuItem = videojs$1.getComponent('TextTrackMenuItem');
+        var textTrackMenuItem = videojs.getComponent('TextTrackMenuItem');
 
         if (textTrackMenuItem) {
-          var originalTextTrackMenuItem_handleClick = textTrackMenuItem.prototype.handleClick;
-          var self = this;
+          var originalTextTrackMenuItemHandleClick = textTrackMenuItem.prototype.handleClick;
+          /* eslint-disable */
+
+          var _self = this;
+          /* eslint-enable */
+
 
           textTrackMenuItem.prototype.handleClick = function () {
-            originalTextTrackMenuItem_handleClick.apply(this, arguments);
-            self.trigger(empPlayerEvents.TRACK_CHANGE);
-            self.trigger(empPlayerEvents.TEXT_TRACK_CHANGE);
+            originalTextTrackMenuItemHandleClick.apply(this, arguments);
+
+            _self.trigger(empPlayerEvents.TRACK_CHANGE);
+
+            _self.trigger(empPlayerEvents.TEXT_TRACK_CHANGE);
           };
         }
       }
@@ -5773,37 +5878,37 @@
 
       if (obj.startTime !== undefined) {
         obj.startTime = parseFloat(obj.startTime) || 0;
-      } //absoluteStartTime override startTime
+      } // absoluteStartTime override startTime
 
 
       if (obj.absoluteStartTime !== undefined) {
         obj.startTime = 0;
       }
 
-      this.options_ = videojs$1.mergeOptions(this.options_, obj);
+      this.options_ = videojs.mergeOptions(this.options_, obj);
       return this.options_;
     }
     /**
      * get options to add to tech
      *
-     * @returns {object}
+     * @return {Object}
      * @private
      */
     ;
 
     _proto.getTechOptions_ = function getTechOptions_() {
       var playOptions = {
-        'autoplay': this.options_.autoplay,
-        'muted': this.options_.muted,
-        'language': this.options_.language,
-        'maxBitrate': this.options_.maxBitrate,
-        'timeShiftDisabled': this.options_.timeShiftDisabled,
-        'useLastViewedOffset': this.options_.useLastViewedOffset,
-        'startTime': this.options_.startTime,
-        'absoluteStartTime': this.options_.absoluteStartTime,
-        'audioLanguage': this.options_.audioLanguage,
-        'subtitleLanguage': this.options_.subtitleLanguage,
-        'liveDelay': this.options_.liveDelay
+        autoplay: this.options_.autoplay,
+        muted: this.options_.muted,
+        language: this.options_.language,
+        maxBitrate: this.options_.maxBitrate,
+        timeShiftDisabled: this.options_.timeShiftDisabled,
+        useLastViewedOffset: this.options_.useLastViewedOffset,
+        startTime: this.options_.startTime,
+        absoluteStartTime: this.options_.absoluteStartTime,
+        audioLanguage: this.options_.audioLanguage,
+        subtitleLanguage: this.options_.subtitleLanguage,
+        liveDelay: this.options_.liveDelay
       };
       return playOptions;
     }
@@ -5811,7 +5916,7 @@
      * loadTech_
      *
      * @param {string} techName
-     * @param {object} source
+     * @param {Object} source
      * @private
      */
     ;
@@ -5827,31 +5932,31 @@
         _this2.player_.error(error);
       });
       this.on(this.tech_, empPlayerEvents.TRACK_CHANGE, function () {
-        log$1('TRACK_CHANGE');
+        log('TRACK_CHANGE');
 
         _this2.player_.trigger(empPlayerEvents.TRACK_CHANGE);
       });
       this.on(this.tech_, empPlayerEvents.DURATION_CHANGE, function () {
-        //log('DURATION_CHANGE');
+        // log('DURATION_CHANGE');
         _this2.player_.trigger(empPlayerEvents.DURATION_CHANGE);
       });
     }
     /**
      * load and play next video/program in the playback queue
      *
-     * @returns {boolean} True if there was something in the queue
+     * @return {boolean} True if there was something in the queue
      */
     ;
 
     _proto.loadNextSource = function loadNextSource() {
       if (this.sourceChanging_) {
-        log$1('loadNextSource ignore sourceChanging');
+        log('loadNextSource ignore sourceChanging');
         return;
       }
 
       this.sourceChanging_ = true;
 
-      if (this.tech_ && this.tech_['loadNextSource'] !== undefined) {
+      if (this.tech_ && this.tech_.loadNextSource !== undefined) {
         this.techCall_('loadNextSource');
         return true;
       } else if (this.cache_.sources && this.cache_.sources.length > 1) {
@@ -5865,7 +5970,8 @@
     }
     /**
      * set videojs TextTrackStyle or send to Chromecast
-     * @param {object} style
+     *
+     * @param {Object} style
      */
     ;
 
@@ -5882,28 +5988,28 @@
      *
      * @param {?string} assetId optional
      * @param {?string} channelId optional
-     * @param {?String} programId optional
+     * @param {?string} programId optional
      * @param {?number} startTime optional startTime in unix time (ms)
      */
     ;
 
     _proto.lineUpAsset = function lineUpAsset(assetId, channelId, programId, startTime) {
       var asset = {
-        'assetId': assetId,
-        'programId': programId,
-        'channelId': channelId
+        assetId: assetId,
+        programId: programId,
+        channelId: channelId
       };
 
       if (startTime) {
         this.options({
-          'playFrom': 'beginning',
-          'absoluteStartTime': startTime
+          playFrom: 'beginning',
+          absoluteStartTime: startTime
         });
       }
 
       this.lineupSource({
-        'type': 'video/emp',
-        'src': JSON.stringify(asset)
+        type: 'video/emp',
+        src: JSON.stringify(asset)
       });
     }
     /**
@@ -5915,7 +6021,7 @@
     ;
 
     _proto.lineupSource = function lineupSource(source) {
-      if (this.tech_ && this.tech_['lineupSource'] !== undefined) {
+      if (this.tech_ && this.tech_.lineupSource !== undefined) {
         this.techCall_('lineupSource', source);
         return;
       }
@@ -5923,7 +6029,8 @@
       this.cache_.sources.push(source);
     }
     /**
-     * unloadTech 
+     * unloadTech
+     *
      * @private
      */
     ;
@@ -5932,7 +6039,7 @@
       // Don't think we need to remove events, it seems to work.
       this.techName_ = null;
 
-      _VjsPlayer.prototype.unloadTech_.call(this); // bugfix: WARN: Calling addRemoteTextTrack without explicitly setting the "manualCleanup" 
+      _VjsPlayer.prototype.unloadTech_.call(this); // bugfix: WARN: Calling addRemoteTextTrack without explicitly setting the "manualCleanup"
       // parameter to`true` is deprecated and default to `false` in future version of video.js
 
 
@@ -5948,14 +6055,21 @@
     ;
 
     _proto.stop = function stop(afterStopCallback) {
-      this.analytics && this.analytics().stop();
-      this.yospace && this.yospace().stop();
+      if (this.analytics) {
+        this.analytics().stop();
+      }
+
+      if (this.yospace) {
+        this.yospace().stop();
+      }
+
       extplayer.stop(this, afterStopCallback);
     }
     /**
      * Get Avalible Techs
+     *
      * @param excludeTechs
-     * @returns {Array}
+     * @return {Array}
      */
     ;
 
@@ -5968,7 +6082,7 @@
         var techName = _ref[0],
             tech = _ref[1];
 
-        if (tech && techName !== "Html5" && techName !== "EmpCast" && excludeTechs.indexOf(techName) === -1) {
+        if (tech && techName !== 'Html5' && techName !== 'EmpCast' && excludeTechs.indexOf(techName) === -1) {
           return tech.isSupported();
         }
       });
@@ -5984,7 +6098,7 @@
      *
      * @return {Object|boolean}
      *         Object of source and tech order or false
-     *         
+     *
      * @private
      */
     ;
@@ -6011,8 +6125,8 @@
     /**
      * handleRecoverableError
      *
-     * @param {object} event
-     * @param {object} data
+     * @param {Object} event
+     * @param {Object} data
      * @private
      */
     ;
@@ -6025,24 +6139,26 @@
       }
 
       excludeTechs.push(data.techName);
-      var techs = this.getAvalibleTechs_(excludeTechs); //TODO: Fix reset for hls
-      //Not for CHROMECAST and not for encrypted streams and tech left to try
+      var techs = this.getAvalibleTechs_(excludeTechs); // Not for CHROMECAST and not for encrypted streams and tech left to try
 
       if (data.source && !data.source.licenseServer && (!data.source.keySystems || isEmpty(data.source.keySystems)) && !data.source.protection && !IS_CHROMECAST && techs.length > 0) {
         if (data.error.code !== 6001) {
-          log$1.error('handleRecoverableError', data.techName, data.message);
-          this.analytics && this.analytics().onError({
-            code: data.error.code,
-            message: data.message,
-            stack: data.error.stack
-          });
+          log.error('handleRecoverableError', data.techName, data.message);
+
+          if (this.analytics) {
+            this.analytics().onError({
+              code: data.error.code,
+              message: data.message,
+              stack: data.error.stack
+            });
+          }
         }
 
         if (!this.options_.excludeTechs) {
           this.options_.excludeTechs = [];
         }
 
-        this.options_.excludeTechs.push(data.techName); //TODO: If we want to try Dash then we can ship add to excludeTechs and set this.options_.empshaka['streamType'] = null
+        this.options_.excludeTechs.push(data.techName); // If we want to try Dash then we can ship add to excludeTechs and set this.options_.empshaka['streamType'] = null
 
         if (this.options_.techOrder.length > this.options_.excludeTechs.length) {
           this.error(null);
@@ -6057,24 +6173,24 @@
 
           if (data.source.assetId) {
             var asset = {
-              'assetId': data.source.assetId
+              assetId: data.source.assetId
             };
 
             _VjsPlayer.prototype.src.call(this, {
-              'type': 'video/emp',
-              'src': JSON.stringify(asset)
+              type: 'video/emp',
+              src: JSON.stringify(asset)
             });
 
             return;
           } else if (data.source.channelId) {
             var _asset = {
-              'channelId': data.source.channelId,
-              'programId': data.source.programId
+              channelId: data.source.channelId,
+              programId: data.source.programId
             };
 
             _VjsPlayer.prototype.src.call(this, {
-              'type': 'video/emp',
-              'src': JSON.stringify(_asset)
+              type: 'video/emp',
+              src: JSON.stringify(_asset)
             });
 
             return;
@@ -6093,6 +6209,7 @@
     }
     /**
      * resetWithoutReload_
+     *
      * @private
      */
     ;
@@ -6116,7 +6233,7 @@
       }
 
       var startTime = this.getAbsoluteTime();
-      log$1('resetAndRestartFormPlayhead', startTime);
+      log('resetAndRestartFormPlayhead', startTime);
       this.reset();
       this.startResetAndReloadTimer_();
       this.restart(null, startTime);
@@ -6163,8 +6280,8 @@
     /**
     * select audio track with languageCode (en, sv, de ...) and optional kind
     *
-    * @param {String} languageCode
-    * @param {String} kind or empty
+    * @param {string} languageCode
+    * @param {string} kind or empty
     */
     ;
 
@@ -6187,7 +6304,7 @@
     /**
      * get languageCode for current Audio Track (en, sv, de ...)
      *
-     * @return {String} languageCode
+     * @return {string} languageCode
      */
     ;
 
@@ -6197,7 +6314,7 @@
     /**
      * Get all Audio track language codes
      *
-     * @returns {strings[]} Array of language codes
+     * @return {strings[]} Array of language codes
      */
     ;
 
@@ -6214,8 +6331,8 @@
     /**
     * select text track with languageCode (en, sv, de) and optional kind
     *
-    * @param {?String} languageCode or null
-    * @param {?String} kind or empty
+    * @param {?string} languageCode or null
+    * @param {?string} kind or empty
     */
     ;
 
@@ -6231,10 +6348,10 @@
           if (!kind || track.kind === kind) {
             track.mode = 'showing';
           }
-        } // disable other tracks
-        else if (track.mode !== 'disabled') {
-            track.mode = 'disabled';
-          }
+        } else if (track.mode !== 'disabled') {
+          // disable other tracks
+          track.mode = 'disabled';
+        }
       } // Bug fix textTracks.onchange event is not firing
       // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/8019792/
 
@@ -6247,7 +6364,7 @@
     /**
     * get languageCode for current Text Track (null, en, sv, de ...)
     *
-    * @return {?String} languageCode or null
+    * @return {?string} languageCode or null
     */
     ;
 
@@ -6273,19 +6390,17 @@
             track.mode = 'showing';
             return;
           }
-        } else {
-          if (track.mode === 'showing') {
-            track.mode = 'hidden';
-          } else if (track.mode !== 'disabled') {
-            track.mode = 'disabled';
-          }
+        } else if (track.mode === 'showing') {
+          track.mode = 'hidden';
+        } else if (track.mode !== 'disabled') {
+          track.mode = 'disabled';
         }
       }
     }
     /**
      * Is text track is visible
      *
-     * @returns {boolean}
+     * @return {boolean}
      */
     ;
 
@@ -6306,7 +6421,7 @@
     /**
      * Get all text track language codes
      *
-     * @returns {string[]} Array of language codes
+     * @return {string[]} Array of language codes
      */
     ;
 
@@ -6322,8 +6437,9 @@
     }
     /**
      * Can Seek To position
+     *
      * @param {number} position
-     * @returns {boolean}
+     * @return {boolean}
      */
     ;
 
@@ -6333,7 +6449,7 @@
     /**
      * Get Contract Restrictions
      *
-     * @returns {object}
+     * @return {Object}
      */
     ;
 
@@ -6359,7 +6475,7 @@
      *
      * * > **NOTE**: True if paused
      *
-     * @returns {boolean}
+     * @return {boolean}
      */
     ;
 
@@ -6369,7 +6485,7 @@
     /**
      * Is playback a live stream
      *
-     * @returns {boolean}
+     * @return {boolean}
      */
     ;
 
@@ -6379,7 +6495,7 @@
     /**
      * Get the current tech verion
      *
-     * @returns {string} the version number
+     * @return {string} the version number
      */
     ;
 
@@ -6406,7 +6522,7 @@
      * > **NOTE**: It's the raw duration from the video element
      *
      * > **NOTE**: The video must have started loading before the duration can be
-     * known, 
+     * known,
      * playing.
      *
      * @fires Player#durationchange
@@ -6422,14 +6538,14 @@
     _proto.baseDuration = function baseDuration(seconds) {
       if (seconds === undefined) {
         return extplayer.baseDuration(this);
-      } else {
-        _VjsPlayer.prototype.duration.call(this, seconds);
       }
+
+      _VjsPlayer.prototype.duration.call(this, seconds);
     }
     /**
      * Main method for start playback
      *
-     * @param {string|object} source The Source element of a video element
+     * @param {string|Object} source The Source element of a video element
      */
     ;
 
@@ -6467,12 +6583,12 @@
         if (!srcobj.type) {
           srcobj.type = 'video/emp';
         }
-      }); //Throttling the play request
+      }); // Throttling the play request
 
       if (sources[0].type === 'video/emp') {
         // already loading an src, block this for now
         if (this.loadingSrc_) {
-          log$1('load src blocked', source); // saves the last src that comes in
+          log('load src blocked', source); // saves the last src that comes in
 
           this.loadNextSrc_ = source;
           return;
@@ -6485,13 +6601,18 @@
           if (_this4.loadNextSrc_) {
             // Call this method
             _this4.src(_this4.loadNextSrc_);
-          }
-        }, 3000); // mseconds of blocking
+          } // ms of blocking
+
+        }, 3000);
       }
 
       this.loadNextSrc_ = null;
-      log$1('load src OK');
-      this.yospace && this.yospace().stop();
+      log('load src OK');
+
+      if (this.yospace) {
+        this.yospace().stop();
+      }
+
       this.options_.excludeTechs = [];
 
       if (!this.tech_) {
@@ -6500,7 +6621,7 @@
 
       this.cache_.currentTime = 0;
       this.cache_.duration = NaN;
-      this.error(null); //Keep current program to it start play new
+      this.error(null); // Keep current program to it start play new
 
       if (sources[0].type !== 'video/emp') {
         this.stopProgramService();
@@ -6508,18 +6629,18 @@
 
       if (this.isPlaying()) {
         this.sourceChanging_ = true;
-      } //Will start casting if connected
+      } // Will start casting if connected
 
 
       if (!extplayer.casting(this, sources)) {
         if (sources[0].options) {
           this.options(sources[0].options);
-        } //for external dash streams copy options
+        } // for external dash streams copy options
 
 
         if (sources[0].type !== 'video/emp') {
           sources[0].options = this.getTechOptions_();
-        } //Start playback
+        } // Start playback
 
 
         this.off(empPlayerEvents.LOADED_DATA, this.initialSeekToAbsoluteStartTimeBind);
@@ -6527,16 +6648,16 @@
 
         if (sources[0].type === 'application/yospace' && this.yospace) {
           this.yospace().start('VoD', sources[0].src).then(function (mediaLocator) {
-            log$1('yospace mediaLocator returned', mediaLocator);
+            log('yospace mediaLocator returned', mediaLocator);
 
             _this4.options_.excludeTechs.push('EmpShaka');
 
             _this4.options_.excludeTechs.push('EmpDashif');
 
             sources[0] = {
-              'src': mediaLocator,
-              'type': 'application/x-mpegURL',
-              'yospaceUrl': sources[0].src
+              src: mediaLocator,
+              type: 'application/x-mpegURL',
+              yospaceUrl: sources[0].src
             };
 
             _VjsPlayer.prototype.src.call(_this4, sources);
@@ -6550,7 +6671,7 @@
       }
     }
     /**
-     * 
+     *
      * Reset the tech by removing all sources and then calling
      * {@link Html5.resetMediaElement}.
      */
@@ -6564,21 +6685,21 @@
     }
     /**
      *  clearResetAndReloadTimer_
-     * 
+     *
      *  @private
      */
     ;
 
     _proto.clearResetAndReloadTimer_ = function clearResetAndReloadTimer_() {
       if (this.resetAndReloadTimer_) {
-        log$1('clearResetAndReloadTimer');
+        log('clearResetAndReloadTimer');
         clearInterval(this.resetAndReloadTimer_);
         this.resetAndReloadTimer_ = null;
       }
     }
     /**
      *  startResetAndReloadTimer_ use to fix memory issue when play long time
-     *    
+     *
      *  @private
      */
     ;
@@ -6588,18 +6709,21 @@
 
       if (!IS_CHROMECAST || !this.hasStarted()) {
         this.clearResetAndReloadTimer_();
-        log$1('startResetAndReloadTimer');
+        log('startResetAndReloadTimer');
 
         if (this.options_.resetAndReloadLive !== false) {
           // Disable resetAndReloadLive
           var time = 120;
 
           if (this.options_.resetAndReloadLive) {
-            time = this.options_.resetAndReloadLive > 1 ? this.options_.resetAndReloadLive : 1; // Use resetAndReloadLive config
+            // Use resetAndReloadLive config
+            time = this.options_.resetAndReloadLive > 1 ? this.options_.resetAndReloadLive : 1;
           } else if (IS_CHROMECAST) {
-            time = 120; // reset and reload CC every 2 hour
+            // reset and reload CC every 2 hour
+            time = 120;
           } else {
-            time = 120 * 3; // reset and reload Web every 6 hour
+            // reset and reload Web every 6 hour
+            time = 120 * 3;
           }
 
           this.resetAndReloadTimer_ = this.setTimeout(function () {
@@ -6620,18 +6744,17 @@
     ;
 
     _proto.initialSeekToAbsoluteStartTime_ = function initialSeekToAbsoluteStartTime_() {
-      var entitlement = extplayer.getEntitlement(this); //dash and hls live streams have different stream startTime and different currentTime
-      //absoluteStartTime is slower, use startTime in the most cases
+      var entitlement = extplayer.getEntitlement(this); // dash and hls live streams have different stream startTime and different currentTime
+      // absoluteStartTime is slower, use startTime in the most cases
 
       if (this.options_.absoluteStartTime && this.timeShiftEnabled()) {
         this.setAbsoluteTime(new Date(this.options_.absoluteStartTime));
         this.previousAbsoluteStartTime_ = this.options_.absoluteStartTime;
         this.options_.absoluteStartTime = undefined;
-      } //Seek to lastViewedOffset, can't use startTime with Shaka if stream not dashed
-      //TODO Use startTime when we have VOD in new A/V pipe
-      else if (this.options_.useLastViewedOffset && entitlement && !this.isLive() && this.streamType === 'DASH' && entitlement.lastViewedOffset) {
-          this.currentTime(entitlement.lastViewedOffset / 1000);
-        }
+      } else if (this.options_.useLastViewedOffset && entitlement && !this.isLive() && this.streamType === 'DASH' && entitlement.lastViewedOffset) {
+        // Seek to lastViewedOffset, can't use startTime with Shaka if stream not dashed
+        this.currentTime(entitlement.lastViewedOffset / 1000);
+      }
     }
     /**
      * Set Max Bitrate
@@ -6642,18 +6765,25 @@
 
     _proto.setMaxBitrate = function setMaxBitrate(bitrate) {
       this.options_.maxBitrate = bitrate;
-      if (!this.tech_ || this.tech_['setMaxBitrate'] === undefined) return;
+
+      if (!this.tech_ || this.tech_.setMaxBitrate === undefined) {
+        return;
+      }
+
       this.techCall_('setMaxBitrate', bitrate);
     }
     /**
      * Get Max Bitrate
      *
-     * @returns {number}
+     * @return {number}
      */
     ;
 
     _proto.getMaxBitrate = function getMaxBitrate() {
-      if (!this.tech_ || this.tech_['getMaxBitrate'] === undefined) return 0;
+      if (!this.tech_ || this.tech_.getMaxBitrate === undefined) {
+        return 0;
+      }
+
       return this.techGet_('getMaxBitrate');
     }
     /**
@@ -6662,19 +6792,21 @@
      *> **NOTE**: For backward compatibility, use timeShiftEnabled.
      *
      * @param {boolean} value true=disable false=enabled
-     * @returns {boolean} true if timeShift is disable
+     * @return {boolean} true if timeShift is disable
      */
     ;
 
     _proto.disableTimeShift = function disableTimeShift(value) {
-      if (!this.tech_ || this.tech_['disableTimeShift'] === undefined) return false;
+      if (!this.tech_ || this.tech_.disableTimeShift === undefined) {
+        return false;
+      }
 
       if (value !== undefined) {
         if (value === false && !this.canEnableTimeshift()) {
           return !extplayer.timeShiftEnabled(this);
         }
 
-        this.techCall_('disableTimeShift', value); //tech should decide if it can enable timeShift
+        this.techCall_('disableTimeShift', value); // tech should decide if it can enable timeShift
 
         var isEnabled = extplayer.timeShiftEnabled(this);
 
@@ -6695,7 +6827,7 @@
     /**
      * Can timeShift be enabled according to contract restriction
      *
-     * @returns {boolean}
+     * @return {boolean}
      */
     ;
 
@@ -6712,7 +6844,7 @@
      * Get or Set timeShiftEnabled
      *
      * @param {boolean} value
-     * @returns {boolean}
+     * @return {boolean}
      */
     ;
 
@@ -6726,7 +6858,7 @@
     /**
      * No EPG for current program
      *
-     * @returns {boolean}
+     * @return {boolean}
      */
     ;
 
@@ -6746,7 +6878,7 @@
     /**
      * Can video or program restart from begining
      *
-     * @returns {boolean}
+     * @return {boolean}
      */
     ;
 
@@ -6777,8 +6909,8 @@
     /**
      * Set the player in error state or clear error with null
      *
-     * @param {object | string} err The error or null for clear error
-     * @returns {object | string} The current Error
+     * @param {Object | string} err The error or null for clear error
+     * @return {Object | string} The current Error
      */
     ;
 
@@ -6795,30 +6927,30 @@
       }
 
       if (this.error_ && err && err.code === 4) {
-        //secondary fault use first one
+        // secondary fault use first one
         return this.error_;
       }
 
       if (err && isString(err)) {
         err = new EmpPlayerError(err);
       } else if (isObject(err) && !err.code) {
-        err['code'] = EmpPlayerErrorCodes.UNKNOWN;
+        err.code = EmpPlayerErrorCodes.UNKNOWN;
       }
 
       if (isObject(err) && this.cache_.sources && this.cache_.sources.length > 1) {
-        log$1.error(err);
+        log.error(err);
         this.loadNextSource();
         return err;
-      } else {
-        return this.videojsError_(err);
       }
+
+      return this.videojsError_(err);
     }
     /**
      * videojs base error patched
      *
-     * @param {object | string} err The error or null for clear error
-     * @returns {object | string} The current Error
-     * 
+     * @param {Object | string} err The error or null for clear error
+     * @return {Object | string} The current Error
+     *
      * @private
      */
     ;
@@ -6851,19 +6983,20 @@
         errorTypes = MediaError.errorTypes[this.error_.code];
       }
 
-      log$1.error('(CODE:' + this.error_.code + ' ' + errorTypes + ')', this.error_.message, this.error_);
+      log.error('(CODE:' + this.error_.code + ' ' + errorTypes + ')', this.error_.message, this.error_);
       this.trigger({
         type: empPlayerEvents.ERROR,
         bubbles: true
       }, this.error_);
       return;
-    };
-
+    }
     /**
      * Get current Error
      *
-     * @returns {object} Error object
+     * @return {Object} Error object
      */
+    ;
+
     _proto.getError = function getError() {
       return this.error_;
     }
@@ -6880,7 +7013,7 @@
     /**
      * Get the playheadTime as a Date
      *
-     * @returns {Date} playheadTime
+     * @return {Date} playheadTime
      */
     ;
 
@@ -6888,25 +7021,25 @@
       return extplayer.getAbsoluteTime(this);
     }
     /**
-     * Set / Get the play head time unix time (ms) 
+     * Set / Get the play head time unix time (ms)
      *
      * @param {number} unixTime
-     * @returns {number} playheadTime
+     * @return {number} playheadTime
      */
     ;
 
     _proto.playheadTime = function playheadTime(unixTime) {
       if (unixTime === undefined) {
         return extplayer.getPlayheadTime(this);
-      } else {
-        extplayer.setPlayheadTime(this, unixTime);
       }
+
+      extplayer.setPlayheadTime(this, unixTime);
     }
     /**
     * Sets analytics custom attributes
     *
-    * @param {String}      key   Attribute name
-    * @param {String=}     value Attribute value
+    * @param {string}      key   Attribute name
+    * @param {string=}     value Attribute value
     */
     ;
 
@@ -6920,15 +7053,15 @@
       }
 
       this.options_.analytics.customAttributes.push({
-        'key': key,
-        'value': value
+        key: key,
+        value: value
       });
     }
     /**
       * Load an asset for playback
       *
-      * @param {String}      assetId   Identifier of the asset or channel to load
-      * @param {String=}     programId (optional) Identifier of the program to load
+      * @param {string}      assetId   Identifier of the asset or channel to load
+      * @param {string=}     programId (optional) Identifier of the program to load
       * @param {Function=}   callback  Callback when entitlement request has completed
       * @deprecated since version 1, use startPlayback() or src() instead
       */
@@ -6939,13 +7072,13 @@
         callback = function callback() {};
       }
 
-      log$1.warn('loadAsset() has been deprecated with new US a/v pipe use startPlayback() or src() instead');
+      log.warn('loadAsset() has been deprecated with new US a/v pipe use startPlayback() or src() instead');
       this.options({
-        'playFrom': undefined
+        playFrom: undefined
       });
 
       if (!assetId && programId) {
-        log$1.error('loadAsset: with only programId is not supported');
+        log.error('loadAsset: with only programId is not supported');
         callback();
         return;
       }
@@ -6953,11 +7086,11 @@
       extplayer.loadAsset(this, programId ? undefined : assetId, programId, programId ? assetId : undefined, callback);
     }
     /**
-    * Load an asset for playback
-    *
-    * @param {any} assetId   Identifier of the asset to load (VOD, Channel or Program)
-    * @param {any} playbackProperties (optional) Playback properties
-    */
+     * Load an asset for playback
+     *
+     * @param {any} assetId   Identifier of the asset to load (VOD, Channel or Program)
+     * @param {any} playbackProperties (optional) Playback properties
+     */
     ;
 
     _proto.startPlaybackV2 = function startPlaybackV2(assetId, playbackProperties) {
@@ -6979,12 +7112,12 @@
       }
 
       if (!assetId && !channelId && !programId) {
-        log$1.error('startPlayback: assetId or channelId or programId is undefined');
+        log.error('startPlayback: assetId or channelId or programId is undefined');
         return;
       }
 
       if (!assetId && !channelId && programId) {
-        log$1.error('startPlayback: with only programId is not supported');
+        log.error('startPlayback: with only programId is not supported');
         return;
       }
 
@@ -6993,8 +7126,8 @@
       }
 
       var options = {
-        'playFrom': playbackProperties.playFrom,
-        'autoplay': true
+        playFrom: playbackProperties.playFrom,
+        autoplay: true
       };
 
       if (playbackProperties.autoplay !== undefined) {
@@ -7037,12 +7170,13 @@
 
         _VjsPlayer.prototype.src.call(this, entitlement);
       } else {
-        log$1.error("Call playEntitlement without entitlement");
+        log.error('Call playEntitlement without entitlement');
       }
     }
     /**
      * seconds behinde live edge
-     * @returns {number} timeBehindLive
+     *
+     * @return {number} timeBehindLive
      */
     ;
 
@@ -7051,7 +7185,8 @@
     }
     /**
      * get live delay, how many seconds player live edge differ fom server time
-     * @returns {number} live delay in seconds
+     *
+     * @return {number} live delay in seconds
      */
     ;
 
@@ -7060,7 +7195,8 @@
     }
     /**
      * The unix time (ms) when stream was started
-     * @returns {number} Start Time Live
+     *
+     * @return {number} Start Time Live
      */
     ;
 
@@ -7069,7 +7205,8 @@
     }
     /**
      * The time (s) the live stream has drifted
-     * @returns {number} drifting Time or NaN
+     *
+     * @return {number} drifting Time or NaN
      */
     ;
 
@@ -7078,7 +7215,8 @@
     }
     /**
      * Get Current Tech Name
-     * @returns {string} Current Tech Name
+     *
+     * @return {string} Current Tech Name
      */
     ;
 
@@ -7087,14 +7225,15 @@
     }
     /**
      * Get version
-     * @returns {string} version number
+     *
+     * @return {string} version number
      */
     ;
 
     /**
      * Get current Exposure
      *
-    * @returns {EntitlementEngine} 
+    * @return {EntitlementEngine}
     */
     _proto.getExposure = function getExposure() {
       if (this.programService) {
@@ -7105,13 +7244,14 @@
     }
     /**
     * Sync localtime with servertime
+     *
     * @param {Function=}  callback  Callback when localtime sync with servertime or an error occurs
     */
     ;
 
     _proto.syncServerTime = function syncServerTime(callback) {
       if (this.programService) {
-        exposure = this.programService().exposure;
+        var exposure = this.programService().exposure;
 
         if (exposure) {
           exposure.syncServerTime(callback);
@@ -7120,7 +7260,7 @@
       }
 
       var errMsg = 'No programService or No exposure';
-      log$1.error(errMsg);
+      log.error(errMsg);
 
       if (callback) {
         callback(0, errMsg);
@@ -7150,8 +7290,8 @@
      * Supports Epg Program Change
      *
      * > **NOTE**: For backward compatibility only.
-     *    
-     * @returns {boolean} True if programService is available
+     *
+     * @return {boolean} True if programService is available
      */
     ;
 
@@ -7160,8 +7300,8 @@
     }
     /**
      * Get Server Now Time
-     *    
-     * @returns {number}
+     *
+     * @return {number}
      */
     ;
 
@@ -7172,7 +7312,7 @@
      * getProgram
      *
      * > **NOTE**: For backward compatibility only.
-     *    
+     *
      * @param {Function=} callback Callback with the program
      * @deprecated since version 1 use getProgramDetails instead
      */
@@ -7186,34 +7326,34 @@
     }
     /**
      * Get Program Details
-     *    
-     * @returns {object} Program Details
+     *
+     * @return {Object} Program Details
      */
     ;
 
     _proto.getProgramDetails = function getProgramDetails() {
       if (extplayer.supportsEpgProgramChange(this)) {
         return extplayer.program(this);
-      } else {
-        if (this.programService) {
-          return this.programService().currentProgram;
-        }
+      }
+
+      if (this.programService) {
+        return this.programService().currentProgram;
       }
     }
     /**
      * Get Asset/VOD Details
-     *    
-     * @returns {object} Asset/VOD Details
+     *
+     * @return {Object} Asset/VOD Details
      */
     ;
 
     _proto.getAssetDetails = function getAssetDetails() {
-      if (this.tech_ && this.tech_['VOD']) {
+      if (this.tech_ && this.tech_.VOD) {
         return this.techGet_('VOD');
-      } else {
-        if (this.programService) {
-          return this.programService().currentVOD;
-        }
+      }
+
+      if (this.programService) {
+        return this.programService().currentVOD;
       }
     }
     /**
@@ -7265,7 +7405,7 @@
               seconds = seconds + (start.getTime() - t.start.getTime()) / 1000;
 
               if (seconds <= 0) {
-                seconds = 0; //log('currentTime', 'playPreviousProgram');
+                seconds = 0; // log('currentTime', 'playPreviousProgram');
 
                 extplayer.playPreviousProgram(this, true);
                 return;
@@ -7274,7 +7414,7 @@
               seconds = seconds + start.getTime() / 1000;
 
               if (seconds * 1000 <= entitlement.streamInfo.start.getTime()) {
-                seconds = entitlement.streamInfo.start.getTime() / 1000 + 1; //log('currentTime', 'playPreviousProgram');
+                seconds = entitlement.streamInfo.start.getTime() / 1000 + 1; // log('currentTime', 'playPreviousProgram');
 
                 extplayer.playPreviousProgram(this, true);
                 return;
@@ -7309,8 +7449,8 @@
             currentTime = currentTime - _start.getTime() / 1000;
           }
         } else if (!program) {
-          //Don't show progressbar
-          this.duration(Infinity); //log('currentTimeN', this.hasClass('vjs-live'));
+          // Don't show progressbar
+          this.duration(Infinity); // log('currentTimeN', this.hasClass('vjs-live'));
         }
 
         if (!this.scrubbing()) {
@@ -7318,38 +7458,38 @@
         }
 
         return this.cache_.currentTime;
-      } else {
-        if (typeof seconds !== 'undefined') {
-          if (entitlement && (entitlement.isDynamicCachupAsLive || entitlement.isStaticCachupAsLive) && this.techName_ === 'EmpCast') ; else {
-            seconds = seconds < 0 ? 0 : seconds;
-          }
-
-          this.techCall_('setCurrentTime', seconds);
-          return;
-        } else {
-          if (!this.scrubbing()) {
-            this.cache_.currentTime = this.techGet_('currentTime') || 0;
-          }
-
-          return this.cache_.currentTime;
-        }
       }
+
+      if (typeof seconds !== 'undefined') {
+        if (entitlement && (entitlement.isDynamicCachupAsLive || entitlement.isStaticCachupAsLive) && this.techName_ === 'EmpCast') ; else {
+          seconds = seconds < 0 ? 0 : seconds;
+        }
+
+        this.techCall_('setCurrentTime', seconds);
+        return;
+      }
+
+      if (!this.scrubbing()) {
+        this.cache_.currentTime = this.techGet_('currentTime') || 0;
+      }
+
+      return this.cache_.currentTime;
     }
     /**
-    * Gets the length in time of the video or program in seconds;
-    * in all but the rarest use cases an argument will NOT be passed to the method
-    *
-    * > **NOTE**: The video must have started loading before the duration can be
-    * known.
-    *
-    * @fires Player#durationchange
-    *
-    * @param {number} [seconds]
-    *        The duration of the video to set in seconds
-    *
-    * @return {number}
-    *         - The duration of the video in seconds when getting
-    */
+     * Gets the length in time of the video or program in seconds;
+     * in all but the rarest use cases an argument will NOT be passed to the method
+     *
+     * > **NOTE**: The video must have started loading before the duration can be
+     * known.
+     *
+     * @fires Player#durationchange
+     *
+     * @param {number} [seconds]
+     *        The duration of the video to set in seconds
+     *
+     * @return {number}
+     *         - The duration of the video in seconds when getting
+     */
     ;
 
     _proto.duration = function duration(seconds) {
@@ -7373,13 +7513,13 @@
           if (this.noEPG()) {
             seconds = Infinity;
             this.addClass('vjs-live');
-          } //log('set duration', seconds);
+          } // log('set duration', seconds);
 
 
           _VjsPlayer.prototype.duration.call(this, seconds);
 
           return;
-        } //seconds === undefined
+        } // seconds === undefined
 
 
         var duration = this.techGet_('duration');
@@ -7396,17 +7536,17 @@
 
         this.cache_.duration = duration;
         return duration;
-      } else {
-        _VjsPlayer.prototype.duration.call(this, seconds);
-
-        return this.techGet_('duration');
       }
+
+      _VjsPlayer.prototype.duration.call(this, seconds);
+
+      return this.techGet_('duration');
     }
     /**
-     * Get a program related `TimeRange` object for seekable range.
-     *
-     * @return {TimeRange} The time range object.
-     */
+    * Get a program related `TimeRange` object for seekable range.
+    *
+    * @return {TimeRange} The time range object.
+    */
     ;
 
     _proto.seekable = function seekable() {
@@ -7419,10 +7559,10 @@
       return range;
     }
     /**
-      * Get a program related `TimeRange` object for buffering.
-      *
-      * @return {TimeRange} The time range object.
-      */
+     * Get a program related `TimeRange` object for buffering.
+     *
+     * @return {TimeRange} The time range object.
+     */
     ;
 
     _proto.buffered = function buffered() {
@@ -7436,8 +7576,9 @@
     }
     /**
      * getRange_
-     * @param {object} range
-     * @returns {object} TimeRanges
+     *
+     * @param {Object} range
+     * @return {Object} TimeRanges
      * @private
      */
     ;
@@ -7494,7 +7635,7 @@
         var end = new Date(program.endTime).getTime();
 
         if (nowDate < end) {
-          //live
+          // live
           duration = this.techGet_('duration');
 
           if (duration !== Infinity) {
@@ -7515,7 +7656,8 @@
     }
     /**
      * Get remaining time of the program/vod
-     * @returns {number}
+     *
+     * @return {number}
      */
     ;
 
@@ -7528,9 +7670,9 @@
 
         if (duration === Infinity || duration === 0) {
           return Infinity;
-        } else {
-          time = duration - this.currentTime();
         }
+
+        time = duration - this.currentTime();
       } else {
         time = extplayer.remainingTime(this);
       }
@@ -7551,6 +7693,7 @@
     }
     /**
      * Play Previous Program
+     *
      * @param {boolean} end If it should play 30 sec from the end
      */
     ;
@@ -7559,11 +7702,11 @@
       var _this6 = this;
 
       if (this.sourceChanging_) {
-        log$1('playPreviousProgram ignore sourceChanging');
+        log('playPreviousProgram ignore sourceChanging');
         return;
       }
 
-      if (this.tech_['playPreviousProgram']) {
+      if (this.tech_.playPreviousProgram) {
         this.techCall_('playPreviousProgram', end);
       } else {
         var entitlement = extplayer.getEntitlement(this);
@@ -7571,15 +7714,11 @@
         if (this.programService && (entitlement.isStaticCachupAsLive || entitlement.isDynamicCachupAsLive) && entitlement.rwEnabled) {
           this.programService().getPreviousProgram(function (program, error) {
             if (error) {
-              log$1.warn('playPreviousProgram', error);
+              log.warn('playPreviousProgram', error);
+            } else if (end) {
+              _this6.playheadTime(program.end.getTime() - 30000);
             } else {
-              var dateTime = new Date(program.startTime);
-
-              if (end) {
-                _this6.playheadTime(program.end.getTime() - 30000);
-              } else {
-                _this6.playheadTime(program.start.getTime() + 1000);
-              }
+              _this6.playheadTime(program.start.getTime() + 1000);
             }
           });
         } else {
@@ -7594,11 +7733,11 @@
 
     _proto.playNextProgram = function playNextProgram() {
       if (this.sourceChanging_) {
-        log$1('playNextProgram ignore sourceChanging');
+        log('playNextProgram ignore sourceChanging');
         return;
       }
 
-      if (this.tech_['playNextProgram']) {
+      if (this.tech_.playNextProgram) {
         this.techCall_('playNextProgram');
       } else {
         var entitlement = extplayer.getEntitlement(this);
@@ -7613,7 +7752,8 @@
     }
     /**
      * Is the playing program live
-     * @returns {boolean}
+     *
+     * @return {boolean}
      */
     ;
 
@@ -7628,7 +7768,8 @@
     }
     /**
      * Is the playing program a Catchup
-     * @returns {boolean}
+     *
+     * @return {boolean}
      */
     ;
 
@@ -7637,14 +7778,14 @@
 
       if (entitlement) {
         return entitlement.isStaticCachupAsLive || !this.isProgramLive() && entitlement.isDynamicCachupAsLive;
-      } else {
-        return !this.isLive();
       }
+
+      return !this.isLive();
     }
     /**
      * Get current video source asset object
      *
-     * @returns {object} video source asset object { 'assetId': assetId, 'programId': programId, 'channelId': channelId }
+     * @return {Object} video source asset object { 'assetId': assetId, 'programId': programId, 'channelId': channelId }
      */
     ;
 
@@ -7654,7 +7795,7 @@
     /**
      * Check if video has ended
      *
-     * @returns {boolean}  true if Video has ended
+     * @return {boolean}  true if Video has ended
      */
     ;
 
@@ -7663,6 +7804,7 @@
     }
     /**
     * handleTechWaiting, filter if no real buffering
+     *
     * @private
     */
     ;
@@ -7672,7 +7814,7 @@
 
       if (this.hasStarted() && !this.ended() && !this.paused() && !this.hasClass('vjs-waiting')) {
         this.playheadMoving_(function (moving) {
-          //log('playheadMoving', moving);
+          // log('playheadMoving', moving);
           if (!moving) {
             _this7.addClass('vjs-waiting');
 
@@ -7685,6 +7827,7 @@
     }
     /**
      * remove vjs-waiting class
+     *
      * @private
      */
     ;
@@ -7693,12 +7836,12 @@
       var _this8 = this;
 
       this.one('timeupdate', function () {
-        //log('playheadMoving off', this.prePlayheadTime_, this.playheadTime(), this.playheadTime() - this.prePlayheadTime_);
+        // log('playheadMoving off', this.prePlayheadTime_, this.playheadTime(), this.playheadTime() - this.prePlayheadTime_);
         if (_this8.playheadTime() - _this8.prePlayheadTime_ > 1 || _this8.playheadTime() - _this8.prePlayheadTime_ < -1) {
-          //log('playheadMoving off', true);
+          // log('playheadMoving off', true);
           _this8.prePlayheadTime_ = 0;
 
-          _this8.removeClass('vjs-waiting'); //edgeIELoadingBugWorkaround_(); Add if need
+          _this8.removeClass('vjs-waiting'); // edgeIELoadingBugWorkaround_(); Add if need
 
 
           if (_this8.paused()) {
@@ -7712,21 +7855,22 @@
       });
     }
     /*
-      //Temporary bug fix to overcome shaka bug in IE/Edge where the loading spinner never disapears after seek occurs.
-      edgeIELoadingBugWorkaround_() {
-        this.on(EmpPlayerEvents.SEEKED, () => {
-          var loadings = document.getElementsByClassName('vjs-waiting');
-          [].forEach.call(loadings, function (loadingEl) {
-            if (loadingEl && loadingEl.classList) {
-              loadingEl.classList.remove('vjs-waiting');
-            }
-          });
+    //Temporary bug fix to overcome shaka bug in IE/Edge where the loading spinner never disapears after seek occurs.
+    edgeIELoadingBugWorkaround_() {
+      this.on(EmpPlayerEvents.SEEKED, () => {
+        var loadings = document.getElementsByClassName('vjs-waiting');
+        [].forEach.call(loadings, function (loadingEl) {
+          if (loadingEl && loadingEl.classList) {
+            loadingEl.classList.remove('vjs-waiting');
+          }
         });
-      }
-     */
+      });
+    }
+    */
 
     /**
     * Check if playhead is moving
+     *
     * @param {Function=} callback moving callback
     * @private
     */
@@ -7740,7 +7884,7 @@
 
       this.prePlayheadTime_ = this.playheadTime();
       this.playheadMovingTimer_ = this.setTimeout(function () {
-        //log('playheadMoving', this.prePlayheadTime_, this.playheadTime(), this.playheadTime() - this.prePlayheadTime_);
+        // log('playheadMoving', this.prePlayheadTime_, this.playheadTime(), this.playheadTime() - this.prePlayheadTime_);
         callback(this.playheadTime() - this.prePlayheadTime_ > 200 || this.playheadTime() - this.prePlayheadTime_ < -200);
       }, 2000);
     }
@@ -7819,7 +7963,7 @@
     /**
      * Video Source is changing
      *
-     * @returns {boolean}  true if video source is changing
+     * @return {boolean}  true if video source is changing
      */
     ;
 
@@ -7828,8 +7972,8 @@
     }
     /**
      * Check if player is casting to Chromecast
-     * 
-     * @returns {boolean}  true if casting
+     *
+     * @return {boolean}  true if casting
      */
     ;
 
@@ -7840,18 +7984,18 @@
     _createClass(Player, [{
       key: "version",
       get: function get() {
-        return '2.1.101-313';
+        return '2.1.101-314';
       }
       /**
        * Get entitlement
        *
-      * @returns {Entitlement} current entitlement
+      * @return {Entitlement} current entitlement
       */
 
     }, {
       key: "entitlement",
       get: function get() {
-        var entitlement = extplayer.getEntitlement(this); //Clone entitlement
+        var entitlement = extplayer.getEntitlement(this); // Clone entitlement
 
         if (entitlement) {
           entitlement = assign({}, entitlement);
@@ -7864,10 +8008,10 @@
       key: "streamType",
       get: function get() {
         if (this.tech_) {
-          return this.tech_['streamType'];
-        } else {
-          return undefined;
+          return this.tech_.streamType;
         }
+
+        return undefined;
       }
     }]);
 
@@ -7875,21 +8019,21 @@
   }(VjsPlayer);
   /**
    * Get AutoTechArray
+   *
    * @param {string} chosenDashTech choice of dash tech
-   * @returns {String[]} AutoTechArray
+   * @return {string[]} AutoTechArray
    *  @static
    */
+
 
   Player.AutoTechArray = function (chosenDashTech) {
     var dashTech1 = Tech.techs_.hasOwnProperty('EmpShaka');
     var dashTech2 = Tech.techs_.hasOwnProperty('EmpDashif');
 
-    if (dashTech1 && dashTech2) ; else {
-      if (dashTech1) {
-        chosenDashTech = 'EmpShaka';
-      } else {
-        chosenDashTech = 'EmpDashif';
-      }
+    if (dashTech1 && dashTech2) ; else if (dashTech1) {
+      chosenDashTech = 'EmpShaka';
+    } else {
+      chosenDashTech = 'EmpDashif';
     }
 
     var autoTechOrder = [chosenDashTech, 'EmpHLS-MSE', 'EmpHLS', 'Html5'];
@@ -7916,12 +8060,12 @@
   /**
    * Check if the browser and plattform suppot Fairplay
    *
-   * @returns {boolean} True if the browser and plattform support Fairplay
+   * @return {boolean} True if the browser and plattform support Fairplay
    */
 
 
   Player.SupportFairplay_ = function () {
-    var hlsTech = videojs$1.getTech('EmpHLS');
+    var hlsTech = videojs.getTech('EmpHLS');
 
     if (undefined !== hlsTech && hlsTech.isSupported() && window_1.WebKitMediaKeys && hlsTech.getKeySystem && window_1.WebKitMediaKeys.isTypeSupported(hlsTech.getKeySystem(), 'video/mp4')) {
       return true;
@@ -7931,37 +8075,37 @@
   }; // Override default 'Player' component
 
 
-  var Component$k = videojs$1.getComponent('Component');
-  Component$k.registerComponent('Player', Player);
+  var Component$j = videojs.getComponent('Component');
+  Component$j.registerComponent('Player', Player);
 
   /**
    * Detects if the current browser has the required technology to play an unencrypted stream provided by EMP.
    *
-   * @returns {Promise} that is always fulfilled with a boolean value
+   * @return {Promise} that is always fulfilled with a boolean value
    */
 
   function canPlayUnencrypted() {
     // test if DASH is supported
-    var shakaTech = videojs$1.getTech('EmpShaka');
+    var shakaTech = videojs.getTech('EmpShaka');
 
     if (undefined !== shakaTech && shakaTech.isSupported()) {
       return Promise.resolve(true);
     }
 
-    var dashifTech = videojs$1.getTech('EmpDashif');
+    var dashifTech = videojs.getTech('EmpDashif');
 
     if (undefined !== dashifTech && dashifTech.isSupported()) {
       return Promise.resolve(true);
     } // test if HLS is supported
 
 
-    var hlsTech = videojs$1.getTech('EmpHLS');
+    var hlsTech = videojs.getTech('EmpHLS');
 
     if (undefined !== hlsTech && hlsTech.isSupported()) {
       return Promise.resolve(true);
     }
 
-    var hlsMseTech = videojs$1.getTech('EmpHLS-MSE');
+    var hlsMseTech = videojs.getTech('EmpHLS-MSE');
 
     if (undefined !== hlsMseTech && hlsMseTech.isSupported()) {
       return Promise.resolve(true);
@@ -7972,7 +8116,7 @@
   /**
    * Detects if the current browser has the required technology to play an encrypted stream provided by EMP.
    *
-   * @returns {Promise} that is always fulfilled with a boolean value
+   * @return {Promise} that is always fulfilled with a boolean value
    */
 
   function canPlayEncrypted() {
@@ -7995,8 +8139,8 @@
         sessionTypes: ['temporary']
       }]; // test if DASH + Widevine or Playready is supported
 
-      var shakaTech = videojs$1.getTech('EmpShaka');
-      var dashifTech = videojs$1.getTech('EmpDashif');
+      var shakaTech = videojs.getTech('EmpShaka');
+      var dashifTech = videojs.getTech('EmpDashif');
 
       if (undefined !== shakaTech && shakaTech.isSupported() || undefined !== dashifTech && dashifTech.isSupported()) {
         ptable.push(new Promise(function (resolve, reject) {
@@ -8015,13 +8159,13 @@
         }));
       }
     } else {
-      var _shakaTech = videojs$1.getTech('EmpShaka');
+      var _shakaTech = videojs.getTech('EmpShaka');
 
-      var _dashifTech = videojs$1.getTech('EmpDashif');
+      var _dashifTech = videojs.getTech('EmpDashif');
 
       if (undefined !== _shakaTech && _shakaTech.isSupported() || undefined !== _dashifTech && _dashifTech.isSupported()) {
         if (IE_VERSION === 11 && window_1.MSMediaKeys) {
-          if (window_1.MSMediaKeys.isTypeSupported("com.microsoft.playready", 'video/mp4')) {
+          if (window_1.MSMediaKeys.isTypeSupported('com.microsoft.playready', 'video/mp4')) {
             ptable.push(true);
           }
         }
@@ -8029,14 +8173,14 @@
     } // test if HLS + Fairplay is supported
 
 
-    var hlsTech = videojs$1.getTech('EmpHLS');
+    var hlsTech = videojs.getTech('EmpHLS');
 
     if (undefined !== hlsTech && hlsTech.isSupported() && window_1.WebKitMediaKeys && hlsTech.getKeySystem && window_1.WebKitMediaKeys.isTypeSupported(hlsTech.getKeySystem(), 'video/mp4')) {
       ptable.push(true);
     } // If no playback technology is available, resolve to false
 
 
-    if (0 === ptable.length) {
+    if (ptable.length === 0) {
       ptable.push(false);
     }
 
@@ -8046,8 +8190,6 @@
       return false;
     });
   }
-
-  var empPlayer = window_1.empPlayer;
 
   var EMPAnalyticsConnector =
   /*#__PURE__*/
@@ -8107,8 +8249,8 @@
 
       if (!this.mem[sId]) {
         this.mem[sId] = {
-          'pause': {},
-          'resume': {}
+          pause: {},
+          resume: {}
         };
       }
 
@@ -8162,7 +8304,7 @@
               _this.clearTimers();
             });
           } else {
-            log$1.error('registerCurrentTimeTimer Exposure is undefined');
+            log.error('registerCurrentTimeTimer Exposure is undefined');
           }
         }
       }, 1000);
@@ -8188,14 +8330,14 @@
 
     _proto.init = function init() {
       if (!this.player_ || !this.analytics_) {
-        log$1.warn('Warning: init failed . Possible causes: either player or analytics were not set.');
+        log.warn('Warning: init failed . Possible causes: either player or analytics were not set.');
         return;
       }
 
       this._errorSessionId = null;
       this.disabled_ = false;
       this.entitlementLoaded_ = false;
-      log$1('Initialization EmpAnalytics');
+      log('Initialization EmpAnalytics');
       this.analytics_.init();
       window_1.addEventListener('beforeunload', this.onWindowUnloadBind);
       this.player_.on(empPlayerEvents.ENTITLEMENT_LOAD_START, this.onEntitlementLoadStartBind);
@@ -8250,7 +8392,7 @@
         if (sId) {
           var currentTime = _this3.getCachedCurrentTime();
 
-          log$1('StartCasting', currentTime);
+          log('StartCasting', currentTime);
 
           _this3.analytics_.startCasting(_this3.SessionId(), currentTime);
         }
@@ -8290,14 +8432,14 @@
       var _this5 = this;
 
       var program = data ? data.program : null;
-      log$1('analytics', 'onProgramChange', program);
+      log('analytics', 'onProgramChange', program);
 
       if (program && this.analytics_.programChanged) {
-        //Don't send ProgramChange if it's a new session
+        // Don't send ProgramChange if it's a new session
         if (this.player_.hasStarted()) {
           this.onGeneric('ProgramChange', this.analytics_.programChanged, function () {
             _this5.analytics_.programChanged(_this5.SessionId(), _this5.OffsetTime(), {
-              'programId': program.programId
+              programId: program.programId
             });
           }, true);
         }
@@ -8313,7 +8455,7 @@
       var _this6 = this;
 
       this.entitlementLoaded_ = true;
-      this.player_.off(empPlayerEvents.ERROR, this.onErrorBeforeAssetBind); //entitlement method will cache entitlement
+      this.player_.off(empPlayerEvents.ERROR, this.onErrorBeforeAssetBind); // entitlement method will cache entitlement
 
       var entitlement = this.entitlement(data && data.entitlement);
       this.onGeneric('HandShake', this.analytics_.handshake, function () {
@@ -8335,7 +8477,7 @@
             params.channelId = asset.channelId;
             params.programId = asset.programId;
           }
-        } //Use this new playSessionId
+        } // Use this new playSessionId
 
 
         var playSessionId = entitlement ? entitlement.playSessionId : errorSessionId;
@@ -8373,7 +8515,7 @@
       var currentSessionId = playSessionId ? playSessionId : this.SessionId();
 
       if (!currentSessionId) {
-        log$1('onLoadStart called but not session available.');
+        log('onLoadStart called but not session available.');
         return;
       }
 
@@ -8383,7 +8525,7 @@
           var options = _this8.player_.options();
 
           var params = {
-            'version': _this8.playerVersion
+            version: _this8.playerVersion
           };
 
           if (options && options.autoplay) {
@@ -8423,7 +8565,7 @@
 
       this.onGeneric('BitrateChange', this.analytics_.bitrateChanged, function () {
         var params = {
-          'bitrate': Math.max(0, Math.round(_this9.getBitrate() / 1000))
+          bitrate: Math.max(0, Math.round(_this9.getBitrate() / 1000))
         };
 
         _this9.analytics_.bitrateChanged(_this9.SessionId(), _this9.OffsetTime(), params);
@@ -8581,9 +8723,9 @@
         }
 
         var params = {
-          'techName': techName,
-          'version': _this14.playerVersion,
-          'techVersion': _this14.techVersion
+          techName: techName,
+          version: _this14.playerVersion,
+          techVersion: _this14.techVersion
         };
 
         _this14.analytics_.play(_this14.SessionId(), _this14.OffsetTime(), params);
@@ -8656,13 +8798,13 @@
 
         var sId = _this17.SessionId();
 
-        var refTim = parseInt((new Date() - 0) / 25);
+        var refTim = parseInt((new Date() - 0) / 25, 10);
 
-        if (_this17.mem[sId]['pause'][refTim]) {
+        if (_this17.mem[sId].pause[refTim]) {
           return;
         }
 
-        _this17.mem[sId]['pause'][refTim] = true;
+        _this17.mem[sId].pause[refTim] = true;
 
         _this17.analytics_.paused(sId, _this17.OffsetTime());
       }, true);
@@ -8679,13 +8821,13 @@
       this.onGeneric('Resume', this.analytics_.resume, function () {
         var sId = _this18.SessionId();
 
-        var refTim = parseInt((new Date() - 0) / 25);
+        var refTim = parseInt((new Date() - 0) / 25, 10);
 
-        if (_this18.mem[sId]['resume'][refTim]) {
+        if (_this18.mem[sId].resume[refTim]) {
           return;
         }
 
-        _this18.mem[sId]['resume'][refTim] = true;
+        _this18.mem[sId].resume[refTim] = true;
 
         _this18.analytics_.resume(sId, _this18.OffsetTime());
       }, true);
@@ -8700,7 +8842,7 @@
       this.entitlementLoaded_ = false;
       this.onEntitlementChange(null, null, this.errorSessionId);
       this.onError(null, this.errorSessionId);
-      this.clearTimers(); //this.entitlementLoaded_ = true;
+      this.clearTimers(); // this.entitlementLoaded_ = true;
     };
 
     /**
@@ -8778,12 +8920,12 @@
     _proto.onDrmSessionUpdate = function onDrmSessionUpdate(event, data) {
       var _this20 = this;
 
-      log$1('onDrmSessionUpdate', event, data);
+      log('onDrmSessionUpdate', event, data);
       this.onGeneric('DrmSessionUpdate', this.analytics_.drmSessionUpdate, function () {
         _this20.analytics_.drmSessionUpdate(_this20.SessionId(), {
-          'message': data.messageType,
-          'code': data.code,
-          'info': data.info
+          message: data.messageType,
+          code: data.code,
+          info: data.info
         });
       }, true);
     }
@@ -8799,12 +8941,12 @@
       }
 
       if (this.disabled_ && !ignoreDisabled) {
-        log$1(eventName + ' not delivered: analytics disabled.');
+        log(eventName + ' not delivered: analytics disabled.');
         return;
       }
 
       if (checkSessionCreation && !this.sessionCreated(this.SessionId())) {
-        log$1(eventName + ' was discarded.');
+        log(eventName + ' was discarded.');
       } else if (eventFnc && callback) {
         callback();
       }
@@ -8862,7 +9004,10 @@
     }, {
       key: "playerVersion",
       get: function get() {
-        if (!this.player_.version) return window_1.videojs ? window_1.videojs.VERSION : '2.x.x';
+        if (!this.player_.version) {
+          return window_1.videojs ? window_1.videojs.VERSION : '2.x.x';
+        }
+
         return this.player_.version;
       }
     }, {
@@ -8887,9 +9032,9 @@
   var empAnalyticsTmp = unwrapExports(empAnalytics_min);
 
   var EMPAnalytics = window_1.empAnalytics ? window_1.empAnalytics : empAnalyticsTmp;
-  var Plugin = videojs$1.getPlugin('plugin');
+  var Plugin = videojs.getPlugin('plugin');
   /**
-   * 
+   *
    * @param {Player} player The `Player` that this class should be attached to.
    * @param {Object=} options The key/value store of player options.
    * @class AnalyticsPlugin
@@ -8904,7 +9049,7 @@
       var _this;
 
       _this = _Plugin.call(this, player, options) || this;
-      log$1('AnalyticsPlugin', 'create');
+      log('AnalyticsPlugin', 'create');
       _this.analyticsConnector_ = null;
       _this.options_ = options;
       _this.onLoadStartBind = _this.onLoadStart_.bind(_assertThisInitialized(_assertThisInitialized(_this)));
@@ -8915,9 +9060,9 @@
       _this.options_ = _this.options_ ? _this.options_ : {};
       _this.options_.analytics = _this.options_.analytics ? _this.options_.analytics : {};
       _this.options_.analytics.deviceInfo = _this.options_.analytics.deviceInfo ? _this.options_.analytics.deviceInfo : {};
-      _this.options_.analytics.deviceInfo = videojs$1.mergeOptions({
-        'deviceName': client.name,
-        'model': client.version
+      _this.options_.analytics.deviceInfo = videojs.mergeOptions({
+        deviceName: client.name,
+        model: client.version
       }, _this.options_.analytics.deviceInfo);
       return _this;
     }
@@ -8951,7 +9096,7 @@
     ;
 
     _proto.dispose = function dispose() {
-      log$1('AnalyticsPlugin', 'dispose');
+      log('AnalyticsPlugin', 'dispose');
       this.player.off(empPlayerEvents.LOAD_START, this.onLoadStartBind);
       this.stop();
 
@@ -8970,20 +9115,21 @@
         return this.options_;
       }
 
-      this.options_ = videojs$1.mergeOptions(this.options_, obj);
+      this.options_ = videojs.mergeOptions(this.options_, obj);
     }
     /**
      * Create a new Analytics session
+     *
      * @param {Object=} obj options
      */
     ;
 
     _proto.newAnalytics = function newAnalytics(opt) {
-      log$1('new EMPAnalytics'); //exposureApiURL, customer, businessUnit, sessionToken, userId, deviceInfoData = {}, props = {}
+      log('new EMPAnalytics'); // exposureApiURL, customer, businessUnit, sessionToken, userId, deviceInfoData = {}, props = {}
 
       var analytics = new EMPAnalytics(opt.exposureApiURL, opt.customer, opt.businessUnit, opt.sessionToken, opt.userId, this.options_.analytics && this.options_.analytics.deviceInfo);
       this.stop();
-      log$1('new EMPAnalyticsConnector');
+      log('new EMPAnalyticsConnector');
       this.analyticsConnector_ = new EMPAnalyticsConnector(this.player, analytics, this.options_);
     }
     /**
@@ -8996,16 +9142,21 @@
      * Call onEntitlementLoadStart
      */
     _proto.onEntitlementLoadStart = function onEntitlementLoadStart() {
-      this.analyticsConnector_ && this.analyticsConnector_.onEntitlementLoadStart();
+      if (this.analyticsConnector_) {
+        this.analyticsConnector_.onEntitlementLoadStart();
+      }
     }
     /**
      * Call onError
+     *
      * @param {Error} e
      */
     ;
 
     _proto.onError = function onError(e) {
-      this.analyticsConnector_ && this.analyticsConnector_.onError(e);
+      if (this.analyticsConnector_) {
+        this.analyticsConnector_.onError(e);
+      }
     }
     /**
      * Call onWindowUnload
@@ -9013,17 +9164,20 @@
     ;
 
     _proto.onWindowUnload = function onWindowUnload() {
-      this.analyticsConnector_ && this.analyticsConnector_.onWindowUnload();
+      if (this.analyticsConnector_) {
+        this.analyticsConnector_.onWindowUnload();
+      }
     }
     /**
-     *  Handle onLoadStart event 
-     * @param {object} event
+     *  Handle onLoadStart event
+     *
+     * @param {Object} event
      * @private
      */
     ;
 
     _proto.onLoadStart_ = function onLoadStart_(event) {
-      //if no entitlement stop analytics
+      // if no entitlement stop analytics
       if (!extplayer.getEntitlement(this.player)) {
         this.stop();
       }
@@ -9032,9 +9186,9 @@
     _proto.version = function version() {
       if (EMPAnalytics) {
         return EMPAnalytics.VERSION;
-      } else {
-        return _Plugin.prototype.version.call(this);
       }
+
+      return _Plugin.prototype.version.call(this);
     };
 
     _createClass(AnalyticsPlugin, [{
@@ -9047,371 +9201,13 @@
     return AnalyticsPlugin;
   }(Plugin);
 
-  AnalyticsPlugin.VERSION = '2.1.101-313';
+  AnalyticsPlugin.VERSION = '2.1.101-314';
 
-  if (videojs$1.getPlugin('analytics')) {
-    videojs$1.log.warn('A plugin named "analytics" already exists.');
+  if (videojs.getPlugin('analytics')) {
+    videojs.log.warn('A plugin named "analytics" already exists.');
   } else {
-    videojs$1.registerPlugin('analytics', AnalyticsPlugin);
+    videojs.registerPlugin('analytics', AnalyticsPlugin);
   }
-
-  /**
-   * Entitlement Base Class
-   *
-   * @class Entitlement
-   * @param {Object}  [options]              - Object of option names and values
-   * @param {string}  [options.assetId]      - asset identifier
-   * @param {string}  [options.programId]     - program identifier
-   * @param {string}  [options.channelId]     - channel identifier
-   * @param {string}  [options.playToken=''] - play token string to be used to authenticate the DRM license requests
-   * @param {string}  [options.mediaLocator=''] - stream locator to be used by the underlying playback technology
-   * @param {Object}  [options.edrmConfig=null] - EDRM configuration object as provided by EMP Exposure API
-   * @param {boolean} [options.live=false]   - set to true if the Entitlement represents a Live stream
-   * @param {integer} [options.minBitrate=0] - set to any value >0 to limit the minimum playback bitrate
-   * @param {integer} [options.maxBitrate=0] - set to any value >0 to limit the maximum playback bitrate
-   * @param {integer} [options.maxResWidth=0] - set to any value >0 to limit the maximum playback resolution width
-   * @param {integer} [options.maxResHeight=0] - set to any value >0 to limit the maximum playback resolution height
-   * @param {boolean} [options.rwEnabled=true] - set to false to disable rewind option
-   * @param {boolean} [options.ffEnabled=true] - set to false to disable fast forward option
-   * @param {boolean} [options.airplayBlocked=false] - set to true to disable airplay option
-   * @param {boolean} [options.timeshiftEnabled=undefined] - set to false to disable timeshift option
-   * @param {Object}  [options.protection] - certificateUrl and licenseAcquisitionUrl for fairplay
-   * @param {string}  [options.mdnRequestRouterUrl= ''] - MDN request router URL
-   * @param {Array}   [options.baseUris= ''] -  baseUris from MDN request router
-   * @param {Object}  [options.analyticsConfig=null] - analytics props to override on analytics object
-   * @param {string}  [options.lastViewedOffset=null] - Last viewed offset
-   * @param {string}  [options.lastViewedTime=null] - Last viewed offset absolute time
-   * @param {string}  [options.liveTime=null] - Last viewed offset liveTime
-   * @param {Object}  [options.keySystems] - keySystems for dash
-   * @param {Object}  [options.requestId] - requestId for the play call
-   * @param {Object}  [options.adMediaLocator] - MediaLocator for ad override MediaLocator
-   * @param {Object}  [options.fairplayConfig] - fairplayConfig {certificateUrl, licenseAcquisitionUrl}
-   * @param {Object}  [options.widevineConfig]  - widevineConfig {certificateServer}
-
-   */
-
-  var Entitlement =
-  /*#__PURE__*/
-  function () {
-    function Entitlement() {
-      // derived properties
-      this.channelId = 0;
-      this.assetId;
-      this.programId;
-      this.productId = '';
-      this.mimeType = '';
-      this.playRequest = null;
-      this.requestId = ''; // properties from play call
-
-      this.edrmConfig = null;
-      this.live = false;
-      this.playSessionId = '';
-      this.analyticsConfig = null;
-      this.lastViewedOffset = null;
-      this.lastViewedTime = null;
-      this.liveTime = null;
-      this.entitlementType = '';
-      this.licenseExpiration = null;
-      this.licenseExpirationReason = '';
-      this.minBitrate = 0;
-      this.maxBitrate = 0;
-      this.maxResWidth = 0;
-      this.maxResHeight = 0;
-      this.rwEnabled = true;
-      this.ffEnabled = true;
-      this.airplayBlocked = false;
-      this.mdnRequestRouterUrl = '';
-      this.timeshiftEnabled = true;
-      this.formats = null; // processed properties from play call
-
-      this.mediaLocator = '';
-      this.src = '';
-      this.adMediaLocator = '';
-      this.streamInfo = null;
-      this.playToken = '';
-      this.playTokenExpiration = '';
-      this.protection = undefined;
-      this.certificateServer = undefined;
-      this.keySystems = undefined;
-    }
-
-    var _proto = Entitlement.prototype;
-
-    _proto.commonInitiate = function commonInitiate(options) {
-      // properties from play call
-      this.edrmConfig = options.edrmConfig || null;
-      this.playSessionId = options.playSessionId || '';
-      this.analyticsConfig = options.analyticsConfig || null;
-      this.entitlementType = options.entitlementType || '';
-      this.mdnRequestRouterUrl = options.mdnRequestRouterUrl || '';
-      this.playToken = options.playToken || '';
-      this.playTokenExpiration = options.playTokenExpiration || '';
-    };
-
-    _proto.initiateV1 = function initiateV1(options, serverTime) {
-      this.commonInitiate(options);
-      this.minBitrate = options.minBitrate || 0;
-      this.maxBitrate = options.maxBitrate || 0;
-      this.maxResWidth = options.maxResWidth || 0;
-      this.maxResHeight = options.maxResHeight || 0;
-      this.rwEnabled = options.rwEnabled === undefined ? true : options.rwEnabled;
-      this.ffEnabled = options.ffEnabled === undefined ? true : options.ffEnabled;
-      this.airplayBlocked = options.airplayBlocked === undefined ? false : options.airplayBlocked;
-      this.timeshiftEnabled = options.timeshiftEnabled || true;
-      this.lastViewedOffset = options.lastViewedOffset || null;
-      this.lastViewedTime = options.lastViewedTime || null;
-      this.liveTime = options.liveTime || null;
-      this.live = options.live || false;
-      var licenseExpirationTimestamp = Date.parse(options.licenseExpiration || null);
-
-      if (isNaN(licenseExpirationTimestamp) === false) {
-        this.licenseExpiration = new Date(licenseExpirationTimestamp);
-      }
-
-      this.licenseExpirationReason = options.licenseExpirationReason || ''; // processed properties from play call
-
-      this.mediaLocator = options.mediaLocator || '';
-
-      if (this.mediaLocator) {
-        if (location.hostname === 'localhost') {
-          this.src = this.mediaLocator;
-        } else {
-          this.src = this.mediaLocator.replace(/^(http:)/, '').replace(/^(https:)/, '');
-        }
-      }
-
-      this.adMediaLocator = options.adMediaLocator || '';
-
-      if (options.streamInfo) {
-        this.streamInfo = options.streamInfo;
-      } else {
-        this.setupStreamInfo(serverTime);
-      }
-
-      if (options.fairplayConfig) {
-        this.protection = {};
-        this.protection.certificateUrl = options.fairplayConfig.certificateUrl || '';
-        this.protection.licenseUrl = options.fairplayConfig.licenseAcquisitionUrl || '';
-
-        if (options.fairplayConfig.secondaryMediaLocator) {
-          this.protection.version = 'mrr';
-        } else {
-          this.protection.version = 'irdeto';
-        } // For Html5 tech with videojs-contrib-eme
-
-
-        this.keySystems = {
-          'com.apple.fps.1_0': {
-            'certificateUri': options.fairplayConfig.certificateUrl || '',
-            'licenseUri': options.fairplayConfig.licenseAcquisitionUrl || ''
-          }
-        };
-      }
-
-      if (options.widevineConfig) {
-        this.certificateServer = options.widevineConfig.certificateUrl || '';
-      }
-
-      if (options.cencConfig) {
-        this.keySystems = options.cencConfig;
-      }
-    };
-
-    _proto.initiateV2 = function initiateV2(options) {
-      this.commonInitiate(options);
-      this.formats = options.formats || null;
-
-      if (options.contractRestrictions) {
-        var contractRestrictions = options.contractRestrictions;
-        this.minBitrate = contractRestrictions.minBitrate || 0;
-        this.maxBitrate = contractRestrictions.maxBitrate || 0;
-        this.maxResWidth = contractRestrictions.maxResWidth || 0;
-        this.maxResHeight = contractRestrictions.maxResHeight || 0;
-        this.rwEnabled = contractRestrictions.rwEnabled === undefined ? true : contractRestrictions.rwEnabled;
-        this.ffEnabled = contractRestrictions.ffEnabled === undefined ? true : contractRestrictions.ffEnabled;
-        this.airplayBlocked = contractRestrictions.airplayEnabled === undefined ? true : !contractRestrictions.airplayEnabled;
-        this.timeshiftEnabled = contractRestrictions.timeshiftEnabled || true;
-      }
-
-      if (options.bookmarks) {
-        var bookmarks = options.bookmarks;
-        this.lastViewedOffset = bookmarks.lastViewedOffset || null;
-        this.lastViewedTime = bookmarks.lastViewedTime || null;
-        this.liveTime = bookmarks.liveTime || null;
-      }
-
-      if (options.streamInfo) {
-        var streamInfo = options.streamInfo;
-        this.streamInfo = {
-          referenceTime: 0
-        };
-        this.live = streamInfo.live || false; //TODO: remove
-
-        this.streamInfo.live = streamInfo.live || false;
-        this.channelId = streamInfo.channelId || undefined; //TODO: remove
-
-        this.programId = streamInfo.programId || undefined; //TODO: remove
-
-        this.streamInfo.channelId = streamInfo.channelId || undefined;
-        this.streamInfo.programId = streamInfo.programId || undefined;
-        this.streamInfo.static = streamInfo.static || false;
-        this.isDynamicCachupAsLive = !streamInfo.static && streamInfo.start !== undefined;
-        this.isStaticCachupAsLive = streamInfo.static && streamInfo.end !== undefined;
-
-        if (streamInfo.start) {
-          this.streamInfo.start = new Date(streamInfo.start * 1000);
-          this.streamInfo.startTime = this.streamInfo.start.getTime();
-        }
-
-        if (streamInfo.end) {
-          this.streamInfo.end = new Date(streamInfo.end * 1000);
-          this.streamInfo.endTime = this.streamInfo.end.getTime();
-        }
-      }
-    };
-
-    _proto.setupMediaLocator = function setupMediaLocator(format) {
-      this.mediaLocator = format.mediaLocator || '';
-
-      if (this.mediaLocator) {
-        if (location.hostname === 'localhost') {
-          this.src = this.mediaLocator;
-        } else {
-          this.src = this.mediaLocator.replace(/^(http:)/, '').replace(/^(https:)/, '');
-        }
-      }
-
-      this.adMediaLocator = format.adMediaLocator || '';
-      var licenseExpirationTimestamp = Date.parse(format.licenseExpiration || null);
-
-      if (isNaN(licenseExpirationTimestamp) === false) {
-        this.licenseExpiration = new Date(licenseExpirationTimestamp);
-      }
-
-      this.licenseExpirationReason = format.licenseExpirationReason || '';
-    };
-
-    _proto.selectFormat = function selectFormat(playRequest) {
-      var _this = this;
-
-      var formats;
-      this.mediaLocator = '';
-      this.src = '';
-      this.playRequest = playRequest;
-      this.mimeType = playRequest.type;
-
-      switch (playRequest.format) {
-        case 'DASH':
-          formats = this.formats.filter(function (obj) {
-            return obj.format === 'DASH';
-          });
-
-          if (formats.length > 0) {
-            var format = formats[0];
-            this.setupMediaLocator(format);
-
-            if (format.drm) {
-              this.keySystems = format.drm;
-
-              if (format.drm['com.widevine.alpha']) {
-                this.certificateServer = format.drm['com.widevine.alpha'].certificateUrl;
-              }
-
-              this.keySystems = {};
-              Object.keys(format.drm).forEach(function (key) {
-                _this.keySystems[key] = format.drm[key].licenseServerUrl;
-              });
-            }
-          }
-
-          break;
-
-        case 'HLS':
-          formats = this.formats.filter(function (obj) {
-            return obj.format === 'HLS';
-          });
-
-          if (formats.length > 0) {
-            var _format = formats[0];
-            this.setupMediaLocator(_format);
-
-            if (_format.drm && _format.drm['com.apple.fps']) {
-              this.protection = {};
-              this.protection.certificateUrl = _format.drm['com.apple.fps'].certificateUrl || '';
-              this.protection.licenseUrl = _format.drm['com.apple.fps'].licenseServerUrl || '';
-              this.protection.version = 'irdeto'; // For Html5 tech with videojs-contrib-eme
-
-              this.keySystems = {
-                'com.apple.fps.1_0': {
-                  'certificateUri': _format.drm['com.apple.fps'].certificateUrl || '',
-                  'licenseUri': _format.drm['com.apple.fps'].licenseServerUrl || ''
-                }
-              };
-            }
-          }
-
-          break;
-
-        default:
-      }
-    };
-
-    _proto.setupStreamInfo = function setupStreamInfo(serverTime) {
-      this.streamInfo = {
-        referenceTime: 0
-      };
-      this.isDynamicCachupAsLive = false;
-      this.isStaticCachupAsLive = false;
-
-      if (this.mediaLocator) {
-        var t = getParameterByName('t', this.mediaLocator);
-
-        if (!t) {
-          var dvr_window_length = getParameterByName('dvr_window_length', this.mediaLocator);
-
-          if (dvr_window_length) {
-            var nowDate = serverTime ? new Date(serverTime) : new Date();
-            t = new Date(nowDate.getTime() - dvr_window_length * 1000).toISOString().replace(/Z/g, '');
-          } else if (this.live) {
-            var _nowDate = serverTime ? new Date(serverTime) : new Date();
-
-            t = new Date(_nowDate.getTime() - 7200 * 1000).toISOString().replace(/Z/g, '');
-          }
-        }
-
-        if (t) {
-          try {
-            if (t && t.length === 47) {
-              this.streamInfo.start = new Date(t.slice(0, 23) + 'Z');
-              this.streamInfo.startTime = this.streamInfo.start.getTime();
-              this.streamInfo.end = new Date(t.slice(24) + 'Z');
-              this.streamInfo.endTime = this.streamInfo.end.getTime();
-            } else if (t && t.length === 23) {
-              this.streamInfo.start = new Date(t + 'Z');
-              this.streamInfo.startTime = this.streamInfo.start.getTime();
-            }
-
-            this.isDynamicCachupAsLive = this.streamInfo.start !== undefined && this.streamInfo.end === undefined;
-            this.isStaticCachupAsLive = this.streamInfo.start !== undefined && this.streamInfo.end !== undefined;
-          } catch (e) {
-            log$1.warn('timeParams', e);
-          }
-        }
-      }
-    };
-
-    _createClass(Entitlement, null, [{
-      key: "Type",
-      get: function get() {
-        return {
-          DASH: 'DASH',
-          HLS: 'HLS'
-        };
-      }
-    }]);
-
-    return Entitlement;
-  }();
 
   var dist = createCommonjsModule(function (module, exports) {
 
@@ -9476,6 +9272,7 @@
 
     /**
      * Constructor
+     *
      * @param {String=|Object=} Object or string describing error
      */
     function EntitlementError(error) {
@@ -9560,7 +9357,7 @@
      * The Entitlement should contain the following parameters:
      *
      * playToken - Playtoken required for drm
-     * mediaLocator - URL of playlist file 
+     * mediaLocator - URL of playlist file
      *
      * @param {EntitlementRequest}    entitlementRequest  Entitlement request to execute
      * @param {Object}                playRequest         Playrequest object containing information about the required
@@ -9588,8 +9385,8 @@
     * The Entitlement should contain the following parameters:
     *
     * playToken - Playtoken required for drm
-    * mediaLocator - URL of playlist file 
-    * 
+    * mediaLocator - URL of playlist file
+    *
     * @param {EntitlementRequest}    entitlementRequest  Entitlement request to execute
     * @param {Object}                playRequest         Playrequest object containing information about the required
     *                                                    attributes of the entitlement (e.g. { drm: 'EDRM', 'format': 'HLS' }
@@ -9621,6 +9418,7 @@
     }
     /**
      * Returns the exact servertime
+     *
      * @param {EntitlementEngine~getServerTimeCallback}  callback  Callback when server time is fetched or an error occurs
      */
     ;
@@ -9630,6 +9428,7 @@
     }
     /**
     * Sync localtime with servertime
+     *
     * @param {EntitlementEngine~getServerTimeCallback}  callback  Callback when localtime sync with servertime or an error occurs
     */
     ;
@@ -9637,12 +9436,12 @@
     _proto.syncServerTime = function syncServerTime(callback) {
       this.getServerTime(function (date, error) {
         if (error) {
-          log$1.error('getServerTime', error);
+          log.error('getServerTime', error);
           date = new Date();
         }
 
         EntitlementEngine.ServerTimeDiff_ = date - new Date();
-        log$1('serverDiff', EntitlementEngine.ServerTimeDiff_);
+        log('serverDiff', EntitlementEngine.ServerTimeDiff_);
 
         if (callback) {
           callback(EntitlementEngine.ServerTimeDiff_, error);
@@ -9651,7 +9450,8 @@
     }
     /**
      * getCachedServerTime
-     * @returns {number}
+     *
+     * @return {number}
      */
     ;
 
@@ -9659,10 +9459,10 @@
       return EntitlementEngine.ServerTimeDiff_ !== undefined ? Date.now() + EntitlementEngine.ServerTimeDiff_ : Date.now();
     }
     /**
-     * Get user preferences key/value pair of (audioLang, subtitlesLang)
-     *
-     * @param {EntitlementEngine~getPreferences}  callback  Callback with user Preferences
-     */
+    * Get user preferences key/value pair of (audioLang, subtitlesLang)
+    *
+    * @param {EntitlementEngine~getPreferences}  callback  Callback with user Preferences
+    */
     ;
 
     _proto.getPreferences = function getPreferences(callback) {
@@ -9688,6 +9488,7 @@
 
     /**
      * Get the program based on EPG
+     *
      * @param channelId
      * @param date
      * @param callback
@@ -9698,13 +9499,14 @@
     _proto.getProgramInfo = function getProgramInfo(channelId, date, callback, programId) {
       throw new EntitlementError('EntitlementEngine: getProgramInfo should be implemented in subclass.');
     }
-    /**    
+    /**
     * Get EPG
+     *
     * @param channelId
     * @param from
     * @param to
     * @param callback
-    * @returns {*}
+    * @return {*}
     */
     ;
 
@@ -9713,6 +9515,7 @@
     }
     /**
     * Get the Asset Info
+     *
     * @param assetId
     * @param callback
     */
@@ -9722,10 +9525,10 @@
       throw new EntitlementError('EntitlementEngine: getAssetInfo should be implemented in subclass.');
     }
     /**
-    * 
-    * @param {String}    channelId Channel to fetch from
+    *
+    * @param {string}    channelId Channel to fetch from
     * @param {function}  callback Callback when entitlement is fetched
-    * @returns {object}   The program
+    * @return {Object}   The program
     */
     ;
 
@@ -9734,6 +9537,7 @@
     }
     /**
      * Verifies if sessionToken is still valid
+     *
      * @param okFn - callback if session is ok
      * @param nokFn - callback if session is not ok
      */
@@ -9744,6 +9548,7 @@
     }
     /**
     * verify the entitlement
+     *
     * @param {string} assetId
     * @param {any} entitlement playRequest
     * @param {function} callback
@@ -9755,10 +9560,11 @@
     }
     /**
     * Login
-    * @param username 
+     *
+    * @param username
     * @param password
-    * @param mfacode 
-    * @param callback 
+    * @param mfacode
+    * @param callback
     */
     ;
 
@@ -9767,6 +9573,7 @@
     }
     /**
      * logout
+     *
      * @param callBack
      */
     ;
@@ -9776,6 +9583,7 @@
     }
     /**
       * Fetch user Preferences
+     *
       * @param {any} callback
      */
     ;
@@ -9785,6 +9593,7 @@
     }
     /**
     * Save user preferences
+     *
     * @param {any} preferences
     * @param {any} callback
     */
@@ -9797,7 +9606,7 @@
      * Return whether the past argument is an entitlement engine or not
      *
      * @param {Object} object An item to check
-     * @return {Boolean}      Wheter it is a entitlement engine or not
+     * @return {boolean}      Wheter it is a entitlement engine or not
      */
     ;
 
@@ -9807,7 +9616,7 @@
     /**
      * Register an entitlement engine
      *
-     * @param {String} name     Name of the entitlement engine
+     * @param {string} name     Name of the entitlement engine
      * @param entitlementEngine The entitlement engine to register
      * @throws Error
      * @static
@@ -9829,9 +9638,9 @@
     /**
      * Get an entitlement engine by name
      *
-     * @param {String} name Name of the entitlement engine
+     * @param {string} name Name of the entitlement engine
      * @static
-     * @returns {EntitlementEngine}
+     * @return {EntitlementEngine}
      */
     ;
 
@@ -9840,15 +9649,371 @@
 
       if (EntitlementEngine.engines_ && EntitlementEngine.engines_[name]) {
         return EntitlementEngine.engines_[name];
-      } else {
-        return null;
       }
+
+      return null;
     };
 
     return EntitlementEngine;
   }();
 
   EntitlementEngine.ServerTimeDiff_ = undefined;
+
+  /**
+   * Entitlement Base Class
+   *
+   * @class Entitlement
+   * @param {Object}  [options]              - Object of option names and values
+   * @param {string}  [options.assetId]      - asset identifier
+   * @param {string}  [options.programId]     - program identifier
+   * @param {string}  [options.channelId]     - channel identifier
+   * @param {string}  [options.playToken=''] - play token string to be used to authenticate the DRM license requests
+   * @param {string}  [options.mediaLocator=''] - stream locator to be used by the underlying playback technology
+   * @param {Object}  [options.edrmConfig=null] - EDRM configuration object as provided by EMP Exposure API
+   * @param {boolean} [options.live=false]   - set to true if the Entitlement represents a Live stream
+   * @param {integer} [options.minBitrate=0] - set to any value >0 to limit the minimum playback bitrate
+   * @param {integer} [options.maxBitrate=0] - set to any value >0 to limit the maximum playback bitrate
+   * @param {integer} [options.maxResWidth=0] - set to any value >0 to limit the maximum playback resolution width
+   * @param {integer} [options.maxResHeight=0] - set to any value >0 to limit the maximum playback resolution height
+   * @param {boolean} [options.rwEnabled=true] - set to false to disable rewind option
+   * @param {boolean} [options.ffEnabled=true] - set to false to disable fast forward option
+   * @param {boolean} [options.airplayBlocked=false] - set to true to disable airplay option
+   * @param {boolean} [options.timeshiftEnabled=undefined] - set to false to disable timeshift option
+   * @param {Object}  [options.protection] - certificateUrl and licenseAcquisitionUrl for fairplay
+   * @param {string}  [options.mdnRequestRouterUrl= ''] - MDN request router URL
+   * @param {Array}   [options.baseUris= ''] -  baseUris from MDN request router
+   * @param {Object}  [options.analyticsConfig=null] - analytics props to override on analytics object
+   * @param {string}  [options.lastViewedOffset=null] - Last viewed offset
+   * @param {string}  [options.lastViewedTime=null] - Last viewed offset absolute time
+   * @param {string}  [options.liveTime=null] - Last viewed offset liveTime
+   * @param {Object}  [options.keySystems] - keySystems for dash
+   * @param {Object}  [options.requestId] - requestId for the play call
+   * @param {Object}  [options.adMediaLocator] - MediaLocator for ad override MediaLocator
+   * @param {Object}  [options.fairplayConfig] - fairplayConfig {certificateUrl, licenseAcquisitionUrl}
+   * @param {Object}  [options.widevineConfig]  - widevineConfig {certificateServer}
+
+   */
+
+  var Entitlement =
+  /*#__PURE__*/
+  function () {
+    function Entitlement() {
+      // derived properties
+      this.channelId = 0;
+      this.assetId = undefined;
+      this.programId = undefined;
+      this.productId = '';
+      this.mimeType = '';
+      this.playRequest = null;
+      this.requestId = ''; // properties from play call
+
+      this.edrmConfig = null;
+      this.live = false;
+      this.playSessionId = '';
+      this.analyticsConfig = null;
+      this.lastViewedOffset = null;
+      this.lastViewedTime = null;
+      this.liveTime = null;
+      this.entitlementType = '';
+      this.licenseExpiration = null;
+      this.licenseExpirationReason = '';
+      this.minBitrate = 0;
+      this.maxBitrate = 0;
+      this.maxResWidth = 0;
+      this.maxResHeight = 0;
+      this.rwEnabled = true;
+      this.ffEnabled = true;
+      this.airplayBlocked = false;
+      this.mdnRequestRouterUrl = '';
+      this.timeshiftEnabled = true;
+      this.formats = null; // processed properties from play call
+
+      this.mediaLocator = '';
+      this.src = '';
+      this.adMediaLocator = '';
+      this.streamInfo = null;
+      this.playToken = '';
+      this.playTokenExpiration = '';
+      this.protection = undefined;
+      this.certificateServer = undefined;
+      this.keySystems = undefined;
+    }
+
+    var _proto = Entitlement.prototype;
+
+    _proto.commonInitiate = function commonInitiate(options) {
+      // properties from play call
+      this.edrmConfig = options.edrmConfig || null;
+      this.playSessionId = options.playSessionId || '';
+      this.analyticsConfig = options.analyticsConfig || null;
+      this.entitlementType = options.entitlementType || '';
+      this.mdnRequestRouterUrl = options.mdnRequestRouterUrl || '';
+      this.playToken = options.playToken || '';
+      this.playTokenExpiration = options.playTokenExpiration || '';
+    };
+
+    _proto.initiateV1 = function initiateV1(options, serverTime) {
+      this.commonInitiate(options);
+      this.minBitrate = options.minBitrate || 0;
+      this.maxBitrate = options.maxBitrate || 0;
+      this.maxResWidth = options.maxResWidth || 0;
+      this.maxResHeight = options.maxResHeight || 0;
+      this.rwEnabled = options.rwEnabled === undefined ? true : options.rwEnabled;
+      this.ffEnabled = options.ffEnabled === undefined ? true : options.ffEnabled;
+      this.airplayBlocked = options.airplayBlocked === undefined ? false : options.airplayBlocked;
+      this.timeshiftEnabled = options.timeshiftEnabled || true;
+      this.lastViewedOffset = options.lastViewedOffset || null;
+      this.lastViewedTime = options.lastViewedTime || null;
+      this.liveTime = options.liveTime || null;
+      this.live = options.live || false;
+      var licenseExpirationTimestamp = Date.parse(options.licenseExpiration || null);
+
+      if (isNaN(licenseExpirationTimestamp) === false) {
+        this.licenseExpiration = new Date(licenseExpirationTimestamp);
+      }
+
+      this.licenseExpirationReason = options.licenseExpirationReason || ''; // processed properties from play call
+
+      this.mediaLocator = options.mediaLocator || '';
+
+      if (this.mediaLocator) {
+        if (window_1.location.hostname === 'localhost') {
+          this.src = this.mediaLocator;
+        } else {
+          this.src = this.mediaLocator.replace(/^(http:)/, '').replace(/^(https:)/, '');
+        }
+      }
+
+      this.adMediaLocator = options.adMediaLocator || '';
+
+      if (options.streamInfo) {
+        this.streamInfo = options.streamInfo;
+      } else {
+        this.setupStreamInfo(serverTime);
+      }
+
+      if (options.fairplayConfig) {
+        this.protection = {};
+        this.protection.certificateUrl = options.fairplayConfig.certificateUrl || '';
+        this.protection.licenseUrl = options.fairplayConfig.licenseAcquisitionUrl || '';
+
+        if (options.fairplayConfig.secondaryMediaLocator) {
+          this.protection.version = 'mrr';
+        } else {
+          this.protection.version = 'irdeto';
+        } // For Html5 tech with videojs-contrib-eme
+
+
+        this.keySystems = {
+          'com.apple.fps.1_0': {
+            certificateUri: options.fairplayConfig.certificateUrl || '',
+            licenseUri: options.fairplayConfig.licenseAcquisitionUrl || ''
+          }
+        };
+      }
+
+      if (options.widevineConfig) {
+        this.certificateServer = options.widevineConfig.certificateUrl || '';
+      }
+
+      if (options.cencConfig) {
+        this.keySystems = options.cencConfig;
+      }
+    };
+
+    _proto.initiateV2 = function initiateV2(options) {
+      this.commonInitiate(options);
+      this.formats = options.formats || null;
+
+      if (options.contractRestrictions) {
+        var contractRestrictions = options.contractRestrictions;
+        this.minBitrate = contractRestrictions.minBitrate || 0;
+        this.maxBitrate = contractRestrictions.maxBitrate || 0;
+        this.maxResWidth = contractRestrictions.maxResWidth || 0;
+        this.maxResHeight = contractRestrictions.maxResHeight || 0;
+        this.rwEnabled = contractRestrictions.rwEnabled === undefined ? true : contractRestrictions.rwEnabled;
+        this.ffEnabled = contractRestrictions.ffEnabled === undefined ? true : contractRestrictions.ffEnabled;
+        this.airplayBlocked = contractRestrictions.airplayEnabled === undefined ? true : !contractRestrictions.airplayEnabled;
+        this.timeshiftEnabled = contractRestrictions.timeshiftEnabled || true;
+      }
+
+      if (options.bookmarks) {
+        var bookmarks = options.bookmarks;
+        this.lastViewedOffset = bookmarks.lastViewedOffset || null;
+        this.lastViewedTime = bookmarks.lastViewedTime || null;
+        this.liveTime = bookmarks.liveTime || null;
+      }
+
+      if (options.streamInfo) {
+        var streamInfo = options.streamInfo; // Use streamInfo in code
+
+        this.streamInfo = {
+          referenceTime: 0
+        };
+        this.live = streamInfo.live || false;
+        this.streamInfo.live = streamInfo.live || false;
+        this.channelId = streamInfo.channelId || undefined;
+        this.programId = streamInfo.programId || undefined;
+        this.streamInfo.channelId = streamInfo.channelId || undefined;
+        this.streamInfo.programId = streamInfo.programId || undefined;
+        this.streamInfo.static = streamInfo.static || false;
+        this.isDynamicCachupAsLive = !streamInfo.static && streamInfo.start !== undefined;
+        this.isStaticCachupAsLive = streamInfo.static && streamInfo.end !== undefined;
+
+        if (streamInfo.start) {
+          this.streamInfo.start = new Date(streamInfo.start * 1000);
+          this.streamInfo.startTime = this.streamInfo.start.getTime();
+        }
+
+        if (streamInfo.end) {
+          this.streamInfo.end = new Date(streamInfo.end * 1000);
+          this.streamInfo.endTime = this.streamInfo.end.getTime();
+        }
+      }
+    };
+
+    _proto.setupMediaLocator = function setupMediaLocator(format) {
+      this.mediaLocator = format.mediaLocator || '';
+
+      if (this.mediaLocator) {
+        if (window_1.location.hostname === 'localhost') {
+          this.src = this.mediaLocator;
+        } else {
+          this.src = this.mediaLocator.replace(/^(http:)/, '').replace(/^(https:)/, '');
+        }
+      }
+
+      this.adMediaLocator = format.adMediaLocator || '';
+      var licenseExpirationTimestamp = Date.parse(format.licenseExpiration || null);
+
+      if (isNaN(licenseExpirationTimestamp) === false) {
+        this.licenseExpiration = new Date(licenseExpirationTimestamp);
+      }
+
+      this.licenseExpirationReason = format.licenseExpirationReason || '';
+    };
+
+    _proto.selectFormat = function selectFormat(playRequest) {
+      var _this = this;
+
+      var formats;
+      this.mediaLocator = '';
+      this.src = '';
+      this.playRequest = playRequest;
+      this.mimeType = playRequest.type;
+
+      switch (playRequest.format) {
+        case 'DASH':
+          formats = this.formats.filter(function (obj) {
+            return obj.format === 'DASH';
+          });
+
+          if (formats.length > 0) {
+            var format = formats[0];
+            this.setupMediaLocator(format);
+
+            if (format.drm) {
+              this.keySystems = format.drm;
+
+              if (format.drm['com.widevine.alpha']) {
+                this.certificateServer = format.drm['com.widevine.alpha'].certificateUrl;
+              }
+
+              this.keySystems = {};
+              Object.keys(format.drm).forEach(function (key) {
+                _this.keySystems[key] = format.drm[key].licenseServerUrl;
+              });
+            }
+          }
+
+          break;
+
+        case 'HLS':
+          formats = this.formats.filter(function (obj) {
+            return obj.format === 'HLS';
+          });
+
+          if (formats.length > 0) {
+            var _format = formats[0];
+            this.setupMediaLocator(_format);
+
+            if (_format.drm && _format.drm['com.apple.fps']) {
+              this.protection = {};
+              this.protection.certificateUrl = _format.drm['com.apple.fps'].certificateUrl || '';
+              this.protection.licenseUrl = _format.drm['com.apple.fps'].licenseServerUrl || '';
+              this.protection.version = 'irdeto'; // For Html5 tech with videojs-contrib-eme
+
+              this.keySystems = {
+                'com.apple.fps.1_0': {
+                  certificateUri: _format.drm['com.apple.fps'].certificateUrl || '',
+                  licenseUri: _format.drm['com.apple.fps'].licenseServerUrl || ''
+                }
+              };
+            }
+          }
+
+          break;
+
+        default:
+      }
+    };
+
+    _proto.setupStreamInfo = function setupStreamInfo(serverTime) {
+      this.streamInfo = {
+        referenceTime: 0
+      };
+      this.isDynamicCachupAsLive = false;
+      this.isStaticCachupAsLive = false;
+
+      if (this.mediaLocator) {
+        var t = getParameterByName('t', this.mediaLocator);
+
+        if (!t) {
+          var dvrWindowLength = getParameterByName('dvr_window_length', this.mediaLocator);
+
+          if (dvrWindowLength) {
+            var nowDate = serverTime ? new Date(serverTime) : new Date();
+            t = new Date(nowDate.getTime() - dvrWindowLength * 1000).toISOString().replace(/Z/g, '');
+          } else if (this.live) {
+            var _nowDate = serverTime ? new Date(serverTime) : new Date();
+
+            t = new Date(_nowDate.getTime() - 7200 * 1000).toISOString().replace(/Z/g, '');
+          }
+        }
+
+        if (t) {
+          try {
+            if (t && t.length === 47) {
+              this.streamInfo.start = new Date(t.slice(0, 23) + 'Z');
+              this.streamInfo.startTime = this.streamInfo.start.getTime();
+              this.streamInfo.end = new Date(t.slice(24) + 'Z');
+              this.streamInfo.endTime = this.streamInfo.end.getTime();
+            } else if (t && t.length === 23) {
+              this.streamInfo.start = new Date(t + 'Z');
+              this.streamInfo.startTime = this.streamInfo.start.getTime();
+            }
+
+            this.isDynamicCachupAsLive = this.streamInfo.start !== undefined && this.streamInfo.end === undefined;
+            this.isStaticCachupAsLive = this.streamInfo.start !== undefined && this.streamInfo.end !== undefined;
+          } catch (e) {
+            log.warn('timeParams', e);
+          }
+        }
+      }
+    };
+
+    _createClass(Entitlement, null, [{
+      key: "Type",
+      get: function get() {
+        return {
+          DASH: 'DASH',
+          HLS: 'HLS'
+        };
+      }
+    }]);
+
+    return Entitlement;
+  }();
 
   var isFunction_1 = isFunction;
 
@@ -10265,12 +10430,12 @@
 
   function noop$1() {}
 
-  /*global
+  /* global
     XMLHttpRequest
   */
 
   /**
-   * EricssonMDN 
+   * EricssonMDN
    *
    * @class EricssonMDN
    */
@@ -10283,8 +10448,8 @@
     /**
     * Register an entitlement engine
     *
-    * @param {String} mdnRequestRouterUrl  MDN request router URL
-    * @param {Object} callback 
+    * @param {string} mdnRequestRouterUrl  MDN request router URL
+    * @param {Object} callback
     * @static
     */
     EricssonMDN.getBaseUrl = function getBaseUrl(entitlement, callback) {
@@ -10294,7 +10459,7 @@
       oXHR.onreadystatechange = function (oEvent) {
         if (oXHR.readyState === 4) {
           if (oXHR.status === 200) {
-            log$1('getBaseUrl OK');
+            log('getBaseUrl OK');
             var xmlDoc = oXHR.responseXML;
 
             try {
@@ -10303,16 +10468,16 @@
               if (baseURL) {
                 entitlement.baseUrl = baseURL;
               } else {
-                log$1.error('getBaseUrl Error can not find baseURL');
+                log.error('getBaseUrl Error can not find baseURL');
               }
 
               callback(entitlement);
             } catch (err) {
-              log$1.error('getBaseUrl Error', err);
+              log.error('getBaseUrl Error', err);
               callback(entitlement);
             }
           } else {
-            log$1.error('getBaseUrl Error', oXHR.statusText);
+            log.error('getBaseUrl Error', oXHR.statusText);
             callback(entitlement);
           }
         }
@@ -10345,81 +10510,81 @@
       }
 
       options = assign({
-        'exposureApiURL': 'https://exposure.emps.ebsd.ericsson.net',
-        'exposureApiVersion': 'v1'
+        exposureApiURL: 'https://exposure.emps.ebsd.ericsson.net',
+        exposureApiVersion: 'v1'
       }, options);
       _this = _EntitlementEngine.call(this, options) || this;
       _this.errorMap = {
         400: {
-          'INVALID_JSON': {
+          INVALID_JSON: {
             message: 'Invalid json.',
             fatal: false
           }
         },
         401: {
-          'NO_SESSION_TOKEN': {
+          NO_SESSION_TOKEN: {
             message: 'The session token is missing.',
             fatal: true
           },
-          'INVALID_SESSION_TOKEN': {
+          INVALID_SESSION_TOKEN: {
             message: 'The session token is not valid.',
             fatal: true
           }
         },
         403: {
-          'FORBIDDEN': {
+          FORBIDDEN: {
             message: 'The business unit has been configured to require server to server authentication, but it is not valid.',
             fatal: true
           },
-          'NOT_ENTITLED': {
+          NOT_ENTITLED: {
             message: 'The user is not entitled.',
             fatal: true
           },
-          'DEVICE_BLOCKED': {
+          DEVICE_BLOCKED: {
             message: 'The device is not allowed to play the asset.',
             fatal: true
           },
-          'GEO_BLOCKED': {
+          GEO_BLOCKED: {
             message: 'Not allowed from this region.',
             fatal: true
           },
-          'LICENSE_EXPIRED': {
+          LICENSE_EXPIRED: {
             message: 'Asset has been expired.',
             fatal: true
           },
-          'NOT_AVAILABLE_IN_FORMAT': {
+          NOT_AVAILABLE_IN_FORMAT: {
             message: 'The media is not available in the requested format.',
             fatal: false
           },
-          'NOT_ENABLED': {
+          NOT_ENABLED: {
             message: 'The media is not enabled.',
             fatal: true
           },
-          'CONCURRENT_STREAMS_LIMIT_REACHED': {
+          CONCURRENT_STREAMS_LIMIT_REACHED: {
             message: 'You have reached the maximum number of concurrent streams you are allowed to watch.',
             fatal: true
           },
-          'NO_MEDIA_ON_CHANNEL': {
+          NO_MEDIA_ON_CHANNEL: {
             message: 'The media is not available on the channel.',
             fatal: false
           },
-          'NO_MEDIA_FOR_PROGRAM': {
+          NO_MEDIA_FOR_PROGRAM: {
             message: 'No media available for this program.',
             fatal: false
           }
         },
         404: {
-          'UNKNOWN_BUSINESS_UNIT': {
+          UNKNOWN_BUSINESS_UNIT: {
             message: 'The business unit cannot be found.',
             fatal: true
           },
-          'UNKNOWN_ASSET': {
+          UNKNOWN_ASSET: {
             message: 'The asset cannot be found.',
             fatal: false
           }
         },
         0: {
-          'NETWORK_ERROR': {
+          NETWORK_ERROR: {
             message: 'Network error.',
             fatal: false
           }
@@ -10429,12 +10594,12 @@
       if (EntitlementEngine.ServerTimeDiff_ === undefined) {
         _this.getServerTime(function (date, error) {
           if (error) {
-            log$1.error('getServerTime', error);
+            log.error('getServerTime', error);
             date = new Date();
           }
 
           EntitlementEngine.ServerTimeDiff_ = date - new Date();
-          log$1('serverDiff', EntitlementEngine.ServerTimeDiff_);
+          log('serverDiff', EntitlementEngine.ServerTimeDiff_);
         });
       }
 
@@ -10442,6 +10607,7 @@
     }
     /**
      * exposureLogin
+     *
      * @param {string} username username
      * @param {string} password password
      * @param {function} callback callback
@@ -10455,7 +10621,7 @@
       var _this2 = this;
 
       if (!callback) {
-        throw 'callback is mandantory for login';
+        throw new EntitlementError('callback is mandantory for login');
       }
 
       var is2factor = false;
@@ -10465,29 +10631,29 @@
       }
 
       var isAnonymous = username === '';
-      var expiration = new Date(this.getCachedServerTime());
-      var expirationSeconds = 24 * 60 * 60; // 24h expiration
+      var expiration = new Date(this.getCachedServerTime()); // 24h expiration
 
-      expiration.setTime(expiration.getTime() + expirationSeconds * 1000); //24h
+      var expirationSeconds = 24 * 60 * 60;
+      expiration.setTime(expiration.getTime() + expirationSeconds * 1000);
 
-      if (this.options_['apiKey']) {
+      if (this.options_.apiKey) {
         var requestHeaders = {
-          'EMP-Auth': this.options_['apiKey']
+          'EMP-Auth': this.options_.apiKey
         };
-        var loginUrl = this.options_['exposureApiURL'] + '/' + this.options_['exposureApiVersion'] + '/customer/' + this.customer + '/businessunit/' + this.businessUnit + '/auth/session';
+        var loginUrl = this.options_.exposureApiURL + '/' + this.options_.exposureApiVersion + '/customer/' + this.customer + '/businessunit/' + this.businessUnit + '/auth/session';
         var requestData = {
           accountId: username,
           userId: username,
-          deviceId: "WEB_" + username,
+          deviceId: 'WEB_' + username,
           device: {
-            "height": screen.height,
-            "width": screen.width,
-            "model": navigator.appName,
-            "name": navigator.product,
-            "os": navigator.platform,
-            "osVersion": navigator.appVersion,
-            "manufacturer": navigator.vendor,
-            "type": "WEB"
+            height: window_1.screen.height,
+            width: window_1.screen.width,
+            model: window_1.navigator.appName,
+            name: window_1.navigator.product,
+            os: window_1.navigator.platform,
+            osVersion: window_1.navigator.appVersion,
+            manufacturer: window_1.navigator.vendor,
+            type: 'WEB'
           },
           expiration: expiration.toISOString(),
           anonymous: false
@@ -10497,11 +10663,11 @@
           headers: requestHeaders
         }, function (error, response, data) {
           // Check and handles error
-          if (_this2.checkForError(error, response, function (nothing, error) {
+          if (_this2.checkForError(error, response, function (nothing, err) {
             callback({
               success: false,
               expiration: 0,
-              message: error.message
+              message: err.message
             });
           })) {
             return;
@@ -10515,7 +10681,7 @@
           });
         });
       } else {
-        var _loginUrl = this.options_['exposureApiURL'] + '/' + this.options_['exposureApiVersion'] + '/customer/' + this.customer + '/businessunit/' + this.businessUnit;
+        var _loginUrl = this.options_.exposureApiURL + '/' + this.options_.exposureApiVersion + '/customer/' + this.customer + '/businessunit/' + this.businessUnit;
 
         if (isAnonymous === true) {
           _loginUrl += '/auth/anonymous';
@@ -10526,16 +10692,16 @@
         }
 
         var _requestData = {
-          deviceId: "WEB_" + username,
+          deviceId: 'WEB_' + username,
           device: {
-            "height": screen.height,
-            "width": screen.width,
-            "model": navigator.appName,
-            "name": navigator.product,
-            "os": navigator.platform,
-            "osVersion": navigator.appVersion,
-            "manufacturer": navigator.vendor,
-            "type": "WEB"
+            height: window_1.screen.height,
+            width: window_1.screen.width,
+            model: window_1.navigator.appName,
+            name: window_1.navigator.product,
+            os: window_1.navigator.platform,
+            osVersion: window_1.navigator.appVersion,
+            manufacturer: window_1.navigator.vendor,
+            type: 'WEB'
           },
           rememberMe: false,
           username: username,
@@ -10546,11 +10712,11 @@
           json: _requestData
         }, function (error, response, data) {
           // Check and handles error
-          if (_this2.checkForError(error, response, function (nothing, error) {
+          if (_this2.checkForError(error, response, function (nothing, err) {
             callback({
               success: false,
               expiration: 0,
-              message: error.message
+              message: err.message
             });
           })) {
             return;
@@ -10560,7 +10726,6 @@
           callback({
             success: true,
             expiration: data.expirationDateTime ? new Date(data.expirationDateTime) - new Date(_this2.getCachedServerTime()) : expirationSeconds * 1000,
-            // assume local clock is in sync with server clock
             session: data
           });
         });
@@ -10593,7 +10758,7 @@
         };
       }
 
-      var queryUrl = this.options_['exposureApiURL'] + '/' + this.options_['exposureApiVersion'] + '/customer/' + customer + '/businessunit/' + businessUnit + '/auth/session';
+      var queryUrl = this.options_.exposureApiURL + '/' + this.options_.exposureApiVersion + '/customer/' + customer + '/businessunit/' + businessUnit + '/auth/session';
       return xhr.del(queryUrl, {
         headers: requestHeaders
       }, function (error, response, data) {
@@ -10623,8 +10788,8 @@
      * The Entitlement should contain the following parameters:
      *
      * playToken - Playtoken required for drm
-     * mediaLocator - URL of playlist file 
-     * 
+     * mediaLocator - URL of playlist file
+     *
      * @param {EntitlementRequest}    entitlementRequest  Entitlement request to execute
      * @param {Object}                playRequest         Playrequest object containing information about the required
      *                                                    attributes of the entitlement (e.g. { drm: 'EDRM', 'format': 'HLS' }
@@ -10666,7 +10831,7 @@
      * The Entitlement should contain the following parameters:
      *
      * playToken - Playtoken required for drm
-     * mediaLocator - URL of playlist file 
+     * mediaLocator - URL of playlist file
      *
      * @param {EntitlementRequest}    entitlementRequest  Entitlement request to execute
      * @param {Object}                playRequest         Playrequest object containing information about the required
@@ -10703,9 +10868,9 @@
      */
 
     /**
-    * 
+    *
     * @param {Object} response xhr response object
-    * @returns {EntitlementError} EntitlementError
+    * @return {EntitlementError} EntitlementError
     * @private
     */
     ;
@@ -10763,11 +10928,11 @@
     }
     /**
      * Check for errors and returns it to the callback
-     * 
+     *
      * @param {Object} xhrError xhr Error object
      * @param {Object} xhrResponse xhr response
      * @param {Function=} callback Callback after xhr finished the request
-     * @returns {boolean} true if there is an error
+     * @return {boolean} true if there is an error
      * @private
      */
     ;
@@ -10835,12 +11000,12 @@
           callback(preEntitlement, entitlementError);
         }
       } else {
-        var requestURL = this.options_['exposureApiURL'] + '/' + 'v2' + '/customer/' + this.customer + '/businessunit/' + this.businessUnit + '/entitlement/' + assetId + '/play';
+        var requestURL = this.options_.exposureApiURL + '/' + 'v2' + '/customer/' + this.customer + '/businessunit/' + this.businessUnit + '/entitlement/' + assetId + '/play';
         return xhr.get(requestURL, {
           headers: this.requestHeaders
         }, function (error, response, body) {
           if (error) {
-            log$1.warn('Fallback to Entitlement request v1', error);
+            log.warn('Fallback to Entitlement request v1', error);
 
             _this4.getEntitlement(entitlementRequest, playRequest, callback);
 
@@ -10851,7 +11016,7 @@
           error = _this4.checkForError(error, response);
 
           if (error) {
-            log$1.warn('Fallback to Entitlement request v1', error.message);
+            log.warn('Fallback to Entitlement request v1', error.message);
 
             _this4.getEntitlement(entitlementRequest, playRequest, callback);
 
@@ -10885,7 +11050,7 @@
     /**
      * Get VOD entitlement
      *
-     * @param {String}    assetId     Asset to fetch
+     * @param {string}    assetId     Asset to fetch
      * @param {Object}    playRequest Playrequest payload
      * @param {Function=} callback    Callback when entitlement is fetched
      * @private
@@ -10914,7 +11079,7 @@
         throw new EntitlementError('getAsset_: assetId was not provided.');
       }
 
-      var requestURL = this.options_['exposureApiURL'] + '/' + this.options_['exposureApiVersion'] + '/customer/' + customer + '/businessunit/' + businessUnit + '/entitlement/' + assetId + '/play';
+      var requestURL = this.options_.exposureApiURL + '/' + this.options_.exposureApiVersion + '/customer/' + customer + '/businessunit/' + businessUnit + '/entitlement/' + assetId + '/play';
       return xhr.post(requestURL, {
         json: playRequest,
         headers: this.requestHeaders
@@ -10942,7 +11107,7 @@
     /**
      * Add StreamReferenceTime to entitlement
      *
-     * @param {object} entitlement
+     * @param {Object} entitlement
      * @private
      */
     ;
@@ -10963,9 +11128,9 @@
     /**
      * Get asset metadata
      *
-     * @param {String}    assetId     Asset to fetch metadata for
+     * @param {string}    assetId     Asset to fetch metadata for
      * @param {Function}  callback    Callback when fetching has completed
-     * @returns {object} Asset Metadata
+     * @return {Object} Asset Metadata
      * @private
      */
     ;
@@ -10985,7 +11150,7 @@
         throw new EntitlementError('getAssetMetadata_: assetId was not provided.');
       }
 
-      var requestURL = this.options_['exposureApiURL'] + '/' + this.options_['exposureApiVersion'] + '/customer/' + this.customer + '/businessunit/' + this.businessUnit + '/content/asset/' + assetId;
+      var requestURL = this.options_.exposureApiURL + '/' + this.options_.exposureApiVersion + '/customer/' + this.customer + '/businessunit/' + this.businessUnit + '/content/asset/' + assetId;
       return xhr.get(requestURL, null, function (error, response, body) {
         // Check and handles error
         if (_this6.checkForError(error, response, callback)) {
@@ -10999,8 +11164,8 @@
     /**
      * Get program entitlement
      *
-     * @param {String}    channelId Channel to fetch from
-     * @param {String}    programId Program to fetch
+     * @param {string}    channelId Channel to fetch from
+     * @param {string}    programId Program to fetch
      * @param {Object}    playRequest Playrequest payload
      * @param {function} callback Callback when entitlement is fetched
      * @private
@@ -11041,7 +11206,7 @@
         channelUrl = '/channel/' + channelId;
       }
 
-      var requestURL = this.options_['exposureApiURL'] + '/' + this.options_['exposureApiVersion'] + '/customer/' + customer + '/businessunit/' + businessUnit + '/entitlement' + channelUrl + programUrl + '/play';
+      var requestURL = this.options_.exposureApiURL + '/' + this.options_.exposureApiVersion + '/customer/' + customer + '/businessunit/' + businessUnit + '/entitlement' + channelUrl + programUrl + '/play';
       return xhr.post(requestURL, {
         json: playRequest,
         headers: this.requestHeaders
@@ -11084,7 +11249,7 @@
      * Should return the exact servertime
      *
      * @param {function}  callback  Callback when server time is fetched or an error occurs
-     * @returns {Date}   ServerTime
+     * @return {Date}   ServerTime
      */
     ;
 
@@ -11093,18 +11258,18 @@
       var businessUnit = this.businessUnit;
 
       if (!customer || !businessUnit) {
-        log$1.warn('getServerTime no customer or businessUnit');
+        log.warn('getServerTime no customer or businessUnit');
         callback(new Date());
         return;
       }
 
-      if (window.navigator.onLine === false) {
-        log$1('getServerTime offline');
+      if (window_1.navigator.onLine === false) {
+        log('getServerTime offline');
         callback(new Date());
         return;
       }
 
-      var requestURL = this.options_['exposureApiURL'] + '/' + this.options_['exposureApiVersion'] + '/customer/' + customer + '/businessunit/' + businessUnit + '/time';
+      var requestURL = this.options_.exposureApiURL + '/' + this.options_.exposureApiVersion + '/customer/' + customer + '/businessunit/' + businessUnit + '/time';
       return xhr.get(requestURL, null, function (error, response, body) {
         if (error) {
           callback(null, error);
@@ -11118,6 +11283,7 @@
     }
     /**
      * Get user preferences key/value pair of (audioLang, subtitlesLang)
+     *
      * @param {function} callback
      */
     ;
@@ -11127,7 +11293,7 @@
 
       var customer = this.customer;
       var businessUnit = this.businessUnit;
-      var requestURL = this.options_['exposureApiURL'] + '/' + this.options_['exposureApiVersion'] + '/customer/' + customer + '/businessunit/' + businessUnit + '/preferences';
+      var requestURL = this.options_.exposureApiURL + '/' + this.options_.exposureApiVersion + '/customer/' + customer + '/businessunit/' + businessUnit + '/preferences';
       return xhr.get(requestURL, {
         headers: this.requestHeaders
       }, function (error, response, body) {
@@ -11154,14 +11320,14 @@
       var businessUnit = this.businessUnit;
 
       if (!preferences) {
-        log$1.error('Preferences was not provided.');
+        log.error('Preferences was not provided.');
         return;
       }
 
       var data = {
-        'preferences': preferences
+        preferences: preferences
       };
-      var requestURL = this.options_['exposureApiURL'] + '/' + this.options_['exposureApiVersion'] + '/customer/' + customer + '/businessunit/' + businessUnit + '/preferences';
+      var requestURL = this.options_.exposureApiURL + '/' + this.options_.exposureApiVersion + '/customer/' + customer + '/businessunit/' + businessUnit + '/preferences';
       return xhr.post(requestURL, {
         json: data,
         headers: this.requestHeaders
@@ -11174,14 +11340,15 @@
         callback(true);
       });
     }
-    /**    
-      * Get EPG
-      * @param channelId
-      * @param from
-      * @param to
-      * @param callback
-      * @returns {*}
-      */
+    /**
+    * Get EPG
+     *
+    * @param channelId
+    * @param from
+    * @param to
+    * @param callback
+    * @return {*}
+    */
     ;
 
     _proto.getEPG = function getEPG(channelId, from, to, callback) {
@@ -11189,7 +11356,7 @@
 
       var customer = this.customer;
       var businessUnit = this.businessUnit;
-      var requestURL = this.options_['exposureApiURL'] + '/' + this.options_['exposureApiVersion'] + '/customer/' + customer + '/businessunit/' + businessUnit + '/epg/' + channelId;
+      var requestURL = this.options_.exposureApiURL + '/' + this.options_.exposureApiVersion + '/customer/' + customer + '/businessunit/' + businessUnit + '/epg/' + channelId;
       requestURL += '?from=' + from + '&to=' + to;
       return xhr.get(requestURL, null, function (error, response, body) {
         if (_this10.checkForError(error, response, callback)) {
@@ -11202,6 +11369,7 @@
     }
     /**
      * Get the program based on EPG
+     *
      * @param channelId
      * @param date
      * @param callback
@@ -11211,17 +11379,12 @@
     _proto.getProgramInfo = function getProgramInfo(channelId, date, callback, programId) {
       var customer = this.customer;
       var businessUnit = this.businessUnit;
-      var params = null;
-      var requestURL = this.options_['exposureApiURL'] + '/' + this.options_['exposureApiVersion'] + '/customer/' + customer + '/businessunit/' + businessUnit + '/epg/' + channelId;
+      var requestURL = this.options_.exposureApiURL + '/' + this.options_.exposureApiVersion + '/customer/' + customer + '/businessunit/' + businessUnit + '/epg/' + channelId;
 
       if (programId) {
         requestURL = requestURL + '/program/' + programId;
       } else {
-        params = {
-          from: date.getTime(),
-          to: date.getTime()
-        };
-        requestURL += '?from=' + params.from + '&to=' + params.to;
+        requestURL += '?from=' + date.getTime() + '&to=' + date.getTime();
       }
 
       return xhr.get(requestURL, null, function (error, response, body) {
@@ -11251,9 +11414,10 @@
     /**
     *
     * Get the Channel Info
-    * @param {String}    channelId Channel to fetch from
+     *
+    * @param {string}    channelId Channel to fetch from
     * @param {function} callback Callback when entitlement is fetched
-    * @returns {object}   The program
+    * @return {Object}   The program
     */
     ;
 
@@ -11266,6 +11430,7 @@
     }
     /**
      * Get the Asset Info
+     *
      * @param assetId
      * @param callback
      */
@@ -11276,7 +11441,7 @@
 
       var customer = this.customer;
       var businessUnit = this.businessUnit;
-      var requestURL = this.options_['exposureApiURL'] + '/' + this.options_['exposureApiVersion'] + '/customer/' + customer + '/businessunit/' + businessUnit + '/content/asset/' + assetId;
+      var requestURL = this.options_.exposureApiURL + '/' + this.options_.exposureApiVersion + '/customer/' + customer + '/businessunit/' + businessUnit + '/content/asset/' + assetId;
       return xhr.get(requestURL, null, function (error, response, body) {
         if (error) {
           callback(null, error);
@@ -11294,6 +11459,7 @@
     }
     /**
      * verify the entitlement
+     *
      * @param {string} assetId
      * @param {any} entitlement playRequest
      * @param {function} callback
@@ -11326,7 +11492,7 @@
         throw new EntitlementError('verifyEntitlement: playRequest was not provided.');
       }
 
-      var requestURL = this.options_['exposureApiURL'] + '/' + this.options_['exposureApiVersion'] + '/customer/' + customer + '/businessunit/' + businessUnit + '/entitlement/' + assetId + '?drm=' + playRequest.drm + '&format=' + playRequest.format;
+      var requestURL = this.options_.exposureApiURL + '/' + this.options_.exposureApiVersion + '/customer/' + customer + '/businessunit/' + businessUnit + '/entitlement/' + assetId + '?drm=' + playRequest.drm + '&format=' + playRequest.format;
       return xhr.get(requestURL, {
         headers: this.requestHeaders
       }, function (error, response, body) {
@@ -11342,6 +11508,7 @@
     }
     /**
      * Verifies if sessionToken is still valid
+     *
      * @param okFn - callback if session is ok
      * @param nokFn - callback if session is not ok
      */
@@ -11352,7 +11519,7 @@
 
       var customer = this.customer;
       var businessUnit = this.businessUnit;
-      var requestURL = this.options_['exposureApiURL'] + '/' + this.options_['exposureApiVersion'] + '/customer/' + customer + '/businessunit/' + businessUnit + '/auth/session';
+      var requestURL = this.options_.exposureApiURL + '/' + this.options_.exposureApiVersion + '/customer/' + customer + '/businessunit/' + businessUnit + '/auth/session';
       return xhr.get(requestURL, {
         headers: this.requestHeaders
       }, function (error, response, body) {
@@ -11372,6 +11539,7 @@
     }
     /**
      * Get Play request headers. Including apiKey if set
+     *
      * @return {Object}
      * @private
      */
@@ -11384,9 +11552,9 @@
           Authorization: 'Bearer ' + this.sessionToken
         };
 
-        if (this.options_['apiKey']) {
+        if (this.options_.apiKey) {
           headers = assign({
-            'EMP-Auth': this.options_['apiKey']
+            'EMP-Auth': this.options_.apiKey
           }, headers);
         }
 
@@ -11394,17 +11562,19 @@
       }
       /**
        * Get customer. Defaults to value set in options if available
-       * @returns {String}
+       *
+       * @return {string}
        */
 
     }, {
       key: "customer",
       get: function get() {
-        return this.customer_ || this.options_['customer'] || null;
+        return this.customer_ || this.options_.customer || null;
       }
       /**
        * Set customer.
-       * @param {String}  customer
+       *
+       * @param {string}  customer
        */
       ,
       set: function set(customer) {
@@ -11412,17 +11582,19 @@
       }
       /**
        * Get business unit. Defaults to value set in options if available
-       * @returns {String}
+       *
+       * @return {string}
        */
 
     }, {
       key: "businessUnit",
       get: function get() {
-        return this.businessUnit_ || this.options_['businessUnit'] || null;
+        return this.businessUnit_ || this.options_.businessUnit || null;
       }
       /**
        * Set business unit
-       * @param {String}  businessUnit
+       *
+       * @param {string}  businessUnit
        */
       ,
       set: function set(businessUnit) {
@@ -11430,21 +11602,23 @@
       }
       /**
        * Get session token. Defaults to value set in options if available
-       * @returns {String}
+       *
+       * @return {string}
        */
 
     }, {
       key: "sessionToken",
       get: function get() {
-        return this.options_['sessionToken'] || null;
+        return this.options_.sessionToken || null;
       }
       /**
        * Set session token
-       * @param {String}  sessionToken
+       *
+       * @param {string}  sessionToken
        */
       ,
       set: function set(sessionToken) {
-        this.options_['sessionToken'] = sessionToken;
+        this.options_.sessionToken = sessionToken;
       }
     }]);
 
@@ -11507,7 +11681,7 @@
       var _this;
 
       _this = _Plugin.call(this, player, options) || this;
-      log$1('ProgramService', 'create');
+      log('ProgramService', 'create');
       _this.MIN_PROGRAM_CHECK_TIMEOUT = 1000;
       _this.checkForProgramChangeBind = _this.checkForProgramChange_.bind(_assertThisInitialized(_assertThisInitialized(_this)));
       _this.onEntitlementChangeBind = _this.onEntitlementChange.bind(_assertThisInitialized(_assertThisInitialized(_this)));
@@ -11521,7 +11695,7 @@
       return _this;
     }
     /**
-    * @returns {Exposure} current exposure
+    * @return {Exposure} current exposure
     */
 
 
@@ -11529,8 +11703,9 @@
 
     /**
      * set / get entitlement
+     *
      * @param value
-     * @returns {Entitlement}
+     * @return {Entitlement}
      */
     _proto.entitlement = function entitlement(value) {
       if (typeof value === 'undefined') {
@@ -11542,8 +11717,9 @@
     }
     /**
      * Set / Get options
+     *
      * @param obj
-     * @returns {object}
+     * @return {Object}
      */
     ;
 
@@ -11556,6 +11732,7 @@
     }
     /**
      * onEntitlementChange
+     *
      * @param event
      * @param data
      */
@@ -11566,7 +11743,7 @@
 
       if (entitlement) {
         if (!(entitlement instanceof Entitlement)) {
-          //From entitlement CC establish Entitlement object
+          // From entitlement CC establish Entitlement object
           this.stop();
           entitlement = assign(new Entitlement({}), entitlement);
         }
@@ -11583,12 +11760,13 @@
     }
     /**
      * start program service
+     *
      * @param entitlement
      */
     ;
 
     _proto.start = function start() {
-      log$1('ProgramService', 'start');
+      log('ProgramService', 'start');
 
       if (this.entitlement()) {
         this.checkForProgramChange_({
@@ -11602,7 +11780,7 @@
     ;
 
     _proto.stop = function stop() {
-      log$1('ProgramService stop');
+      log('ProgramService stop');
       this.clearProgramChangeTimeout_();
 
       if (this.player) {
@@ -11626,7 +11804,7 @@
     _proto.clearProgramChangeTimeout_ = function clearProgramChangeTimeout_(event, data) {
       if (this.programChangeTimeout_) {
         if (event) {
-          log$1('clearProgramChangeTimeout', event.type);
+          log('clearProgramChangeTimeout', event.type);
         }
 
         clearTimeout(this.programChangeTimeout_);
@@ -11635,13 +11813,14 @@
     }
     /**
      *  Check if ProgramService is running
-     * @returns {boolean}
+     *
+     * @return {boolean}
     */
     ;
 
     _proto.running = function running() {
       if (this.programChangeTimeout_) {
-        log$1('ProgramService:running', this.programChangeCheckTimestamp_ ? new Date(this.programChangeCheckTimestamp_) : 0);
+        log('ProgramService:running', this.programChangeCheckTimestamp_ ? new Date(this.programChangeCheckTimestamp_) : 0);
         return true;
       }
 
@@ -11653,7 +11832,7 @@
     ;
 
     _proto.dispose = function dispose() {
-      log$1('ProgramService', 'dispose');
+      log('ProgramService', 'dispose');
       this.player.off(empPlayerEvents.ENTITLEMENT_CHANGE, this.onEntitlementChangeBind);
       this.stop();
 
@@ -11661,12 +11840,14 @@
     }
     /**
      * current Program
-     * @returns {object}
+     *
+     * @return {Object}
      */
     ;
 
     /**
      * Check if program changed
+     *
      * @param event
      * @param data
      * @private
@@ -11675,11 +11856,11 @@
       var _this2 = this;
 
       if (!event) {
-        log$1.error('checkForProgramChange', 'event was not provided.');
+        log.error('checkForProgramChange', 'event was not provided.');
         return;
       }
 
-      log$1('checkForProgramChange', event.type); //Not need update a program or real VOD
+      log('checkForProgramChange', event.type); // Not need update a program or real VOD
 
       if (!this.entitlement().live && !this.entitlement().isStaticCachupAsLive && !this.entitlement().isDynamicCachupAsLive && event.type === empPlayerEvents.SEEKED) {
         return;
@@ -11690,87 +11871,87 @@
       }
 
       if (this.player.options_.absoluteStartTime && event.type === empPlayerEvents.SEEKED) {
-        log$1('checkForProgramChange', 'ignore livepoint');
+        log('checkForProgramChange', 'ignore livepoint');
         return;
       } // If called, due to SEEK or other events, clear previous timer that could cause this method to be called.
 
 
-      this.clearProgramChangeTimeout_(); //For Cast
+      this.clearProgramChangeTimeout_(); // For Cast
 
       if (extplayer.supportsEpgProgramChange(this.player)) {
         var program = extplayer.program(this.player);
 
         if (program) {
-          log$1('updateCurrentProgram from player');
+          log('updateCurrentProgram from player');
           return;
         }
       }
 
       var channelId = this.entitlement().channelId;
       var isLive = this.entitlement().live;
-      var programId = this.entitlement().programId; //VOD
+      var programId = this.entitlement().programId; // VOD
 
       if (!isLive && !programId) {
         this.updateVOD_(this.entitlement().assetId);
         return;
       }
 
-      var dateTime; //Reagula Live
+      var dateTime; // Reagula Live
 
       if (isLive && !programId) {
-        var serverDate = new Date(this.exposure.getCachedServerTime()); //Margin to live edge
+        var serverDate = new Date(this.exposure.getCachedServerTime()); // Margin to live edge
 
         var secondsBehind = event.type === 'startplayback' ? 15 : extplayer.timeBehindLive(this.player);
         serverDate.setSeconds(serverDate.getSeconds() - secondsBehind);
         dateTime = serverDate;
-        log$1('checkForProgramChange', 'Live', secondsBehind);
+        log('checkForProgramChange', 'Live', secondsBehind);
 
         if (this.currentProgram && this.currentProgram.channelId === this.entitlement().channelId && dateTime.getTime() < this.currentProgram.end.getTime() && dateTime.getTime() >= this.currentProgram.start.getTime()) {
-          log$1('checkForProgramChange', 'Same');
+          log('checkForProgramChange', 'Same');
           dateTime = null;
           this.updateCurrentProgram_(this.currentProgram, false);
           return;
         }
-      } //CachupAsLive
-      else if (event.type !== 'startplayback' && (this.entitlement().isDynamicCachupAsLive || this.entitlement().isStaticCachupAsLive)) {
-          var playHeadTime = extplayer.getPlayheadTime(this.player);
+      } else if (event.type !== 'startplayback' && (this.entitlement().isDynamicCachupAsLive || this.entitlement().isStaticCachupAsLive)) {
+        // CachupAsLive
+        var playHeadTime = extplayer.getPlayheadTime(this.player);
 
-          if (playHeadTime) {
-            dateTime = new Date(playHeadTime); // Load next stream
+        if (playHeadTime) {
+          dateTime = new Date(playHeadTime); // Load next stream
 
-            var _serverDate = new Date(this.exposure.getCachedServerTime());
+          if (this.currentProgram && this.entitlement().isStaticCachupAsLive && dateTime.getTime() + 2000 >= this.entitlement().streamInfo.end.getTime()) {
+            if (this.player.lineUpAsset && dateTime.getTime() + 2000 < this.currentProgram.end.getTime()) {
+              log('checkForProgramChange', 'Load next stream', dateTime);
+              this.player.lineUpAsset(null, this.currentProgram.channelId, this.currentProgram.programId, dateTime.getTime());
+            } else {
+              log('checkForProgramChange', 'playNextProgram', dateTime);
+              this.player.playNextProgram();
+            }
 
-            if (this.currentProgram && this.entitlement().isStaticCachupAsLive && dateTime.getTime() + 2000 >= this.entitlement().streamInfo.end.getTime()) {
-              if (this.player.lineUpAsset && dateTime.getTime() + 2000 < this.currentProgram.end.getTime()) {
-                log$1('checkForProgramChange', 'Load next stream', dateTime);
-                this.player.lineUpAsset(null, this.currentProgram.channelId, this.currentProgram.programId, dateTime.getTime());
-              } else {
-                log$1('checkForProgramChange', 'playNextProgram', dateTime);
-                this.player.playNextProgram();
-              }
+            return;
+          } else if (this.currentProgram && dateTime.getTime() + 2000 >= this.currentProgram.end.getTime()) {
+            // Next Program
+            // play request if outside stream boundery
+            log('checkForProgramChange', 'Next', dateTime); // Margin to next program
 
-              return;
-            } //Next Program
-            else if (this.currentProgram && dateTime.getTime() + 2000 >= this.currentProgram.end.getTime()) {
-                //play request if outside stream boundery
-                log$1('checkForProgramChange', 'Next', dateTime);
-                dateTime.setSeconds(dateTime.getSeconds() + 2); // Margin to next program
-              } else if (this.currentProgram && dateTime.getTime() < this.currentProgram.end.getTime() && dateTime.getTime() >= this.currentProgram.start.getTime()) {
-                log$1('checkForProgramChange', 'Same', dateTime);
-                dateTime = null;
-                this.updateCurrentProgram_(this.currentProgram, false);
-                return;
-              } else {
-                log$1('checkForProgramChange', 'Prev', dateTime); //dateTime.setSeconds(dateTime.getSeconds() - 2); // Margin to prev program
-              }
+            dateTime.setSeconds(dateTime.getSeconds() + 2);
+          } else if (this.currentProgram && dateTime.getTime() < this.currentProgram.end.getTime() && dateTime.getTime() >= this.currentProgram.start.getTime()) {
+            log('checkForProgramChange', 'Same', dateTime);
+            dateTime = null;
+            this.updateCurrentProgram_(this.currentProgram, false);
+            return;
+          } else {
+            log('checkForProgramChange', 'Prev', dateTime); // Margin to prev program
+            // dateTime.setSeconds(dateTime.getSeconds() - 2);
           }
         }
+      }
 
       this.exposure.getProgramInfo(channelId, dateTime, function (program, error) {
         _this2.currentVOD_ = null;
 
         if (error) {
-          log$1('getProgramInfo', 'No EPG found.', error);
+          log('getProgramInfo', 'No EPG found.', error);
 
           _this2.pollingForEPG_();
 
@@ -11782,7 +11963,8 @@
     }
     /**
     * updateChannelInfo
-    * @param {object} program
+     *
+    * @param {Object} program
     * @param {Function=} callback when done
     * @private
     */
@@ -11792,7 +11974,7 @@
       var _this3 = this;
 
       if (!program || !program.channelId) {
-        log$1.error('updateChannelInfo', 'program or channelId empty');
+        log.error('updateChannelInfo', 'program or channelId empty');
         callback();
         return;
       }
@@ -11805,12 +11987,12 @@
 
       this.exposure.getChannelInfo(program.channelId, function (channelAsset, error) {
         if (error) {
-          log$1.warn('updateChannelInfo', 'No ChannelInfo found.', error);
+          log.warn('updateChannelInfo', 'No ChannelInfo found.', error);
           callback();
           return;
         }
 
-        log$1('updateChannelInfo', program.channelId);
+        log('updateChannelInfo', program.channelId);
         _this3.currentChannelAsset_ = channelAsset;
         program.channelInfo = _this3.extractAssetMetadata(_this3.currentChannelAsset_);
         callback();
@@ -11819,6 +12001,7 @@
     }
     /**
      * updateVOD
+     *
      * @param assetId
      * @private
      */
@@ -11835,11 +12018,11 @@
         }
 
         if (error) {
-          log$1.warn('No AssetInfo found.', error);
+          log.warn('No AssetInfo found.', error);
           _this4.currentVOD_ = null;
 
           _this4.player.trigger(empPlayerEvents.ASSET_CHANGED, {
-            'asset': null
+            asset: null
           });
 
           return;
@@ -11847,16 +12030,17 @@
 
         if (!_this4.currentVOD_ || _this4.currentVOD_.assetId !== asset.assetId) {
           _this4.currentVOD_ = asset;
-          log$1('ASSET_CHANGED');
+          log('ASSET_CHANGED');
 
           _this4.player.trigger(empPlayerEvents.ASSET_CHANGED, {
-            'asset': asset
+            asset: asset
           });
         }
       });
     }
     /**
      * updateCurrentProgram_
+     *
      * @param program
      * @param startplayback
      * @private
@@ -11866,7 +12050,7 @@
     _proto.updateCurrentProgram_ = function updateCurrentProgram_(program, startplayback) {
       var _this5 = this;
 
-      log$1('updateCurrentProgram', program, startplayback);
+      log('updateCurrentProgram', program, startplayback);
       this.clearProgramChangeTimeout_();
 
       if (!this.player) {
@@ -11900,16 +12084,16 @@
           _this5.player.removeClass('vjs-live');
 
           _this5.player.trigger(empPlayerEvents.PROGRAM_CHANGED, {
-            'program': program
-          });
+            program: program
+          }); // Update progressbar
 
-          _this5.player.trigger(empPlayerEvents.DURATION_CHANGE); //Update progressbar
 
+          _this5.player.trigger(empPlayerEvents.DURATION_CHANGE);
         });
       }
 
       if (startplayback) {
-        log$1('updateCurrentProgram', 'startplayback');
+        log('updateCurrentProgram', 'startplayback');
         return;
       }
 
@@ -11920,7 +12104,7 @@
           var playHeadTime = extplayer.getPlayheadTime(this.player);
 
           if (!playHeadTime) {
-            log$1('updateCurrentProgram', 'no playHeadTime', playHeadTime);
+            log('updateCurrentProgram', 'no playHeadTime', playHeadTime);
             return;
           }
 
@@ -11943,12 +12127,12 @@
         var timediff = expiryDate.getTime() - date.getTime();
 
         if (!timediff || timediff < this.MIN_PROGRAM_CHECK_TIMEOUT) {
-          log$1('updateCurrentProgram', 'timediff is below minimum', timediff);
+          log('updateCurrentProgram', 'timediff is below minimum', timediff);
           timediff = this.MIN_PROGRAM_CHECK_TIMEOUT;
         }
 
         this.programChangeCheckTimestamp_ = Date.now() + timediff;
-        log$1('updateCurrentProgram', 'programChangeTimeout', new Date(this.programChangeCheckTimestamp_));
+        log('updateCurrentProgram', 'programChangeTimeout', new Date(this.programChangeCheckTimestamp_));
         this.programChangeTimeout_ = setTimeout(function () {
           _this5.checkForProgramChange_({
             type: 'programend'
@@ -11974,13 +12158,12 @@
     _proto.pollingForEPG_ = function pollingForEPG_() {
       var _this6 = this;
 
-      var previousProgram = this.currentProgram_;
       this.currentProgram_ = null;
       this.player.trigger(empPlayerEvents.PROGRAM_CHANGED, {
-        'program': null
-      });
-      this.player.trigger(empPlayerEvents.DURATION_CHANGE); //Update progressbar
+        program: null
+      }); // Update progressbar
 
+      this.player.trigger(empPlayerEvents.DURATION_CHANGE);
       this.player.addClass('vjs-live');
       var pollingRate = 2 * 60 * 1000;
       this.programChangeCheckTimestamp_ = Date.now() + pollingRate;
@@ -11994,6 +12177,7 @@
     }
     /**
      * get Next Program
+     *
      * @param {Function=} callback with next program
      */
     ;
@@ -12025,6 +12209,7 @@
     }
     /**
      * get Previous Program
+     *
      * @param {Function=} callback with previous program
      */
     ;
@@ -12051,6 +12236,7 @@
     }
     /**
      * get Program
+     *
      * @param date
      * @param {Function=} callback with program
      */
@@ -12101,11 +12287,11 @@
           return;
         }
 
-        log$1('verifyEntitlement', data.status);
+        log('verifyEntitlement', data.status);
       });
     }
     /**
-     * 
+     *
      * @param assetId
      * @param {Function=} callback with asset metadata
      */
@@ -12116,16 +12302,16 @@
 
       var asset = this.currentProgram ? this.currentProgram.asset : this.currentVOD;
 
-      if (!asset || asset.assetId != assetId) {
-        this.exposure.getAssetMetadata_(assetId, function (asset, error) {
+      if (!asset || asset.assetId !== assetId) {
+        this.exposure.getAssetMetadata_(assetId, function (assetMetadata, error) {
           if (error) {
-            log$1.warn('getAssetMetadata', 'No data found.', error);
+            log.warn('getAssetMetadata', 'No data found.', error);
             callback(null, error);
             return;
-          } else {
-            callback(_this8.extractAssetMetadata(asset));
-            return;
           }
+
+          callback(_this8.extractAssetMetadata(assetMetadata));
+          return;
         });
       } else {
         callback(this.extractAssetMetadata(asset));
@@ -12134,37 +12320,37 @@
       return;
     }
     /**
-    * Extract title, subtitle and images from asset
+    * Extract title, subtitle and images from assetMetadata
     *
-    * @param {object} asset
-    * @returns {object} title, subtitle and images
+    * @param {Object} assetMetadata
+    * @return {Object} title, subtitle and images
     */
     ;
 
-    _proto.extractAssetMetadata = function extractAssetMetadata(asset) {
-      //Used by CC sender and CC Reveiver
+    _proto.extractAssetMetadata = function extractAssetMetadata(assetMetadata) {
+      // Used by CC sender and CC Reveiver
       var title = null;
       var subtitle = null;
-      var images = null; //TODO take correct localized
+      var images = null; // We take first localized
 
-      if (asset && asset.localized && asset.localized.length > 0) {
-        if (asset.localized[0].title) {
-          title = asset.localized[0].title;
+      if (assetMetadata && assetMetadata.localized && assetMetadata.localized.length > 0) {
+        if (assetMetadata.localized[0].title) {
+          title = assetMetadata.localized[0].title;
         }
 
-        if (asset.localized[0].shortDescription) {
-          subtitle = asset.localized[0].shortDescription;
+        if (assetMetadata.localized[0].shortDescription) {
+          subtitle = assetMetadata.localized[0].shortDescription;
         }
 
-        if (asset.localized[0].images && asset.localized[0].images.length > 0 && asset.localized[0].images[0].url) {
-          images = asset.localized[0].images;
+        if (assetMetadata.localized[0].images && assetMetadata.localized[0].images.length > 0 && assetMetadata.localized[0].images[0].url) {
+          images = assetMetadata.localized[0].images;
         }
       }
 
       return {
-        'title': title ? title : '',
-        'subtitle': subtitle ? subtitle : '',
-        'images': images ? images : []
+        title: title ? title : '',
+        subtitle: subtitle ? subtitle : '',
+        images: images ? images : []
       };
     };
 
@@ -12196,13 +12382,14 @@
         if (extplayer.supportsEpgProgramChange(this.player)) {
           var program = extplayer.program(this.player);
           return program;
-        } else {
-          return this.currentProgram_;
         }
+
+        return this.currentProgram_;
       }
       /**
        * current Channel Asset
-       * @returns {object}
+       *
+       * @return {Object}
        */
 
     }, {
@@ -12212,13 +12399,14 @@
       }
       /**
        * current VOD Asset
-       * @returns {object}
+       *
+       * @return {Object}
        */
 
     }, {
       key: "currentVOD",
       get: function get() {
-        //FOR CC currentVOD comming from tech
+        // FOR CC currentVOD comming from tech
         return this.currentVOD_;
       }
     }]);
@@ -12226,7 +12414,7 @@
     return ProgramService;
   }(Plugin$1);
 
-  ProgramService.VERSION = '2.1.101-313';
+  ProgramService.VERSION = '2.1.101-314';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -12250,27 +12438,27 @@
       var _this;
 
       _this = _Plugin.call(this, player, options) || this;
-      log$1('EntitlementExpirationService', 'create');
+      log('EntitlementExpirationService', 'create');
       _this.options_ = options;
       _this.onEntitlementChangeBind = _this.onEntitlementChange.bind(_assertThisInitialized(_assertThisInitialized(_this)));
       return _this;
     }
     /**
-    * @returns {Exposure} current exposure
+    * @return {Exposure} current exposure
     */
 
 
     var _proto = EntitlementExpirationService.prototype;
 
     _proto.dispose = function dispose() {
-      log$1('EntitlementExpirationService', 'dispose');
+      log('EntitlementExpirationService', 'dispose');
       this.stop();
 
       _Plugin.prototype.dispose.call(this);
     };
 
     _proto.stop = function stop() {
-      log$1('EntitlementExpirationService', 'stop');
+      log('EntitlementExpirationService', 'stop');
       this.player.off(empPlayerEvents.ENTITLEMENT_CHANGE, this.onEntitlementChangeBind);
 
       if (this.expirationTimeout_) {
@@ -12280,7 +12468,7 @@
     };
 
     _proto.start = function start() {
-      log$1('EntitlementExpirationService', 'start');
+      log('EntitlementExpirationService', 'start');
 
       if (this.expirationTimeout_) {
         clearTimeout(this.expirationTimeout_);
@@ -12323,7 +12511,7 @@
       var _this2 = this;
 
       var entitlement = this.entitlement();
-      log$1('EntitlementExpirationService', 'checkForExpiration', entitlement.licenseExpiration);
+      log('EntitlementExpirationService', 'checkForExpiration', entitlement.licenseExpiration);
 
       if (!this.hasLicenseExpiration(entitlement)) {
         // If no license expiration is present.
@@ -12344,7 +12532,7 @@
       if (timediff < 0x7FFFFFFF) {
         this.expirationTimeout_ = setTimeout(function () {
           _this2.expirationTimeout_ = null;
-          log$1('EntitlementExpirationService', 'license expired');
+          log('EntitlementExpirationService', 'license expired');
 
           _this2.refreshEntitlement();
         }, timediff);
@@ -12370,8 +12558,8 @@
      *
      * Returns a human readable string for expiration error
      *
-     * @param {String} error
-     * @return {String} Human readable error string
+     * @param {string} error
+     * @return {string} Human readable error string
      */
     ;
 
@@ -12416,7 +12604,7 @@
     return EntitlementExpirationService;
   }(Plugin$2);
 
-  EntitlementExpirationService.VERSION = '2.1.101-313';
+  EntitlementExpirationService.VERSION = '2.1.101-314';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -12441,7 +12629,7 @@
    *
    * You have to manually call .next on the loop for it to continue execution
    *
-   * @param  {Number}   iterations - Number of times to iterate
+   * @param  {number}   iterations - Number of times to iterate
    * @param  {Function} func - Function to execute when iterating
    * @param  {Function} callback - Callback function when all iterations have been complete
    * @private
@@ -12479,14 +12667,237 @@
   * @file entitlement-middleware.js
   * @module empEntitlement
   */
-  var Tech$1 = videojs$1.getComponent('Tech');
+  var Tech$1 = videojs.getComponent('Tech');
   /**
    * Inject a Source handler for EMP streams
+   *
    * @param player
    * @class EntitlementMiddleware
    */
 
   var EntitlementMiddleware = function EntitlementMiddleware(player) {
+    /**
+     * start the ProgramService
+     *
+     * @param options
+     * @param exposure
+     * @param srcEntitlement
+     * @param callback
+     * @private
+     */
+    function startProgramService_(options, exposure, srcEntitlement, callback) {
+      // Don't play behind the live egde
+      if (player.options_.absoluteStartTime && player.options_.absoluteStartTime > exposure.getCachedServerTime()) {
+        player.options_.absoluteStartTime = exposure.getCachedServerTime() - 10000;
+      } else if (player.options_.startTime && player.options_.startTime > exposure.getCachedServerTime() / 1000) {
+        player.options_.startTime = (exposure.getCachedServerTime() - 10000) / 1000;
+      }
+
+      var seekToProgramStart = false;
+
+      if (player.programService && (!options.programService || !options.programService.disable)) {
+        player.programService().options({
+          exposure: exposure
+        });
+
+        if (srcEntitlement.isDynamicCachupAsLive && options.playFrom) {
+          // it's set by useLastViewedOffset or options.playFrom === 'startTime'
+          seekToProgramStart = options.playFrom === 'beginning' || !srcEntitlement.live && !player.options_.absoluteStartTime && !player.options_.startTime;
+
+          if (seekToProgramStart) {
+            // Use timeParams.start as startTime
+            var startTime = srcEntitlement.streamInfo.start.getTime() + 100;
+
+            if (srcEntitlement.mimeType === 'application/dash+xml') {
+              log('SET startTime', startTime);
+              player.options({
+                startTime: startTime / 1000
+              });
+              srcEntitlement.options.startTime = startTime / 1000;
+            } else {
+              // HLS
+              log('SET startTime', 0.1);
+              player.options({
+                startTime: 0.1
+              });
+              srcEntitlement.options.startTime = 0.1;
+            }
+          } else if (player.options_.absoluteStartTime) {
+            // Don't play before program start
+            if (player.options_.absoluteStartTime < srcEntitlement.streamInfo.start.getTime()) {
+              player.options_.absoluteStartTime = srcEntitlement.streamInfo.start.getTime();
+            }
+
+            var _startTime = player.options_.absoluteStartTime;
+
+            if (player.streamType === 'HLS') {
+              _startTime = player.options_.absoluteStartTime - srcEntitlement.streamInfo.start.getTime();
+            }
+
+            _startTime = _startTime ? _startTime : 0.1;
+            log('absoluteStartTime SET startTime', _startTime);
+            player.options({
+              startTime: _startTime / 1000
+            });
+            srcEntitlement.options.startTime = _startTime / 1000;
+            player.options_.absoluteStartTime = undefined;
+            srcEntitlement.options.absoluteStartTime = undefined;
+          } else if (player.options_.startTime) {
+            srcEntitlement.options.startTime = player.options_.startTime;
+            player.options_.absoluteStartTime = undefined;
+            srcEntitlement.options.absoluteStartTime = undefined;
+          }
+        } else if (srcEntitlement.isStaticCachupAsLive && player.options_.absoluteStartTime) {
+          // Don't play before program start
+          if (player.options_.absoluteStartTime < srcEntitlement.streamInfo.start.getTime()) {
+            player.options_.absoluteStartTime = srcEntitlement.streamInfo.start.getTime();
+          }
+
+          var _startTime2 = player.options_.absoluteStartTime - srcEntitlement.streamInfo.start.getTime();
+
+          log('absoluteStartTime SET startTime', _startTime2);
+          player.options({
+            startTime: _startTime2 / 1000
+          });
+          srcEntitlement.options.startTime = _startTime2 / 1000;
+          player.options_.absoluteStartTime = undefined;
+          srcEntitlement.options.absoluteStartTime = undefined;
+        } else if (srcEntitlement.isStaticCachupAsLive && player.options_.startTime) {
+          srcEntitlement.options.startTime = player.options_.startTime;
+          player.options_.absoluteStartTime = undefined;
+          srcEntitlement.options.absoluteStartTime = undefined;
+        }
+
+        player.programService().start();
+      }
+
+      callback();
+    }
+    /**
+     * Start up analytics
+     *
+     * @param player
+     * @param options
+     * @param entitlementOptions
+     * @param exposure
+     * @private
+     */
+
+
+    function startAnalytics_(options, entitlementOptions, exposure) {
+      // backward compatibility with 1.x
+      var analyticsDeviceInfo = options.analyticsDeviceInfo;
+
+      if (analyticsDeviceInfo) {
+        log.warn('options.analyticsDeviceInfo is deprecated. Use options.analytics.deviceInfo.');
+
+        if (!options.analytics) {
+          options.analytics = {};
+        }
+
+        options.analytics.deviceInfo = analyticsDeviceInfo;
+      }
+
+      if (player.analytics) {
+        player.analytics().options({
+          exposure: exposure,
+          analytics: options.analytics
+        });
+        player.analytics().newAnalytics({
+          exposureApiURL: entitlementOptions.exposureApiURL,
+          customer: entitlementOptions.customer,
+          businessUnit: entitlementOptions.businessUnit,
+          sessionToken: entitlementOptions.sessionToken
+        });
+        player.analytics().onEntitlementLoadStart();
+      }
+    }
+    /**
+     * Test if it's an entitlement
+     *
+     * @param entitlement
+     * @return  {boolean}
+     * @private
+     */
+
+
+    function isEntitlement_(entitlement) {
+      return entitlement && entitlement.playSessionId && entitlement.playToken && entitlement.mediaLocator;
+    }
+    /**
+     * Setup Entitlement
+     *
+     * @param entitlement
+     * @param tech
+     * @private
+     */
+
+
+    function setupEntitlement_(entitlement, tech, options) {
+      if (!entitlement) {
+        log.error('setupEntitlement_ no entitlement');
+        return;
+      }
+
+      if (options.useLastViewedOffset === true) {
+        if ((entitlement.isStaticCachupAsLive || entitlement.isDynamicCachupAsLive || entitlement.live) && (entitlement.lastViewedTime || entitlement.liveTime)) {
+          if (entitlement.liveTime) {
+            log('liveTime', new Date(entitlement.liveTime), entitlement.liveTime);
+            player.options({
+              absoluteStartTime: entitlement.liveTime
+            });
+          } // old code
+          // else {
+          //  log('lastViewedTime', new Date(entitlement.lastViewedTime), entitlement.lastViewedTime);
+          //  player.options({ 'absoluteStartTime': entitlement.lastViewedTime });
+          // }
+
+        } else if (entitlement.lastViewedOffset) {
+          log('lastViewedOffset', entitlement.lastViewedOffset / 1000);
+
+          if (player.streamType !== 'DASH') {
+            // Is HLS
+            player.options({
+              startTime: entitlement.lastViewedOffset / 1000
+            });
+          }
+        }
+      }
+
+      if (entitlement.timeshiftEnabled === false) {
+        player.options({
+          timeShiftDisabled: true
+        });
+      }
+
+      player.trigger(empPlayerEvents.ENTITLEMENT_CHANGE, {
+        entitlement: entitlement
+      });
+      entitlement = assign(new Entitlement({}), entitlement);
+      entitlement.type = entitlement.mimeType; // Grab tech-specific options from player options and add source.
+      // Will be send to handleSource
+
+      var playOptions = {
+        autoplay: player.options_.autoplay,
+        muted: player.options_.muted,
+        language: player.options_.language,
+        maxBitrate: player.options_.maxBitrate,
+        timeShiftDisabled: player.options_.timeShiftDisabled,
+        useLastViewedOffset: player.options_.useLastViewedOffset,
+        startTime: player.options_.startTime,
+        absoluteStartTime: player.options_.absoluteStartTime,
+        audioLanguage: player.options_.audioLanguage,
+        subtitleLanguage: player.options_.subtitleLanguage,
+        liveDelay: player.options_.liveDelay
+      };
+      entitlement.options = playOptions; // Change to new entitlement EMP-10229
+
+      entitlement.options.source = entitlement;
+      player.entitlementExpirationService().start();
+      return entitlement;
+    } // return setSource middleware
+
+
     return {
       setSource: function setSource(srcObj, next) {
         var options = player.options();
@@ -12496,7 +12907,7 @@
 
         if (player.programService) {
           player.programService().stop();
-        } //playEntitlement was called by the player
+        } // playEntitlement was called by the player
 
 
         if (isEntitlement_(player.currentSource())) {
@@ -12525,27 +12936,29 @@
         var exposure = EntitlementMiddleware.getExposure(entitlementOptions, exposureServiceName);
 
         if (!entitlementOptions.sessionToken) {
-          //Try Anonymous login
-          exposure.login("", "", function (response) {
+          // Try Anonymous login
+          exposure.login('', '', function (response) {
             if (response.success) {
               entitlementOptions.sessionToken = response.session.sessionToken;
               player.trigger(empPlayerEvents.REPLAY);
             } else {
-              log$1.error("Anonymous login fail", response.message);
-              var error = new EmpPlayerError('Anonymous login fail', EmpPlayerErrorCodes.ENTITLEMENT);
-              player.error(error);
+              log.error('Anonymous login fail', response.message);
+
+              var _error = new EmpPlayerError('Anonymous login fail', EmpPlayerErrorCodes.ENTITLEMENT);
+
+              player.error(_error);
             }
-          }, "");
+          }, '');
           return;
         }
 
         if (!options.analytics || !options.analytics.disable) {
-          startAnalytics_(player, options, entitlementOptions, exposure);
+          startAnalytics_(options, entitlementOptions, exposure);
         }
 
         player.entitlementExpirationService().options({
-          'exposure': exposure
-        }); //Get avalible techs
+          exposure: exposure
+        }); // Get avalible techs
 
         var techs = options.techOrder.map(function (techName) {
           return techName.charAt(0).toUpperCase() + techName.slice(1);
@@ -12561,14 +12974,14 @@
         });
 
         if (techs.length === 0) {
-          var _error = new EmpPlayerError('Unable to load asset: None of the playback technologies are supported', EmpPlayerErrorCodes.ENTITLEMENT);
+          var _error2 = new EmpPlayerError('Unable to load asset: None of the playback technologies are supported', EmpPlayerErrorCodes.ENTITLEMENT);
 
-          player.error(_error);
-          next(_error);
+          player.error(_error2);
+          next(_error2);
           return;
         }
 
-        var entitlementRequestError; //Start the tech selecting loop
+        var entitlementRequestError; // Start the tech selecting loop
 
         asyncLoop(techs.length, function (loop) {
           var i = loop.iteration();
@@ -12576,78 +12989,80 @@
           if (options.excludeTechs && options.excludeTechs.indexOf(techs[i][0]) !== -1) {
             loop.next();
             return;
-          }
+          } // Get reference to the tech object
 
-          var tech = techs[i][1]; // Get reference to the tech object       
+
+          var tech = techs[i][1];
 
           if (player.tech_ && player.techName_ !== techs[i][0]) {
             player.techCall_('reset');
-            player.unloadTech_(); //player.reset(); crash without emp-player for hls
+            player.unloadTech_(); // player.reset(); crash without emp-player for hls
           }
 
           try {
             if (srcEntitlement) {
-              //playEntitlement was called by the player
-              srcEntitlement = setupEntitlement(srcEntitlement, tech);
-              startProgramService_(player, options, exposure, srcEntitlement, function () {
+              // playEntitlement was called by the player
+              srcEntitlement = setupEntitlement_(srcEntitlement, tech, options);
+              startProgramService_(options, exposure, srcEntitlement, function () {
                 next(null, srcEntitlement);
               });
               loop.break();
               return;
-            } else {
-              var techOptions = options[techs[i][0].toLowerCase()];
-              var playRequest = techOptions && techOptions.streamType && tech.entitlementPlayRequests ? tech.entitlementPlayRequests[techOptions.streamType] : tech.entitlementPlayRequest;
-              exposure.getV2Entitlement(entitlementRequest, playRequest, function (entitlement, error) {
-                // If we have an fatal error during playcall break out of the loop else try next tech
-                if (error) {
-                  if (!player.options_.excludeTechs) {
-                    player.options_.excludeTechs = [];
-                  }
+            }
 
-                  player.options_.excludeTechs.push(techs[i][0]);
-                  entitlementRequestError = new EmpPlayerError(error.message + '  ' + JSON.stringify(playRequest) + JSON.stringify(entitlementRequest), error.code, error.stack);
+            var techOptions = options[techs[i][0].toLowerCase()];
+            var playRequest = techOptions && techOptions.streamType && tech.entitlementPlayRequests ? tech.entitlementPlayRequests[techOptions.streamType] : tech.entitlementPlayRequest;
+            exposure.getV2Entitlement(entitlementRequest, playRequest, function (entitlement, error) {
+              // If we have an fatal error during playcall break out of the loop else try next tech
+              if (error) {
+                if (!player.options_.excludeTechs) {
+                  player.options_.excludeTechs = [];
+                }
 
-                  if (error.fatal) {
-                    player.error(entitlementRequestError);
-                    extplayer.stop(player);
-                    next(entitlementRequestError);
-                    return;
-                  }
+                player.options_.excludeTechs.push(techs[i][0]);
+                entitlementRequestError = new EmpPlayerError(error.message + '  ' + JSON.stringify(playRequest) + JSON.stringify(entitlementRequest), error.code, error.stack);
 
-                  preEntitlement = entitlement;
-                  loop.next();
-                } else {
-                  // Set the entitlement to use, and break out of the loop. No need to get other entitlements.
-                  srcEntitlement = setupEntitlement(entitlement, tech);
-                  extplayer.currentAsset(player, entitlement.assetId, entitlement.programId, entitlement.channelId);
+                if (error.fatal) {
+                  player.error(entitlementRequestError);
+                  extplayer.stop(player);
+                  next(entitlementRequestError);
+                  return;
+                }
 
-                  if (srcEntitlement.adMediaLocator && player.yospace) {
-                    log$1("play adMediaLocator with yospace", srcEntitlement.adMediaLocator);
-                    player.yospace().start('VoD', srcEntitlement.adMediaLocator).then(function (mediaLocator) {
-                      log$1("yospace mediaLocator returned", mediaLocator);
-                      srcEntitlement.mediaLocator = mediaLocator;
-                      srcEntitlement.src = mediaLocator;
-                      startProgramService_(player, options, exposure, srcEntitlement, function () {
-                        next(null, srcEntitlement);
-                      });
-                      loop.break();
-                    }).catch(function (errMsg) {
-                      entitlementRequestError = new EmpPlayerError(errMsg, EmpPlayerErrorCodes.ENTITLEMENT);
-                      player.error(entitlementRequestError);
-                      extplayer.stop(player);
-                    });
-                  } else {
-                    startProgramService_(player, options, exposure, srcEntitlement, function () {
+                preEntitlement = entitlement;
+                loop.next();
+              } else {
+                // Set the entitlement to use, and break out of the loop. No need to get other entitlements.
+                srcEntitlement = setupEntitlement_(entitlement, tech, options);
+                extplayer.currentAsset(player, entitlement.assetId, entitlement.programId, entitlement.channelId);
+
+                if (srcEntitlement.adMediaLocator && player.yospace) {
+                  log('play adMediaLocator with yospace', srcEntitlement.adMediaLocator);
+                  player.yospace().start('VoD', srcEntitlement.adMediaLocator).then(function (mediaLocator) {
+                    log('yospace mediaLocator returned', mediaLocator);
+                    srcEntitlement.mediaLocator = mediaLocator;
+                    srcEntitlement.src = mediaLocator;
+                    startProgramService_(options, exposure, srcEntitlement, function () {
                       next(null, srcEntitlement);
                     });
                     loop.break();
-                  }
+                  }).catch(function (errMsg) {
+                    entitlementRequestError = new EmpPlayerError(errMsg, EmpPlayerErrorCodes.ENTITLEMENT);
+                    player.error(entitlementRequestError);
+                    extplayer.stop(player);
+                    srcEntitlement = null;
+                  });
+                } else {
+                  startProgramService_(options, exposure, srcEntitlement, function () {
+                    next(null, srcEntitlement);
+                  });
+                  loop.break();
                 }
-              }, preEntitlement);
-            }
-          } //If we get other error try next tech
-          catch (error) {
-            log$1.warn('error try next tech', new EmpPlayerError(error, EmpPlayerErrorCodes.ENTITLEMENT));
+              }
+            }, preEntitlement);
+          } catch (error) {
+            // If we get other error try next tech
+            log.warn('error try next tech', new EmpPlayerError(error, EmpPlayerErrorCodes.ENTITLEMENT));
             loop.next();
             return;
           }
@@ -12663,219 +13078,6 @@
             return;
           }
         });
-        /**
-         * Start up analytics
-         * @param player
-         * @param options
-         * @param entitlementOptions
-         * @param exposure
-         */
-
-        function startAnalytics_(player, options, entitlementOptions, exposure) {
-          //backward compatibility with 1.x
-          var analyticsDeviceInfo = options.analyticsDeviceInfo;
-
-          if (analyticsDeviceInfo) {
-            log$1.warn("options.analyticsDeviceInfo is deprecated. Use options.analytics.deviceInfo.");
-
-            if (!options.analytics) {
-              options.analytics = {};
-            }
-
-            options.analytics.deviceInfo = analyticsDeviceInfo;
-          }
-
-          if (player.analytics) {
-            player.analytics().options({
-              'exposure': exposure,
-              'analytics': options.analytics
-            });
-            player.analytics().newAnalytics({
-              'exposureApiURL': entitlementOptions.exposureApiURL,
-              'customer': entitlementOptions.customer,
-              'businessUnit': entitlementOptions.businessUnit,
-              'sessionToken': entitlementOptions.sessionToken
-            });
-            player.analytics().onEntitlementLoadStart();
-          }
-        }
-        /**
-         * Start the Program Service
-         * @param player
-         * @param options
-         * @param exposure
-         * @param srcEntitlement
-         * @param callback
-         */
-
-
-        function startProgramService_(player, options, exposure, srcEntitlement, callback) {
-          //Don't play behind the live egde
-          if (player.options_.absoluteStartTime && player.options_.absoluteStartTime > exposure.getCachedServerTime()) {
-            player.options_.absoluteStartTime = exposure.getCachedServerTime() - 10000;
-          } else if (player.options_.startTime && player.options_.startTime > exposure.getCachedServerTime() / 1000) {
-            player.options_.startTime = (exposure.getCachedServerTime() - 10000) / 1000;
-          }
-
-          var seekToProgramStart = false;
-
-          if (player.programService && (!options.programService || !options.programService.disable)) {
-            player.programService().options({
-              'exposure': exposure
-            });
-
-            if (srcEntitlement.isDynamicCachupAsLive && options.playFrom) {
-              seekToProgramStart = options.playFrom === 'beginning' || !srcEntitlement.live && !player.options_.absoluteStartTime && !player.options_.startTime; //it's set by useLastViewedOffset or options.playFrom === 'startTime'
-
-              if (seekToProgramStart) {
-                //Use timeParams.start as startTime
-                var startTime = srcEntitlement.streamInfo.start.getTime() + 100;
-
-                if (srcEntitlement.mimeType === 'application/dash+xml') {
-                  log$1('SET startTime', startTime);
-                  player.options({
-                    startTime: startTime / 1000
-                  });
-                  srcEntitlement.options.startTime = startTime / 1000;
-                } else {
-                  //HLS
-                  log$1('SET startTime', 0.1);
-                  player.options({
-                    startTime: 0.1
-                  });
-                  srcEntitlement.options.startTime = 0.1;
-                }
-              } else if (player.options_.absoluteStartTime) {
-                //Don't play before program start
-                if (player.options_.absoluteStartTime < srcEntitlement.streamInfo.start.getTime()) {
-                  player.options_.absoluteStartTime = srcEntitlement.streamInfo.start.getTime();
-                }
-
-                var _startTime = player.options_.absoluteStartTime;
-
-                if (player.streamType === 'HLS') {
-                  _startTime = player.options_.absoluteStartTime - srcEntitlement.streamInfo.start.getTime();
-                }
-
-                _startTime = _startTime ? _startTime : 0.1;
-                log$1('absoluteStartTime SET startTime', _startTime);
-                player.options({
-                  startTime: _startTime / 1000
-                });
-                srcEntitlement.options.startTime = _startTime / 1000;
-                player.options_.absoluteStartTime = undefined;
-                srcEntitlement.options.absoluteStartTime = undefined;
-              } else if (player.options_.startTime) {
-                srcEntitlement.options.startTime = player.options_.startTime;
-                player.options_.absoluteStartTime = undefined;
-                srcEntitlement.options.absoluteStartTime = undefined;
-              }
-            } else if (srcEntitlement.isStaticCachupAsLive && player.options_.absoluteStartTime) {
-              //Don't play before program start
-              if (player.options_.absoluteStartTime < srcEntitlement.streamInfo.start.getTime()) {
-                player.options_.absoluteStartTime = srcEntitlement.streamInfo.start.getTime();
-              }
-
-              var _startTime2 = player.options_.absoluteStartTime - srcEntitlement.streamInfo.start.getTime();
-
-              log$1('absoluteStartTime SET startTime', _startTime2);
-              player.options({
-                startTime: _startTime2 / 1000
-              });
-              srcEntitlement.options.startTime = _startTime2 / 1000;
-              player.options_.absoluteStartTime = undefined;
-              srcEntitlement.options.absoluteStartTime = undefined;
-            } else if (srcEntitlement.isStaticCachupAsLive && player.options_.startTime) {
-              srcEntitlement.options.startTime = player.options_.startTime;
-              player.options_.absoluteStartTime = undefined;
-              srcEntitlement.options.absoluteStartTime = undefined;
-            }
-
-            player.programService().start();
-          }
-
-          callback();
-        }
-        /**
-         * Test if it's an entitlement
-         * @param entitlement
-         * @returns  {Boolean}
-         */
-
-
-        function isEntitlement_(entitlement) {
-          return entitlement && entitlement.playSessionId && entitlement.playToken && entitlement.mediaLocator;
-        }
-        /**
-         * Setup Entitlement
-         * @param entitlement
-         * @param tech
-         */
-
-
-        function setupEntitlement(entitlement, tech) {
-          if (!entitlement) {
-            log$1.error('setupEntitlement no entitlement');
-            return;
-          }
-
-          if (options.useLastViewedOffset === true) {
-            if ((entitlement.isStaticCachupAsLive || entitlement.isDynamicCachupAsLive || entitlement.live) && (entitlement.lastViewedTime || entitlement.liveTime)) {
-              if (entitlement.liveTime) {
-                log$1('liveTime', new Date(entitlement.liveTime), entitlement.liveTime);
-                player.options({
-                  'absoluteStartTime': entitlement.liveTime
-                });
-              } //old code
-              //else {
-              //  log('lastViewedTime', new Date(entitlement.lastViewedTime), entitlement.lastViewedTime);
-              //  player.options({ 'absoluteStartTime': entitlement.lastViewedTime });
-              //}
-
-            } else if (entitlement.lastViewedOffset) {
-              log$1('lastViewedOffset', entitlement.lastViewedOffset / 1000); //TODO Use startTime when we have VOD in new A/V pipe
-
-              if (player.streamType !== 'DASH') {
-                //HLS
-                player.options({
-                  'startTime': entitlement.lastViewedOffset / 1000
-                });
-              }
-            }
-          }
-
-          if (entitlement.timeshiftEnabled === false) {
-            player.options({
-              'timeShiftDisabled': true
-            });
-          }
-
-          player.trigger(empPlayerEvents.ENTITLEMENT_CHANGE, {
-            'entitlement': entitlement
-          });
-          entitlement = assign(new Entitlement({}), entitlement);
-          entitlement.type = entitlement.mimeType; // Grab tech-specific options from player options and add source.
-          // Will be send to handleSource
-
-          var playOptions = {
-            'autoplay': player.options_.autoplay,
-            'muted': player.options_.muted,
-            'language': player.options_.language,
-            'maxBitrate': player.options_.maxBitrate,
-            'timeShiftDisabled': player.options_.timeShiftDisabled,
-            'useLastViewedOffset': player.options_.useLastViewedOffset,
-            'startTime': player.options_.startTime,
-            'absoluteStartTime': player.options_.absoluteStartTime,
-            'audioLanguage': player.options_.audioLanguage,
-            'subtitleLanguage': player.options_.subtitleLanguage,
-            'liveDelay': player.options_.liveDelay
-          };
-          entitlement.options = playOptions; // Change to new entitlement EMP-10229
-
-          entitlement.options.source = entitlement;
-          player.entitlementExpirationService().start();
-          return entitlement;
-        }
       }
     };
   };
@@ -12884,7 +13086,7 @@
   *
   * @param {Object} object An item to check
   * @static
-  * @return {Boolean}      Wheter it is a entitlement engine or not
+  * @return {boolean}      Wheter it is a entitlement engine or not
   */
 
 
@@ -12903,23 +13105,23 @@
   /**
   * Get an Exposure Service by name
   *
-  * @param {String} name Name of the entitlement engine
+  * @param {string} name Name of the entitlement engine
   * @static
-  * @returns {EntitlementEngine}
+  * @return {EntitlementEngine}
   */
 
   EntitlementMiddleware.getExposure = function (options, name) {
     if (options) {
       var Exposure = EntitlementEngine.getEntitlementEngine(name);
       return new Exposure(options);
-    } else {
-      throw new EmpPlayerError('Missing exposureOptions', EmpPlayerErrorCodes.ENTITLEMENT);
     }
+
+    throw new EmpPlayerError('Missing exposureOptions', EmpPlayerErrorCodes.ENTITLEMENT);
   };
   /**
   * Register an Exposure Service
   *
-  * @param {String} name     Name of the entitlement engine
+  * @param {string} name     Name of the entitlement engine
   * @param entitlementEngine The entitlement engine to register
   * @throws Error
   * @static
@@ -12931,26 +13133,27 @@
   };
   /**
   * get the EMP log object
+   *
   * @static
-  * @returns {*|log}
+  * @return {*|log}
   */
 
 
   EntitlementMiddleware.getLog = function () {
-    return log$1;
+    return log;
   };
 
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.101-313';
+  EntitlementMiddleware.VERSION = '2.1.101-314';
 
-  if (videojs$1.EntitlementMiddleware) {
-    videojs$1.log.warn('EntitlementMiddleware already exists.');
+  if (videojs.EntitlementMiddleware) {
+    videojs.log.warn('EntitlementMiddleware already exists.');
   } else {
     // Register the plugin with video.js.
-    videojs$1.use('video/emp', EntitlementMiddleware);
-    videojs$1.EntitlementMiddleware = EntitlementMiddleware;
+    videojs.use('video/emp', EntitlementMiddleware);
+    videojs.EntitlementMiddleware = EntitlementMiddleware;
   }
 
   /**
@@ -12958,14 +13161,14 @@
    * @module empPlayer
    */
 
-  var EntitlementMiddleware$1 = window.empEntitlement ? window.empEntitlement : EntitlementMiddleware;
+  var EntitlementMiddleware$1 = window_1.empEntitlement ? window_1.empEntitlement : EntitlementMiddleware;
   /**
    * empPlayer - Extend videojs class
    *
    * @class empPlayer
    */
 
-  var empPlayer$1 = videojs$1;
+  var empPlayer = videojs;
   /**
    * Detects if the current browser has the required technology to play an unencrypted stream provided by EMP.
    *
@@ -12973,7 +13176,7 @@
    * @static
    */
 
-  empPlayer$1.canPlayUnencrypted = canPlayUnencrypted;
+  empPlayer.canPlayUnencrypted = canPlayUnencrypted;
   /**
    * Detects if the current browser has the required technology to play an encrypted stream provided by EMP.
    *
@@ -12981,7 +13184,7 @@
    * @static
    */
 
-  empPlayer$1.canPlayEncrypted = canPlayEncrypted;
+  empPlayer.canPlayEncrypted = canPlayEncrypted;
   /**
   * Get an Exposure Service by name
   *
@@ -12990,7 +13193,7 @@
   * @returns {EntitlementEngine}
   */
 
-  empPlayer$1.getExposure = EntitlementMiddleware$1.getExposure;
+  empPlayer.getExposure = EntitlementMiddleware$1.getExposure;
   /**
   * Get an entitlement engine by name
   *
@@ -12999,7 +13202,7 @@
   * @returns {EntitlementEngine}
   */
 
-  empPlayer$1.getEntitlementEngine = EntitlementMiddleware$1.getEntitlementEngine;
+  empPlayer.getEntitlementEngine = EntitlementMiddleware$1.getEntitlementEngine;
   /**
   * Register an Exposure Service
   *
@@ -13009,7 +13212,7 @@
   * @static
   */
 
-  empPlayer$1.registerEntitlementEngine = EntitlementMiddleware$1.registerEntitlementEngine;
+  empPlayer.registerEntitlementEngine = EntitlementMiddleware$1.registerEntitlementEngine;
   /**
   * Return whether the past argument is an Exposure Service or not
   *
@@ -13018,7 +13221,7 @@
   * @return {Boolean}      Wheter it is a entitlement engine or not
   */
 
-  empPlayer$1.isEntitlementEngine = EntitlementMiddleware$1.isEntitlementEngine;
+  empPlayer.isEntitlementEngine = EntitlementMiddleware$1.isEntitlementEngine;
   /**
   * Return EntitlementClass
   *
@@ -13026,35 +13229,35 @@
   * @return {Class}  EntitlementClass
   */
 
-  empPlayer$1.EntitlementClass = EntitlementMiddleware$1.EntitlementClass;
+  empPlayer.EntitlementClass = EntitlementMiddleware$1.EntitlementClass;
   /**
   * get the EMP log object
   * @static
   * @returns {*|log}
   */
 
-  empPlayer$1.log = log$1;
+  empPlayer.log = log;
   /**
   * get plugin
   * @static
   * @returns {*}
   */
 
-  empPlayer$1.plugin = videojs$1.plugin;
+  empPlayer.plugin = videojs.plugin;
   /**
   * get videojs
   * @static
   * @returns {*}
   */
 
-  empPlayer$1.videojs = videojs$1;
+  empPlayer.videojs = videojs;
   /**
   * get EntitlementMiddleware
   * @static
   * @returns {*} EntitlementMiddleware
   */
 
-  empPlayer$1.EntitlementMiddleware = EntitlementMiddleware$1;
+  empPlayer.EntitlementMiddleware = EntitlementMiddleware$1;
   /**
    * Extend function for non ES6 classes - Wrapper around videojs extend method
    * @param {String} superClass       class to extend
@@ -13062,7 +13265,7 @@
    * @returns {Function}              Newly created subclass
    */
 
-  empPlayer$1.extend = videojs$1.extend;
+  empPlayer.extend = videojs.extend;
   /**
    * Returns EmpPlayerEvents which holds all player events
    *
@@ -13071,21 +13274,23 @@
    * @memberOf EMPPlayer
    */
 
-  empPlayer$1.Events = empPlayerEvents;
-  empPlayer$1.VERSION = '2.1.101-313';
+  empPlayer.Events = empPlayerEvents;
+  empPlayer.VERSION = '2.1.101-314';
   /*
    * Universal Module Definition (UMD)
    *
    */
 
-  if (typeof define === 'function' && define['amd']) {
+  /* eslint-disable */
+
+  if (typeof define === 'function' && define.amd) {
     define('empPlayer', [], function () {
-      return empPlayer$1;
+      return empPlayer;
     }); // checking that module is an object too because of umdjs/umd#35
   } else if (typeof exports === 'object' && typeof module === 'object') {
-    module['exports'] = empPlayer$1;
+    module.exports = empPlayer;
   }
 
-  return empPlayer$1;
+  return empPlayer;
 
 })));

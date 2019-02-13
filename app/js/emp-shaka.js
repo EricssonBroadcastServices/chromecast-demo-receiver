@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.101-313 
+ * EMP-Player 2.1.101-314 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -668,27 +668,10 @@
 
   });
 
+  /* eslint-disable */
+
   var shaka = window.shaka ? window.shaka : shakaPlayer_compiled;
-
-  var minDoc = {};
-
-  var topLevel = typeof commonjsGlobal !== 'undefined' ? commonjsGlobal :
-      typeof window !== 'undefined' ? window : {};
-
-
-  var doccy;
-
-  if (typeof document !== 'undefined') {
-      doccy = document;
-  } else {
-      doccy = topLevel['__GLOBAL_DOCUMENT_CACHE@4'];
-
-      if (!doccy) {
-          doccy = topLevel['__GLOBAL_DOCUMENT_CACHE@4'] = minDoc;
-      }
-  }
-
-  var document_1 = doccy;
+  /* eslint-enable */
 
   var videojsTmp = window_1.videojs;
   var videojs = videojsTmp;
@@ -1206,7 +1189,7 @@
 
   var logToBrowserConsole = false;
 
-  var log_temp = function log_temp() {
+  var logTemp = function logTemp() {
     if (logToBrowserConsole) {
       _log(null, arguments);
     }
@@ -1214,7 +1197,10 @@
 
 
   if (window_1.EMP_DEBUG_LOG) {
-    log_temp = window_1.console && window_1.console.log && console.log.bind(console) || function () {};
+    /* eslint-disable */
+    logTemp = window_1.console && window_1.console.log && console.log.bind(console) || function () {};
+    /* eslint-enable */
+
   }
   /**
    * Log plain debug messages
@@ -1222,18 +1208,18 @@
    */
 
 
-  var log$1 = log_temp;
+  var log = logTemp;
   /**
    * Keep a history of log messages
    * @type {Array}
    */
 
-  log$1.history = [];
+  log.history = [];
   /**
    * Log error messages
    */
 
-  log$1.error = function () {
+  log.error = function () {
     _log('error', arguments);
   };
   /**
@@ -1241,7 +1227,7 @@
    */
 
 
-  log$1.warn = function () {
+  log.warn = function () {
     _log('warn', arguments);
   };
   /**
@@ -1249,24 +1235,27 @@
    */
 
 
-  log$1.debug = function () {
+  log.debug = function () {
     _log('debug', arguments);
   }; // Allway log if EMP_DEBUG_LOG and with correct stack trace
 
 
   if (window_1.EMP_DEBUG_LOG) {
     var noop = function noop() {};
+    /* eslint-disable */
 
-    log$1.debug = window_1.console && window_1.console.debug && console.debug.bind(console) || noop;
-    log$1.warn = window_1.WARN = window_1.console && window_1.console.warn && console.warn.bind(console) || noop;
-    log$1.error = window_1.ERROR = window_1.console && window_1.console.error && console.error.bind(console) || noop;
+
+    log.debug = window_1.console && window_1.console.debug && console.debug.bind(console) || noop;
+    log.warn = window_1.WARN = window_1.console && window_1.console.warn && console.warn.bind(console) || noop;
+    log.error = window_1.ERROR = window_1.console && window_1.console.error && console.error.bind(console) || noop;
+    /* eslint-enable */
   }
   /**
    * setLogToBrowserConsole and debug mode
    */
 
 
-  log$1.setLogToBrowserConsole = function (value) {
+  log.setLogToBrowserConsole = function (value) {
     if (value === void 0) {
       value = false;
     }
@@ -1276,7 +1265,7 @@
   /**
    * Log messages to the console and history based on the type of message
    *
-   * @param {String} type The type of message, or 'null' for 'log'
+   * @param {string} type The type of message, or 'null' for 'log'
    * @param {Object} args The arguments to be passed to the log
    * @private
    * @method _log
@@ -1290,11 +1279,11 @@
 
     var noop = function noop() {};
 
-    var console = window_1['console'] || {
-      'log': noop,
-      'warn': noop,
-      'error': noop,
-      'trace': noop
+    var console = window_1.console || {
+      log: noop,
+      warn: noop,
+      error: noop,
+      trace: noop
     };
 
     if (type) {
@@ -1303,7 +1292,7 @@
     } else {
       type = 'log';
     } // add to history
-    //log.history.push(argsArray);
+    // log.history.push(argsArray);
     // add console prefix after adding to history
 
 
@@ -1393,7 +1382,7 @@
    * results in `'object'`.
    *
    * @param  {Object} value
-   * @return {Boolean}
+   * @return {boolean}
    */
 
   function isObject(value) {
@@ -1401,15 +1390,16 @@
   }
   /**
    * Check is Object is isEmpty
+   *
    * @param {Object} value
-   * @returns {Boolean}
+   * @return {boolean}
    */
 
   function isEmpty(value) {
     return keys(value).length === 0;
   }
 
-  /*global
+  /* global
     document, atob
   */
   function base64EncodeUint8Array(input) {
@@ -1425,11 +1415,11 @@
     var output = '';
 
     while (i < input.length) {
-      chr1 = input[i++];
-      chr2 = i < input.length ? input[i++] : Number.NaN; // Not sure if the index
+      chr1 = input[i++]; // Not sure if the index
 
-      chr3 = i < input.length ? input[i++] : Number.NaN; // checks are needed here
+      chr2 = i < input.length ? input[i++] : Number.NaN; // checks are needed here
 
+      chr3 = i < input.length ? input[i++] : Number.NaN;
       enc1 = chr1 >> 2;
       enc2 = (chr1 & 3) << 4 | chr2 >> 4;
       enc3 = (chr2 & 15) << 2 | chr3 >> 6;
@@ -1485,78 +1475,30 @@
     return src;
   }
 
-  /**
-   * EmpPlayerErrorCodes - Holds all available error codes
-   * EmpPlayerError - Emp custom Error object
-   *
-   * @class EmpPlayerError
-   */
+  var minDoc = {};
 
-  var EmpPlayerErrorCodes = {
-    UNKNOWN: 100,
-    LOAD_ASSET: 101,
-    ENTITLEMENT: 102,
-    ENTITLEMENT2: 103,
-    SHAKA_TECH: 200,
-    HLS_TECH: 300,
-    CHROMECAST_TECH: 500,
-    HLS_MSE_TECH: 10000,
-    DASHIF_TECH: 20000
-  };
-  var EmpPlayerError =
-  /*#__PURE__*/
-  function (_Error) {
-    _inheritsLoose(EmpPlayerError, _Error);
+  var topLevel = typeof commonjsGlobal !== 'undefined' ? commonjsGlobal :
+      typeof window !== 'undefined' ? window : {};
 
-    function EmpPlayerError(value, code, status) {
-      var _this;
 
-      if (code === void 0) {
-        code = EmpPlayerErrorCodes.UNKNOWN;
+  var doccy;
+
+  if (typeof document !== 'undefined') {
+      doccy = document;
+  } else {
+      doccy = topLevel['__GLOBAL_DOCUMENT_CACHE@4'];
+
+      if (!doccy) {
+          doccy = topLevel['__GLOBAL_DOCUMENT_CACHE@4'] = minDoc;
       }
+  }
 
-      if (status === void 0) {
-        status = null;
-      }
-
-      _this = _Error.call(this) || this;
-      _this.code = code;
-
-      if (isString(value)) {
-        _this.message = value;
-      } else if (value.message) {
-        _this.message = value.message;
-      }
-
-      _this.status = status;
-
-      if (Error.captureStackTrace) {
-        Error.captureStackTrace(_assertThisInitialized(_assertThisInitialized(_this)), EmpPlayerError);
-      }
-
-      return _this;
-    }
-
-    _createClass(EmpPlayerError, [{
-      key: "codes",
-      get: function get() {
-        return EmpPlayerErrorCodes;
-      }
-    }]);
-
-    return EmpPlayerError;
-  }(_wrapNativeSuper(Error));
-
-  /**
-   * Unique ID for an element or function
-   * @type {Number}
-   * @private
-   */
+  var document_1 = doccy;
 
   /**
    * Whether the current DOM interface appears to be real.
    *
-   * @return {Boolean}
+   * @return {boolean}
    */
 
 
@@ -1646,6 +1588,10 @@
   var TOUCH_ENABLED = isReal() && ('ontouchstart' in window_1 || window_1.DocumentTouch && window_1.document instanceof window_1.DocumentTouch);
   var BACKGROUND_SIZE_SUPPORTED = isReal() && 'backgroundSize' in window_1.document.createElement('video').style;
 
+  /* global
+    XMLHttpRequest
+  */
+
   /**
    * EmpTech - General tech implementation, not specific to a certain tech
    *
@@ -1661,7 +1607,8 @@
 
     /**
      * Returns the language code of a language string: 'en-English' to 'en' or returns the original string if '-' can't be found
-     * @returns {String} language code
+     *
+     * @return {string} language code
      */
     _proto.languageCode = function languageCode(language) {
       return language ? language.split('-')[0] : null;
@@ -1672,9 +1619,9 @@
 
       if (duration === Infinity || duration === 0) {
         return Infinity;
-      } else {
-        return duration - this.currentTime();
       }
+
+      return duration - this.currentTime();
     };
 
     _proto.supportsEpgProgramChange = function supportsEpgProgramChange() {
@@ -1693,15 +1640,15 @@
     ;
 
     _proto.triggerRecoverableTechError = function triggerRecoverableTechError(error, techName) {
-      log$1('RecoverableTechError', techName, error);
+      log('RecoverableTechError', techName, error);
       var category = error.category || '';
       var code = error.code || '';
       var msg = error.message || '';
       var message = 'Tech: ' + techName + '  Can\'t load video: error category: ' + category + ' code: ' + code + ' message: ' + msg;
 
       if (category !== 6 && code !== 6001) {
-        //Hide DRM error for Safari with Shaka-Dash
-        log$1.error(message);
+        // Hide DRM error for Safari with Shaka-Dash
+        log.error(message);
       }
 
       this.trigger(empPlayerEvents.RECOVERABLE_ASSET_ERROR, {
@@ -1753,7 +1700,7 @@
       var duration = this.duration();
 
       if (this.preDuration_ !== duration) {
-        //only trigger DURATION_CHANGE if change bigger than 1 sec.
+        // only trigger DURATION_CHANGE if change bigger than 1 sec.
         if (duration - this.preDuration_ >= 1.0 || duration - this.preDuration_ <= -1.0 || duration === 0) {
           this.preDuration_ = this.duration();
           this.trigger(empPlayerEvents.DURATION_CHANGE);
@@ -1764,11 +1711,11 @@
     _proto.fetchWidevineCertificate = function fetchWidevineCertificate(certificateUrl, callback) {
       var _this = this;
 
-      log$1('fetchWidevineCertificate'); //Can't trigger here no handlers yet
-      //this.trigger({ type: EmpPlayerEvents.DRM_SESSION_UPDATE, bubbles: true }, { 'messageType': 'WIDEVINE_CERTIFICATE_REQUEST', 'code': undefined, 'info': certificateUrl });
+      log('fetchWidevineCertificate'); // Can't trigger here no handlers yet
+      // this.trigger({ type: EmpPlayerEvents.DRM_SESSION_UPDATE, bubbles: true }, { 'messageType': 'WIDEVINE_CERTIFICATE_REQUEST', 'code': undefined, 'info': certificateUrl });
 
       var request = new XMLHttpRequest();
-      request.addEventListener('error', this.checkForRecoverableErrors, false); //'irdeto'
+      request.addEventListener('error', this.checkForRecoverableErrors, false); // 'irdeto'
 
       request.responseType = 'arraybuffer';
       request.addEventListener('load', function (event) {
@@ -1784,14 +1731,14 @@
     _proto.onWidevineCertificateLoad_ = function onWidevineCertificateLoad_(event, _ref) {
       var callback = _ref.callback,
           certificateUrl = _ref.certificateUrl;
-      log$1('onWidevineCertificateLoad');
+      log('onWidevineCertificateLoad');
       this.trigger({
         type: empPlayerEvents.DRM_SESSION_UPDATE,
         bubbles: true
       }, {
-        'messageType': 'WIDEVINE_CERTIFICATE_REQUEST',
-        'code': undefined,
-        'info': certificateUrl
+        messageType: 'WIDEVINE_CERTIFICATE_REQUEST',
+        code: undefined,
+        info: certificateUrl
       });
       var request = event.target;
 
@@ -1801,9 +1748,9 @@
           type: empPlayerEvents.DRM_SESSION_UPDATE,
           bubbles: true
         }, {
-          'messageType': 'WIDEVINE_CERTIFICATE_RESPONSE',
-          'code': undefined,
-          'info': 'onWidevineCertificateLoad'
+          messageType: 'WIDEVINE_CERTIFICATE_RESPONSE',
+          code: undefined,
+          info: 'onWidevineCertificateLoad'
         });
         callback(certificate);
       } else {
@@ -1812,7 +1759,7 @@
           code: request.status
         };
 
-        if (request.responseType === "arraybuffer") {
+        if (request.responseType === 'arraybuffer') {
           var enc = new TextDecoder('utf-8');
           error.message = enc.decode(request.response);
         }
@@ -1830,29 +1777,27 @@
       } // Don't fetch certificate if IE or Edge or CC
 
 
-      if (window.document.documentMode || /Edge/.test(window.navigator.userAgent) || IS_CHROMECAST || IS_ANDROID) {
+      if (window_1.document.documentMode || /Edge/.test(window_1.navigator.userAgent) || IS_CHROMECAST || IS_ANDROID) {
         this.certificate_ = null;
-      } else {
-        if (source.certificateServer && !this.certificate_ && (source.licenseServer || source.keySystems && !isEmpty(source.keySystems))) {
-          this.fetchWidevineCertificate(source.certificateServer, function (cert, error) {
-            if (cert) {
-              if (_this2.name_ === 'EmpDashif') {
-                _this2.certificate_ = base64EncodeUint8Array(cert);
-              } else {
-                //Shaka
-                _this2.certificate_ = cert;
-              }
-
-              _this2.handleSource(source, tech);
+      } else if (source.certificateServer && !this.certificate_ && (source.licenseServer || source.keySystems && !isEmpty(source.keySystems))) {
+        this.fetchWidevineCertificate(source.certificateServer, function (cert, error) {
+          if (cert) {
+            if (_this2.name_ === 'EmpDashif') {
+              _this2.certificate_ = base64EncodeUint8Array(cert);
             } else {
-              _this2.checkForRecoverableErrors(error ? error : {
-                message: 'no certificate',
-                category: 6
-              });
+              // Is Shaka
+              _this2.certificate_ = cert;
             }
-          });
-          return false;
-        }
+
+            _this2.handleSource(source, tech);
+          } else {
+            _this2.checkForRecoverableErrors(error ? error : {
+              message: 'no certificate',
+              category: 6
+            });
+          }
+        });
+        return false;
       }
 
       if (this.stopTrackingDuration) {
@@ -1886,10 +1831,11 @@
 
       this.clearTracks(['text']);
       return true;
-    } ///////////////////// Text tracks
+    } // /////////////////// Text tracks
 
     /**
      * isTextTrackSynchronized
+     *
      * @param {string[]} techTracksLanguages
      * @private
      */
@@ -1905,9 +1851,9 @@
       }
 
       videojsTextTracksLanguages = videojsTextTracksLanguages.sort();
-      var isSync = techTracksLanguages.join() === videojsTextTracksLanguages.join(); //log('isTextTrackSynchronized', isSync, techTracksLanguages.join(), videojsTextTracksLanguages.join());
+      var isSync = techTracksLanguages.join() === videojsTextTracksLanguages.join(); // log('isTextTrackSynchronized', isSync, techTracksLanguages.join(), videojsTextTracksLanguages.join());
 
-      log$1('isTextTrackSynchronized', isSync);
+      log('isTextTrackSynchronized', isSync);
       return isSync;
     }
     /**
@@ -1918,7 +1864,7 @@
     ;
 
     _proto.syncVideojsTexttrackVisibility = function syncVideojsTexttrackVisibility() {
-      log$1('syncVideojsTexttrackVisibility');
+      log('syncVideojsTexttrackVisibility');
       this.blockLocalTrackChange = true;
       var textTracks = this.textTracks();
       var i = textTracks.length;
@@ -1935,12 +1881,12 @@
         var selectedTechTextLanguage = this.getSelectedTechTextLanguage();
 
         while (i--) {
-          var track = textTracks[i];
+          var _track = textTracks[i];
 
-          if (track.language === selectedTechTextLanguage && track.mode !== 'showing') {
-            track.mode = 'showing';
-          } else if (track.language !== selectedTechTextLanguage && track.mode !== 'disabled') {
-            track.mode = 'disabled';
+          if (_track.language === selectedTechTextLanguage && _track.mode !== 'showing') {
+            _track.mode = 'showing';
+          } else if (_track.language !== selectedTechTextLanguage && _track.mode !== 'disabled') {
+            _track.mode = 'disabled';
           }
         }
       }
@@ -1950,21 +1896,22 @@
     /**
     * deferredSelectTextTrack
     * When changing tracklist we get many onTextTrackChange, wait to the update is done
+     *
     * @param {string} languageCode
     * @private
     */
     ;
 
     _proto.deferredSelectTextTrack = function deferredSelectTextTrack(languageCode) {
-      log$1('deferredSelectTextTrack enter', languageCode);
+      log('deferredSelectTextTrack enter', languageCode);
 
       if (this.deferredTextTrackChangeTimeOut) {
-        //Reset TrackChange, new selection comming in
+        // Reset TrackChange, new selection comming in
         clearTimeout(this.deferredTextTrackChangeTimeOut);
       }
 
       this.deferredTextTrackChangeTimeOut = setTimeout(function () {
-        log$1('update texttrack');
+        log('update texttrack');
         clearTimeout(this.deferredTextTrackChangeTimeOut);
         this.deferredTextTrackChangeTimeOut = null;
 
@@ -1975,17 +1922,18 @@
         this.blockLocalTrackChange = true;
         this.selectTechTextLanguage(languageCode);
         this.stopBlockLocalTrackChange('deferredSelectTextTrack exit');
-      }.bind(this), 2000); // 1 sec
+      }.bind(this), 2000);
     }
     /**
     * selectVideojsTextLanguage
+     *
     * @param {string} languageCode
     * @private
     */
     ;
 
     _proto.selectVideojsTextLanguage = function selectVideojsTextLanguage(languageCode) {
-      log$1('selectVideojsTextLanguage', languageCode);
+      log('selectVideojsTextLanguage', languageCode);
       var textTracks = this.textTracks();
       var i = textTracks.length;
 
@@ -1994,10 +1942,10 @@
 
         if (languageCode === track.language && track.mode !== 'showing') {
           this.blockLocalTrackChange = true;
-          track.mode === 'showing';
+          track.mode = 'showing';
         } else if (languageCode !== track.language && track.mode === 'showing') {
           this.blockLocalTrackChange = true;
-          track.mode === 'disabled';
+          track.mode = 'disabled';
         }
       }
 
@@ -2005,7 +1953,8 @@
     }
     /**
     * VideoJS Text track change
-    * @param {object} event
+     *
+    * @param {Object} event
     * One of the VideoJS text track changed its mode
     *
     * @private
@@ -2014,11 +1963,11 @@
 
     _proto.baseTextTrackChange = function baseTextTrackChange(event) {
       if (this.blockLocalTrackChange) {
-        log$1('blockLocalTrackChange', 'baseTextTrackChange');
+        log('blockLocalTrackChange', 'baseTextTrackChange');
         return;
       }
 
-      log$1('ontextTrackChange');
+      log('ontextTrackChange');
       var textTracks = this.textTracks();
       var i = textTracks.length;
 
@@ -2032,10 +1981,11 @@
       }
 
       this.deferredSelectTextTrack(null);
-    } ///////////////////// Audio tracks
+    } // /////////////////// Audio tracks
 
     /**
     * isTechAudioTrackSynchronized
+     *
     * @param {string[]} techTracksLanguages
     * @private
     */
@@ -2051,26 +2001,27 @@
       }
 
       videojsAudioTracksLanguages = videojsAudioTracksLanguages.sort();
-      var isSync = techTracksLanguages.join() === videojsAudioTracksLanguages.join(); //log('isAudioTrackSynchronized', isSync, techTracksLanguages.join(), videojsAudioTracksLanguages.join());
+      var isSync = techTracksLanguages.join() === videojsAudioTracksLanguages.join(); // log('isAudioTrackSynchronized', isSync, techTracksLanguages.join(), videojsAudioTracksLanguages.join());
 
-      log$1('isAudioTrackSynchronized', isSync);
+      log('isAudioTrackSynchronized', isSync);
       return isSync;
     }
     /**
      * VideoJS
      * One of the VideoJS audio track changed its enabled
-     * @param {object} event
+     *
+     * @param {Object} event
      * @private
      */
     ;
 
     _proto.baseAudioTrackChange = function baseAudioTrackChange(event) {
       if (this.blockLocalTrackChange) {
-        log$1('blockLocalTrackChange', 'baseAudioTrackChange');
+        log('blockLocalTrackChange', 'baseAudioTrackChange');
         return;
       }
 
-      log$1('onAudioTrackChange');
+      log('onAudioTrackChange');
       var audioTracks = this.audioTracks();
       var i = audioTracks.length;
 
@@ -2085,13 +2036,14 @@
     }
     /**
     * selectVideojsAudioLanguage
+     *
     * @param {string} languageCode
     * @private
     */
     ;
 
     _proto.selectVideojsAudioLanguage = function selectVideojsAudioLanguage(languageCode) {
-      log$1('selectVideojsAudioLanguage', languageCode);
+      log('selectVideojsAudioLanguage', languageCode);
 
       if (languageCode) {
         var audioTracks = this.audioTracks();
@@ -2111,12 +2063,12 @@
       }
     }
     /**
-     * 
+     *
      * @param {string} kind
      * @param {string} label
      * @param {string} language
      * @param {boolean} enabled = false
-     * @returns {object} new Track
+     * @return {Object} new Track
      * @private
      */
     ;
@@ -2138,6 +2090,7 @@
     }
     /**
     * stopBlockLocalTrackChange
+     *
     * @param {string} caller
     * @private
     */
@@ -2153,12 +2106,12 @@
           try {
             clearTimeout(this.blockLocalTrackChangeTimeOut);
             this.blockLocalTrackChangeTimeOut = null;
-            log$1(caller, 'stopBlockLocalTrackChange', ' TRACK_CHANGE');
+            log(caller, 'stopBlockLocalTrackChange', ' TRACK_CHANGE');
             this.trigger(empPlayerEvents.TRACK_CHANGE);
             this.blockLocalTrackChange = false;
-          } catch (e) {} //Crash when navigate away
-
-        }.bind(this), 2000); //Stop block LocalTrackChange after 1 sec
+          } catch (e) {// Crash when navigate away
+          }
+        }.bind(this), 2000);
       }
     };
 
@@ -2173,11 +2126,12 @@
    * return the start and end times for a range
    * TimeRanges are returned by the buffered() method
    *
-   * @param  {(Number|Array)} Start of a single range or an array of ranges
-   * @param  {Number} End of a single range
+   * @param  {(number|Array)} Start of a single range or an array of ranges
+   * @param  {number} End of a single range
    * @private
    * @method createTimeRanges
    */
+
   function createTimeRanges(start, end) {
     if (Array.isArray(start)) {
       return createTimeRangesObj(start);
@@ -2371,744 +2325,744 @@
   var es6Mixins = mix.init.bind(mix);
 
   function ISO639Converter() {
-    this['aar'] = {
+    this.aar = {
       'ISO_639-1': 'aa',
       'ISO_639-3': 'aar'
     };
-    this['abk'] = {
+    this.abk = {
       'ISO_639-1': 'ab',
       'ISO_639-3': 'abk'
     };
-    this['ave'] = {
+    this.ave = {
       'ISO_639-1': 'ae',
       'ISO_639-3': 'ave'
     };
-    this['afr'] = {
+    this.afr = {
       'ISO_639-1': 'af',
       'ISO_639-3': 'afr'
     };
-    this['aka'] = {
+    this.aka = {
       'ISO_639-1': 'ak',
       'ISO_639-3': 'aka'
     };
-    this['amh'] = {
+    this.amh = {
       'ISO_639-1': 'am',
       'ISO_639-3': 'amh'
     };
-    this['arg'] = {
+    this.arg = {
       'ISO_639-1': 'an',
       'ISO_639-3': 'arg'
     };
-    this['ara'] = {
+    this.ara = {
       'ISO_639-1': 'ar',
       'ISO_639-3': 'ara'
     };
-    this['asm'] = {
+    this.asm = {
       'ISO_639-1': 'as',
       'ISO_639-3': 'asm'
     };
-    this['ava'] = {
+    this.ava = {
       'ISO_639-1': 'av',
       'ISO_639-3': 'ava'
     };
-    this['aym'] = {
+    this.aym = {
       'ISO_639-1': 'ay',
       'ISO_639-3': 'aym'
     };
-    this['aze'] = {
+    this.aze = {
       'ISO_639-1': 'az',
       'ISO_639-3': 'aze'
     };
-    this['bak'] = {
+    this.bak = {
       'ISO_639-1': 'ba',
       'ISO_639-3': 'bak'
     };
-    this['bel'] = {
+    this.bel = {
       'ISO_639-1': 'be',
       'ISO_639-3': 'bel'
     };
-    this['bul'] = {
+    this.bul = {
       'ISO_639-1': 'bg',
       'ISO_639-3': 'bul'
     };
-    this['bis'] = {
+    this.bis = {
       'ISO_639-1': 'bi',
       'ISO_639-3': 'bis'
     };
-    this['bam'] = {
+    this.bam = {
       'ISO_639-1': 'bm',
       'ISO_639-3': 'bam'
     };
-    this['ben'] = {
+    this.ben = {
       'ISO_639-1': 'bn',
       'ISO_639-3': 'ben'
     };
-    this['bod'] = {
+    this.bod = {
       'ISO_639-1': 'bo',
       'ISO_639-3': 'bod'
     };
-    this['bre'] = {
+    this.bre = {
       'ISO_639-1': 'br',
       'ISO_639-3': 'bre'
     };
-    this['bos'] = {
+    this.bos = {
       'ISO_639-1': 'bs',
       'ISO_639-3': 'bos'
     };
-    this['cat'] = {
+    this.cat = {
       'ISO_639-1': 'ca',
       'ISO_639-3': 'cat'
     };
-    this['che'] = {
+    this.che = {
       'ISO_639-1': 'ce',
       'ISO_639-3': 'che'
     };
-    this['cha'] = {
+    this.cha = {
       'ISO_639-1': 'ch',
       'ISO_639-3': 'cha'
     };
-    this['cos'] = {
+    this.cos = {
       'ISO_639-1': 'co',
       'ISO_639-3': 'cos'
     };
-    this['cre'] = {
+    this.cre = {
       'ISO_639-1': 'cr',
       'ISO_639-3': 'cre'
     };
-    this['ces'] = {
+    this.ces = {
       'ISO_639-1': 'cs',
       'ISO_639-3': 'ces'
     };
-    this['chu'] = {
+    this.chu = {
       'ISO_639-1': 'cu',
       'ISO_639-3': 'chu'
     };
-    this['chv'] = {
+    this.chv = {
       'ISO_639-1': 'cv',
       'ISO_639-3': 'chv'
     };
-    this['cym'] = {
+    this.cym = {
       'ISO_639-1': 'cy',
       'ISO_639-3': 'cym'
     };
-    this['dan'] = {
+    this.dan = {
       'ISO_639-1': 'da',
       'ISO_639-3': 'dan'
     };
-    this['deu'] = {
+    this.deu = {
       'ISO_639-1': 'de',
       'ISO_639-3': 'deu'
     };
-    this['div'] = {
+    this.div = {
       'ISO_639-1': 'dv',
       'ISO_639-3': 'div'
     };
-    this['dzo'] = {
+    this.dzo = {
       'ISO_639-1': 'dz',
       'ISO_639-3': 'dzo'
     };
-    this['ewe'] = {
+    this.ewe = {
       'ISO_639-1': 'ee',
       'ISO_639-3': 'ewe'
     };
-    this['ell'] = {
+    this.ell = {
       'ISO_639-1': 'el',
       'ISO_639-3': 'ell'
     };
-    this['eng'] = {
+    this.eng = {
       'ISO_639-1': 'en',
       'ISO_639-3': 'eng'
     };
-    this['epo'] = {
+    this.epo = {
       'ISO_639-1': 'eo',
       'ISO_639-3': 'epo'
     };
-    this['spa'] = {
+    this.spa = {
       'ISO_639-1': 'es',
       'ISO_639-3': 'spa'
     };
-    this['est'] = {
+    this.est = {
       'ISO_639-1': 'et',
       'ISO_639-3': 'est'
     };
-    this['eus'] = {
+    this.eus = {
       'ISO_639-1': 'eu',
       'ISO_639-3': 'eus'
     };
-    this['fas'] = {
+    this.fas = {
       'ISO_639-1': 'fa',
       'ISO_639-3': 'fas'
     };
-    this['ful'] = {
+    this.ful = {
       'ISO_639-1': 'ff',
       'ISO_639-3': 'ful'
     };
-    this['fin'] = {
+    this.fin = {
       'ISO_639-1': 'fi',
       'ISO_639-3': 'fin'
     };
-    this['fij'] = {
+    this.fij = {
       'ISO_639-1': 'fj',
       'ISO_639-3': 'fij'
     };
-    this['fao'] = {
+    this.fao = {
       'ISO_639-1': 'fo',
       'ISO_639-3': 'fao'
     };
-    this['fra'] = {
+    this.fra = {
       'ISO_639-1': 'fr',
       'ISO_639-3': 'fra'
     };
-    this['fry'] = {
+    this.fry = {
       'ISO_639-1': 'fy',
       'ISO_639-3': 'fry'
-    }; //Bugfix some track have "ger" as code
+    }; // Bugfix some track have "ger" as code
 
-    this['ger'] = {
+    this.ger = {
       'ISO_639-1': 'de',
       'ISO_639-3': 'deu'
     };
-    this['gle'] = {
+    this.gle = {
       'ISO_639-1': 'ga',
       'ISO_639-3': 'gle'
     };
-    this['gla'] = {
+    this.gla = {
       'ISO_639-1': 'gd',
       'ISO_639-3': 'gla'
     };
-    this['glg'] = {
+    this.glg = {
       'ISO_639-1': 'gl',
       'ISO_639-3': 'glg'
     };
-    this['grn'] = {
+    this.grn = {
       'ISO_639-1': 'gn',
       'ISO_639-3': 'grn'
     };
-    this['guj'] = {
+    this.guj = {
       'ISO_639-1': 'gu',
       'ISO_639-3': 'guj'
     };
-    this['glv'] = {
+    this.glv = {
       'ISO_639-1': 'gv',
       'ISO_639-3': 'glv'
     };
-    this['hau'] = {
+    this.hau = {
       'ISO_639-1': 'ha',
       'ISO_639-3': 'hau'
     };
-    this['heb'] = {
+    this.heb = {
       'ISO_639-1': 'he',
       'ISO_639-3': 'heb'
     };
-    this['hin'] = {
+    this.hin = {
       'ISO_639-1': 'hi',
       'ISO_639-3': 'hin'
     };
-    this['hmo'] = {
+    this.hmo = {
       'ISO_639-1': 'ho',
       'ISO_639-3': 'hmo'
     };
-    this['hrv'] = {
+    this.hrv = {
       'ISO_639-1': 'hr',
       'ISO_639-3': 'hrv'
     };
-    this['hat'] = {
+    this.hat = {
       'ISO_639-1': 'ht',
       'ISO_639-3': 'hat'
     };
-    this['hun'] = {
+    this.hun = {
       'ISO_639-1': 'hu',
       'ISO_639-3': 'hun'
     };
-    this['hye'] = {
+    this.hye = {
       'ISO_639-1': 'hy',
       'ISO_639-3': 'hye'
     };
-    this['her'] = {
+    this.her = {
       'ISO_639-1': 'hz',
       'ISO_639-3': 'her'
     };
-    this['ina'] = {
+    this.ina = {
       'ISO_639-1': 'ia',
       'ISO_639-3': 'ina'
     };
-    this['ind'] = {
+    this.ind = {
       'ISO_639-1': 'id',
       'ISO_639-3': 'ind'
     };
-    this['ile'] = {
+    this.ile = {
       'ISO_639-1': 'ie',
       'ISO_639-3': 'ile'
     };
-    this['ibo'] = {
+    this.ibo = {
       'ISO_639-1': 'ig',
       'ISO_639-3': 'ibo'
     };
-    this['iii'] = {
+    this.iii = {
       'ISO_639-1': 'ii',
       'ISO_639-3': 'iii'
     };
-    this['ipk'] = {
+    this.ipk = {
       'ISO_639-1': 'ik',
       'ISO_639-3': 'ipk'
     };
-    this['ido'] = {
+    this.ido = {
       'ISO_639-1': 'io',
       'ISO_639-3': 'ido'
     };
-    this['isl'] = {
+    this.isl = {
       'ISO_639-1': 'is',
       'ISO_639-3': 'isl'
     };
-    this['ita'] = {
+    this.ita = {
       'ISO_639-1': 'it',
       'ISO_639-3': 'ita'
     };
-    this['iku'] = {
+    this.iku = {
       'ISO_639-1': 'iu',
       'ISO_639-3': 'iku'
     };
-    this['jpn'] = {
+    this.jpn = {
       'ISO_639-1': 'ja',
       'ISO_639-3': 'jpn'
     };
-    this['jav'] = {
+    this.jav = {
       'ISO_639-1': 'jv',
       'ISO_639-3': 'jav'
     };
-    this['kat'] = {
+    this.kat = {
       'ISO_639-1': 'ka',
       'ISO_639-3': 'kat'
     };
-    this['kon'] = {
+    this.kon = {
       'ISO_639-1': 'kg',
       'ISO_639-3': 'kon'
     };
-    this['kik'] = {
+    this.kik = {
       'ISO_639-1': 'ki',
       'ISO_639-3': 'kik'
     };
-    this['kua'] = {
+    this.kua = {
       'ISO_639-1': 'kj',
       'ISO_639-3': 'kua'
     };
-    this['kaz'] = {
+    this.kaz = {
       'ISO_639-1': 'kk',
       'ISO_639-3': 'kaz'
     };
-    this['kal'] = {
+    this.kal = {
       'ISO_639-1': 'kl',
       'ISO_639-3': 'kal'
     };
-    this['khm'] = {
+    this.khm = {
       'ISO_639-1': 'km',
       'ISO_639-3': 'khm'
     };
-    this['kan'] = {
+    this.kan = {
       'ISO_639-1': 'kn',
       'ISO_639-3': 'kan'
     };
-    this['kor'] = {
+    this.kor = {
       'ISO_639-1': 'ko',
       'ISO_639-3': 'kor'
     };
-    this['kau'] = {
+    this.kau = {
       'ISO_639-1': 'kr',
       'ISO_639-3': 'kau'
     };
-    this['kas'] = {
+    this.kas = {
       'ISO_639-1': 'ks',
       'ISO_639-3': 'kas'
     };
-    this['kur'] = {
+    this.kur = {
       'ISO_639-1': 'ku',
       'ISO_639-3': 'kur'
     };
-    this['kom'] = {
+    this.kom = {
       'ISO_639-1': 'kv',
       'ISO_639-3': 'kom'
     };
-    this['cor'] = {
+    this.cor = {
       'ISO_639-1': 'kw',
       'ISO_639-3': 'cor'
     };
-    this['kir'] = {
+    this.kir = {
       'ISO_639-1': 'ky',
       'ISO_639-3': 'kir'
     };
-    this['lat'] = {
+    this.lat = {
       'ISO_639-1': 'la',
       'ISO_639-3': 'lat'
     };
-    this['ltz'] = {
+    this.ltz = {
       'ISO_639-1': 'lb',
       'ISO_639-3': 'ltz'
     };
-    this['lug'] = {
+    this.lug = {
       'ISO_639-1': 'lg',
       'ISO_639-3': 'lug'
     };
-    this['lim'] = {
+    this.lim = {
       'ISO_639-1': 'li',
       'ISO_639-3': 'lim'
     };
-    this['lin'] = {
+    this.lin = {
       'ISO_639-1': 'ln',
       'ISO_639-3': 'lin'
     };
-    this['lao'] = {
+    this.lao = {
       'ISO_639-1': 'lo',
       'ISO_639-3': 'lao'
     };
-    this['lit'] = {
+    this.lit = {
       'ISO_639-1': 'lt',
       'ISO_639-3': 'lit'
     };
-    this['lub'] = {
+    this.lub = {
       'ISO_639-1': 'lu',
       'ISO_639-3': 'lub'
     };
-    this['lav'] = {
+    this.lav = {
       'ISO_639-1': 'lv',
       'ISO_639-3': 'lav'
     };
-    this['mlg'] = {
+    this.mlg = {
       'ISO_639-1': 'mg',
       'ISO_639-3': 'mlg'
     };
-    this['mah'] = {
+    this.mah = {
       'ISO_639-1': 'mh',
       'ISO_639-3': 'mah'
     };
-    this['mri'] = {
+    this.mri = {
       'ISO_639-1': 'mi',
       'ISO_639-3': 'mri'
     };
-    this['mkd'] = {
+    this.mkd = {
       'ISO_639-1': 'mk',
       'ISO_639-3': 'mkd'
     };
-    this['mal'] = {
+    this.mal = {
       'ISO_639-1': 'ml',
       'ISO_639-3': 'mal'
     };
-    this['mon'] = {
+    this.mon = {
       'ISO_639-1': 'mn',
       'ISO_639-3': 'mon'
     };
-    this['mar'] = {
+    this.mar = {
       'ISO_639-1': 'mr',
       'ISO_639-3': 'mar'
     };
-    this['msa'] = {
+    this.msa = {
       'ISO_639-1': 'ms',
       'ISO_639-3': 'msa'
     };
-    this['mlt'] = {
+    this.mlt = {
       'ISO_639-1': 'mt',
       'ISO_639-3': 'mlt'
     };
-    this['mya'] = {
+    this.mya = {
       'ISO_639-1': 'my',
       'ISO_639-3': 'mya'
     };
-    this['nau'] = {
+    this.nau = {
       'ISO_639-1': 'na',
       'ISO_639-3': 'nau'
     };
-    this['nob'] = {
+    this.nob = {
       'ISO_639-1': 'nb',
       'ISO_639-3': 'nob'
     };
-    this['nde'] = {
+    this.nde = {
       'ISO_639-1': 'nd',
       'ISO_639-3': 'nde'
     };
-    this['nep'] = {
+    this.nep = {
       'ISO_639-1': 'ne',
       'ISO_639-3': 'nep'
     };
-    this['ndo'] = {
+    this.ndo = {
       'ISO_639-1': 'ng',
       'ISO_639-3': 'ndo'
     };
-    this['nld'] = {
+    this.nld = {
       'ISO_639-1': 'nl',
       'ISO_639-3': 'nld'
     };
-    this['nno'] = {
+    this.nno = {
       'ISO_639-1': 'nn',
       'ISO_639-3': 'nno'
     };
-    this['nor'] = {
+    this.nor = {
       'ISO_639-1': 'no',
       'ISO_639-3': 'nor'
     };
-    this['nbl'] = {
+    this.nbl = {
       'ISO_639-1': 'nr',
       'ISO_639-3': 'nbl'
     };
-    this['nav'] = {
+    this.nav = {
       'ISO_639-1': 'nv',
       'ISO_639-3': 'nav'
     };
-    this['nya'] = {
+    this.nya = {
       'ISO_639-1': 'ny',
       'ISO_639-3': 'nya'
     };
-    this['oci'] = {
+    this.oci = {
       'ISO_639-1': 'oc',
       'ISO_639-3': 'oci'
     };
-    this['oji'] = {
+    this.oji = {
       'ISO_639-1': 'oj',
       'ISO_639-3': 'oji'
     };
-    this['orm'] = {
+    this.orm = {
       'ISO_639-1': 'om',
       'ISO_639-3': 'orm'
     };
-    this['ori'] = {
+    this.ori = {
       'ISO_639-1': 'or',
       'ISO_639-3': 'ori'
     };
-    this['oss'] = {
+    this.oss = {
       'ISO_639-1': 'os',
       'ISO_639-3': 'oss'
     };
-    this['pan'] = {
+    this.pan = {
       'ISO_639-1': 'pa',
       'ISO_639-3': 'pan'
     };
-    this['pli'] = {
+    this.pli = {
       'ISO_639-1': 'pi',
       'ISO_639-3': 'pli'
     };
-    this['pol'] = {
+    this.pol = {
       'ISO_639-1': 'pl',
       'ISO_639-3': 'pol'
     };
-    this['pus'] = {
+    this.pus = {
       'ISO_639-1': 'ps',
       'ISO_639-3': 'pus'
     };
-    this['por'] = {
+    this.por = {
       'ISO_639-1': 'pt',
       'ISO_639-3': 'por'
     };
-    this['que'] = {
+    this.que = {
       'ISO_639-1': 'qu',
       'ISO_639-3': 'que'
     };
-    this['roh'] = {
+    this.roh = {
       'ISO_639-1': 'rm',
       'ISO_639-3': 'roh'
     };
-    this['run'] = {
+    this.run = {
       'ISO_639-1': 'rn',
       'ISO_639-3': 'run'
     };
-    this['ron'] = {
+    this.ron = {
       'ISO_639-1': 'ro',
       'ISO_639-3': 'ron'
     };
-    this['rus'] = {
+    this.rus = {
       'ISO_639-1': 'ru',
       'ISO_639-3': 'rus'
     };
-    this['kin'] = {
+    this.kin = {
       'ISO_639-1': 'rw',
       'ISO_639-3': 'kin'
     };
-    this['san'] = {
+    this.san = {
       'ISO_639-1': 'sa',
       'ISO_639-3': 'san'
     };
-    this['srd'] = {
+    this.srd = {
       'ISO_639-1': 'sc',
       'ISO_639-3': 'srd'
     };
-    this['snd'] = {
+    this.snd = {
       'ISO_639-1': 'sd',
       'ISO_639-3': 'snd'
     };
-    this['sme'] = {
+    this.sme = {
       'ISO_639-1': 'se',
       'ISO_639-3': 'sme'
     };
-    this['sag'] = {
+    this.sag = {
       'ISO_639-1': 'sg',
       'ISO_639-3': 'sag'
     };
-    this['hbs'] = {
+    this.hbs = {
       'ISO_639-1': 'sh (deprecated)',
       'ISO_639-3': 'hbs'
     };
-    this['sin'] = {
+    this.sin = {
       'ISO_639-1': 'si',
       'ISO_639-3': 'sin'
     };
-    this['slk'] = {
+    this.slk = {
       'ISO_639-1': 'sk',
       'ISO_639-3': 'slk'
     };
-    this['slv'] = {
+    this.slv = {
       'ISO_639-1': 'sl',
       'ISO_639-3': 'slv'
     };
-    this['smo'] = {
+    this.smo = {
       'ISO_639-1': 'sm',
       'ISO_639-3': 'smo'
     };
-    this['sna'] = {
+    this.sna = {
       'ISO_639-1': 'sn',
       'ISO_639-3': 'sna'
     };
-    this['som'] = {
+    this.som = {
       'ISO_639-1': 'so',
       'ISO_639-3': 'som'
     };
-    this['sqi'] = {
+    this.sqi = {
       'ISO_639-1': 'sq',
       'ISO_639-3': 'sqi'
     };
-    this['srp'] = {
+    this.srp = {
       'ISO_639-1': 'sr',
       'ISO_639-3': 'srp'
     };
-    this['ssw'] = {
+    this.ssw = {
       'ISO_639-1': 'ss',
       'ISO_639-3': 'ssw'
     };
-    this['sot'] = {
+    this.sot = {
       'ISO_639-1': 'st',
       'ISO_639-3': 'sot'
     };
-    this['sun'] = {
+    this.sun = {
       'ISO_639-1': 'su',
       'ISO_639-3': 'sun'
     };
-    this['swe'] = {
+    this.swe = {
       'ISO_639-1': 'sv',
       'ISO_639-3': 'swe'
     };
-    this['swa'] = {
+    this.swa = {
       'ISO_639-1': 'sw',
       'ISO_639-3': 'swa'
     };
-    this['tam'] = {
+    this.tam = {
       'ISO_639-1': 'ta',
       'ISO_639-3': 'tam'
     };
-    this['tel'] = {
+    this.tel = {
       'ISO_639-1': 'te',
       'ISO_639-3': 'tel'
     };
-    this['tgk'] = {
+    this.tgk = {
       'ISO_639-1': 'tg',
       'ISO_639-3': 'tgk'
     };
-    this['tha'] = {
+    this.tha = {
       'ISO_639-1': 'th',
       'ISO_639-3': 'tha'
     };
-    this['tir'] = {
+    this.tir = {
       'ISO_639-1': 'ti',
       'ISO_639-3': 'tir'
     };
-    this['tuk'] = {
+    this.tuk = {
       'ISO_639-1': 'tk',
       'ISO_639-3': 'tuk'
     };
-    this['tgl'] = {
+    this.tgl = {
       'ISO_639-1': 'tl',
       'ISO_639-3': 'tgl'
     };
-    this['tsn'] = {
+    this.tsn = {
       'ISO_639-1': 'tn',
       'ISO_639-3': 'tsn'
     };
-    this['ton'] = {
+    this.ton = {
       'ISO_639-1': 'to',
       'ISO_639-3': 'ton'
     };
-    this['tur'] = {
+    this.tur = {
       'ISO_639-1': 'tr',
       'ISO_639-3': 'tur'
     };
-    this['tso'] = {
+    this.tso = {
       'ISO_639-1': 'ts',
       'ISO_639-3': 'tso'
     };
-    this['tat'] = {
+    this.tat = {
       'ISO_639-1': 'tt',
       'ISO_639-3': 'tat'
     };
-    this['twi'] = {
+    this.twi = {
       'ISO_639-1': 'tw',
       'ISO_639-3': 'twi'
     };
-    this['tah'] = {
+    this.tah = {
       'ISO_639-1': 'ty',
       'ISO_639-3': 'tah'
     };
-    this['uig'] = {
+    this.uig = {
       'ISO_639-1': 'ug',
       'ISO_639-3': 'uig'
     };
-    this['ukr'] = {
+    this.ukr = {
       'ISO_639-1': 'uk',
       'ISO_639-3': 'ukr'
     };
-    this['urd'] = {
+    this.urd = {
       'ISO_639-1': 'ur',
       'ISO_639-3': 'urd'
     };
-    this['uzb'] = {
+    this.uzb = {
       'ISO_639-1': 'uz',
       'ISO_639-3': 'uzb'
     };
-    this['ven'] = {
+    this.ven = {
       'ISO_639-1': 've',
       'ISO_639-3': 'ven'
     };
-    this['vie'] = {
+    this.vie = {
       'ISO_639-1': 'vi',
       'ISO_639-3': 'vie'
     };
-    this['vol'] = {
+    this.vol = {
       'ISO_639-1': 'vo',
       'ISO_639-3': 'vol'
     };
-    this['wln'] = {
+    this.wln = {
       'ISO_639-1': 'wa',
       'ISO_639-3': 'wln'
     };
-    this['wol'] = {
+    this.wol = {
       'ISO_639-1': 'wo',
       'ISO_639-3': 'wol'
     };
-    this['xho'] = {
+    this.xho = {
       'ISO_639-1': 'xh',
       'ISO_639-3': 'xho'
     };
-    this['yid'] = {
+    this.yid = {
       'ISO_639-1': 'yi',
       'ISO_639-3': 'yid'
     };
-    this['yor'] = {
+    this.yor = {
       'ISO_639-1': 'yo',
       'ISO_639-3': 'yor'
     };
-    this['zha'] = {
+    this.zha = {
       'ISO_639-1': 'za',
       'ISO_639-3': 'zha'
     };
-    this['zho'] = {
+    this.zho = {
       'ISO_639-1': 'zh',
       'ISO_639-3': 'zho'
     };
-    this['zul'] = {
+    this.zul = {
       'ISO_639-1': 'zu',
       'ISO_639-3': 'zul'
     };
@@ -3117,765 +3071,834 @@
   ISO639Converter.prototype.from3to1 = function (ISO3Code) {
     if (this.hasOwnProperty(ISO3Code)) {
       return this[ISO3Code]['ISO_639-1'];
-    } else {
-      return null;
     }
+
+    return null;
   };
 
-  window.iso639Converter = new ISO639Converter();
+  window_1.iso639Converter = new ISO639Converter();
   /**
-  * @author Phil Teare
-  * using wikipedia data
-  */
+  	 * @author Phil Teare
+  	 * using wikipedia data
+  	 */
 
   var isoLangs = {
-    "ab": {
-      "name": "Abkhaz",
-      "nativeName": "аҧсуа"
-    },
-    "aa": {
-      "name": "Afar",
-      "nativeName": "Afaraf"
-    },
-    "af": {
-      "name": "Afrikaans",
-      "nativeName": "Afrikaans"
-    },
-    "ak": {
-      "name": "Akan",
-      "nativeName": "Akan"
-    },
-    "sq": {
-      "name": "Albanian",
-      "nativeName": "Shqip"
-    },
-    "am": {
-      "name": "Amharic",
-      "nativeName": "አማርኛ"
-    },
-    "ar": {
-      "name": "Arabic",
-      "nativeName": "العربية"
-    },
-    "an": {
-      "name": "Aragonese",
-      "nativeName": "Aragonés"
-    },
-    "hy": {
-      "name": "Armenian",
-      "nativeName": "Հայերեն"
-    },
-    "as": {
-      "name": "Assamese",
-      "nativeName": "অসমীয়া"
-    },
-    "av": {
-      "name": "Avaric",
-      "nativeName": "авар мацӀ, магӀарул мацӀ"
-    },
-    "ae": {
-      "name": "Avestan",
-      "nativeName": "avesta"
-    },
-    "ay": {
-      "name": "Aymara",
-      "nativeName": "aymar aru"
-    },
-    "az": {
-      "name": "Azerbaijani",
-      "nativeName": "azərbaycan dili"
-    },
-    "bm": {
-      "name": "Bambara",
-      "nativeName": "bamanankan"
-    },
-    "ba": {
-      "name": "Bashkir",
-      "nativeName": "башҡорт теле"
-    },
-    "eu": {
-      "name": "Basque",
-      "nativeName": "euskara, euskera"
-    },
-    "be": {
-      "name": "Belarusian",
-      "nativeName": "Беларуская"
-    },
-    "bn": {
-      "name": "Bengali",
-      "nativeName": "বাংলা"
-    },
-    "bh": {
-      "name": "Bihari",
-      "nativeName": "भोजपुरी"
-    },
-    "bi": {
-      "name": "Bislama",
-      "nativeName": "Bislama"
-    },
-    "bs": {
-      "name": "Bosnian",
-      "nativeName": "bosanski jezik"
-    },
-    "br": {
-      "name": "Breton",
-      "nativeName": "brezhoneg"
-    },
-    "bg": {
-      "name": "Bulgarian",
-      "nativeName": "български език"
-    },
-    "my": {
-      "name": "Burmese",
-      "nativeName": "ဗမာစာ"
-    },
-    "ca": {
-      "name": "Catalan; Valencian",
-      "nativeName": "Català"
-    },
-    "ch": {
-      "name": "Chamorro",
-      "nativeName": "Chamoru"
-    },
-    "ce": {
-      "name": "Chechen",
-      "nativeName": "нохчийн мотт"
-    },
-    "ny": {
-      "name": "Chichewa; Chewa; Nyanja",
-      "nativeName": "chiCheŵa, chinyanja"
-    },
-    "zh": {
-      "name": "Chinese",
-      "nativeName": "中文 (Zhōngwén), 汉语, 漢語"
-    },
-    "cv": {
-      "name": "Chuvash",
-      "nativeName": "чӑваш чӗлхи"
-    },
-    "kw": {
-      "name": "Cornish",
-      "nativeName": "Kernewek"
-    },
-    "co": {
-      "name": "Corsican",
-      "nativeName": "corsu, lingua corsa"
-    },
-    "cr": {
-      "name": "Cree",
-      "nativeName": "ᓀᐦᐃᔭᐍᐏᐣ"
-    },
-    "hr": {
-      "name": "Croatian",
-      "nativeName": "hrvatski"
-    },
-    "cs": {
-      "name": "Czech",
-      "nativeName": "česky, čeština"
-    },
-    "da": {
-      "name": "Danish",
-      "nativeName": "dansk"
-    },
-    "dv": {
-      "name": "Divehi; Dhivehi; Maldivian;",
-      "nativeName": "ދިވެހި"
-    },
-    "nl": {
-      "name": "Dutch",
-      "nativeName": "Nederlands, Vlaams"
-    },
-    "en": {
-      "name": "English",
-      "nativeName": "English"
-    },
-    "eo": {
-      "name": "Esperanto",
-      "nativeName": "Esperanto"
-    },
-    "et": {
-      "name": "Estonian",
-      "nativeName": "eesti, eesti keel"
-    },
-    "ee": {
-      "name": "Ewe",
-      "nativeName": "Eʋegbe"
-    },
-    "fo": {
-      "name": "Faroese",
-      "nativeName": "føroyskt"
-    },
-    "fj": {
-      "name": "Fijian",
-      "nativeName": "vosa Vakaviti"
-    },
-    "fi": {
-      "name": "Finnish",
-      "nativeName": "suomi, suomen kieli"
-    },
-    "fr": {
-      "name": "French",
-      "nativeName": "français, langue française"
-    },
-    "ff": {
-      "name": "Fula; Fulah; Pulaar; Pular",
-      "nativeName": "Fulfulde, Pulaar, Pular"
-    },
-    "gl": {
-      "name": "Galician",
-      "nativeName": "Galego"
-    },
-    "ka": {
-      "name": "Georgian",
-      "nativeName": "ქართული"
-    },
-    "de": {
-      "name": "German",
-      "nativeName": "Deutsch"
-    },
-    "el": {
-      "name": "Greek, Modern",
-      "nativeName": "Ελληνικά"
-    },
-    "gn": {
-      "name": "Guaraní",
-      "nativeName": "Avañeẽ"
-    },
-    "gu": {
-      "name": "Gujarati",
-      "nativeName": "ગુજરાતી"
-    },
-    "ht": {
-      "name": "Haitian; Haitian Creole",
-      "nativeName": "Kreyòl ayisyen"
-    },
-    "ha": {
-      "name": "Hausa",
-      "nativeName": "Hausa, هَوُسَ"
-    },
-    "he": {
-      "name": "Hebrew (modern)",
-      "nativeName": "עברית"
-    },
-    "hz": {
-      "name": "Herero",
-      "nativeName": "Otjiherero"
-    },
-    "hi": {
-      "name": "Hindi",
-      "nativeName": "हिन्दी, हिंदी"
-    },
-    "ho": {
-      "name": "Hiri Motu",
-      "nativeName": "Hiri Motu"
-    },
-    "hu": {
-      "name": "Hungarian",
-      "nativeName": "Magyar"
-    },
-    "ia": {
-      "name": "Interlingua",
-      "nativeName": "Interlingua"
-    },
-    "id": {
-      "name": "Indonesian",
-      "nativeName": "Bahasa Indonesia"
-    },
-    "ie": {
-      "name": "Interlingue",
-      "nativeName": "Originally called Occidental; then Interlingue after WWII"
-    },
-    "ga": {
-      "name": "Irish",
-      "nativeName": "Gaeilge"
-    },
-    "ig": {
-      "name": "Igbo",
-      "nativeName": "Asụsụ Igbo"
-    },
-    "ik": {
-      "name": "Inupiaq",
-      "nativeName": "Iñupiaq, Iñupiatun"
-    },
-    "io": {
-      "name": "Ido",
-      "nativeName": "Ido"
-    },
-    "is": {
-      "name": "Icelandic",
-      "nativeName": "Íslenska"
-    },
-    "it": {
-      "name": "Italian",
-      "nativeName": "Italiano"
-    },
-    "iu": {
-      "name": "Inuktitut",
-      "nativeName": "ᐃᓄᒃᑎᑐᑦ"
-    },
-    "ja": {
-      "name": "Japanese",
-      "nativeName": "日本語 (にほんご／にっぽんご)"
-    },
-    "jv": {
-      "name": "Javanese",
-      "nativeName": "basa Jawa"
-    },
-    "kl": {
-      "name": "Kalaallisut, Greenlandic",
-      "nativeName": "kalaallisut, kalaallit oqaasii"
-    },
-    "kn": {
-      "name": "Kannada",
-      "nativeName": "ಕನ್ನಡ"
-    },
-    "kr": {
-      "name": "Kanuri",
-      "nativeName": "Kanuri"
-    },
-    "ks": {
-      "name": "Kashmiri",
-      "nativeName": "कश्मीरी, كشميري‎"
-    },
-    "kk": {
-      "name": "Kazakh",
-      "nativeName": "Қазақ тілі"
-    },
-    "km": {
-      "name": "Khmer",
-      "nativeName": "ភាសាខ្មែរ"
-    },
-    "ki": {
-      "name": "Kikuyu, Gikuyu",
-      "nativeName": "Gĩkũyũ"
-    },
-    "rw": {
-      "name": "Kinyarwanda",
-      "nativeName": "Ikinyarwanda"
-    },
-    "ky": {
-      "name": "Kirghiz, Kyrgyz",
-      "nativeName": "кыргыз тили"
-    },
-    "kv": {
-      "name": "Komi",
-      "nativeName": "коми кыв"
-    },
-    "kg": {
-      "name": "Kongo",
-      "nativeName": "KiKongo"
-    },
-    "ko": {
-      "name": "Korean",
-      "nativeName": "한국어 (韓國語), 조선말 (朝鮮語)"
-    },
-    "ku": {
-      "name": "Kurdish",
-      "nativeName": "Kurdî, كوردی‎"
-    },
-    "kj": {
-      "name": "Kwanyama, Kuanyama",
-      "nativeName": "Kuanyama"
-    },
-    "la": {
-      "name": "Latin",
-      "nativeName": "latine, lingua latina"
-    },
-    "lb": {
-      "name": "Luxembourgish, Letzeburgesch",
-      "nativeName": "Lëtzebuergesch"
-    },
-    "lg": {
-      "name": "Luganda",
-      "nativeName": "Luganda"
-    },
-    "li": {
-      "name": "Limburgish, Limburgan, Limburger",
-      "nativeName": "Limburgs"
-    },
-    "ln": {
-      "name": "Lingala",
-      "nativeName": "Lingála"
-    },
-    "lo": {
-      "name": "Lao",
-      "nativeName": "ພາສາລາວ"
-    },
-    "lt": {
-      "name": "Lithuanian",
-      "nativeName": "lietuvių kalba"
-    },
-    "lu": {
-      "name": "Luba-Katanga",
-      "nativeName": ""
-    },
-    "lv": {
-      "name": "Latvian",
-      "nativeName": "latviešu valoda"
-    },
-    "gv": {
-      "name": "Manx",
-      "nativeName": "Gaelg, Gailck"
-    },
-    "mk": {
-      "name": "Macedonian",
-      "nativeName": "македонски јазик"
-    },
-    "mg": {
-      "name": "Malagasy",
-      "nativeName": "Malagasy fiteny"
-    },
-    "ms": {
-      "name": "Malay",
-      "nativeName": "bahasa Melayu, بهاس ملايو‎"
-    },
-    "ml": {
-      "name": "Malayalam",
-      "nativeName": "മലയാളം"
-    },
-    "mt": {
-      "name": "Maltese",
-      "nativeName": "Malti"
-    },
-    "mi": {
-      "name": "Māori",
-      "nativeName": "te reo Māori"
-    },
-    "mr": {
-      "name": "Marathi (Marāṭhī)",
-      "nativeName": "मराठी"
-    },
-    "mh": {
-      "name": "Marshallese",
-      "nativeName": "Kajin M̧ajeļ"
-    },
-    "mn": {
-      "name": "Mongolian",
-      "nativeName": "монгол"
-    },
-    "na": {
-      "name": "Nauru",
-      "nativeName": "Ekakairũ Naoero"
-    },
-    "nv": {
-      "name": "Navajo, Navaho",
-      "nativeName": "Diné bizaad, Dinékʼehǰí"
-    },
-    "nb": {
-      "name": "Norwegian Bokmål",
-      "nativeName": "Norsk bokmål"
-    },
-    "nd": {
-      "name": "North Ndebele",
-      "nativeName": "isiNdebele"
-    },
-    "ne": {
-      "name": "Nepali",
-      "nativeName": "नेपाली"
-    },
-    "ng": {
-      "name": "Ndonga",
-      "nativeName": "Owambo"
-    },
-    "nn": {
-      "name": "Norwegian Nynorsk",
-      "nativeName": "Norsk nynorsk"
-    },
-    "no": {
-      "name": "Norwegian",
-      "nativeName": "Norsk"
-    },
-    "ii": {
-      "name": "Nuosu",
-      "nativeName": "ꆈꌠ꒿ Nuosuhxop"
-    },
-    "nr": {
-      "name": "South Ndebele",
-      "nativeName": "isiNdebele"
-    },
-    "oc": {
-      "name": "Occitan",
-      "nativeName": "Occitan"
-    },
-    "oj": {
-      "name": "Ojibwe, Ojibwa",
-      "nativeName": "ᐊᓂᔑᓈᐯᒧᐎᓐ"
-    },
-    "cu": {
-      "name": "Old Church Slavonic, Church Slavic, Church Slavonic, Old Bulgarian, Old Slavonic",
-      "nativeName": "ѩзыкъ словѣньскъ"
-    },
-    "om": {
-      "name": "Oromo",
-      "nativeName": "Afaan Oromoo"
-    },
-    "or": {
-      "name": "Oriya",
-      "nativeName": "ଓଡ଼ିଆ"
-    },
-    "os": {
-      "name": "Ossetian, Ossetic",
-      "nativeName": "ирон æвзаг"
-    },
-    "pa": {
-      "name": "Panjabi, Punjabi",
-      "nativeName": "ਪੰਜਾਬੀ, پنجابی‎"
-    },
-    "pi": {
-      "name": "Pāli",
-      "nativeName": "पाऴि"
-    },
-    "fa": {
-      "name": "Persian",
-      "nativeName": "فارسی"
-    },
-    "pl": {
-      "name": "Polish",
-      "nativeName": "polski"
-    },
-    "ps": {
-      "name": "Pashto, Pushto",
-      "nativeName": "پښتو"
-    },
-    "pt": {
-      "name": "Portuguese",
-      "nativeName": "Português"
-    },
-    "qu": {
-      "name": "Quechua",
-      "nativeName": "Runa Simi, Kichwa"
-    },
-    "rm": {
-      "name": "Romansh",
-      "nativeName": "rumantsch grischun"
-    },
-    "rn": {
-      "name": "Kirundi",
-      "nativeName": "kiRundi"
-    },
-    "ro": {
-      "name": "Romanian, Moldavian, Moldovan",
-      "nativeName": "română"
-    },
-    "ru": {
-      "name": "Russian",
-      "nativeName": "русский язык"
-    },
-    "sa": {
-      "name": "Sanskrit (Saṁskṛta)",
-      "nativeName": "संस्कृतम्"
-    },
-    "sc": {
-      "name": "Sardinian",
-      "nativeName": "sardu"
-    },
-    "sd": {
-      "name": "Sindhi",
-      "nativeName": "सिन्धी, سنڌي، سندھی‎"
-    },
-    "se": {
-      "name": "Northern Sami",
-      "nativeName": "Davvisámegiella"
-    },
-    "sm": {
-      "name": "Samoan",
-      "nativeName": "gagana faa Samoa"
-    },
-    "sg": {
-      "name": "Sango",
-      "nativeName": "yângâ tî sängö"
-    },
-    "sr": {
-      "name": "Serbian",
-      "nativeName": "српски језик"
-    },
-    "gd": {
-      "name": "Scottish Gaelic; Gaelic",
-      "nativeName": "Gàidhlig"
-    },
-    "sn": {
-      "name": "Shona",
-      "nativeName": "chiShona"
-    },
-    "si": {
-      "name": "Sinhala, Sinhalese",
-      "nativeName": "සිංහල"
-    },
-    "sk": {
-      "name": "Slovak",
-      "nativeName": "slovenčina"
-    },
-    "sl": {
-      "name": "Slovene",
-      "nativeName": "slovenščina"
-    },
-    "so": {
-      "name": "Somali",
-      "nativeName": "Soomaaliga, af Soomaali"
-    },
-    "st": {
-      "name": "Southern Sotho",
-      "nativeName": "Sesotho"
-    },
-    "es": {
-      "name": "Spanish; Castilian",
-      "nativeName": "español, castellano"
-    },
-    "su": {
-      "name": "Sundanese",
-      "nativeName": "Basa Sunda"
-    },
-    "sw": {
-      "name": "Swahili",
-      "nativeName": "Kiswahili"
-    },
-    "ss": {
-      "name": "Swati",
-      "nativeName": "SiSwati"
-    },
-    "sv": {
-      "name": "Swedish",
-      "nativeName": "svenska"
-    },
-    "ta": {
-      "name": "Tamil",
-      "nativeName": "தமிழ்"
-    },
-    "te": {
-      "name": "Telugu",
-      "nativeName": "తెలుగు"
-    },
-    "tg": {
-      "name": "Tajik",
-      "nativeName": "тоҷикӣ, toğikī, تاجیکی‎"
-    },
-    "th": {
-      "name": "Thai",
-      "nativeName": "ไทย"
-    },
-    "ti": {
-      "name": "Tigrinya",
-      "nativeName": "ትግርኛ"
-    },
-    "bo": {
-      "name": "Tibetan Standard, Tibetan, Central",
-      "nativeName": "བོད་ཡིག"
-    },
-    "tk": {
-      "name": "Turkmen",
-      "nativeName": "Türkmen, Түркмен"
-    },
-    "tl": {
-      "name": "Tagalog",
-      "nativeName": "Wikang Tagalog, ᜏᜒᜃᜅ᜔ ᜆᜄᜎᜓᜄ᜔"
-    },
-    "tn": {
-      "name": "Tswana",
-      "nativeName": "Setswana"
-    },
-    "to": {
-      "name": "Tonga (Tonga Islands)",
-      "nativeName": "faka Tonga"
-    },
-    "tr": {
-      "name": "Turkish",
-      "nativeName": "Türkçe"
-    },
-    "ts": {
-      "name": "Tsonga",
-      "nativeName": "Xitsonga"
-    },
-    "tt": {
-      "name": "Tatar",
-      "nativeName": "татарча, tatarça, تاتارچا‎"
-    },
-    "tw": {
-      "name": "Twi",
-      "nativeName": "Twi"
-    },
-    "ty": {
-      "name": "Tahitian",
-      "nativeName": "Reo Tahiti"
-    },
-    "ug": {
-      "name": "Uighur, Uyghur",
-      "nativeName": "Uyƣurqə, ئۇيغۇرچە‎"
-    },
-    "uk": {
-      "name": "Ukrainian",
-      "nativeName": "українська"
-    },
-    "ur": {
-      "name": "Urdu",
-      "nativeName": "اردو"
-    },
-    "uz": {
-      "name": "Uzbek",
-      "nativeName": "zbek, Ўзбек, أۇزبېك‎"
-    },
-    "ve": {
-      "name": "Venda",
-      "nativeName": "Tshivenḓa"
-    },
-    "vi": {
-      "name": "Vietnamese",
-      "nativeName": "Tiếng Việt"
-    },
-    "vo": {
-      "name": "Volapük",
-      "nativeName": "Volapük"
-    },
-    "wa": {
-      "name": "Walloon",
-      "nativeName": "Walon"
-    },
-    "cy": {
-      "name": "Welsh",
-      "nativeName": "Cymraeg"
-    },
-    "wo": {
-      "name": "Wolof",
-      "nativeName": "Wollof"
-    },
-    "fy": {
-      "name": "Western Frisian",
-      "nativeName": "Frysk"
-    },
-    "xh": {
-      "name": "Xhosa",
-      "nativeName": "isiXhosa"
-    },
-    "yi": {
-      "name": "Yiddish",
-      "nativeName": "ייִדיש"
-    },
-    "yo": {
-      "name": "Yoruba",
-      "nativeName": "Yorùbá"
-    },
-    "za": {
-      "name": "Zhuang, Chuang",
-      "nativeName": "Saɯ cueŋƅ, Saw cuengh"
+    ab: {
+      name: 'Abkhaz',
+      nativeName: 'аҧсуа'
+    },
+    aa: {
+      name: 'Afar',
+      nativeName: 'Afaraf'
+    },
+    af: {
+      name: 'Afrikaans',
+      nativeName: 'Afrikaans'
+    },
+    ak: {
+      name: 'Akan',
+      nativeName: 'Akan'
+    },
+    sq: {
+      name: 'Albanian',
+      nativeName: 'Shqip'
+    },
+    am: {
+      name: 'Amharic',
+      nativeName: 'አማርኛ'
+    },
+    ar: {
+      name: 'Arabic',
+      nativeName: 'العربية'
+    },
+    an: {
+      name: 'Aragonese',
+      nativeName: 'Aragonés'
+    },
+    hy: {
+      name: 'Armenian',
+      nativeName: 'Հայերեն'
+    },
+    as: {
+      name: 'Assamese',
+      nativeName: 'অসমীয়া'
+    },
+    av: {
+      name: 'Avaric',
+      nativeName: 'авар мацӀ, магӀарул мацӀ'
+    },
+    ae: {
+      name: 'Avestan',
+      nativeName: 'avesta'
+    },
+    ay: {
+      name: 'Aymara',
+      nativeName: 'aymar aru'
+    },
+    az: {
+      name: 'Azerbaijani',
+      nativeName: 'azərbaycan dili'
+    },
+    bm: {
+      name: 'Bambara',
+      nativeName: 'bamanankan'
+    },
+    ba: {
+      name: 'Bashkir',
+      nativeName: 'башҡорт теле'
+    },
+    eu: {
+      name: 'Basque',
+      nativeName: 'euskara, euskera'
+    },
+    be: {
+      name: 'Belarusian',
+      nativeName: 'Беларуская'
+    },
+    bn: {
+      name: 'Bengali',
+      nativeName: 'বাংলা'
+    },
+    bh: {
+      name: 'Bihari',
+      nativeName: 'भोजपुरी'
+    },
+    bi: {
+      name: 'Bislama',
+      nativeName: 'Bislama'
+    },
+    bs: {
+      name: 'Bosnian',
+      nativeName: 'bosanski jezik'
+    },
+    br: {
+      name: 'Breton',
+      nativeName: 'brezhoneg'
+    },
+    bg: {
+      name: 'Bulgarian',
+      nativeName: 'български език'
+    },
+    my: {
+      name: 'Burmese',
+      nativeName: 'ဗမာစာ'
+    },
+    ca: {
+      name: 'Catalan; Valencian',
+      nativeName: 'Català'
+    },
+    ch: {
+      name: 'Chamorro',
+      nativeName: 'Chamoru'
+    },
+    ce: {
+      name: 'Chechen',
+      nativeName: 'нохчийн мотт'
+    },
+    ny: {
+      name: 'Chichewa; Chewa; Nyanja',
+      nativeName: 'chiCheŵa, chinyanja'
+    },
+    zh: {
+      name: 'Chinese',
+      nativeName: '中文 (Zhōngwén), 汉语, 漢語'
+    },
+    cv: {
+      name: 'Chuvash',
+      nativeName: 'чӑваш чӗлхи'
+    },
+    kw: {
+      name: 'Cornish',
+      nativeName: 'Kernewek'
+    },
+    co: {
+      name: 'Corsican',
+      nativeName: 'corsu, lingua corsa'
+    },
+    cr: {
+      name: 'Cree',
+      nativeName: 'ᓀᐦᐃᔭᐍᐏᐣ'
+    },
+    hr: {
+      name: 'Croatian',
+      nativeName: 'hrvatski'
+    },
+    cs: {
+      name: 'Czech',
+      nativeName: 'česky, čeština'
+    },
+    da: {
+      name: 'Danish',
+      nativeName: 'dansk'
+    },
+    dv: {
+      name: 'Divehi; Dhivehi; Maldivian;',
+      nativeName: 'ދިވެހި'
+    },
+    nl: {
+      name: 'Dutch',
+      nativeName: 'Nederlands, Vlaams'
+    },
+    en: {
+      name: 'English',
+      nativeName: 'English'
+    },
+    eo: {
+      name: 'Esperanto',
+      nativeName: 'Esperanto'
+    },
+    et: {
+      name: 'Estonian',
+      nativeName: 'eesti, eesti keel'
+    },
+    ee: {
+      name: 'Ewe',
+      nativeName: 'Eʋegbe'
+    },
+    fo: {
+      name: 'Faroese',
+      nativeName: 'føroyskt'
+    },
+    fj: {
+      name: 'Fijian',
+      nativeName: 'vosa Vakaviti'
+    },
+    fi: {
+      name: 'Finnish',
+      nativeName: 'suomi, suomen kieli'
+    },
+    fr: {
+      name: 'French',
+      nativeName: 'français, langue française'
+    },
+    ff: {
+      name: 'Fula; Fulah; Pulaar; Pular',
+      nativeName: 'Fulfulde, Pulaar, Pular'
+    },
+    gl: {
+      name: 'Galician',
+      nativeName: 'Galego'
+    },
+    ka: {
+      name: 'Georgian',
+      nativeName: 'ქართული'
+    },
+    de: {
+      name: 'German',
+      nativeName: 'Deutsch'
+    },
+    el: {
+      name: 'Greek, Modern',
+      nativeName: 'Ελληνικά'
+    },
+    gn: {
+      name: 'Guaraní',
+      nativeName: 'Avañeẽ'
+    },
+    gu: {
+      name: 'Gujarati',
+      nativeName: 'ગુજરાતી'
+    },
+    ht: {
+      name: 'Haitian; Haitian Creole',
+      nativeName: 'Kreyòl ayisyen'
+    },
+    ha: {
+      name: 'Hausa',
+      nativeName: 'Hausa, هَوُسَ'
+    },
+    he: {
+      name: 'Hebrew (modern)',
+      nativeName: 'עברית'
+    },
+    hz: {
+      name: 'Herero',
+      nativeName: 'Otjiherero'
+    },
+    hi: {
+      name: 'Hindi',
+      nativeName: 'हिन्दी, हिंदी'
+    },
+    ho: {
+      name: 'Hiri Motu',
+      nativeName: 'Hiri Motu'
+    },
+    hu: {
+      name: 'Hungarian',
+      nativeName: 'Magyar'
+    },
+    ia: {
+      name: 'Interlingua',
+      nativeName: 'Interlingua'
+    },
+    id: {
+      name: 'Indonesian',
+      nativeName: 'Bahasa Indonesia'
+    },
+    ie: {
+      name: 'Interlingue',
+      nativeName: 'Originally called Occidental; then Interlingue after WWII'
+    },
+    ga: {
+      name: 'Irish',
+      nativeName: 'Gaeilge'
+    },
+    ig: {
+      name: 'Igbo',
+      nativeName: 'Asụsụ Igbo'
+    },
+    ik: {
+      name: 'Inupiaq',
+      nativeName: 'Iñupiaq, Iñupiatun'
+    },
+    io: {
+      name: 'Ido',
+      nativeName: 'Ido'
+    },
+    is: {
+      name: 'Icelandic',
+      nativeName: 'Íslenska'
+    },
+    it: {
+      name: 'Italian',
+      nativeName: 'Italiano'
+    },
+    iu: {
+      name: 'Inuktitut',
+      nativeName: 'ᐃᓄᒃᑎᑐᑦ'
+    },
+    ja: {
+      name: 'Japanese',
+      nativeName: '日本語 (にほんご／にっぽんご)'
+    },
+    jv: {
+      name: 'Javanese',
+      nativeName: 'basa Jawa'
+    },
+    kl: {
+      name: 'Kalaallisut, Greenlandic',
+      nativeName: 'kalaallisut, kalaallit oqaasii'
+    },
+    kn: {
+      name: 'Kannada',
+      nativeName: 'ಕನ್ನಡ'
+    },
+    kr: {
+      name: 'Kanuri',
+      nativeName: 'Kanuri'
+    },
+    ks: {
+      name: 'Kashmiri',
+      nativeName: 'कश्मीरी, كشميري‎'
+    },
+    kk: {
+      name: 'Kazakh',
+      nativeName: 'Қазақ тілі'
+    },
+    km: {
+      name: 'Khmer',
+      nativeName: 'ភាសាខ្មែរ'
+    },
+    ki: {
+      name: 'Kikuyu, Gikuyu',
+      nativeName: 'Gĩkũyũ'
+    },
+    rw: {
+      name: 'Kinyarwanda',
+      nativeName: 'Ikinyarwanda'
+    },
+    ky: {
+      name: 'Kirghiz, Kyrgyz',
+      nativeName: 'кыргыз тили'
+    },
+    kv: {
+      name: 'Komi',
+      nativeName: 'коми кыв'
+    },
+    kg: {
+      name: 'Kongo',
+      nativeName: 'KiKongo'
+    },
+    ko: {
+      name: 'Korean',
+      nativeName: '한국어 (韓國語), 조선말 (朝鮮語)'
+    },
+    ku: {
+      name: 'Kurdish',
+      nativeName: 'Kurdî, كوردی‎'
+    },
+    kj: {
+      name: 'Kwanyama, Kuanyama',
+      nativeName: 'Kuanyama'
+    },
+    la: {
+      name: 'Latin',
+      nativeName: 'latine, lingua latina'
+    },
+    lb: {
+      name: 'Luxembourgish, Letzeburgesch',
+      nativeName: 'Lëtzebuergesch'
+    },
+    lg: {
+      name: 'Luganda',
+      nativeName: 'Luganda'
+    },
+    li: {
+      name: 'Limburgish, Limburgan, Limburger',
+      nativeName: 'Limburgs'
+    },
+    ln: {
+      name: 'Lingala',
+      nativeName: 'Lingála'
+    },
+    lo: {
+      name: 'Lao',
+      nativeName: 'ພາສາລາວ'
+    },
+    lt: {
+      name: 'Lithuanian',
+      nativeName: 'lietuvių kalba'
+    },
+    lu: {
+      name: 'Luba-Katanga',
+      nativeName: ''
+    },
+    lv: {
+      name: 'Latvian',
+      nativeName: 'latviešu valoda'
+    },
+    gv: {
+      name: 'Manx',
+      nativeName: 'Gaelg, Gailck'
+    },
+    mk: {
+      name: 'Macedonian',
+      nativeName: 'македонски јазик'
+    },
+    mg: {
+      name: 'Malagasy',
+      nativeName: 'Malagasy fiteny'
+    },
+    ms: {
+      name: 'Malay',
+      nativeName: 'bahasa Melayu, بهاس ملايو‎'
+    },
+    ml: {
+      name: 'Malayalam',
+      nativeName: 'മലയാളം'
+    },
+    mt: {
+      name: 'Maltese',
+      nativeName: 'Malti'
+    },
+    mi: {
+      name: 'Māori',
+      nativeName: 'te reo Māori'
+    },
+    mr: {
+      name: 'Marathi (Marāṭhī)',
+      nativeName: 'मराठी'
+    },
+    mh: {
+      name: 'Marshallese',
+      nativeName: 'Kajin M̧ajeļ'
+    },
+    mn: {
+      name: 'Mongolian',
+      nativeName: 'монгол'
+    },
+    na: {
+      name: 'Nauru',
+      nativeName: 'Ekakairũ Naoero'
+    },
+    nv: {
+      name: 'Navajo, Navaho',
+      nativeName: 'Diné bizaad, Dinékʼehǰí'
+    },
+    nb: {
+      name: 'Norwegian Bokmål',
+      nativeName: 'Norsk bokmål'
+    },
+    nd: {
+      name: 'North Ndebele',
+      nativeName: 'isiNdebele'
+    },
+    ne: {
+      name: 'Nepali',
+      nativeName: 'नेपाली'
+    },
+    ng: {
+      name: 'Ndonga',
+      nativeName: 'Owambo'
+    },
+    nn: {
+      name: 'Norwegian Nynorsk',
+      nativeName: 'Norsk nynorsk'
+    },
+    no: {
+      name: 'Norwegian',
+      nativeName: 'Norsk'
+    },
+    ii: {
+      name: 'Nuosu',
+      nativeName: 'ꆈꌠ꒿ Nuosuhxop'
+    },
+    nr: {
+      name: 'South Ndebele',
+      nativeName: 'isiNdebele'
+    },
+    oc: {
+      name: 'Occitan',
+      nativeName: 'Occitan'
+    },
+    oj: {
+      name: 'Ojibwe, Ojibwa',
+      nativeName: 'ᐊᓂᔑᓈᐯᒧᐎᓐ'
+    },
+    cu: {
+      name: 'Old Church Slavonic, Church Slavic, Church Slavonic, Old Bulgarian, Old Slavonic',
+      nativeName: 'ѩзыкъ словѣньскъ'
+    },
+    om: {
+      name: 'Oromo',
+      nativeName: 'Afaan Oromoo'
+    },
+    or: {
+      name: 'Oriya',
+      nativeName: 'ଓଡ଼ିଆ'
+    },
+    os: {
+      name: 'Ossetian, Ossetic',
+      nativeName: 'ирон æвзаг'
+    },
+    pa: {
+      name: 'Panjabi, Punjabi',
+      nativeName: 'ਪੰਜਾਬੀ, پنجابی‎'
+    },
+    pi: {
+      name: 'Pāli',
+      nativeName: 'पाऴि'
+    },
+    fa: {
+      name: 'Persian',
+      nativeName: 'فارسی'
+    },
+    pl: {
+      name: 'Polish',
+      nativeName: 'polski'
+    },
+    ps: {
+      name: 'Pashto, Pushto',
+      nativeName: 'پښتو'
+    },
+    pt: {
+      name: 'Portuguese',
+      nativeName: 'Português'
+    },
+    qu: {
+      name: 'Quechua',
+      nativeName: 'Runa Simi, Kichwa'
+    },
+    rm: {
+      name: 'Romansh',
+      nativeName: 'rumantsch grischun'
+    },
+    rn: {
+      name: 'Kirundi',
+      nativeName: 'kiRundi'
+    },
+    ro: {
+      name: 'Romanian, Moldavian, Moldovan',
+      nativeName: 'română'
+    },
+    ru: {
+      name: 'Russian',
+      nativeName: 'русский язык'
+    },
+    sa: {
+      name: 'Sanskrit (Saṁskṛta)',
+      nativeName: 'संस्कृतम्'
+    },
+    sc: {
+      name: 'Sardinian',
+      nativeName: 'sardu'
+    },
+    sd: {
+      name: 'Sindhi',
+      nativeName: 'सिन्धी, سنڌي، سندھی‎'
+    },
+    se: {
+      name: 'Northern Sami',
+      nativeName: 'Davvisámegiella'
+    },
+    sm: {
+      name: 'Samoan',
+      nativeName: 'gagana faa Samoa'
+    },
+    sg: {
+      name: 'Sango',
+      nativeName: 'yângâ tî sängö'
+    },
+    sr: {
+      name: 'Serbian',
+      nativeName: 'српски језик'
+    },
+    gd: {
+      name: 'Scottish Gaelic; Gaelic',
+      nativeName: 'Gàidhlig'
+    },
+    sn: {
+      name: 'Shona',
+      nativeName: 'chiShona'
+    },
+    si: {
+      name: 'Sinhala, Sinhalese',
+      nativeName: 'සිංහල'
+    },
+    sk: {
+      name: 'Slovak',
+      nativeName: 'slovenčina'
+    },
+    sl: {
+      name: 'Slovene',
+      nativeName: 'slovenščina'
+    },
+    so: {
+      name: 'Somali',
+      nativeName: 'Soomaaliga, af Soomaali'
+    },
+    st: {
+      name: 'Southern Sotho',
+      nativeName: 'Sesotho'
+    },
+    es: {
+      name: 'Spanish; Castilian',
+      nativeName: 'español, castellano'
+    },
+    su: {
+      name: 'Sundanese',
+      nativeName: 'Basa Sunda'
+    },
+    sw: {
+      name: 'Swahili',
+      nativeName: 'Kiswahili'
+    },
+    ss: {
+      name: 'Swati',
+      nativeName: 'SiSwati'
+    },
+    sv: {
+      name: 'Swedish',
+      nativeName: 'svenska'
+    },
+    ta: {
+      name: 'Tamil',
+      nativeName: 'தமிழ்'
+    },
+    te: {
+      name: 'Telugu',
+      nativeName: 'తెలుగు'
+    },
+    tg: {
+      name: 'Tajik',
+      nativeName: 'тоҷикӣ, toğikī, تاجیکی‎'
+    },
+    th: {
+      name: 'Thai',
+      nativeName: 'ไทย'
+    },
+    ti: {
+      name: 'Tigrinya',
+      nativeName: 'ትግርኛ'
+    },
+    bo: {
+      name: 'Tibetan Standard, Tibetan, Central',
+      nativeName: 'བོད་ཡིག'
+    },
+    tk: {
+      name: 'Turkmen',
+      nativeName: 'Türkmen, Түркмен'
+    },
+    tl: {
+      name: 'Tagalog',
+      nativeName: 'Wikang Tagalog, ᜏᜒᜃᜅ᜔ ᜆᜄᜎᜓᜄ᜔'
+    },
+    tn: {
+      name: 'Tswana',
+      nativeName: 'Setswana'
+    },
+    to: {
+      name: 'Tonga (Tonga Islands)',
+      nativeName: 'faka Tonga'
+    },
+    tr: {
+      name: 'Turkish',
+      nativeName: 'Türkçe'
+    },
+    ts: {
+      name: 'Tsonga',
+      nativeName: 'Xitsonga'
+    },
+    tt: {
+      name: 'Tatar',
+      nativeName: 'татарча, tatarça, تاتارچا‎'
+    },
+    tw: {
+      name: 'Twi',
+      nativeName: 'Twi'
+    },
+    ty: {
+      name: 'Tahitian',
+      nativeName: 'Reo Tahiti'
+    },
+    ug: {
+      name: 'Uighur, Uyghur',
+      nativeName: 'Uyƣurqə, ئۇيغۇرچە‎'
+    },
+    uk: {
+      name: 'Ukrainian',
+      nativeName: 'українська'
+    },
+    ur: {
+      name: 'Urdu',
+      nativeName: 'اردو'
+    },
+    uz: {
+      name: 'Uzbek',
+      nativeName: 'zbek, Ўзбек, أۇزبېك‎'
+    },
+    ve: {
+      name: 'Venda',
+      nativeName: 'Tshivenḓa'
+    },
+    vi: {
+      name: 'Vietnamese',
+      nativeName: 'Tiếng Việt'
+    },
+    vo: {
+      name: 'Volapük',
+      nativeName: 'Volapük'
+    },
+    wa: {
+      name: 'Walloon',
+      nativeName: 'Walon'
+    },
+    cy: {
+      name: 'Welsh',
+      nativeName: 'Cymraeg'
+    },
+    wo: {
+      name: 'Wolof',
+      nativeName: 'Wollof'
+    },
+    fy: {
+      name: 'Western Frisian',
+      nativeName: 'Frysk'
+    },
+    xh: {
+      name: 'Xhosa',
+      nativeName: 'isiXhosa'
+    },
+    yi: {
+      name: 'Yiddish',
+      nativeName: 'ייִדיש'
+    },
+    yo: {
+      name: 'Yoruba',
+      nativeName: 'Yorùbá'
+    },
+    za: {
+      name: 'Zhuang, Chuang',
+      nativeName: 'Saɯ cueŋƅ, Saw cuengh'
     }
   };
   function getLanguageName(value) {
     var key;
-    if (value.length == 3) key = window.iso639Converter.from3to1(value);else key = value.slice(0, 2);
-    var lang = isoLangs[key];
-    return lang ? lang.name : value; //Return value if no hit
+
+    if (value.length === 3) {
+      key = window_1.iso639Converter.from3to1(value);
+    } else {
+      key = value.slice(0, 2);
+    }
+
+    var lang = isoLangs[key]; // Return value if no hit
+
+    return lang ? lang.name : value;
   }
+
+  /**
+   * EmpPlayerErrorCodes - Holds all available error codes
+   * EmpPlayerError - Emp custom Error object
+   *
+   * @class EmpPlayerError
+   */
+
+  var EmpPlayerErrorCodes = {
+    UNKNOWN: 100,
+    LOAD_ASSET: 101,
+    ENTITLEMENT: 102,
+    ENTITLEMENT2: 103,
+    SHAKA_TECH: 200,
+    HLS_TECH: 300,
+    CHROMECAST_TECH: 500,
+    HLS_MSE_TECH: 10000,
+    DASHIF_TECH: 20000
+  };
+  var EmpPlayerError =
+  /*#__PURE__*/
+  function (_Error) {
+    _inheritsLoose(EmpPlayerError, _Error);
+
+    function EmpPlayerError(value, code, status) {
+      var _this;
+
+      if (code === void 0) {
+        code = EmpPlayerErrorCodes.UNKNOWN;
+      }
+
+      if (status === void 0) {
+        status = null;
+      }
+
+      _this = _Error.call(this) || this;
+      _this.code = code;
+
+      if (isString(value)) {
+        _this.message = value;
+      } else if (value.message) {
+        _this.message = value.message;
+      }
+
+      _this.status = status;
+
+      if (Error.captureStackTrace) {
+        Error.captureStackTrace(_assertThisInitialized(_assertThisInitialized(_this)), EmpPlayerError);
+      }
+
+      return _this;
+    }
+
+    _createClass(EmpPlayerError, [{
+      key: "codes",
+      get: function get() {
+        return EmpPlayerErrorCodes;
+      }
+    }]);
+
+    return EmpPlayerError;
+  }(_wrapNativeSuper(Error));
 
   var Plugin = videojs.getPlugin('plugin');
   var Tech = videojs.getComponent('Tech');
   /**
    *  DownloadService
-   *  This manages persistent offline data including storage, listing, and deleting stored manifests. 
-   *  Playback of offline manifests are done through the Player using a special URI (see shaka.offline.OfflineUri). 
-   *  First, check isSupported to see if offline is supported by the platform. 
+   *  This manages persistent offline data including storage, listing, and deleting stored manifests.
+   *  Playback of offline manifests are done through the Player using a special URI (see shaka.offline.OfflineUri).
+   *  First, check isSupported to see if offline is supported by the platform.
    *  Second, listen to EmpPlayerEvents.DOWNLOAD_PROGRESS on the download plugin
    *  Third, call startDownload(), remove(), or list() as needed.
    *  Start playback with load().
-   *    
+   *
    * @param player
    * @param options
    */
@@ -3889,14 +3912,15 @@
       var _this;
 
       _this = _Plugin.call(this, player, options) || this;
-      log$1('DownloadService', 'create');
+      log('DownloadService', 'create');
       _this.options_ = options ? options : {};
       _this.offlineOperationInProgress_ = false;
       return _this;
     }
     /**
      * if offline is supported by the platform
-     * @returns {boolean}
+     *
+     * @return {boolean}
      */
 
 
@@ -3904,21 +3928,21 @@
 
     /**
      * Delete all
-     *  
-     * @returns {Promise}
+     *
+     * @return {Promise}
      */
     _proto.deleteAll = function deleteAll() {
       return shaka.offline.Storage.deleteAll(this.player.tech_.shakaPlayer_);
     }
     /**
      * start download of asset or program
-     *  
+     *
      * @param {any} assetId   Identifier of the asset to load
      * @param {any} channelId Identifier of the channel to load
      * @param {any} programId Identifier of the program to load
-     * @param {?object} metadata (optional) An arbitrary object from the application that will be stored along-side the offline content. Use this for any application-specific metadata you need associated with the stored content. For details on the data types that can be stored here, please refer to https://goo.gl/h62coS
+     * @param {?Object} metadata (optional) An arbitrary object from the application that will be stored along-side the offline content. Use this for any application-specific metadata you need associated with the stored content. For details on the data types that can be stored here, please refer to https://goo.gl/h62coS
      * @param {?boolean} usePersistentLicense (optional) use PersistentLicense default=true
-     * @returns {Promise}
+     * @return {Promise}
      */
     ;
 
@@ -3926,31 +3950,32 @@
       var _this2 = this;
 
       var errorMsg;
+      var exposure;
 
       if (this.offlineOperationInProgress_) {
         errorMsg = 'Offline Operation In Progress';
-        log$1.error(errorMsg);
+        log.error(errorMsg);
         return Promise.reject(errorMsg);
       }
 
       if (!assetId && !channelId && !programId) {
         errorMsg = 'assetId or channelId or programId is undefined';
-        log$1.error(errorMsg);
+        log.error(errorMsg);
         return Promise.reject(errorMsg);
       }
 
       this.offlineOperationInProgress_ = true;
       var entitlementRequest = {
-        'assetId': assetId ? assetId : null,
-        'programId': programId ? programId : null,
-        'channelId': channelId ? channelId : null
+        assetId: assetId ? assetId : null,
+        programId: programId ? programId : null,
+        channelId: channelId ? channelId : null
       };
 
       if (this.player.programService) {
         exposure = this.player.programService().exposure;
       } else {
         errorMsg = 'No programService';
-        log$1.error(errorMsg);
+        log.error(errorMsg);
         return Promise.reject(errorMsg);
       }
 
@@ -3961,13 +3986,17 @@
           if (error) {
             if (error.fatal) {
               _this2.offlineOperationInProgress_ = false;
-              var error = new EmpPlayerError(error, EmpPlayerErrorCodes.ENTITLEMENT);
-              _this2.player.analytics && _this2.player.analytics().onError({
-                code: error.code,
-                message: error.message,
-                stack: error.stack
-              });
-              reject(error);
+              var empPlayerError = new EmpPlayerError(error, EmpPlayerErrorCodes.ENTITLEMENT);
+
+              if (_this2.player.analytics) {
+                _this2.player.analytics().onError({
+                  code: empPlayerError.code,
+                  message: empPlayerError.message,
+                  stack: empPlayerError.stack
+                });
+              }
+
+              reject(empPlayerError);
             }
           } else {
             if (!metadata) {
@@ -3982,8 +4011,7 @@
             metadata.programId = programId;
             metadata.channelId = channelId;
 
-            _this2.player.programService().getAssetMetadata(metadata.assetId, function (assetMetadata, error) {
-              //Don't care is error
+            _this2.player.programService().getAssetMetadata(metadata.assetId, function (assetMetadata) {
               if (assetMetadata) {
                 metadata.title = assetMetadata.title;
                 metadata.subtitle = assetMetadata.subtitle;
@@ -3998,7 +4026,7 @@
     }
     /**
      * startDownloadEntitlement_
-     *  
+     *
      * @param entitlement
      * @param metadata
      * @param usePersistentLicense
@@ -4009,41 +4037,47 @@
     ;
 
     _proto.startDownloadEntitlement_ = function startDownloadEntitlement_(entitlement, metadata, usePersistentLicense, resolve, reject) {
-      var self = this;
+      var _this3 = this;
+
       this.startDownloadSource(entitlement, metadata, usePersistentLicense).then(function (content) {
-        self.offlineOperationInProgress_ = false;
+        _this3.offlineOperationInProgress_ = false;
         resolve(content);
       }).catch(function (error) {
-        if (self.cancelInProgress_) {
+        if (this.cancelInProgress_) {
           resolve(null);
         } else {
-          self.offlineOperationInProgress_ = false;
-          self.player.analytics && self.player.analytics().onError({
-            code: error.code,
-            message: error.message,
-            stack: error.stack
-          });
-          log$1.error(error.message);
+          this.offlineOperationInProgress_ = false;
+
+          if (this.player.analytics) {
+            this.player.analytics().onError({
+              code: error.code,
+              message: error.message,
+              stack: error.stack
+            });
+          }
+
+          log.error(error.message);
           reject(error);
         }
       });
     }
     /**
      * start download of a source
-     * 
-     * @param {string|object} source The Source element of a video element
-     * @param {?object} metadata (optional) An arbitrary object from the application that will be stored along-side the offline content. Use this for any application-specific metadata you need associated with the stored content. For details on the data types that can be stored here, please refer to https://goo.gl/h62coS
+     *
+     * @param {string|Object} source The Source element of a video element
+     * @param {?Object} metadata (optional) An arbitrary object from the application that will be stored along-side the offline content. Use this for any application-specific metadata you need associated with the stored content. For details on the data types that can be stored here, please refer to https://goo.gl/h62coS
      * @param {?boolean} usePersistentLicense (optional) use PersistentLicense default=true
-     * @returns {Promise}
+     * @return {Promise}
      */
     ;
 
     _proto.startDownloadSource = function startDownloadSource(source, metadata, usePersistentLicense) {
+      var errorMsg;
       this.cancelInProgress_ = false;
 
       if (typeof source === 'undefined') {
         errorMsg = 'source is undefined';
-        log$1.error(errorMsg);
+        log.error(errorMsg);
         return Promise.reject(errorMsg);
       } // filter out invalid sources and turn our source into
       // an array of source objects
@@ -4053,7 +4087,7 @@
 
       if (!sources.length) {
         errorMsg = 'source is undefined';
-        log$1.error(errorMsg);
+        log.error(errorMsg);
         return Promise.reject(errorMsg);
       }
 
@@ -4070,18 +4104,18 @@
         config.drm = {
           advanced: {
             'com.widevine.alpha': {
-              'videoRobustness': 'SW_SECURE_DECODE',
-              'audioRobustness': 'SW_SECURE_CRYPTO'
+              videoRobustness: 'SW_SECURE_DECODE',
+              audioRobustness: 'SW_SECURE_CRYPTO'
             }
           }
         };
       } else {
-        //Android
+        // Android
         config.drm = {
           advanced: {
             'com.widevine.alpha': {
-              'videoRobustness': 'SW_SECURE_CRYPTO',
-              'audioRobustness': 'SW_SECURE_CRYPTO'
+              videoRobustness: 'SW_SECURE_CRYPTO',
+              audioRobustness: 'SW_SECURE_CRYPTO'
             }
           }
         };
@@ -4098,9 +4132,9 @@
       }
 
       config.offline = {
-        'progressCallback': this.setDownloadProgress_.bind(this),
-        //'trackSelectionCallback': this.selectTracks_.bind(this),
-        'usePersistentLicense': usePersistentLicense
+        progressCallback: this.setDownloadProgress_.bind(this),
+        // 'trackSelectionCallback': this.selectTracks_.bind(this),
+        usePersistentLicense: usePersistentLicense
       };
       this.player.tech_.shakaPlayer_.configure(config);
 
@@ -4112,27 +4146,26 @@
     }
     /**
      * selectTracks
-     *  
-     * @param {object[]} tracks
-     * @returns {object[]}
+     *
+     * @param {Object[]} tracks
+     * @return {Object[]}
      * @private
      */
     ;
 
     _proto.selectTracks_ = function selectTracks_(tracks) {
-      // TODO select diffrent bandwidth. Don't working with drm, Why?
-      // Store the highest bandwidth variant.
+      // Store the highest bandwidth variant. Later we will support user selected bandwidth
       var found = tracks.filter(function (track) {
-        return track.type == 'variant';
+        return track.type === 'variant';
       }).sort(function (a, b) {
         return a.bandwidth > b.bandwidth;
       }).pop();
-      log$1('Offline Track: ' + found);
+      log('Offline Track: ' + found);
       return [found];
     }
     /**
      * initStorage
-     * 
+     *
      * @private
      */
     ;
@@ -4155,23 +4188,24 @@
     }
     /**
      * setDownloadProgress
-     * 
-     * @param {?object} content
+     *
+     * @param {?Object} content
      * @param {number} progress
-     *  
+     *
      * @private
      */
     ;
 
     _proto.setDownloadProgress_ = function setDownloadProgress_(content, progress) {
       this.trigger(empPlayerEvents.DOWNLOAD_PROGRESS, {
-        'content': content,
-        'progress': progress
+        content: content,
+        progress: progress
       });
     }
     /**
      * List all downloaded assests
-     * @returns {Promise}
+     *
+     * @return {Promise}
      */
     ;
 
@@ -4184,8 +4218,9 @@
     }
     /**
      * Remove downloaded assest
+     *
      * @param {string} offlineUri
-     * @returns {Promise}
+     * @return {Promise}
      */
     ;
 
@@ -4198,7 +4233,8 @@
     }
     /**
      * Play downloaded assest
-     * @param {string} 
+     *
+     * @param {string}
      * @param {Object=} options Player Options
      */
     ;
@@ -4206,12 +4242,12 @@
     _proto.load = function load(offlineUri, options) {
       if (options === void 0) {
         options = {
-          'autoplay': true
+          autoplay: true
         };
       }
 
       if (!offlineUri) {
-        log$1.error('offlineUri is undefined');
+        log.error('offlineUri is undefined');
         return;
       }
 
@@ -4224,8 +4260,8 @@
       }
 
       this.player.src({
-        'type': 'application/dash+xml',
-        'src': offlineUri
+        type: 'application/dash+xml',
+        src: offlineUri
       });
     };
 
@@ -4254,7 +4290,7 @@
     ;
 
     _proto.dispose = function dispose() {
-      log$1('DownloadService is being disposed');
+      log('DownloadService is being disposed');
 
       if (this.storage_) {
         this.storage_.destroy();
@@ -4272,6 +4308,8 @@
         if (shaka.offline.Storage) {
           return shaka.offline.Storage.support();
         }
+
+        return false;
       }
     }, {
       key: "offlineOperationInProgress",
@@ -4283,7 +4321,7 @@
     return DownloadService;
   }(Plugin);
 
-  DownloadService.VERSION = '2.1.101-313';
+  DownloadService.VERSION = '2.1.101-314';
 
   if (videojs.getPlugin('DownloadService')) {
     videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -4294,6 +4332,10 @@
   var Html5 = videojs.getTech('Html5');
   var Tech$1 = videojs.getComponent('Tech');
   var TechName = 'EmpShaka';
+  /* global
+    ShakaPlayerDnaWrapper
+  */
+
   /**
    * HTML5 Dash Media Controller - Wrapper for HTML5 Media API using MPEG-Dash playback
    *
@@ -4352,8 +4394,8 @@
       _this.preActiveTextTrack = null;
       _this.onLoadStartBind = _this.onLoadStart.bind(_assertThisInitialized(_assertThisInitialized(_this)));
 
-      _this.on(_assertThisInitialized(_assertThisInitialized(_this)), empPlayerEvents.LOAD_START, _this.onLoadStartBind); //Workaround for Firefox bug 
-      //https://bugzilla.mozilla.org/show_bug.cgi?id=1491365
+      _this.on(_assertThisInitialized(_assertThisInitialized(_this)), empPlayerEvents.LOAD_START, _this.onLoadStartBind); // Workaround for Firefox bug
+      // https://bugzilla.mozilla.org/show_bug.cgi?id=1491365
 
 
       if (IS_FIREFOX) {
@@ -4373,7 +4415,7 @@
 
     _proto.onLoadStart = function onLoadStart(event) {
       this.hasMetadata_ = true;
-      log$1('onLoadStart');
+      log('onLoadStart');
 
       if (this.stopped_) {
         event.stopImmediatePropagation();
@@ -4388,14 +4430,14 @@
      *
      * Setting this to true, hides the player progress controlbar
      *
-     * @param {Boolean} disable
+     * @param {boolean} disable
      */
     ;
 
     _proto.disableTimeShift = function disableTimeShift(disable) {
       if (!this.options_) {
         this.options_ = {
-          'timeShiftDisabled': disable
+          timeShiftDisabled: disable
         };
       } else {
         this.options_.timeShiftDisabled = disable;
@@ -4424,7 +4466,7 @@
       this.preActiveTextTrack = null; // Shaka is loading
 
       if (this.loading_ || !source.src) {
-        log$1.warn('handleSource shaka is loading');
+        log.warn('handleSource shaka is loading');
 
         if (this.shakaPlayer_) {
           this.shakaPlayer_.destroy();
@@ -4437,11 +4479,11 @@
         // We can re-use the old player. calling the 'load' method automatically calls 'unload' if a previous manifest has
         // been loaded
         this.createPlayer_();
-      } //Needed for not get Promise rejected error
-      else if (!this.el_.paused) {
-          //If playing, pause first before load new asset
-          this.el_.pause();
-        }
+      } else if (!this.el_.paused) {
+        // Needed for not get Promise rejected error
+        // If playing, pause first before load new asset
+        this.el_.pause();
+      }
 
       this.shakaPlayer_.resetConfiguration(); // Default language is defined (in descending order)
       // 1. language set in player options
@@ -4452,8 +4494,8 @@
       var audioLanguage = this.options_.audioLanguage || this.options_.language;
       var textLanguage = this.options_.subtitleLanguage || this.options_.language;
       textLanguage = textLanguage !== 'None' ? textLanguage : '';
-      log$1('preferredAudioLanguage', audioLanguage);
-      log$1('preferredTextLanguage', textLanguage);
+      log('preferredAudioLanguage', audioLanguage);
+      log('preferredTextLanguage', textLanguage);
       var config = {
         streaming: {},
         abr: {},
@@ -4478,7 +4520,7 @@
 
       if (source.maxResHeight) {
         config.restrictions.maxHeight = source.maxResHeight;
-      } //override with custom value
+      } // override with custom value
 
 
       if (this.options_.maxBitrate) {
@@ -4526,7 +4568,7 @@
         },
         failureCallback: this.streamingFailureCallback.bind(this),
         ignoreTextStreamFailures: true,
-        jumpLargeGaps: true //startAtSegmentBoundary: true
+        jumpLargeGaps: true // startAtSegmentBoundary: true
 
       };
 
@@ -4534,8 +4576,8 @@
         config.drm = {
           advanced: {
             'com.widevine.alpha': {
-              'videoRobustness': 'SW_SECURE_CRYPTO',
-              'audioRobustness': 'SW_SECURE_CRYPTO'
+              videoRobustness: 'SW_SECURE_CRYPTO',
+              audioRobustness: 'SW_SECURE_CRYPTO'
             }
           }
         };
@@ -4543,8 +4585,8 @@
         config.drm = {
           advanced: {
             'com.widevine.alpha': {
-              'videoRobustness': 'SW_SECURE_DECODE',
-              'audioRobustness': 'SW_SECURE_CRYPTO'
+              videoRobustness: 'SW_SECURE_DECODE',
+              audioRobustness: 'SW_SECURE_CRYPTO'
             }
           }
         };
@@ -4561,7 +4603,7 @@
       }
 
       if (this.certificate_) {
-        config.drm.advanced['com.widevine.alpha']['serverCertificate'] = this.certificate_;
+        config.drm.advanced['com.widevine.alpha'].serverCertificate = this.certificate_;
       }
 
       this.shakaPlayer_.configure(config);
@@ -4571,7 +4613,7 @@
 
       if (this.playToken) {
         var header = {
-          'Authorization': 'Bearer ' + this.playToken
+          Authorization: 'Bearer ' + this.playToken
         };
 
         if (this.requestFilter) {
@@ -4588,15 +4630,16 @@
         startTime = this.options_.startTime;
       }
 
-      log$1('before load stream');
-      this.loading_ = true; //Block load call if loading 
+      log('before load stream'); // Block load call if loading
+
+      this.loading_ = true;
 
       if (window_1.ShakaPlayerDnaWrapper && this.options_.streamrootkey && !this.streamrootWrapper_) {
         this.createStreamrootWrapper_(this.options_.streamrootkey);
       }
 
       this.shakaPlayer_.load(source.src, startTime).then(function () {
-        log$1('after load stream');
+        log('after load stream');
         _this2.loading_ = false;
 
         _this2.trackDuration();
@@ -4604,7 +4647,7 @@
         _this2.loading_ = false;
 
         if (error.code === shaka.util.Error.Code.LOAD_INTERRUPTED) {
-          log$1('Shaka load() interrupted');
+          log('Shaka load() interrupted');
         } else {
           _this2.checkForRecoverableErrors(error);
         }
@@ -4621,9 +4664,9 @@
     };
 
     _proto.streamingFailureCallback = function streamingFailureCallback(error) {
-      //The default streamingFailureCallback will infiniteRetriesForLiveStreams
-      //Error will be fire later
-      log$1(TechName, 'Streaming Failure', error);
+      // The default streamingFailureCallback will infiniteRetriesForLiveStreams
+      // Error will be fire later
+      log(TechName, 'Streaming Failure', error);
     };
 
     _proto.techVersion = function techVersion() {
@@ -4635,6 +4678,7 @@
     }
     /**
      * Creates an instance of Shaka.Player for use and sets the relevant listeners
+     *
      * @private
      */
     ;
@@ -4642,10 +4686,10 @@
     _proto.createPlayer_ = function createPlayer_() {
       var _this3 = this;
 
-      log$1('createPlayer Shaka');
+      log('createPlayer Shaka');
       this.shakaPlayer_ = new shaka.Player(this.el_);
       this.shakaPlayer_.addEventListener('texttrackvisibility', function (event) {
-        log$1('texttrackvisibility', _this3.hasMetadata_, _this3.shakaPlayer_.isTextTrackVisible());
+        log('texttrackvisibility', _this3.hasMetadata_, _this3.shakaPlayer_.isTextTrackVisible());
 
         if (_this3.hasMetadata_ && !_this3.blockLocalTrackChange) {
           _this3.syncVideojsTexttrackVisibility();
@@ -4656,7 +4700,7 @@
         _this3.drmsessionbeforeupdate_(event);
       });
       this.shakaPlayer_.addEventListener('drmsessionupdate', function (event) {
-        log$1('drmsessionupdate', event); // We use standard Shaka
+        log('drmsessionupdate', event); // We use standard Shaka
 
         _this3.drmsessionbeforeupdate_(event);
 
@@ -4665,29 +4709,29 @@
 
           if (_this3.shakaPlayer_.drmInfo().keySystem === 'com.microsoft.playready') {
             message = {
-              'messageType': 'PLAYREADY_LICENSE_RESPONSE',
-              'code': undefined,
-              'info': 'drmsessionupdate'
+              messageType: 'PLAYREADY_LICENSE_RESPONSE',
+              code: undefined,
+              info: 'drmsessionupdate'
             };
           } else if (_this3.shakaPlayer_.drmInfo().keySystem === 'com.widevine.alpha') {
             if (event.isCertificateRequest) {
               message = {
-                'messageType': 'WIDEVINE_CERTIFICATE_RESPONSE',
-                'code': undefined,
-                'info': 'drmsessionupdate'
+                messageType: 'WIDEVINE_CERTIFICATE_RESPONSE',
+                code: undefined,
+                info: 'drmsessionupdate'
               };
             } else {
               message = {
-                'messageType': 'WIDEVINE_LICENSE_RESPONSE',
-                'code': undefined,
-                'info': 'drmsessionupdate'
+                messageType: 'WIDEVINE_LICENSE_RESPONSE',
+                code: undefined,
+                info: 'drmsessionupdate'
               };
             }
           } else {
             message = {
-              'messageType': 'FAIRPLAY_LICENSE_RESPONSE',
-              'code': undefined,
-              'info': 'drmsessionupdate'
+              messageType: 'FAIRPLAY_LICENSE_RESPONSE',
+              code: undefined,
+              info: 'drmsessionupdate'
             };
           }
 
@@ -4698,17 +4742,17 @@
         }
       });
       this.shakaPlayer_.addEventListener('adaptation', function (event) {
-        log$1('Shaka adaptationchanged');
+        log('Shaka adaptationchanged');
 
         if (!_this3.hasMetadata_) {
           return;
-        } //For debug
-        //var state = this.shakaPlayer_.getStats();
-        //log('Shaka state', state.estimatedBandwidth, state.streamBandwidth, state.switchHistory.length, state.switchHistory);
-        //if(state.switchHistory.length > 1) {
+        } // For debug
+        // var state = this.shakaPlayer_.getStats();
+        // log('Shaka state', state.estimatedBandwidth, state.streamBandwidth, state.switchHistory.length, state.switchHistory);
+        // if(state.switchHistory.length > 1) {
         //  log('switchHistory1', state.switchHistory[state.switchHistory.length -2].id, state.switchHistory[state.switchHistory.length -2].type, state.switchHistory[state.switchHistory.length -2].bandwidth);
         //  log('switchHistory2', state.switchHistory[state.switchHistory.length -1].id, state.switchHistory[state.switchHistory.length -1].type, state.switchHistory[state.switchHistory.length -1].bandwidth);
-        //}
+        // }
 
 
         var activeVariantTrack = _this3.getActiveVariantTrack();
@@ -4726,7 +4770,7 @@
         }
 
         if (_this3.preActiveTextTrack === null || activeTextTrack && activeTextTrack.language !== _this3.preActiveTextTrack.language) {
-          //Shaka bug fix
+          // Shaka bug fix
           if (_this3.preActiveTextTrack === null && _this3.shakaPlayer_.getConfiguration().preferredTextLanguage === '' && _this3.shakaPlayer_.isTextTrackVisible()) {
             _this3.shakaPlayer_.setTextTrackVisibility(false);
           }
@@ -4739,7 +4783,7 @@
         }
 
         if (!_this3.preActiveVariantTrack || activeVariantTrack && activeVariantTrack.videoBandwidth !== _this3.preActiveVariantTrack.videoBandwidth) {
-          log$1('BITRATE_CHANGED', activeVariantTrack.videoBandwidth);
+          log('BITRATE_CHANGED', activeVariantTrack.videoBandwidth);
           var auto = false;
 
           var config = _this3.shakaPlayer_.getConfiguration();
@@ -4750,10 +4794,10 @@
 
           _this3.trigger({
             type: empPlayerEvents.BITRATE_CHANGED,
-            'bubbles': true
+            bubbles: true
           }, {
-            'bitrate': activeVariantTrack.videoBandwidth,
-            'auto': auto
+            bitrate: activeVariantTrack.videoBandwidth,
+            auto: auto
           });
         }
 
@@ -4761,34 +4805,33 @@
 
         _this3.preActiveVariantTrack = activeVariantTrack;
         _this3.preActiveTextTrack = activeTextTrack;
-      });
+      }); // With multi periods we maybe have to update tracks and send TRACK_CHANGE from here.
+
       this.shakaPlayer_.addEventListener('trackschanged', function (event) {
-        log$1('Shaka trackschanged', event); //TODO: With multi periods we maybe have to update tracks and send TRACK_CHANGE from here.
+        log('Shaka trackschanged', event);
       });
       this.shakaPlayer_.addEventListener('error', function (event) {
         _this3.checkForRecoverableErrors(event.detail);
       });
       this.shakaPlayer_.addEventListener('buffering', function (event) {
-        //Shaka player send buffering after ended and stop
+        // Shaka player send buffering after ended and stop
         if (!_this3.stopped_ && !_this3.ended_) {
-          log$1('buffering', event, event ? event.buffering : null);
+          log('buffering', event, event ? event.buffering : null);
 
           if (event.buffering) {
             _this3.trigger(empPlayerEvents.WAITING);
-          } else {
-            if (_this3.el_ && _this3.el_.paused) {
-              //Needed for not get Promise rejected error
-              if (_this3.paused()) {
-                _this3.trigger({
-                  type: empPlayerEvents.PAUSE,
-                  bubbles: true
-                });
-              } else {
-                _this3.trigger({
-                  type: empPlayerEvents.PLAYING,
-                  bubbles: true
-                });
-              }
+          } else if (_this3.el_ && _this3.el_.paused) {
+            // Needed for not get Promise rejected error
+            if (_this3.paused()) {
+              _this3.trigger({
+                type: empPlayerEvents.PAUSE,
+                bubbles: true
+              });
+            } else {
+              _this3.trigger({
+                type: empPlayerEvents.PLAYING,
+                bubbles: true
+              });
             }
           }
         }
@@ -4797,36 +4840,36 @@
     };
 
     _proto.drmsessionbeforeupdate_ = function drmsessionbeforeupdate_(event) {
-      log$1('drmsessionbeforeupdate', event);
+      log('drmsessionbeforeupdate', event);
 
       if (this.shakaPlayer_.drmInfo()) {
         var message;
 
         if (this.shakaPlayer_.drmInfo().keySystem === 'com.microsoft.playready') {
           message = {
-            'messageType': 'PLAYREADY_LICENSE_REQUEST',
-            'code': undefined,
-            'info': this.shakaPlayer_.drmInfo().licenseServerUri
+            messageType: 'PLAYREADY_LICENSE_REQUEST',
+            code: undefined,
+            info: this.shakaPlayer_.drmInfo().licenseServerUri
           };
         } else if (this.shakaPlayer_.drmInfo().keySystem === 'com.widevine.alpha') {
           if (event.isCertificateRequest) {
             message = {
-              'messageType': 'WIDEVINE_CERTIFICATE_REQUEST',
-              'code': undefined,
-              'info': this.shakaPlayer_.drmInfo().licenseServerUri
+              messageType: 'WIDEVINE_CERTIFICATE_REQUEST',
+              code: undefined,
+              info: this.shakaPlayer_.drmInfo().licenseServerUri
             };
           } else {
             message = {
-              'messageType': 'WIDEVINE_LICENSE_REQUEST',
-              'code': undefined,
-              'info': this.shakaPlayer_.drmInfo().licenseServerUri
+              messageType: 'WIDEVINE_LICENSE_REQUEST',
+              code: undefined,
+              info: this.shakaPlayer_.drmInfo().licenseServerUri
             };
           }
         } else {
           message = {
-            'messageType': 'FAIRPLAY_LICENSE_REQUES',
-            'code': undefined,
-            'info': this.shakaPlayer_.drmInfo().licenseServerUri
+            messageType: 'FAIRPLAY_LICENSE_REQUES',
+            code: undefined,
+            info: this.shakaPlayer_.drmInfo().licenseServerUri
           };
         }
 
@@ -4838,16 +4881,23 @@
     };
 
     _proto.addErrorMessage = function addErrorMessage(error) {
-      if (error.message) return;
+      if (error.message) {
+        return;
+      }
+
       var categoryName = 'UNKNOWN';
       var codeName = 'UNKNOWN';
 
       for (var k in shaka.util.Error.Category) {
-        if (shaka.util.Error.Category[k] === error.category) categoryName = k;
+        if (shaka.util.Error.Category[k] === error.category) {
+          categoryName = k;
+        }
       }
 
       for (var c in shaka.util.Error.Code) {
-        if (shaka.util.Error.Code[c] === error.code) codeName = c;
+        if (shaka.util.Error.Code[c] === error.code) {
+          codeName = c;
+        }
       }
 
       error.message = categoryName + ' ' + codeName;
@@ -4865,7 +4915,7 @@
       this.addErrorMessage(error);
 
       if (error && error.data && error.data.length > 0) {
-        log$1.error(TechName, error.code, error.data, error.message);
+        log.error(TechName, error.code, error.data, error.message);
       }
 
       switch (error.category) {
@@ -4876,12 +4926,15 @@
             break;
           }
 
-        /* falls through */
         // Errors parsing or processing audio or video streams.
+        // falls through
 
         case 3:
-          //Ignore Reload error from previous mediasource
-          if (error.code === 3015) return;
+          // Ignore Reload error from previous mediasource
+          if (error.code === 3015) {
+            return;
+          }
+
           this.triggerRecoverableError(error);
           break;
         // Errors parsing the Manifest.
@@ -4910,9 +4963,9 @@
             type: empPlayerEvents.DRM_SESSION_UPDATE,
             bubbles: true
           }, {
-            'messageType': messageType,
-            'code': error.code,
-            'info': error.message
+            messageType: messageType,
+            code: error.code,
+            info: error.message
           });
           this.triggerRecoverableError(error);
           break;
@@ -4999,7 +5052,7 @@
     /**
     * Is current playback live or not?
     *
-    * @return {Boolean} whether or not current playback is live
+    * @return {boolean} whether or not current playback is live
     */
     ;
 
@@ -5017,7 +5070,7 @@
      *
      * Total length of the video
      *
-     * @return {Number} The duration of the video in seconds
+     * @return {number} The duration of the video in seconds
      */
     ;
 
@@ -5039,7 +5092,7 @@
      *
      * The time at which the video is currently playing
      *
-     * @return {Number} Current time in seconds
+     * @return {number} Current time in seconds
      */
     ;
 
@@ -5058,19 +5111,19 @@
     };
 
     _proto.setAbsoluteTime = function setAbsoluteTime(value) {
-      log$1('setAbsoluteTime', value.date);
+      log('setAbsoluteTime', value.date);
 
       try {
         if (this.live()) {
           var moreAccurateTime = (value.date - this.startTimeLive()) / 1000;
-          log$1('setAbsoluteTime setCurrentTime', moreAccurateTime);
+          log('setAbsoluteTime setCurrentTime', moreAccurateTime);
           this.setCurrentTime(moreAccurateTime);
-        } //VOD
-        else {
-            this.setCurrentTime(value.date / 1000);
-          }
+        } else {
+          // Is VOD
+          this.setCurrentTime(value.date / 1000);
+        }
       } catch (e) {
-        log$1.error(e);
+        log.error(e);
       }
     };
 
@@ -5083,9 +5136,9 @@
         var absoluteTime = this.startTimeLive() / 1000 + _Html.prototype.currentTime.call(this);
 
         return new Date(absoluteTime * 1000);
-      } else {
-        return new Date(_Html.prototype.currentTime.call(this) * 1000);
       }
+
+      return new Date(_Html.prototype.currentTime.call(this) * 1000);
     };
 
     _proto.timeBehindLive = function timeBehindLive() {
@@ -5121,7 +5174,7 @@
       }
 
       return 0;
-    } //It's ok to seek to beginning or end
+    } // It's ok to seek to beginning or end
     ;
 
     _proto.allowJump_ = function allowJump_(time) {
@@ -5136,7 +5189,7 @@
     /**
      * Set current time
      *
-     * @param {Number} time Current time of video
+     * @param {number} time Current time of video
      * @method setCurrentTime
      */
     ;
@@ -5145,11 +5198,15 @@
       // handle restrictions
       if (this.options_.source) {
         if (this.options_.source.ffEnabled === false && !this.allowJump_(time)) {
-          if (this.currentTime() <= time) return;
+          if (this.currentTime() <= time) {
+            return;
+          }
         }
 
         if (this.options_.source.rwEnabled === false && !this.allowJump_(time)) {
-          if (this.currentTime() >= time) return;
+          if (this.currentTime() >= time) {
+            return;
+          }
         }
       }
 
@@ -5166,7 +5223,8 @@
     }
     /**
      * Get timeShiftEnabled
-     * @return {Boolean} if timeShift is enabled
+     *
+     * @return {boolean} if timeShift is enabled
      */
     ;
 
@@ -5176,7 +5234,7 @@
     /**
      * Returns a list of available bitrates
      *
-     * @return {Number[]}) Array of available bitrates
+     * @return {number[]}) Array of available bitrates
      */
     ;
 
@@ -5189,7 +5247,7 @@
       var variantTracks = this.getVariantTracks();
       var bitrates = [];
       variantTracks.forEach(function (track) {
-        //Add only unique videoBandwidth
+        // Add only unique videoBandwidth
         if (track.language === activeVariantTrack.language && bitrates.indexOf(track.videoBandwidth) === -1) {
           bitrates.push(track.videoBandwidth);
         }
@@ -5209,8 +5267,8 @@
      * able use setMaxBitrate instead
      *
      * @throws TypeError Invalid bitrate specified.
-     * @param {Number} value Bitrate to set. 0 to 'reset' back to ABR
-     * @return {Number} bitrate when getting
+     * @param {number} value Bitrate to set. 0 to 'reset' back to ABR
+     * @return {number} bitrate when getting
      */
     ;
 
@@ -5221,7 +5279,7 @@
 
       var activeVariantTrack = this.getActiveVariantTrack();
 
-      if (value == null) {
+      if (value === null) {
         // Get video bitrate
         var config = this.shakaPlayer_.getConfiguration();
 
@@ -5248,46 +5306,46 @@
         });
         this.preActiveVariantTrack = null;
         return;
-      } else {
-        // Set bitrate and stop auto switch.
-        var variantTracks = this.getVariantTracks();
-        var newTrack = null;
+      } // Set bitrate and stop auto switch.
 
-        for (var i = 0; i < variantTracks.length; i++) {
-          var track = variantTracks[i];
 
-          if (track.videoBandwidth === value && track.language === activeVariantTrack.language) {
-            newTrack = track;
-            break;
-          }
+      var variantTracks = this.getVariantTracks();
+      var newTrack = null;
+
+      for (var i = 0; i < variantTracks.length; i++) {
+        var track = variantTracks[i];
+
+        if (track.videoBandwidth === value && track.language === activeVariantTrack.language) {
+          newTrack = track;
+          break;
         }
-
-        if (newTrack === null) {
-          throw new TypeError('Invalid bitrate specified.');
-        }
-
-        this.shakaPlayer_.configure({
-          abr: {
-            enabled: false
-          }
-        }); // Finnaly, set the bitrate
-
-        this.shakaPlayer_.selectVariantTrack(newTrack, true);
-        this.trigger({
-          type: empPlayerEvents.BITRATE_CHANGED,
-          bubbles: true
-        }, {
-          bitrate: value,
-          auto: false
-        });
       }
+
+      if (newTrack === null) {
+        throw new TypeError('Invalid bitrate specified.');
+      }
+
+      this.shakaPlayer_.configure({
+        abr: {
+          enabled: false
+        }
+      }); // Finnaly, set the bitrate
+
+      this.shakaPlayer_.selectVariantTrack(newTrack, true);
+      this.trigger({
+        type: empPlayerEvents.BITRATE_CHANGED,
+        bubbles: true
+      }, {
+        bitrate: value,
+        auto: false
+      });
     }
     /**
      * Get current bitrate
      *
      * Always returns the current bitrate, unlike bitrate() which returns 0 if ABR is enabled
      *
-     * @return {Number} bitrate
+     * @return {number} bitrate
      */
     ;
 
@@ -5302,7 +5360,8 @@
     }
     /**
      * Is Dash supported?
-     * @returns {boolean}
+     *
+     * @return {boolean}
      */
     ;
 
@@ -5321,7 +5380,7 @@
      *
      * These options check whether or not we can playback the source object.
      *
-     * @returns {Object}
+     * @return {Object}
      * @static
      */
     ;
@@ -5331,13 +5390,15 @@
      *
      * Setting this to NaN will clear the max bitrate
      *
-     * @param {Number} bitrate in kbps
+     * @param {number} bitrate in kbps
      */
     _proto.setMaxBitrate = function setMaxBitrate(bitrate) {
       if (this.shakaPlayer_) {
         // set to max
         if (isNaN(bitrate)) {
           bitrate = Number.POSITIVE_INFINITY;
+        } else {
+          bitrate = bitrate * 1000;
         }
 
         var config = {
@@ -5354,7 +5415,8 @@
     }
     /**
      * Get bitrate
-     * @returns {Number} bitrate in kbps
+     *
+     * @return {number} bitrate in kbps
      */
     ;
 
@@ -5364,12 +5426,12 @@
 
         if (config.restrictions.maxBandwidth) {
           return config.restrictions.maxBandwidth / 1000;
-        } else {
-          return config.restrictions.maxBandwidth;
         }
-      } else {
-        return this.options_.maxBitrate;
+
+        return config.restrictions.maxBandwidth;
       }
+
+      return this.options_.maxBitrate;
     }
     /**
      * Return the object presentation of the play-request required for the entitlement engine
@@ -5385,7 +5447,7 @@
     /**
      * Get the current track of a specific type
      *
-     * @param {String} type track type (deprecated in Shaka 2.2)
+     * @param {string} type track type (deprecated in Shaka 2.2)
      * @private
      */
     ;
@@ -5406,8 +5468,8 @@
     /**
      * Get all variantTracks
      *
-     * @param {String} type track type (deprecated in Shaka 2.2)
-     * @returns {Array} Array with Track items
+     * @param {string} type track type (deprecated in Shaka 2.2)
+     * @return {Array} Array with Track items
      * @private
      */
     ;
@@ -5415,7 +5477,7 @@
     _proto.getVariantTracks = function getVariantTracks() {
       var variantTracks = this.shakaPlayer_.getVariantTracks();
       return variantTracks;
-    } ///////////////////// Audio tracks
+    } // /////////////////// Audio tracks
 
     /**
     * isAudioTrackSynchronized
@@ -5436,6 +5498,7 @@
      * Configure audio tracks
      *
      * Adds available audio tracks to the video
+     *
      * @private
      */
     ;
@@ -5448,8 +5511,8 @@
         return;
       }
 
-      log$1('configureVideojsAudioTracks');
-      var variantTracks = this.getVariantTracks(); // Clear current audio tracks 
+      log('configureVideojsAudioTracks');
+      var variantTracks = this.getVariantTracks(); // Clear current audio tracks
 
       this.clearTracks(['audio']); // Audio tracks can have multiple bitrates, filter out the highest for each language
 
@@ -5487,25 +5550,25 @@
       });
     }
     /**
-    * selectTechAudioLanguage
-    *
-    * @private
-    */
+     * selectTechAudioLanguage
+     *
+     * @private
+     */
     ;
 
     _proto.selectTechAudioLanguage = function selectTechAudioLanguage(languageCode) {
       if (languageCode) {
-        //Make selection sticky
+        // Make selection sticky
         if (!this.options_) {
           this.options_ = {
-            'audioLanguage': languageCode
+            audioLanguage: languageCode
           };
         } else {
           this.options_.audioLanguage = languageCode;
         }
 
         if (languageCode !== this.getSelectedTechAudioLanguage()) {
-          log$1('selectTechAudioLanguage', languageCode);
+          log('selectTechAudioLanguage', languageCode);
           this.shakaPlayer_.selectAudioLanguage(languageCode);
         }
       }
@@ -5524,7 +5587,7 @@
 
       var activeVariantTrack = this.getActiveVariantTrack();
       return activeVariantTrack ? activeVariantTrack.language : null;
-    } //////////////////////////// Text tracks
+    } // ////////////////////////// Text tracks
 
     /**
     * get Shaka ActiveTextTrack
@@ -5556,10 +5619,10 @@
       return activeTextTrack && this.shakaPlayer_.isTextTrackVisible() ? activeTextTrack.language : null;
     }
     /**
-     * isTextTrackSynchronized
-     *
-     * @private
-     */
+    * isTextTrackSynchronized
+    *
+    * @private
+    */
     ;
 
     _proto.isTextTrackSynchronized = function isTextTrackSynchronized() {
@@ -5572,6 +5635,7 @@
      * Configure text tracks
      *
      * Clear all videojs text tracks then Adds shaka text tracks to the videojs
+     *
      * @private
      */
     ;
@@ -5585,7 +5649,7 @@
       }
 
       this.blockLocalTrackChange = true;
-      log$1('configureVideojsTextTracks'); // Clear videojs text tracks
+      log('configureVideojsTextTracks'); // Clear videojs text tracks
 
       this.clearTracks(['text']); // Add available text tracks to videojs
 
@@ -5607,7 +5671,7 @@
         if (selectedShakaTextLanguage === track.language) {
           selectedVideojsTrack = newTrack;
         }
-      }); //We need change mode after all tracks are added for UI menu to work.
+      }); // We need change mode after all tracks are added for UI menu to work.
 
       if (selectedVideojsTrack) {
         selectedVideojsTrack.mode = 'showing';
@@ -5632,37 +5696,35 @@
       if (languageCode) {
         // Show text track
         if (!this.shakaPlayer_.isTextTrackVisible()) {
-          log$1('Shaka texttrack', 'show', this.getSelectedTechTextLanguage());
+          log('Shaka texttrack', 'show', this.getSelectedTechTextLanguage());
           this.shakaPlayer_.setTextTrackVisibility(true);
         }
 
         if (this.getSelectedTechTextLanguage() !== languageCode) {
-          log$1('select Shaka texttrack', languageCode);
+          log('select Shaka texttrack', languageCode);
           this.shakaPlayer_.selectTextLanguage(languageCode);
         }
-      } else {
+      } else if (this.shakaPlayer_.isTextTrackVisible()) {
         // Hide text track
-        if (this.shakaPlayer_.isTextTrackVisible()) {
-          log$1('Shaka texttrack', 'hide');
-          this.shakaPlayer_.setTextTrackVisibility(false);
-        }
+        log('Shaka texttrack', 'hide');
+        this.shakaPlayer_.setTextTrackVisibility(false);
       }
 
-      languageCode = languageCode ? languageCode : 'None'; //Make selection sticky
+      languageCode = languageCode ? languageCode : 'None'; // Make selection sticky
 
       if (!this.options_) {
         this.options_ = {
-          'subtitleLanguage': languageCode
+          subtitleLanguage: languageCode
         };
       } else {
         this.options_.subtitleLanguage = languageCode;
       }
-    } /////////////////// Text tracks end
+    } // ///////////////// Text tracks end
 
     /**
-    *
-    * Overide play() and block videojs from send play when autoplay, should be handle by Shaka player
-    */
+      *
+      * Overide play() and block videojs from send play when autoplay, should be handle by Shaka player
+      */
     ;
 
     _proto.play = function play() {
@@ -5672,11 +5734,11 @@
           bubbles: true
         });
       } else {
-        //Don't working! do we still need it? Can't press play button  with sll and autoplay
-        //if ((!this.options_.autoplay && this.el_.networkState > this.el_.HAVE_METADATA) ||
-        //(this.hasStarted_ && this.el_.networkState > this.el_.HAVE_METADATA)) {
-        //this.trigger('play'); not needed
-        //return this.el_.play();
+        // Don't working! do we still need it? Can't press play button  with sll and autoplay
+        // if ((!this.options_.autoplay && this.el_.networkState > this.el_.HAVE_METADATA) ||
+        // (this.hasStarted_ && this.el_.networkState > this.el_.HAVE_METADATA)) {
+        // this.trigger('play'); not needed
+        // return this.el_.play();
         return _Html.prototype.play.call(this);
       }
     };
@@ -5696,12 +5758,13 @@
     /**
      *
      * Dispose of the tech
+     *
      * @private
      */
     ;
 
     _proto.dispose = function dispose() {
-      log$1('dispose ' + TechName);
+      log('dispose ' + TechName);
       this.stopTrackingDuration();
       this.textTracks().off('selectedlanguagechange', this.textTrackChangeBind);
       this.audioTracks().off('change', this.audioTrackChangeBind);
@@ -5711,7 +5774,8 @@
       if (this.shakaPlayer_) {
         try {
           this.shakaPlayer_.destroy();
-        } catch (e) {}
+        } catch (e) {// Do nothing
+        }
       }
 
       this.shakaPlayer_ = null;
@@ -5739,9 +5803,9 @@
         }
 
         return createTimeRanges(start, seekRange.end);
-      } else {
-        return createTimeRanges(0, 0);
       }
+
+      return createTimeRanges(0, 0);
     };
 
     _proto.triggerRecoverableError = function triggerRecoverableError(error) {
@@ -5753,9 +5817,9 @@
       get: function get() {
         if (this.options_ && this.options_.streamType === 'HLS') {
           return 'HLS';
-        } else {
-          return 'DASH';
         }
+
+        return 'DASH';
       }
     }], [{
       key: "nativeSourceHandler",
@@ -5765,7 +5829,7 @@
            * Checks if we can handle source from source object
            *
            * @param {Object} source Source for playback
-           * @returns {probably|maybe|*}
+           * @return {probably|maybe|*}
            * @method canHandleSource
            */
           canHandleSource: function canHandleSource(source, options) {
@@ -5776,13 +5840,14 @@
               return 'probably';
             } else if (dashExtRE.test(source.src)) {
               return 'maybe';
-            } else {
-              return '';
             }
+
+            return '';
           },
 
           /**
            * Handle source
+           *
            * @param {Object} source Source for playback
            * @param {Tech}   tech Tech object to use for playback
            */
@@ -5792,8 +5857,9 @@
 
           /**
            * Determine if we can play type
-           * @param {String}  type mime-type
-           * @returns {probably|''}
+           *
+           * @param {string}  type mime-type
+           * @return {probably|''}
            */
           canPlayType: function canPlayType(type, options) {
             var dashTypeRE = /^application\/dash\+xml/i;
@@ -5828,12 +5894,12 @@
       key: "entitlementPlayRequests",
       get: function get() {
         return {
-          'DASH': {
+          DASH: {
             drm: 'CENC',
             format: 'DASH',
             type: 'application/dash+xml'
           },
-          'HLS': {
+          HLS: {
             drm: 'UNENCRYPTED',
             format: 'HLS',
             type: 'application/x-mpegurl'
@@ -5843,16 +5909,16 @@
     }, {
       key: "log",
       get: function get() {
-        return log$1;
+        return log;
       }
     }]);
 
     return EmpShaka;
   }(Html5);
 
-  EmpShaka.prototype['featuresNativeTextTracks'] = false;
+  EmpShaka.prototype.featuresNativeTextTracks = false;
   Tech$1.withSourceHandlers(EmpShaka);
-  EmpShaka.VERSION = '2.1.101-313'; // Unset source handlers set by Html5 super class.
+  EmpShaka.VERSION = '2.1.101-314'; // Unset source handlers set by Html5 super class.
   // We do not intent to support any sources other then sources allowed by nativeSourceHandler
 
   EmpShaka.sourceHandlers = [];
