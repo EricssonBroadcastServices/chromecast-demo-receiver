@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.101-314 
+ * EMP-Player 2.1.101-315 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -676,18 +676,13 @@
   var empPlayerEvents = new EmpPlayerEvents();
 
   /**
-   * @callback obj:EachCallback
-   *
-   * @param {Mixed} value
-   *        The current key for the object that is being iterated over.
-   *
-   * @param {string} key
-   *        The current key-value for object that is being iterated over
-   */
+  * @file obj.js
+  * @module obj
+  */
   /**
    * Get the keys of an Object
    *
-   * @param {Object}
+   * @param {Object} object
    *        The Object to get the keys from
    *
    * @return {string[]}
@@ -703,11 +698,8 @@
   /**
    * Array-like iteration for objects.
    *
-   * @param {Object} object
-   *        The object to iterate over
-   *
-   * @param {obj:EachCallback} fn
-   *        The callback function which is called for each key in the object.
+   * @param {Object} object The object to iterate over
+   * @param {EachCallback} fn The callback function which is called for each key in the object.
    */
 
 
@@ -746,9 +738,9 @@
   /**
    * Object.assign-style object shallow merge/extend.
    *
-   * @param  {Object} target
-   * @param  {Object} ...sources
-   * @return {Object}
+   * @param  {Object} target target
+   * @param  {Object} ...sources sources
+   * @return {Object} assign object
    */
 
   function assign(target) {
@@ -778,8 +770,8 @@
    * This avoids the gotcha where using `typeof` on a `null` value
    * results in `'object'`.
    *
-   * @param  {Object} value
-   * @return {boolean}
+   * @param  {Object} value value
+   * @return {boolean} isObject
    */
 
   function isObject(value) {
@@ -788,18 +780,19 @@
   /**
    * Check is Object is isEmpty
    *
-   * @param {Object} value
-   * @return {boolean}
+   * @param {Object} value value
+   * @return {boolean} isEmpty
    */
 
   function isEmpty(value) {
     return keys(value).length === 0;
   }
   /**
+   * Rename properties in a object
    *
-   * @param {Object} obj
-   * @param {Object} newKeys
-   * @return {Object}
+   * @param {Object} obj obj
+   * @param {Object} newKeys newKeys
+   * @return {Object} renameKeys
    */
 
   function renameKeys(obj, newKeys) {
@@ -815,9 +808,23 @@
   /* global
     document, atob
   */
+  /**
+   * check if type is string
+   *
+   * @param {Object} val val
+   * @return {boolean} isString
+   */
+
   function isString(val) {
     return typeof val === 'string' || !!val && typeof val === 'object' && Object.prototype.toString.call(val) === '[object String]';
   }
+  /**
+   * parse a video source
+   *
+   * @param {string} src src
+   * @return {Object} asset
+   */
+
   function parseSrc(src) {
     var asset = {
       assetId: undefined,
@@ -835,8 +842,11 @@
   }
   /**
    * Filter out single bad source objects or multiple source objects in an
-   * array.Also flattens nested source object arrays into a 1 dimensional
+   * array. Also flattens nested source object arrays into a 1 dimensional
    * array of source objects.
+   *
+   * @param {string} src src
+   * @return {Array} Sources
    */
 
   function filterSource(src) {
@@ -868,6 +878,14 @@
 
     return src;
   }
+  /**
+   * get Parameter in url by name
+   *
+   * @param {string} name name
+   * @param {string} url url
+   * @return {string} Parameter
+   */
+
   function getParameterByName(name, url) {
     name = name.replace(/[\[\]]/g, '\\$&');
     var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
@@ -1011,6 +1029,8 @@
   }
   /**
    * setLogToBrowserConsole and debug mode
+   *
+   * @param {boolean} value = false
    */
 
 
@@ -1073,7 +1093,7 @@
   /**
    * Get the next unique ID
    *
-   * @return {string}
+   * @return {string} a GUID
    * @function newGUID
    */
 
@@ -1128,7 +1148,7 @@
    * @param  {number}   wait
    *         The number of milliseconds by which to throttle.
    *
-   * @return {Function}
+   * @return {Function} throttled function
    */
 
   var throttle = function throttle(fn, wait) {
@@ -1358,6 +1378,8 @@
    * @param {string} prop
    *        The property name you want
    *
+   * @return {string} currentStyle
+   *
    * @see https://bugzilla.mozilla.org/show_bug.cgi?id=548397
    *
    * @static
@@ -1389,7 +1411,7 @@
   /**
    * Whether the current DOM interface appears to be real.
    *
-   * @return {boolean}
+   * @return {boolean} DOM interface appears to be real.
    */
 
 
@@ -2341,16 +2363,23 @@
 
   /**
    * @file format-time.js
+   * @module format-time
+   */
+
+  /**
+   * Format seconds as a time string, H:MM:SS or M:SS. Supplying a guide (in
+   * seconds) will force a number of leading zeros to cover the length of the
+   * guide.
    *
-   * Format seconds as a time string, H:MM:SS or M:SS
-   * Supplying a guide (in seconds) will force a number of leading zeros
-   * to cover the length of the guide
-   *
-   * @param  {number} seconds Number of seconds to be turned into a string
-   * @param  {number} guide   Number (in seconds) to model the string after
-   * @return {string}         Time formatted as H:MM:SS or M:SS
    * @private
-   * @function formatTime
+   * @param  {number} seconds
+   *         Number of seconds to be turned into a string
+   *
+   * @param  {number} guide
+   *         Number (in seconds) to model the string after
+   *
+   * @return {string}
+   *         Time formatted as H:MM:SS or M:SS
    */
   function formatTime(seconds, guide) {
     if (guide === void 0) {
@@ -2615,6 +2644,12 @@
   var IS_IE_OR_EDGE = IS_EDGE || IE_VERSION !== null;
   var TOUCH_ENABLED = isReal() && ('ontouchstart' in window_1 || window_1.DocumentTouch && window_1.document instanceof window_1.DocumentTouch);
   var BACKGROUND_SIZE_SUPPORTED = isReal() && 'backgroundSize' in window_1.document.createElement('video').style;
+  /**
+   * detectClient
+   *
+   * @return {Object} Client name and version
+   */
+
   function detectClient() {
     var ua = window_1.navigator.userAgent;
     var tem;
@@ -4115,15 +4150,18 @@
   /**
    * @file time-ranges.js
    *
+   */
+
+  /**
    * Should create a fake TimeRange object
    * Mimics an HTML5 time range instance, which has functions that
    * return the start and end times for a range
    * TimeRanges are returned by the buffered() method
    *
-   * @param  {(number|Array)} Start of a single range or an array of ranges
-   * @param  {number} End of a single range
+   * @param  {(number|Array)} start of a single range or an array of ranges
+   * @param  {number} end of a single range
+   * @return {Object} TimeRangesObject
    * @private
-   * @method createTimeRanges
    */
 
   function createTimeRanges(start, end) {
@@ -4135,6 +4173,14 @@
 
     return createTimeRangesObj([[start, end]]);
   }
+  /**
+   * Create a time range object given ranges of time.
+   *
+   * @private
+   * @param   {Array} [ranges]
+   *          An array of time ranges.
+   * @return {Object} TimeRangesObj
+   */
 
   function createTimeRangesObj(ranges) {
     if (ranges === undefined || ranges.length === 0) {
@@ -4155,6 +4201,31 @@
       end: getRange.bind(null, 'end', 1, ranges)
     };
   }
+  /**
+   * Get the time for the specified index at the start or end
+   * of a TimeRange object.
+   *
+   * @private
+   * @param      {string} fnName
+   *             The function name to use for logging
+   *
+   * @param      {string} valueIndex
+   *             The property that should be used to get the time. should be
+   *             'start' or 'end'
+   *
+   * @param      {Array} ranges
+   *             An array of time ranges
+   *
+   * @param      {Array} [rangeIndex=0]
+   *             The index to start the search at
+   *
+   * @return     {number}
+   *             The time that offset at the specified index.
+   *
+   * @deprecated rangeIndex must be set to a value, in the future this will throw an error.
+   * @throws     {Error} if rangeIndex is more than the length of ranges
+   */
+
 
   function getRange(fnName, valueIndex, ranges, rangeIndex) {
     if (rangeIndex === undefined) {
@@ -4165,6 +4236,22 @@
     rangeCheck(fnName, rangeIndex, ranges.length - 1);
     return ranges[rangeIndex][valueIndex];
   }
+  /**
+   * Check if any of the time ranges are over the maximum index.
+   *
+   * @private
+   * @param   {string} fnName
+   *          The function name to use for logging
+   *
+   * @param   {number} index
+   *          The index to check
+   *
+   * @param   {number} maxIndex
+   *          The maximum possible index
+   *
+   * @throws  {Error} if the timeRanges provided are over the maxIndex
+   */
+
 
   function rangeCheck(fnName, index, maxIndex) {
     if (index < 0 || index > maxIndex) {
@@ -7984,7 +8071,7 @@
     _createClass(Player, [{
       key: "version",
       get: function get() {
-        return '2.1.101-314';
+        return '2.1.101-315';
       }
       /**
        * Get entitlement
@@ -9034,6 +9121,7 @@
   var EMPAnalytics = window_1.empAnalytics ? window_1.empAnalytics : empAnalyticsTmp;
   var Plugin = videojs.getPlugin('plugin');
   /**
+   * AnalyticsPlugin
    *
    * @param {Player} player The `Player` that this class should be attached to.
    * @param {Object=} options The key/value store of player options.
@@ -9045,6 +9133,12 @@
   function (_Plugin) {
     _inheritsLoose(AnalyticsPlugin, _Plugin);
 
+    /**
+    * constructor
+    *
+    * @param {Player} player The `Player` that this class should be attached to.
+    * @param {Object=} options The key/value store of player options.
+    */
     function AnalyticsPlugin(player, options) {
       var _this;
 
@@ -9105,22 +9199,22 @@
     /**
      * Set or get the key/value store of analytics options.
      *
-     * @param {Object=} obj options
+     * @param {Object=} opt options
      * @returns {Object=} options
      */
     ;
 
-    _proto.options = function options(obj) {
-      if (!obj) {
+    _proto.options = function options(opt) {
+      if (!opt) {
         return this.options_;
       }
 
-      this.options_ = videojs.mergeOptions(this.options_, obj);
+      this.options_ = videojs.mergeOptions(this.options_, opt);
     }
     /**
      * Create a new Analytics session
      *
-     * @param {Object=} obj options
+     * @param {Object=} opt options
      */
     ;
 
@@ -9201,7 +9295,7 @@
     return AnalyticsPlugin;
   }(Plugin);
 
-  AnalyticsPlugin.VERSION = '2.1.101-314';
+  AnalyticsPlugin.VERSION = '2.1.101-315';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -10448,7 +10542,7 @@
     /**
     * Register an entitlement engine
     *
-    * @param {string} mdnRequestRouterUrl  MDN request router URL
+    * @param {Object} entitlement
     * @param {Object} callback
     * @static
     */
@@ -12151,6 +12245,7 @@
     }
     /**
      * polling backend for new EPG
+     *
      * @private
      */
     ;
@@ -12414,7 +12509,7 @@
     return ProgramService;
   }(Plugin$1);
 
-  ProgramService.VERSION = '2.1.101-314';
+  ProgramService.VERSION = '2.1.101-315';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -12604,7 +12699,7 @@
     return EntitlementExpirationService;
   }(Plugin$2);
 
-  EntitlementExpirationService.VERSION = '2.1.101-314';
+  EntitlementExpirationService.VERSION = '2.1.101-315';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -12632,6 +12727,7 @@
    * @param  {number}   iterations - Number of times to iterate
    * @param  {Function} func - Function to execute when iterating
    * @param  {Function} callback - Callback function when all iterations have been complete
+   * @return {Object} - asyncLoop
    * @private
    */
   function asyncLoop(iterations, func, callback) {
@@ -13146,7 +13242,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.101-314';
+  EntitlementMiddleware.VERSION = '2.1.101-315';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -13275,7 +13371,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.1.101-314';
+  empPlayer.VERSION = '2.1.101-315';
   /*
    * Universal Module Definition (UMD)
    *

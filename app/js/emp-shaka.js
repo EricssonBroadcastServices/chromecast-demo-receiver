@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.101-314 
+ * EMP-Player 2.1.101-315 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -1252,6 +1252,8 @@
   }
   /**
    * setLogToBrowserConsole and debug mode
+   *
+   * @param {boolean} value = false
    */
 
 
@@ -1306,18 +1308,13 @@
   }
 
   /**
-   * @callback obj:EachCallback
-   *
-   * @param {Mixed} value
-   *        The current key for the object that is being iterated over.
-   *
-   * @param {string} key
-   *        The current key-value for object that is being iterated over
-   */
+  * @file obj.js
+  * @module obj
+  */
   /**
    * Get the keys of an Object
    *
-   * @param {Object}
+   * @param {Object} object
    *        The Object to get the keys from
    *
    * @return {string[]}
@@ -1333,11 +1330,8 @@
   /**
    * Array-like iteration for objects.
    *
-   * @param {Object} object
-   *        The object to iterate over
-   *
-   * @param {obj:EachCallback} fn
-   *        The callback function which is called for each key in the object.
+   * @param {Object} object The object to iterate over
+   * @param {EachCallback} fn The callback function which is called for each key in the object.
    */
 
 
@@ -1349,9 +1343,9 @@
   /**
    * Object.assign-style object shallow merge/extend.
    *
-   * @param  {Object} target
-   * @param  {Object} ...sources
-   * @return {Object}
+   * @param  {Object} target target
+   * @param  {Object} ...sources sources
+   * @return {Object} assign object
    */
 
   function assign(target) {
@@ -1381,8 +1375,8 @@
    * This avoids the gotcha where using `typeof` on a `null` value
    * results in `'object'`.
    *
-   * @param  {Object} value
-   * @return {boolean}
+   * @param  {Object} value value
+   * @return {boolean} isObject
    */
 
   function isObject(value) {
@@ -1391,8 +1385,8 @@
   /**
    * Check is Object is isEmpty
    *
-   * @param {Object} value
-   * @return {boolean}
+   * @param {Object} value value
+   * @return {boolean} isEmpty
    */
 
   function isEmpty(value) {
@@ -1402,6 +1396,13 @@
   /* global
     document, atob
   */
+  /**
+   * base64EncodeUint8Array
+   *
+   * @param {Array} input input
+   * @return {string} base64
+   */
+
   function base64EncodeUint8Array(input) {
     var keyStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
     var chr1;
@@ -1436,13 +1437,23 @@
 
     return output;
   }
+  /**
+   * check if type is string
+   *
+   * @param {Object} val val
+   * @return {boolean} isString
+   */
+
   function isString(val) {
     return typeof val === 'string' || !!val && typeof val === 'object' && Object.prototype.toString.call(val) === '[object String]';
   }
   /**
    * Filter out single bad source objects or multiple source objects in an
-   * array.Also flattens nested source object arrays into a 1 dimensional
+   * array. Also flattens nested source object arrays into a 1 dimensional
    * array of source objects.
+   *
+   * @param {string} src src
+   * @return {Array} Sources
    */
 
   function filterSource(src) {
@@ -1498,7 +1509,7 @@
   /**
    * Whether the current DOM interface appears to be real.
    *
-   * @return {boolean}
+   * @return {boolean} DOM interface appears to be real.
    */
 
 
@@ -1608,11 +1619,19 @@
     /**
      * Returns the language code of a language string: 'en-English' to 'en' or returns the original string if '-' can't be found
      *
+     * @param {string} language language string
      * @return {string} language code
+     * @private
      */
     _proto.languageCode = function languageCode(language) {
       return language ? language.split('-')[0] : null;
-    };
+    }
+    /**
+     * Get remainingTime
+     *
+     * @return {number} remainingTime
+     */
+    ;
 
     _proto.remainingTime = function remainingTime() {
       var duration = this.duration();
@@ -1622,11 +1641,24 @@
       }
 
       return duration - this.currentTime();
-    };
+    }
+    /**
+     * supportsEpgProgramChange
+     *
+     * @return {boolean} supportsEpgProgramChange
+     * @private
+     */
+    ;
 
     _proto.supportsEpgProgramChange = function supportsEpgProgramChange() {
       return this.supportsEpgProgramChange_ || false;
-    };
+    }
+    /**
+     * es6-mixins adds the method to the prototype
+     * meaning the second time this object is created the methods are already on the prototype
+     * therefore do not merge duplicates
+     */
+    ;
 
     _proto.base = function base() {} // noop
 
@@ -1634,7 +1666,8 @@
     * Trigger a recoverable error
     * allows the player to fallback to another tech
     *
-    * @param {Object} error
+    * @param {Object} error error object
+    * @param {string} techName techName
     * @private
     */
     ;
@@ -1661,6 +1694,7 @@
     /**
       * Tracking Duration
       *
+      * @private
       */
     ;
 
@@ -1679,6 +1713,7 @@
     /**
       * stop Tracking Duration
       *
+      * @private
       */
     ;
 
@@ -1693,6 +1728,7 @@
     /**
     * Trigger durationchange event
     *
+    * @private
     */
     ;
 
@@ -1706,7 +1742,15 @@
           this.trigger(empPlayerEvents.DURATION_CHANGE);
         }
       }
-    };
+    }
+    /**
+     * fetchWidevineCertificate
+     *
+     * @param {string} certificateUrl
+     * @param {Function=} callback
+     * @private
+     */
+    ;
 
     _proto.fetchWidevineCertificate = function fetchWidevineCertificate(certificateUrl, callback) {
       var _this = this;
@@ -1726,7 +1770,16 @@
       }, false);
       request.open('GET', certificateUrl, true);
       request.send();
-    };
+    }
+    /**
+     * onWidevineCertificateLoad_
+     *
+     * @param {Object} event
+     * @param {Object} callback
+     * @param {string} certificateUrl
+     * @private
+     */
+    ;
 
     _proto.onWidevineCertificateLoad_ = function onWidevineCertificateLoad_(event, _ref) {
       var callback = _ref.callback,
@@ -1767,7 +1820,16 @@
         error.category = 6;
         callback(null, error);
       }
-    };
+    }
+    /**
+     * baseHandleSource
+     *
+     * @param {Object} source
+     * @param {Object} tech
+     * @return {boolean} Has handle the source
+     * @private
+     */
+    ;
 
     _proto.baseHandleSource = function baseHandleSource(source, tech) {
       var _this2 = this;
@@ -1837,6 +1899,7 @@
      * isTextTrackSynchronized
      *
      * @param {string[]} techTracksLanguages
+     * @return {boolean} is Synchronized
      * @private
      */
     ;
@@ -1985,8 +2048,9 @@
 
     /**
     * isTechAudioTrackSynchronized
-     *
+    *
     * @param {string[]} techTracksLanguages
+    * @return {boolean} is Synchronized
     * @private
     */
     ;
@@ -2071,6 +2135,16 @@
      * @return {Object} new Track
      * @private
      */
+
+    /**
+     * addAudioTrack
+     *
+     * @param {string} kind
+     * @param {string} label
+     * @param {string} language
+     * @param {boolean=} enabled
+     * @return {Object} Track
+     */
     ;
 
     _proto.addAudioTrack = function addAudioTrack(kind, label, language, enabled) {
@@ -2121,15 +2195,18 @@
   /**
    * @file time-ranges.js
    *
+   */
+
+  /**
    * Should create a fake TimeRange object
    * Mimics an HTML5 time range instance, which has functions that
    * return the start and end times for a range
    * TimeRanges are returned by the buffered() method
    *
-   * @param  {(number|Array)} Start of a single range or an array of ranges
-   * @param  {number} End of a single range
+   * @param  {(number|Array)} start of a single range or an array of ranges
+   * @param  {number} end of a single range
+   * @return {Object} TimeRangesObject
    * @private
-   * @method createTimeRanges
    */
 
   function createTimeRanges(start, end) {
@@ -2141,6 +2218,14 @@
 
     return createTimeRangesObj([[start, end]]);
   }
+  /**
+   * Create a time range object given ranges of time.
+   *
+   * @private
+   * @param   {Array} [ranges]
+   *          An array of time ranges.
+   * @return {Object} TimeRangesObj
+   */
 
   function createTimeRangesObj(ranges) {
     if (ranges === undefined || ranges.length === 0) {
@@ -2161,6 +2246,31 @@
       end: getRange.bind(null, 'end', 1, ranges)
     };
   }
+  /**
+   * Get the time for the specified index at the start or end
+   * of a TimeRange object.
+   *
+   * @private
+   * @param      {string} fnName
+   *             The function name to use for logging
+   *
+   * @param      {string} valueIndex
+   *             The property that should be used to get the time. should be
+   *             'start' or 'end'
+   *
+   * @param      {Array} ranges
+   *             An array of time ranges
+   *
+   * @param      {Array} [rangeIndex=0]
+   *             The index to start the search at
+   *
+   * @return     {number}
+   *             The time that offset at the specified index.
+   *
+   * @deprecated rangeIndex must be set to a value, in the future this will throw an error.
+   * @throws     {Error} if rangeIndex is more than the length of ranges
+   */
+
 
   function getRange(fnName, valueIndex, ranges, rangeIndex) {
     if (rangeIndex === undefined) {
@@ -2171,6 +2281,22 @@
     rangeCheck(fnName, rangeIndex, ranges.length - 1);
     return ranges[rangeIndex][valueIndex];
   }
+  /**
+   * Check if any of the time ranges are over the maximum index.
+   *
+   * @private
+   * @param   {string} fnName
+   *          The function name to use for logging
+   *
+   * @param   {number} index
+   *          The index to check
+   *
+   * @param   {number} maxIndex
+   *          The maximum possible index
+   *
+   * @throws  {Error} if the timeRanges provided are over the maxIndex
+   */
+
 
   function rangeCheck(fnName, index, maxIndex) {
     if (index < 0 || index > maxIndex) {
@@ -2323,6 +2449,10 @@
   var mix = new Mixins();
 
   var es6Mixins = mix.init.bind(mix);
+
+  /**
+   * ISO639Converter
+   */
 
   function ISO639Converter() {
     this.aar = {
@@ -3812,6 +3942,13 @@
       nativeName: 'Saɯ cueŋƅ, Saw cuengh'
     }
   };
+  /**
+   * get Language Name
+   *
+   * @param {string} value Language code
+   * @return {string} Language Name
+   */
+
   function getLanguageName(value) {
     var key;
 
@@ -4321,7 +4458,7 @@
     return DownloadService;
   }(Plugin);
 
-  DownloadService.VERSION = '2.1.101-314';
+  DownloadService.VERSION = '2.1.101-315';
 
   if (videojs.getPlugin('DownloadService')) {
     videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -5918,7 +6055,7 @@
 
   EmpShaka.prototype.featuresNativeTextTracks = false;
   Tech$1.withSourceHandlers(EmpShaka);
-  EmpShaka.VERSION = '2.1.101-314'; // Unset source handlers set by Html5 super class.
+  EmpShaka.VERSION = '2.1.101-315'; // Unset source handlers set by Html5 super class.
   // We do not intent to support any sources other then sources allowed by nativeSourceHandler
 
   EmpShaka.sourceHandlers = [];
