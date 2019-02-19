@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.101-324 
+ * EMP-Player 2.1.101-325 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -4500,7 +4500,7 @@
     return DownloadService;
   }(Plugin);
 
-  DownloadService.VERSION = '2.1.101-324';
+  DownloadService.VERSION = '2.1.101-325';
 
   if (videojs.getPlugin('DownloadService')) {
     videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -4518,7 +4518,7 @@
   /**
    * HTML5 Dash Media Controller - Wrapper for HTML5 Media API using MPEG-Dash playback
    *
-   * @param {Object=} options Object of option names and values
+   * @param {Object=} options The key/value store of tech options.
    * @param {Function=} ready Ready callback function
    * @extends videojs.Html5
    * @class EmpShaka
@@ -4529,6 +4529,12 @@
   function (_Html) {
     _inheritsLoose(EmpShaka, _Html);
 
+    /**
+     * Create a EmpShaka tech object
+     *
+     * @param {Object=} options The key/value store of tech options.
+     * @param {Function} [ready] - Ready callback function
+     */
     function EmpShaka(options, ready) {
       var _this;
 
@@ -4589,9 +4595,20 @@
 
       return _this;
     }
+    /**
+     * Get StreamType (DASH OR HLS)
+     *
+     * @return {string} StreamType
+     */
+
 
     var _proto = EmpShaka.prototype;
 
+    /**
+     * onLoadStart
+     *
+     * @param {EventTarget~Event} event
+     */
     _proto.onLoadStart = function onLoadStart(event) {
       this.hasMetadata_ = true;
       log('onLoadStart');
@@ -4630,6 +4647,7 @@
      * Source handler for dash playback.
      *
      * @param {Object} source Source object for playback
+     * @param {EmpShaka} tech The instance of the EmpShaka tech
      * @method handleSource
      */
     ;
@@ -4831,7 +4849,15 @@
           _this2.checkForRecoverableErrors(error);
         }
       });
-    };
+    }
+    /**
+     * createStreamrootWrapper
+     *
+     * @param {string} streamrootkey
+     * @return {Object} streamrootWrapper
+     * @private
+     */
+    ;
 
     _proto.createStreamrootWrapper_ = function createStreamrootWrapper_(streamrootkey) {
       var dnaConfig = {};
@@ -4840,13 +4866,26 @@
       };
       this.streamrootWrapper_ = new ShakaPlayerDnaWrapper(this.shakaPlayer_, streamrootkey, dnaConfig, wrapperConfig);
       return this.streamrootWrapper_;
-    };
+    }
+    /**
+     * streamingFailureCallback
+     *
+     * @param {Error} error
+     * @private
+     */
+    ;
 
     _proto.streamingFailureCallback = function streamingFailureCallback(error) {
       // The default streamingFailureCallback will infiniteRetriesForLiveStreams
       // Error will be fire later
       log(TechName, 'Streaming Failure', error);
-    };
+    }
+    /**
+     * Get techVersion
+     *
+     * @return {string} techVersion
+     */
+    ;
 
     _proto.techVersion = function techVersion() {
       if (shaka && shaka.Player) {
@@ -4858,6 +4897,7 @@
     /**
      * Creates an instance of Shaka.Player for use and sets the relevant listeners
      *
+     * @return {Object} shaka.Player
      * @private
      */
     ;
@@ -5016,7 +5056,14 @@
         }
       });
       return this.shakaPlayer_;
-    };
+    }
+    /**
+     * drmsessionbeforeupdate
+     *
+     * @param {EventTarget~Event} event
+     * @private
+     */
+    ;
 
     _proto.drmsessionbeforeupdate_ = function drmsessionbeforeupdate_(event) {
       log('drmsessionbeforeupdate', event);
@@ -5057,7 +5104,14 @@
           bubbles: true
         }, message);
       }
-    };
+    }
+    /**
+     * addErrorMessage
+     *
+     * @param {Error} error
+     * @private
+     */
+    ;
 
     _proto.addErrorMessage = function addErrorMessage(error) {
       if (error.message) {
@@ -5153,7 +5207,13 @@
           this.triggerRecoverableError(error);
           break;
       }
-    };
+    }
+    /**
+     * Stop playback
+     *
+     * @param {Function=}afterStopCallback
+     */
+    ;
 
     _proto.stop = function stop(afterStopCallback) {
       var _this4 = this;
@@ -5189,7 +5249,14 @@
           }
         });
       }
-    };
+    }
+    /**
+     * onEnded
+     *
+     * @param {EventTarget~Event} event
+     * @private
+     */
+    ;
 
     _proto.onEnded = function onEnded(event) {
       this.ended_ = true;
@@ -5198,7 +5265,12 @@
       if (this.shakaPlayer_) {
         this.reset();
       }
-    };
+    }
+    /**
+     * Reset the tech by removing all sources and then calling
+     * {@link Html5.resetMediaElement}.
+     */
+    ;
 
     _proto.reset = function reset() {
       this.loading_ = false;
@@ -5283,11 +5355,26 @@
       var currentTime = _Html.prototype.currentTime.call(this);
 
       return currentTime;
-    };
+    }
+    /**
+    * Get or the raw current time (in seconds) from the video element
+    *
+    * > **NOTE**: It's the raw currentTime from the video element
+    *
+    * @return {number}
+    *         - the current time in seconds when getting
+    */
+    ;
 
     _proto.baseCurrentTime = function baseCurrentTime() {
       return _Html.prototype.currentTime.call(this);
-    };
+    }
+    /**
+     * Set the playheadTime as a Date
+     *
+     * @param {Date} value
+     */
+    ;
 
     _proto.setAbsoluteTime = function setAbsoluteTime(value) {
       log('setAbsoluteTime', value.date);
@@ -5304,7 +5391,14 @@
       } catch (e) {
         log.error(e);
       }
-    };
+    }
+    /**
+     * Get the playheadTime as a Date
+     *
+     * @param {number=} nowDate
+     * @return {Date} playheadTime
+     */
+    ;
 
     _proto.getAbsoluteTime = function getAbsoluteTime(nowDate) {
       if (!this.el_) {
@@ -5318,7 +5412,13 @@
       }
 
       return new Date(_Html.prototype.currentTime.call(this) * 1000);
-    };
+    }
+    /**
+     * seconds behinde live edge
+     *
+     * @return {number} timeBehindLive
+     */
+    ;
 
     _proto.timeBehindLive = function timeBehindLive() {
       if (!this.shakaPlayer_ || !this.live()) {
@@ -5330,7 +5430,13 @@
       var currentTime = _Html.prototype.currentTime.call(this);
 
       return Math.floor(seekRange.end - currentTime);
-    };
+    }
+    /**
+     * The unix time (ms) when stream was started
+     *
+     * @return {number} Start Time Live
+     */
+    ;
 
     _proto.startTimeLive = function startTimeLive() {
       var starttime = 0;
@@ -5344,7 +5450,12 @@
       }
 
       return starttime;
-    } // This is getPresentationStartTime + drifting
+    }
+    /**
+     * getPresentationStartTime + drifting
+     *
+     * @return {number} Shaka PresentationStartTime
+     */
     ;
 
     _proto.getPresentationStartTime = function getPresentationStartTime() {
@@ -5353,7 +5464,14 @@
       }
 
       return 0;
-    } // It's ok to seek to beginning or end
+    }
+    /**
+     * allowJump
+     *
+     * @param {number} time
+     * @return {boolean} is allowJump
+     * @private
+     */
     ;
 
     _proto.allowJump_ = function allowJump_(time) {
@@ -5538,9 +5656,11 @@
       return 0;
     }
     /**
-     * Is Dash supported?
+     * Check if Dash media is supported by this browser/device.
      *
      * @return {boolean}
+     *         - True if HTML5 media is supported.
+     *         - False if HTML5 media is not supported.
      */
     ;
 
@@ -5559,7 +5679,7 @@
      *
      * These options check whether or not we can playback the source object.
      *
-     * @return {Object}
+     * @return {Object} nativeSourceHandler
      * @static
      */
     ;
@@ -5614,11 +5734,15 @@
     }
     /**
      * Return the object presentation of the play-request required for the entitlement engine
+     *
+     * @return {Object} entitlementPlayRequest
      */
     ;
 
     /**
      * Returns true if the playback can be restarted
+     *
+     * @return {boolean} canRestart
      */
     _proto.canRestart = function canRestart() {
       return !this.live() || this.timeShiftEnabled();
@@ -5626,7 +5750,7 @@
     /**
      * Get the current track of a specific type
      *
-     * @param {string} type track type (deprecated in Shaka 2.2)
+     * @return {Object} Active VariantTrack
      * @private
      */
     ;
@@ -5647,7 +5771,6 @@
     /**
      * Get all variantTracks
      *
-     * @param {string} type track type (deprecated in Shaka 2.2)
      * @return {Array} Array with Track items
      * @private
      */
@@ -5661,6 +5784,7 @@
     /**
     * isAudioTrackSynchronized
     *
+    * @return {boolean} isAudioTrackSynchronized
     * @private
     */
     ;
@@ -5731,6 +5855,7 @@
     /**
      * selectTechAudioLanguage
      *
+     * @param {string} languageCode
      * @private
      */
     ;
@@ -5755,6 +5880,7 @@
     /**
      * getSelectedTechAudioLanguage
      *
+     * @return {string} AudioLanguage code
      * @private
      */
     ;
@@ -5771,6 +5897,7 @@
     /**
     * get Shaka ActiveTextTrack
     *
+    * @return {Object} Active TextTrack
     * @private
     */
     ;
@@ -5785,6 +5912,7 @@
     /**
     * getSelectedTechTextLanguage
     *
+    * @return {string} Active TextTrack Language
     * @private
     */
     ;
@@ -5800,6 +5928,7 @@
     /**
     * isTextTrackSynchronized
     *
+    * @return {boolean} is TextTrack Synchronized
     * @private
     */
     ;
@@ -5867,6 +5996,7 @@
     /**
     * selectTechTextLanguage
     *
+    * @param {string} languageCode
     * @private
     */
     ;
@@ -5901,12 +6031,19 @@
     } // ///////////////// Text tracks end
 
     /**
-      *
-      * Overide play() and block videojs from send play when autoplay, should be handle by Shaka player
-      */
+     * Attempt to begin playback at the first opportunity.
+     *
+     * @return {Promise|undefined}
+     *         Returns a promise if the browser supports Promises (or one
+     *         was passed in as an option). This promise will be resolved on
+     *         the return value of play. If this is undefined it will fulfill the
+     *         promise chain otherwise the promise chain will be fulfilled when
+     *         the promise from play is fulfilled.
+     */
     ;
 
     _proto.play = function play() {
+      // Overide play() and block videojs from send play when autoplay, should be handle by Shaka player
       if (this.stopped_ || this.ended_) {
         this.trigger({
           type: empPlayerEvents.REPLAY,
@@ -5920,7 +6057,11 @@
         // return this.el_.play();
         return _Html.prototype.play.call(this);
       }
-    };
+    }
+    /**
+     * pause playback
+     */
+    ;
 
     _proto.pause = function pause() {
       if (this.live() && this.options_.timeShiftDisabled) {
@@ -5964,13 +6105,27 @@
       _Html.prototype.dispose.call(this);
 
       this.isDispose_ = true;
-    };
+    }
+    /**
+     * Set current Program
+     *
+     * @param {Object} currentProgram
+     */
+    ;
 
     _proto.program = function program(currentProgram) {
       if (currentProgram) {
         this.currentProgram_ = currentProgram;
       }
-    };
+    }
+    /**
+     * Returns the TimeRanges of the media that are currently available
+     * for seeking to.
+     *
+     * @return {TimeRanges} the seekable intervals of the media timeline
+     * @method Player#seekable
+     */
+    ;
 
     _proto.seekable = function seekable() {
       if (this.shakaPlayer_) {
@@ -5985,11 +6140,24 @@
       }
 
       return createTimeRanges(0, 0);
-    };
+    }
+    /**
+     * triggerRecoverableError
+     *
+     * @param {Error} error
+     * @private
+     */
+    ;
 
     _proto.triggerRecoverableError = function triggerRecoverableError(error) {
       this.triggerRecoverableTechError(error, TechName);
-    };
+    }
+    /**
+     * Get EMP log object
+     *
+     * @return {Object} EMP log
+     */
+    ;
 
     _createClass(EmpShaka, [{
       key: "streamType",
@@ -6003,12 +6171,19 @@
     }], [{
       key: "nativeSourceHandler",
       get: function get() {
+        /**
+         *
+         * @param {Object} source Source for playback
+         * @param {Object=} options The key/value store of tech options.
+         * @return {probably|maybe|*} canHandleSource
+         */
         return {
           /**
-           * Checks if we can handle source from source object
+           * canHandleSource
            *
            * @param {Object} source Source for playback
-           * @return {probably|maybe|*}
+           * @param {Object=} options The key/value store of tech options.
+           * @return {probably|maybe|*} canHandleSource
            * @method canHandleSource
            */
           canHandleSource: function canHandleSource(source, options) {
@@ -6038,7 +6213,8 @@
            * Determine if we can play type
            *
            * @param {string}  type mime-type
-           * @return {probably|''}
+           * @param {Object=} options The key/value store of tech options.
+           * @return {probably|''} canPlayType
            */
           canPlayType: function canPlayType(type, options) {
             var dashTypeRE = /^application\/dash\+xml/i;
@@ -6069,6 +6245,12 @@
           type: 'application/dash+xml'
         };
       }
+      /**
+       * Get Entitlement PlayRequests
+       *
+       * @return {Object} entitlementPlayRequests
+       */
+
     }, {
       key: "entitlementPlayRequests",
       get: function get() {
@@ -6097,7 +6279,7 @@
 
   EmpShaka.prototype.featuresNativeTextTracks = false;
   Tech$1.withSourceHandlers(EmpShaka);
-  EmpShaka.VERSION = '2.1.101-324'; // Unset source handlers set by Html5 super class.
+  EmpShaka.VERSION = '2.1.101-325'; // Unset source handlers set by Html5 super class.
   // We do not intent to support any sources other then sources allowed by nativeSourceHandler
 
   EmpShaka.sourceHandlers = [];

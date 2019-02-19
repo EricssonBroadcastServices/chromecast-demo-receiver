@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.101-324 
+ * EMP-Player 2.1.101-325 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -8409,7 +8409,7 @@
     _createClass(Player, [{
       key: "version",
       get: function get() {
-        return '2.1.101-324';
+        return '2.1.101-325';
       }
       /**
        * Get entitlement
@@ -8483,7 +8483,7 @@
     return validAutoTechOrder;
   };
   /**
-   * Check if the browser and plattform suppot Fairplay
+   * Check if the browser and plattform support Fairplay
    *
    * @return {boolean} True if the browser and plattform support Fairplay
    */
@@ -9759,7 +9759,7 @@
     return AnalyticsPlugin;
   }(Plugin);
 
-  AnalyticsPlugin.VERSION = '2.1.101-324';
+  AnalyticsPlugin.VERSION = '2.1.101-325';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -12350,9 +12350,11 @@
 
   var Plugin$1 = videojs.getPlugin('plugin');
   /**
-   *  ProgramService
-   * @param player
-   * @param options
+   * Program Service Plugin
+   * @param {Player} player The `Player` that this class should be attached to.
+   * @param {Object=} options The key/value store of player options.
+   * @extends videojs.Plugin
+   * @class ProgramService
    */
 
   var ProgramService =
@@ -12360,6 +12362,12 @@
   function (_Plugin) {
     _inheritsLoose(ProgramService, _Plugin);
 
+    /**
+     * Create the ProgramService
+     *
+     * @param {Player} player The `Player` that this class should be attached to.
+     * @param {Object=} options The key/value store of player options.
+     */
     function ProgramService(player, options) {
       var _this;
 
@@ -12378,6 +12386,8 @@
       return _this;
     }
     /**
+    * get exposure
+    *
     * @return {Exposure} current exposure
     */
 
@@ -12385,10 +12395,10 @@
     var _proto = ProgramService.prototype;
 
     /**
-     * set / get entitlement
+     * set or get entitlement
      *
-     * @param value
-     * @return {Entitlement}
+     * @param {Entitlement} value
+     * @return {Entitlement} Entitlement
      */
     _proto.entitlement = function entitlement(value) {
       if (typeof value === 'undefined') {
@@ -12399,11 +12409,12 @@
       return value;
     }
     /**
-     * Set / Get options
-     *
-     * @param obj
-     * @return {Object}
-     */
+    /**
+    * Set/Get The program service options
+    *
+    * @param {Object} obj
+    * @return {Object} options
+    */
     ;
 
     _proto.options = function options(obj) {
@@ -12417,7 +12428,7 @@
      * onEntitlementChange
      *
      * @param {EventTarget~Event} [event]
-     * @param data
+     * @param {Object} data
      */
     ;
 
@@ -12443,8 +12454,6 @@
     }
     /**
      * start program service
-     *
-     * @param entitlement
      */
     ;
 
@@ -12475,14 +12484,26 @@
 
       this.currentProgram_ = null;
       this.currentVOD_ = null;
-    };
+    }
+    /**
+     * reset
+     */
+    ;
 
     _proto.reset = function reset() {
       this.stop();
       this.currentProgram_ = null;
       this.currentVOD_ = null;
       this.entitlement_ = null;
-    };
+    }
+    /**
+     * clearProgramChangeTimeout
+     *
+     * @param {EventTarget~Event} [event]
+     * @param {Object} data
+     * @private
+     */
+    ;
 
     _proto.clearProgramChangeTimeout_ = function clearProgramChangeTimeout_(event, data) {
       if (this.programChangeTimeout_) {
@@ -12497,7 +12518,7 @@
     /**
      *  Check if ProgramService is running
      *
-     * @return {boolean}
+     * @return {boolean} ProgramService is running
     */
     ;
 
@@ -12522,9 +12543,9 @@
       _Plugin.prototype.dispose.call(this);
     }
     /**
-     * current Program
+     * Get Current Program
      *
-     * @return {Object}
+     * @return {Object} current program
      */
     ;
 
@@ -12532,7 +12553,7 @@
      * Check if program changed
      *
      * @param {EventTarget~Event} [event]
-     * @param data
+     * @param {Object} data
      * @private
      */
     _proto.checkForProgramChange_ = function checkForProgramChange_(event, data) {
@@ -12685,7 +12706,7 @@
     /**
      * updateVOD
      *
-     * @param assetId
+     * @param {string} assetId
      * @private
      */
     ;
@@ -12724,8 +12745,8 @@
     /**
      * updateCurrentProgram_
      *
-     * @param program
-     * @param startplayback
+     * @param {string} program
+     * @param {boolean} startplayback
      * @private
      */
     ;
@@ -12921,7 +12942,7 @@
     /**
      * get Program
      *
-     * @param date
+     * @param {Date} dateTime
      * @param {Function=} callback with program
      */
     ;
@@ -12975,8 +12996,9 @@
       });
     }
     /**
+     * get AssetMetadata
      *
-     * @param assetId
+     * @param {string} assetId
      * @param {Function=} callback with asset metadata
      */
     ;
@@ -13071,9 +13093,9 @@
         return this.currentProgram_;
       }
       /**
-       * current Channel Asset
+       * Get Current Channel Asset
        *
-       * @return {Object}
+       * @return {Object} current Channel Asset
        */
 
     }, {
@@ -13082,9 +13104,9 @@
         return this.currentChannelAsset_;
       }
       /**
-       * current VOD Asset
+       * Get Current VOD Asset
        *
-       * @return {Object}
+       * @return {Object} current VOD Asset
        */
 
     }, {
@@ -13098,7 +13120,7 @@
     return ProgramService;
   }(Plugin$1);
 
-  ProgramService.VERSION = '2.1.101-324';
+  ProgramService.VERSION = '2.1.101-325';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -13337,7 +13359,7 @@
     return EntitlementExpirationService;
   }(Plugin$2);
 
-  EntitlementExpirationService.VERSION = '2.1.101-324';
+  EntitlementExpirationService.VERSION = '2.1.101-325';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -13886,7 +13908,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.101-324';
+  EntitlementMiddleware.VERSION = '2.1.101-325';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -14015,7 +14037,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.1.101-324';
+  empPlayer.VERSION = '2.1.101-325';
   /*
    * Universal Module Definition (UMD)
    *
