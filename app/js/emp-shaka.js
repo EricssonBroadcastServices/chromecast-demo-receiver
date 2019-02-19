@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.101-319 
+ * EMP-Player 2.1.101-322 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -681,7 +681,11 @@
    *
    * @class EmpPlayerEvents
    */
-  var EmpPlayerEvents = function EmpPlayerEvents() {
+  var EmpPlayerEvents =
+  /**
+   * constructor
+   */
+  function EmpPlayerEvents() {
     /**
     * Fired when video playback ends
     * @event ENDED
@@ -1774,7 +1778,7 @@
     /**
      * onWidevineCertificateLoad_
      *
-     * @param {Object} event
+     * @param {EventTarget~Event} [event]
      * @param {Object} callback
      * @param {string} certificateUrl
      * @private
@@ -2017,7 +2021,7 @@
     /**
     * VideoJS Text track change
      *
-    * @param {Object} event
+    * @param {EventTarget~Event} [event]
     * One of the VideoJS text track changed its mode
     *
     * @private
@@ -2074,7 +2078,7 @@
      * VideoJS
      * One of the VideoJS audio track changed its enabled
      *
-     * @param {Object} event
+     * @param {EventTarget~Event} [event]
      * @private
      */
     ;
@@ -3981,11 +3985,25 @@
     HLS_MSE_TECH: 10000,
     DASHIF_TECH: 20000
   };
+  /**
+   * The class for EmpPlayerError
+   *
+   * @class EmpPlayerError
+   * @extends Error
+  */
+
   var EmpPlayerError =
   /*#__PURE__*/
   function (_Error) {
     _inheritsLoose(EmpPlayerError, _Error);
 
+    /**
+     * Create EmpPlayerError
+     *
+     * @param {any} value
+     * @param {number} code = EmpPlayerErrorCodes.UNKNOWN
+     * @param {Object} status = null
+     */
     function EmpPlayerError(value, code, status) {
       var _this;
 
@@ -4009,11 +4027,17 @@
       _this.status = status;
 
       if (Error.captureStackTrace) {
-        Error.captureStackTrace(_assertThisInitialized(_assertThisInitialized(_this)), EmpPlayerError);
+        Error.captureStackTrace(_assertThisInitialized(_this), EmpPlayerError);
       }
 
       return _this;
     }
+    /**
+     * Get EmpPlayerErrorCodes
+     *
+     * @return {number} EmpPlayerErrorCodes
+     */
+
 
     _createClass(EmpPlayerError, [{
       key: "codes",
@@ -4028,7 +4052,7 @@
   var Plugin = videojs.getPlugin('plugin');
   var Tech = videojs.getComponent('Tech');
   /**
-   *  DownloadService
+   * Download Service Plugin
    *  This manages persistent offline data including storage, listing, and deleting stored manifests.
    *  Playback of offline manifests are done through the Player using a special URI (see shaka.offline.OfflineUri).
    *  First, check isSupported to see if offline is supported by the platform.
@@ -4036,8 +4060,10 @@
    *  Third, call startDownload(), remove(), or list() as needed.
    *  Start playback with load().
    *
-   * @param player
-   * @param options
+   * @param {Player} player The `Player` that this class should be attached to.
+   * @param {Object=} options The key/value store of player options.
+   * @extends videojs.Plugin
+   * @class DownloadService
    */
 
   var DownloadService =
@@ -4045,6 +4071,12 @@
   function (_Plugin) {
     _inheritsLoose(DownloadService, _Plugin);
 
+    /**
+     * Create the DownloadService
+     *
+     * @param {Player} player The `Player` that this class should be attached to.
+     * @param {Object=} options The key/value store of player options.
+     */
     function DownloadService(player, options) {
       var _this;
 
@@ -4057,7 +4089,7 @@
     /**
      * if offline is supported by the platform
      *
-     * @return {boolean}
+     * @return {boolean} isSupported
      */
 
 
@@ -4066,7 +4098,7 @@
     /**
      * Delete all
      *
-     * @return {Promise}
+     * @return {Promise} deleteAll
      */
     _proto.deleteAll = function deleteAll() {
       return shaka.offline.Storage.deleteAll(this.player.tech_.shakaPlayer_);
@@ -4079,7 +4111,7 @@
      * @param {any} programId Identifier of the program to load
      * @param {?Object} metadata (optional) An arbitrary object from the application that will be stored along-side the offline content. Use this for any application-specific metadata you need associated with the stored content. For details on the data types that can be stored here, please refer to https://goo.gl/h62coS
      * @param {?boolean} usePersistentLicense (optional) use PersistentLicense default=true
-     * @return {Promise}
+     * @return {Promise} startDownload
      */
     ;
 
@@ -4162,13 +4194,13 @@
       });
     }
     /**
-     * startDownloadEntitlement_
+     * startDownloadEntitlement
      *
-     * @param entitlement
-     * @param metadata
-     * @param usePersistentLicense
-     * @param resolve
-     * @param reject
+     * @param {Entitlement} entitlement
+     * @param {Object} metadata
+     * @param {boolean} usePersistentLicense
+     * @param {Object} resolve
+     * @param {Object} reject
      * @private
      */
     ;
@@ -4204,7 +4236,7 @@
      * @param {string|Object} source The Source element of a video element
      * @param {?Object} metadata (optional) An arbitrary object from the application that will be stored along-side the offline content. Use this for any application-specific metadata you need associated with the stored content. For details on the data types that can be stored here, please refer to https://goo.gl/h62coS
      * @param {?boolean} usePersistentLicense (optional) use PersistentLicense default=true
-     * @return {Promise}
+     * @return {Promise} StartDownloadSource Promise
      */
     ;
 
@@ -4285,7 +4317,7 @@
      * selectTracks
      *
      * @param {Object[]} tracks
-     * @return {Object[]}
+     * @return {Object[]} selectTracks
      * @private
      */
     ;
@@ -4342,7 +4374,7 @@
     /**
      * List all downloaded assests
      *
-     * @return {Promise}
+     * @return {Promise} list
      */
     ;
 
@@ -4357,7 +4389,7 @@
      * Remove downloaded assest
      *
      * @param {string} offlineUri
-     * @return {Promise}
+     * @return {Promise} Remove Promise
      */
     ;
 
@@ -4371,7 +4403,7 @@
     /**
      * Play downloaded assest
      *
-     * @param {string}
+     * @param {string} offlineUri
      * @param {Object=} options Player Options
      */
     ;
@@ -4400,7 +4432,11 @@
         type: 'application/dash+xml',
         src: offlineUri
       });
-    };
+    }
+    /**
+     * cancel
+     */
+    ;
 
     _proto.cancel = function cancel() {
       if (this.offlineOperationInProgress_) {
@@ -4448,6 +4484,12 @@
 
         return false;
       }
+      /**
+       * offlineOperationInProgress
+       *
+       * @return {boolean} offlineOperationInProgress
+       */
+
     }, {
       key: "offlineOperationInProgress",
       get: function get() {
@@ -4458,7 +4500,7 @@
     return DownloadService;
   }(Plugin);
 
-  DownloadService.VERSION = '2.1.101-319';
+  DownloadService.VERSION = '2.1.101-322';
 
   if (videojs.getPlugin('DownloadService')) {
     videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -4505,7 +4547,7 @@
       // therefore do not merge duplicates
 
       if (!_this.base) {
-        es6Mixins(EmpTech, _assertThisInitialized(_assertThisInitialized(_this)), {
+        es6Mixins(EmpTech, _assertThisInitialized(_this), {
           mergeDuplicates: false
         });
       }
@@ -4515,23 +4557,23 @@
       _this.certificate_ = null; // Shaka polyfills, fullscreen has been excluded because VideoJS handles this api
 
       shaka.polyfill.installAll();
-      _this.textTrackChangeBind = _this.baseTextTrackChange.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+      _this.textTrackChangeBind = _this.baseTextTrackChange.bind(_assertThisInitialized(_this));
 
       _this.textTracks().on('selectedlanguagechange', _this.textTrackChangeBind);
 
-      _this.audioTrackChangeBind = _this.baseAudioTrackChange.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+      _this.audioTrackChangeBind = _this.baseAudioTrackChange.bind(_assertThisInitialized(_this));
 
       _this.audioTracks().on(empPlayerEvents.CHANGE, _this.audioTrackChangeBind);
 
-      _this.onEndedBind = _this.onEnded.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+      _this.onEndedBind = _this.onEnded.bind(_assertThisInitialized(_this));
 
       _this.el_.addEventListener(empPlayerEvents.ENDED, _this.onEndedBind);
 
       _this.preActiveVariantTrack = null;
       _this.preActiveTextTrack = null;
-      _this.onLoadStartBind = _this.onLoadStart.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+      _this.onLoadStartBind = _this.onLoadStart.bind(_assertThisInitialized(_this));
 
-      _this.on(_assertThisInitialized(_assertThisInitialized(_this)), empPlayerEvents.LOAD_START, _this.onLoadStartBind); // Workaround for Firefox bug
+      _this.on(_assertThisInitialized(_this), empPlayerEvents.LOAD_START, _this.onLoadStartBind); // Workaround for Firefox bug
       // https://bugzilla.mozilla.org/show_bug.cgi?id=1491365
 
 
@@ -6055,7 +6097,7 @@
 
   EmpShaka.prototype.featuresNativeTextTracks = false;
   Tech$1.withSourceHandlers(EmpShaka);
-  EmpShaka.VERSION = '2.1.101-319'; // Unset source handlers set by Html5 super class.
+  EmpShaka.VERSION = '2.1.101-322'; // Unset source handlers set by Html5 super class.
   // We do not intent to support any sources other then sources allowed by nativeSourceHandler
 
   EmpShaka.sourceHandlers = [];

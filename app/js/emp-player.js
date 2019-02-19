@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.101-319 
+ * EMP-Player 2.1.101-322 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -169,7 +169,11 @@
    *
    * @class EmpPlayerEvents
    */
-  var EmpPlayerEvents = function EmpPlayerEvents() {
+  var EmpPlayerEvents =
+  /**
+   * constructor
+   */
+  function EmpPlayerEvents() {
     /**
     * Fired when video playback ends
     * @event ENDED
@@ -920,11 +924,25 @@
     HLS_MSE_TECH: 10000,
     DASHIF_TECH: 20000
   };
+  /**
+   * The class for EmpPlayerError
+   *
+   * @class EmpPlayerError
+   * @extends Error
+  */
+
   var EmpPlayerError =
   /*#__PURE__*/
   function (_Error) {
     _inheritsLoose(EmpPlayerError, _Error);
 
+    /**
+     * Create EmpPlayerError
+     *
+     * @param {any} value
+     * @param {number} code = EmpPlayerErrorCodes.UNKNOWN
+     * @param {Object} status = null
+     */
     function EmpPlayerError(value, code, status) {
       var _this;
 
@@ -948,11 +966,17 @@
       _this.status = status;
 
       if (Error.captureStackTrace) {
-        Error.captureStackTrace(_assertThisInitialized(_assertThisInitialized(_this)), EmpPlayerError);
+        Error.captureStackTrace(_assertThisInitialized(_this), EmpPlayerError);
       }
 
       return _this;
     }
+    /**
+     * Get EmpPlayerErrorCodes
+     *
+     * @return {number} EmpPlayerErrorCodes
+     */
+
 
     _createClass(EmpPlayerError, [{
       key: "codes",
@@ -1182,6 +1206,12 @@
   function (_MenuItem) {
     _inheritsLoose(BitrateMenuItem, _MenuItem);
 
+    /**
+     * Create a BitrateMenuItem button
+     *
+     * @param {Player|Object} player
+     * @param {Object=} options
+     */
     function BitrateMenuItem(player, options) {
       var _this;
 
@@ -1206,6 +1236,8 @@
     }
     /**
      * Handle click on audio track
+     *
+     * @param {EventTarget~Event} [event]
      */
 
 
@@ -1223,10 +1255,8 @@
   var MenuButton = videojs.getComponent('MenuButton');
   var Component$1 = videojs.getComponent('Component');
   /**
-   * The base class for buttons that toggle specific bitrate
+   * The class for BitrateButton
    *
-   * @param {Player|Object} player
-   * @param {Object=} options
    * @extends MenuButton
    * @class BitrateButton
    */
@@ -1236,6 +1266,12 @@
   function (_MenuButton) {
     _inheritsLoose(BitrateButton, _MenuButton);
 
+    /**
+     * Create a BitrateButton button
+     *
+     * @param {Player|Object} player
+     * @param {Object=} options
+     */
     function BitrateButton(player, options) {
       var _this;
 
@@ -1245,7 +1281,7 @@
 
       _this.hide();
 
-      var updateHandler = bind(_assertThisInitialized(_assertThisInitialized(_this)), _this.update);
+      var updateHandler = bind(_assertThisInitialized(_this), _this.update);
 
       _this.player_.on(empPlayerEvents.LOADED_DATA, updateHandler);
 
@@ -1268,10 +1304,11 @@
       return _this;
     }
     /**
-     * Allow sub components to stack CSS class names
+     * Builds the default DOM class name.
      *
-     * @return {string} The constructed class name
-     * @method buildCSSClass
+     * @return {string}
+     *         The DOM class name for this object.
+     * @private
      */
 
 
@@ -2301,7 +2338,7 @@
     /**
      * Create the component's DOM element
      *
-     * @return {Element}
+     * @return {Element}  The element that was created.
      * @method createEl
      */
 
@@ -2321,15 +2358,33 @@
       });
       el.appendChild(this.contentEl_);
       return el;
-    };
+    }
+    /**
+     * Get Entitlement
+     *
+     * @return {Entitlement} Entitlement
+     * @private
+     */
+    ;
 
+    /**
+     * updateShowing
+     *
+     * @private
+     */
     _proto.updateShowing = function updateShowing() {
       if (this.player().isLive() || this.entitlement && this.entitlement.isStaticCachupAsLive) {
         this.show();
       } else {
         this.hide();
       }
-    };
+    }
+    /**
+     * timeUpdate
+     *
+     * @private
+     */
+    ;
 
     _proto.timeUpdate = function timeUpdate() {
       if (this.player().isLive() || this.entitlement && this.entitlement.isStaticCachupAsLive) {
@@ -2343,7 +2398,13 @@
           this.removeClass('emp-live-edge');
         }
       }
-    };
+    }
+    /**
+     * gotoLive
+     *
+     * @private
+     */
+    ;
 
     _proto.handleClick = function handleClick() {
       this.player().gotoLive();
@@ -2424,6 +2485,12 @@
   function (_Component) {
     _inheritsLoose(EmpMarker, _Component);
 
+    /**
+     * Create a EmpMarker button
+     *
+     * @param {Player|Object} player
+     * @param {Object=} options
+     */
     function EmpMarker(player, options) {
       var _this;
 
@@ -2448,7 +2515,7 @@
     /**
     * Create the component's DOM element
     *
-    * @return {Element}
+    * @return {Element} The element that was created.
     * @method createEl
     */
 
@@ -2461,11 +2528,25 @@
       });
 
       return el;
-    };
+    }
+    /**
+     * Builds the default DOM class name.
+     *
+     * @return {string}
+     *         The DOM class name for this object.
+     * @private
+     */
+    ;
 
     _proto.buildCSSClass = function buildCSSClass() {
       return "emp-ad-marker " + _Component.prototype.buildCSSClass.call(this);
-    };
+    }
+    /**
+     * updateVisibility
+     *
+     * @private
+     */
+    ;
 
     _proto.updateVisibility = function updateVisibility() {
       if (this.player_.duration()) {
@@ -2493,7 +2574,11 @@
         this.el_.style.width = (percentDuration * 100).toFixed(2) + '%';
         this.show();
       }
-    };
+    }
+    /**
+     * dispose
+     */
+    ;
 
     _proto.dispose = function dispose() {
       _Component.prototype.dispose.call(this);
@@ -2719,7 +2804,7 @@
 
       _this = _Slider.call(this, player, options) || this;
       _this.markers = [];
-      _this.update = throttle(bind(_assertThisInitialized(_assertThisInitialized(_this)), _this.update), UPDATE_REFRESH_INTERVAL);
+      _this.update = throttle(bind(_assertThisInitialized(_this), _this.update), UPDATE_REFRESH_INTERVAL);
 
       _this.on(player, empPlayerEvents.TIME_UPDATE, _this.update);
 
@@ -2760,8 +2845,11 @@
       return _this;
     }
     /**
-    * Update the marker displays
-    */
+     * Update the marker displays
+     *
+     * @param {EventTarget~Event} [event]
+     * @param {Object} data
+     */
 
 
     var _proto = SeekBar.prototype;
@@ -2854,6 +2942,7 @@
      *
      * @param {EventTarget~Event} [event]
      *        The `timeupdate` or `ended` event that caused this to run.
+     * @param {Object} data
      *
      * @listens Player#timeupdate
      *
@@ -2966,7 +3055,13 @@
       }
 
       this.setCurrentTime(newTime);
-    };
+    }
+    /**
+     * setCurrentTime
+     *
+     * @param {number} newTime
+     */
+    ;
 
     _proto.setCurrentTime = function setCurrentTime(newTime) {
       var src = this.player_.src() ? this.player_.src() : '';
@@ -3014,7 +3109,7 @@
     /**
     * on Seek Input Timeout
     *
-    *
+    * @param {number} newTime
     */
     ;
 
@@ -3024,7 +3119,11 @@
       this.player_.scrubbing(false);
       this.player_.currentTime(newTime);
       this.player_.getCache().currentTime = newTime;
-    };
+    }
+    /**
+     * enable
+     */
+    ;
 
     _proto.enable = function enable() {
       _Slider.prototype.enable.call(this);
@@ -3036,7 +3135,11 @@
       }
 
       mouseTimeDisplay.show();
-    };
+    }
+    /**
+     * disable
+     */
+    ;
 
     _proto.disable = function disable() {
       _Slider.prototype.disable.call(this);
@@ -3218,10 +3321,11 @@
       return _this;
     }
     /**
-     * Allow sub components to stack CSS class names
+     * Builds the default DOM class name.
      *
-     * @return {string} The constructed class name
-     * @method buildCSSClass
+     * @return {string}
+     *         The DOM class name for this object.
+     * @private
      */
 
 
@@ -3229,7 +3333,11 @@
 
     _proto.buildCSSClass = function buildCSSClass() {
       return "emp-restart-control " + _Button.prototype.buildCSSClass.call(this);
-    };
+    }
+    /**
+     * updateShowing
+     */
+    ;
 
     _proto.updateShowing = function updateShowing() {
       if (this.player().canRestart()) {
@@ -3237,7 +3345,10 @@
       } else {
         this.hide();
       }
-    } // Jump to beginning
+    }
+    /**
+     * Jump to beginning
+     */
     ;
 
     _proto.handleClick = function handleClick() {
@@ -3307,9 +3418,21 @@
 
       return _this;
     }
+    /**
+     * Get Entitlement
+     *
+     * @return {Entitlement} Entitlement
+     * @private
+     */
+
 
     var _proto = EmpForwardButton.prototype;
 
+    /**
+     * updateEnabled
+     *
+     * @param {Object} program The program
+     */
     _proto.updateEnabled = function updateEnabled(program) {
       if (this.entitlement && !this.entitlement.ffEnabled || !this.player().timeShiftEnabled()) {
         this.disable();
@@ -3337,16 +3460,20 @@
       }
     }
     /**
-     * Allow sub components to stack CSS class names
+     * Builds the default DOM class name.
      *
-     * @return {string} The constructed class name
-     * @method buildCSSClass
+     * @return {string}
+     *         The DOM class name for this object.
+     * @private
      */
     ;
 
     _proto.buildCSSClass = function buildCSSClass() {
       return "emp-forward-control " + _Button.prototype.buildCSSClass.call(this);
-    } // Jump to beginning
+    }
+    /**
+     * handleClick, Jump to beginning
+     */
     ;
 
     _proto.handleClick = function handleClick() {
@@ -3417,9 +3544,21 @@
 
       return _this;
     }
+    /**
+     * Get Entitlement
+     *
+     * @return {Entitlement} Entitlement
+     * @private
+     */
+
 
     var _proto = EmpRewindButton.prototype;
 
+    /**
+     * updateEnabled
+     *
+     * @param {Object} program
+     */
     _proto.updateEnabled = function updateEnabled(program) {
       if (this.entitlement && !this.entitlement.rwEnabled || !this.player().timeShiftEnabled()) {
         this.disable();
@@ -3431,8 +3570,8 @@
       }
     }
     /**
-    * Handle onTimeshift event
-    */
+     * Handle onTimeshift event
+     */
     ;
 
     _proto.onTimeshift = function onTimeshift() {
@@ -3447,16 +3586,20 @@
       }
     }
     /**
-     * Allow sub components to stack CSS class names
+     * Builds the default DOM class name.
      *
-     * @return {string} The constructed class name
-     * @method buildCSSClass
+     * @return {string}
+     *         The DOM class name for this object.
+     * @private
      */
     ;
 
     _proto.buildCSSClass = function buildCSSClass() {
       return "emp-rewind-control " + _Button.prototype.buildCSSClass.call(this);
-    } // Jump backwards
+    }
+    /**
+     * Jump backwards
+     */
     ;
 
     _proto.handleClick = function handleClick() {
@@ -3506,10 +3649,11 @@
       return _Button.call(this, player, options) || this;
     }
     /**
-     * Allow sub components to stack CSS class names
+     * Builds the default DOM class name.
      *
-     * @return {string} The constructed class name
-     * @method buildCSSClass
+     * @return {string}
+     *         The DOM class name for this object.
+     * @private
      */
 
 
@@ -3517,7 +3661,10 @@
 
     _proto.buildCSSClass = function buildCSSClass() {
       return "emp-reload-control " + _Button.prototype.buildCSSClass.call(this);
-    } // Restart playback
+    }
+    /**
+     * Restart playback
+     */
     ;
 
     _proto.handleClick = function handleClick() {
@@ -3555,7 +3702,7 @@
 
       _this = _Component.call(this, player, options) || this;
       _this.mode_ = options.mode || 'remainingTime';
-      _this.throttledUpdateContent = throttle(bind(_assertThisInitialized(_assertThisInitialized(_this)), _this.updateContent), UPDATE_REFRESH_INTERVAL$1);
+      _this.throttledUpdateContent = throttle(bind(_assertThisInitialized(_this), _this.updateContent), UPDATE_REFRESH_INTERVAL$1);
 
       _this.on(player, empPlayerEvents.TIME_UPDATE, _this.throttledUpdateContent);
 
@@ -3572,7 +3719,7 @@
     /**
      * Create the component's DOM element
      *
-     * @return {Element}
+     * @return {Element} The element that was created.
      * @method createEl
      */
 
@@ -3718,6 +3865,9 @@
     }
     /**
      * Handle click on audio track
+     *
+     * @param {EventTarget~Event} [event]
+     *        The `timeupdate` or `ended` event that caused this to run.
      */
     ;
 
@@ -3727,10 +3877,11 @@
       }
     }
     /**
-     * Allow sub components to stack CSS class names
+     * Builds the default DOM class name.
      *
-     * @return {string} The constructed class name
-     * @method buildCSSClass
+     * @return {string}
+     *         The DOM class name for this object.
+     * @private
      */
     ;
 
@@ -3800,6 +3951,8 @@
     }
     /**
      * Handle click on audio track
+     *
+     * @param {EventTarget~Event} [event]
      */
     ;
 
@@ -3807,10 +3960,11 @@
       _PlayToggle.prototype.handleClick.call(this, event);
     }
     /**
-     * Allow sub components to stack CSS class names
+     * Builds the default DOM class name.
      *
-     * @return {string} The constructed class name
-     * @method buildCSSClass
+     * @return {string}
+     *         The DOM class name for this object.
+     * @private
      */
     ;
 
@@ -3826,12 +3980,24 @@
   Component$c.registerComponent('EmpPlayToggle', EmpPlayToggle);
 
   var Button$6 = videojs.getComponent('Button');
+  /**
+   * The class for AirplayToggle
+   *
+   * @class AirplayToggle
+   * @extends Button
+  */
 
   var AirplayToggle =
   /*#__PURE__*/
   function (_Button) {
     _inheritsLoose(AirplayToggle, _Button);
 
+    /**
+     * Create a AirplayToggle button
+     *
+     * @param {Player|Object} player
+     * @param {Object=} options
+     */
     function AirplayToggle(player, options) {
       var _this;
 
@@ -3844,9 +4010,21 @@
       });
       return _this;
     }
+    /**
+     * Get Entitlement
+     *
+     * @return {Entitlement} Entitlement
+     * @private
+     */
+
 
     var _proto = AirplayToggle.prototype;
 
+    /**
+     * initAirPlay
+     *
+     * @private
+     */
     _proto.initAirPlay = function initAirPlay() {
       var player = this.player();
 
@@ -3873,11 +4051,23 @@
           }
         });
       }
-    };
+    }
+    /**
+     * Builds the default DOM class name.
+     *
+     * @return {string}
+     *         The DOM class name for this object.
+     * @private
+     */
+    ;
 
     _proto.buildCSSClass = function buildCSSClass() {
       return "vjs-airplay-control " + _Button.prototype.buildCSSClass.call(this);
-    };
+    }
+    /**
+     * handleClick
+     */
+    ;
 
     _proto.handleClick = function handleClick() {
       if (!this.entitlement || !this.entitlement.airplayBlocked) {
@@ -3943,9 +4133,21 @@
 
       return _this;
     }
+    /**
+     * Create a AirplayToggle button
+     *
+     * @param {Player|Object} player
+     * @param {Object=} options
+     */
+
 
     var _proto = EmpNextButton.prototype;
 
+    /**
+     * updateShowing
+     *
+     * @param {Object} program
+     */
     _proto.updateShowing = function updateShowing(program) {
       program = program ? program : this.player().getProgramDetails();
 
@@ -3965,16 +4167,23 @@
       }
     }
     /**
-     * Allow sub components to stack CSS class names
+     * Builds the default DOM class name.
      *
-     * @return {string} The constructed class name
-     * @method buildCSSClass
+     * @return {string}
+     *         The DOM class name for this object.
+     * @private
      */
     ;
 
     _proto.buildCSSClass = function buildCSSClass() {
       return "emp-next-control " + _Button.prototype.buildCSSClass.call(this);
-    };
+    }
+    /**
+     * playNextProgram
+     *
+     * @private
+     */
+    ;
 
     _proto.handleClick = function handleClick() {
       if (this.player().ended()) {
@@ -4039,9 +4248,19 @@
 
       return _this;
     }
+    /**
+     * Get Entitlement
+     *
+     * @return {Entitlement} Entitlement
+     * @private
+     */
+
 
     var _proto = EmpPreviousButton.prototype;
 
+    /**
+     * updateShowing
+     */
     _proto.updateShowing = function updateShowing() {
       var program = this.player().getProgramDetails();
 
@@ -4056,16 +4275,20 @@
       }
     }
     /**
-     * Allow sub components to stack CSS class names
+     * Builds the default DOM class name.
      *
-     * @return {string} The constructed class name
-     * @method buildCSSClass
+     * @return {string}
+     *         The DOM class name for this object.
+     * @private
      */
     ;
 
     _proto.buildCSSClass = function buildCSSClass() {
       return "emp-previous-control " + _Button.prototype.buildCSSClass.call(this);
-    } // Jump backwards
+    }
+    /**
+     * Jump backwards
+     */
     ;
 
     _proto.handleClick = function handleClick() {
@@ -4349,14 +4572,14 @@
       var _this;
 
       _this = _Component.call(this, player, options, ready) || this;
-      player.on('loadstart', bind(_assertThisInitialized(_assertThisInitialized(_this)), _this.toggleDisplay));
-      player.on('texttrackchange', bind(_assertThisInitialized(_assertThisInitialized(_this)), _this.updateDisplay));
-      player.on('loadstart', bind(_assertThisInitialized(_assertThisInitialized(_this)), _this.preselectTrack)); // This used to be called during player init, but was causing an error
+      player.on('loadstart', bind(_assertThisInitialized(_this), _this.toggleDisplay));
+      player.on('texttrackchange', bind(_assertThisInitialized(_this), _this.updateDisplay));
+      player.on('loadstart', bind(_assertThisInitialized(_this), _this.preselectTrack)); // This used to be called during player init, but was causing an error
       // if a track should show by default and the display hadn't loaded yet.
       // Should probably be moved to an external track loader when we support
       // tracks that don't need a display.
 
-      player.ready(bind(_assertThisInitialized(_assertThisInitialized(_this)), function () {
+      player.ready(bind(_assertThisInitialized(_this), function () {
         if (player.tech_ && player.tech_.featuresNativeTextTracks) {
           this.hide();
           return;
@@ -4485,7 +4708,14 @@
       if (typeof window_1.WebVTT === 'function') {
         window_1.WebVTT.processCues(window_1, [], this.el_);
       }
-    };
+    }
+    /**
+     * removeStyles
+     *
+     * @param {string} styleName
+     * @return {Element} style Element
+     */
+    ;
 
     _proto.removeStyles = function removeStyles(styleName) {
       var styleElement = document_1.getElementById(styleName);
@@ -4495,7 +4725,14 @@
       }
 
       return styleElement;
-    };
+    }
+    /**
+     * writeStyles
+     *
+     * @param {string} styleName
+     * @param {string} cssText
+     */
+    ;
 
     _proto.writeStyles = function writeStyles(styleName, cssText) {
       var styleElement = this.removeStyles(styleName);
@@ -4504,7 +4741,14 @@
       styleElement.id = styleName;
       styleElement.innerHTML = cssText;
       document_1.getElementsByTagName('head')[0].appendChild(styleElement);
-    };
+    }
+    /**
+     * getStyle
+     *
+     * @param {Object} overrides
+     * @return {Object} style
+     */
+    ;
 
     _proto.getStyle = function getStyle(overrides) {
       var color;
@@ -4573,7 +4817,14 @@
 
       var style = (color ? color + '; ' : '') + (backgroundColor ? backgroundColor + '; ' : '') + (textShadow ? textShadow + '; ' : '') + (fontSize ? fontSize + '; ' : '') + (height ? height + '; ' : '') + (top ? top + '; ' : '') + (bottom ? bottom + '; ' : '') + (fontVariant ? fontVariant + '; ' : '') + (fontFamily ? fontFamily + '; ' : '') + (windowColor ? windowColor + '; ' : '');
       return style;
-    };
+    }
+    /**
+     * getSafariStyle
+     *
+     * @param {Object} overrides
+     * @return {Object} style
+     */
+    ;
 
     _proto.getSafariStyle = function getSafariStyle(overrides) {
       var backgroundColor;
@@ -4962,7 +5213,7 @@
 
       options.temporary = false;
       _this = _ModalDialog.call(this, player, options) || this;
-      _this.updateDisplay = bind(_assertThisInitialized(_assertThisInitialized(_this)), _this.updateDisplay); // fill the modal and pretend we have opened it
+      _this.updateDisplay = bind(_assertThisInitialized(_this), _this.updateDisplay); // fill the modal and pretend we have opened it
 
       _this.fill();
 
@@ -5003,6 +5254,10 @@
 
       return _this;
     }
+    /**
+     * dispose
+     */
+
 
     var _proto = TextTrackSettings.prototype;
 
@@ -5016,6 +5271,10 @@
      *
      * @param {string} key
      *        Configuration key to use during creation.
+     * @param {string} legendId
+     *        legendId.
+     * @param {string} type
+     *        label.
      *
      * @return {string}
      *         An HTML string.
@@ -5132,19 +5391,45 @@
         className: 'vjs-track-settings-controls',
         innerHTML: ["<button class=\"vjs-default-button\" title=\"" + defaultsDescription + "\">", this.localize('Reset'), "<span class=\"vjs-control-text\"> " + defaultsDescription + "</span>", '</button>', "<button class=\"vjs-done-button\">" + this.localize('Done') + "</button>"].join('')
       });
-    };
+    }
+    /**
+     * Get content
+     *
+     * @return {Object} content
+     */
+    ;
 
     _proto.content = function content() {
       return [this.createElColors_(), this.createElFont_(), this.createElControls_()];
-    };
+    }
+    /**
+     * Get localize label
+     *
+     * @return {string} localize label
+     */
+    ;
 
     _proto.label = function label() {
       return this.localize('Caption Settings Dialog');
-    };
+    }
+    /**
+     * Get localize description
+     *
+     * @return {string} localize description
+     */
+    ;
 
     _proto.description = function description() {
       return this.localize('Beginning of dialog window. Escape will cancel and close the window.');
-    };
+    }
+    /**
+     * Builds the default DOM class name.
+     *
+     * @return {string}
+     *         The DOM class name for this object.
+     * @private
+     */
+    ;
 
     _proto.buildCSSClass = function buildCSSClass() {
       return _ModalDialog.prototype.buildCSSClass.call(this) + ' vjs-text-track-settings';
@@ -5297,6 +5582,12 @@
   function (_Component) {
     _inheritsLoose(EmpMediaInfoBar, _Component);
 
+    /**
+     * Create a EmpMediaInfoBar button
+     *
+     * @param {Player|Object} player
+     * @param {Object=} options
+     */
     function EmpMediaInfoBar(player, options) {
       var _this;
 
@@ -5392,10 +5683,11 @@
       return _this;
     }
     /**
-     * Allow sub components to stack CSS class names
+     * Builds the default DOM class name.
      *
-     * @return {string} The constructed class name
-     * @method buildCSSClass
+     * @return {string}
+     *         The DOM class name for this object.
+     * @private
      */
 
 
@@ -5405,11 +5697,11 @@
       return "emp-mediainfo-bar " + _Component.prototype.buildCSSClass.call(this);
     }
     /**
-    * Create the component's DOM element
-    *
-    * @return {Element}
-    * @method createEl
-    */
+     * Create the component's DOM element
+     *
+     * @return {Element} The element that was created.
+     * @method createEl
+     */
     ;
 
     _proto.createEl = function createEl() {
@@ -5420,12 +5712,12 @@
       return el;
     }
     /**
-    * Select the image to display for the asset
+     * Select the image to display for the asset
      *
-    * @param {Array} images image objects
-    * @param {string} imageType image type in backend
-    * @return {image} image object
-    */
+     * @param {Array} images image objects
+     * @param {string} imageType image type in backend
+     * @return {image} image object
+     */
     ;
 
     _proto.imageSelector = function imageSelector(images, imageType) {
@@ -5442,7 +5734,14 @@
       }
 
       return image;
-    };
+    }
+    /**
+     * updateMediaInformation
+     *
+     * @param {Object} assetMetadata
+     * @private
+     */
+    ;
 
     _proto.updateMediaInformation_ = function updateMediaInformation_(assetMetadata) {
       if (!this.el_) {
@@ -5497,7 +5796,13 @@
 
 
       this.player().userActive(true);
-    };
+    }
+    /**
+     * clearEl
+     *
+     * @private
+     */
+    ;
 
     _proto.clearEl = function clearEl() {
       if (!this.el_) {
@@ -5505,7 +5810,13 @@
       }
 
       this.el_.innerHTML = '';
-    };
+    }
+    /**
+     * fillEl
+     *
+     * @private
+     */
+    ;
 
     _proto.fillEl = function fillEl() {
       var opt = this.player().options();
@@ -5757,7 +6068,7 @@
       _this.monkeyPatchingTextMenu_();
 
       if (window_1.empPlayer && log.islogToBrowserConsole) {
-        window_1.empPlayer.setInstance(_assertThisInitialized(_assertThisInitialized(_this)));
+        window_1.empPlayer.setInstance(_assertThisInitialized(_this));
       }
 
       _this.previousAbsoluteStartTime_ = undefined;
@@ -5870,7 +6181,7 @@
         _this.options_.startTime = 0;
       });
 
-      _this.initialSeekToAbsoluteStartTimeBind = _this.initialSeekToAbsoluteStartTime_.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+      _this.initialSeekToAbsoluteStartTimeBind = _this.initialSeekToAbsoluteStartTime_.bind(_assertThisInitialized(_this));
       _this.isCreated = true;
 
       _this.trigger(empPlayerEvents.PLAYER_CREATED);
@@ -5944,8 +6255,9 @@
       }
     }
     /**
-    * Set/Get The player tech options
+    * Set/Get The player options
     *
+    * @param {Object} obj
     * @return {Object} options
     */
     ;
@@ -6215,7 +6527,7 @@
     /**
      * handleRecoverableError
      *
-     * @param {Object} event
+     * @param {EventTarget~Event} [event]
      * @param {Object} data
      * @private
      */
@@ -8074,7 +8386,7 @@
     _createClass(Player, [{
       key: "version",
       get: function get() {
-        return '2.1.101-319';
+        return '2.1.101-322';
       }
       /**
        * Get entitlement
@@ -8281,9 +8593,25 @@
     });
   }
 
+  /**
+   * Player class, inherits from videojs Player class.
+   *
+   * @param {Player} player The `Player` that this class should be attached to.
+   * @param {Object} analytics EMPAnalytics
+   * @param {Object=} analyticsConfig The key/value store of analytics options.
+   * @class EMPAnalyticsConnector
+   */
+
   var EMPAnalyticsConnector =
   /*#__PURE__*/
   function () {
+    /**
+     * constructor
+     *
+     * @param {Player} player The `Player` that this class should be attached to.
+     * @param {Object} analytics EMPAnalytics
+     * @param {Object=} analyticsConfig The key/value store of analytics options.
+     */
     function EMPAnalyticsConnector(player, analytics, analyticsConfig) {
       this.INITIAL_REFERENCE_TIME = 1;
       this.player_ = player;
@@ -8323,6 +8651,8 @@
     /**
      * Retrieves ongoing playback session id
      *
+     * @param {string} playSessionId playSessionId
+     * @return {string} playSessionId
      */
 
 
@@ -8345,7 +8675,13 @@
       }
 
       return sId;
-    };
+    }
+    /**
+     * hasSessionId
+     *
+     * @return {boolean} if it hasSessionId
+     */
+    ;
 
     _proto.hasSessionId = function hasSessionId() {
       if (!this.entitlement() || !this.entitlementLoaded_) {
@@ -8494,6 +8830,7 @@
     /**
      * Callback when chromecast stops casting and sender takes back playback session
      *
+     * @param {boolean} isChromecast
      */
     ;
 
@@ -8515,6 +8852,8 @@
     /**
      * Callback when Program Change
      *
+     * @param {EventTarget~Event} [event]
+     * @param {Object} data
      */
     ;
 
@@ -8538,6 +8877,14 @@
     /**
      * Callback when there is an event to change entitlement
      *
+     */
+
+    /**
+     * Callback when there is an event to change entitlement
+     *
+     * @param {EventTarget~Event} [event]
+     * @param {Object} data
+     * @param {string} errorSessionId
      */
     ;
 
@@ -8596,6 +8943,7 @@
     /**
      * Callback when starting to load new media chunks
      *
+     * @param {string} playSessionId
      */
     ;
 
@@ -8681,7 +9029,14 @@
           }
         });
       }, true);
-    };
+    }
+    /**
+     * OffsetTime
+     *
+     * @return {number} OffsetTime
+     * @private
+     */
+    ;
 
     _proto.OffsetTime = function OffsetTime() {
       if (this.entitlement() && (this.entitlement().isStaticCachupAsLive || this.entitlement().isDynamicCachupAsLive)) {
@@ -8689,19 +9044,47 @@
       }
 
       return extplayer.baseCurrentTime(this.player_);
-    };
+    }
+    /**
+     * startTimeLive
+     *
+     * @return {number} startTimeLive
+     * @private
+     */
+    ;
 
     _proto.startTimeLive = function startTimeLive() {
       return extplayer.startTimeLive(this.player_);
-    };
+    }
+    /**
+     * isLive
+     *
+     * @return {boolean} isLive
+     * @private
+     */
+    ;
 
     _proto.isLive = function isLive() {
       return extplayer.isLive(this.player_);
-    };
+    }
+    /**
+     * Get current bitrate
+     *
+     * @return {number} bitrate
+     */
+    ;
 
     _proto.getBitrate = function getBitrate() {
       return extplayer.getBitrate(this.player_);
-    };
+    }
+    /**
+     * Duration
+     *
+     * Total length of the video
+     *
+     * @return {number} The duration of the video in seconds
+     */
+    ;
 
     _proto.duration = function duration() {
       if (this.entitlement() && (this.entitlement().isStaticCachupAsLive || this.entitlement().isDynamicCachupAsLive)) {
@@ -8711,8 +9094,20 @@
       }
 
       return extplayer.duration(this.player_);
-    };
+    }
+    /**
+     * techVersion
+     *
+     * @return {string} techVersion
+     */
+    ;
 
+    /**
+     * get or set entitlement
+     *
+     * @param {Object=} value entitlement
+     * @return {Object} entitlement
+     */
     _proto.entitlement = function entitlement(value) {
       if (typeof value === 'undefined') {
         return extplayer.getEntitlement(this.player_) || this.entitlement_;
@@ -8740,6 +9135,8 @@
     /**
      * Callback when playback exists
      *
+     * @param {EventTarget~Event} [event]
+     * @param {Object} data
      */
     ;
 
@@ -8755,7 +9152,13 @@
 
         _this12.clearTimers();
       }, true, true);
-    };
+    }
+    /**
+     * Get Cached Current Time
+     *
+     * @return {number} CachedCurrentTime
+     */
+    ;
 
     _proto.getCachedCurrentTime = function getCachedCurrentTime() {
       if (this.player_) {
@@ -8933,11 +9336,20 @@
       this.onEntitlementChange(null, null, this.errorSessionId);
       this.onError(null, this.errorSessionId);
       this.clearTimers(); // this.entitlementLoaded_ = true;
-    };
+    }
+    /**
+     * errorSessionId
+     *
+     * @return {string} errorSessionId
+     * @private
+     */
+    ;
 
     /**
      * Callback when error occurs
      *
+     * @param {Object=} errorEvent
+     * @param {string=} fallbackSessionId
      */
     _proto.onError = function onError(errorEvent, fallbackSessionId) {
       var _this19 = this;
@@ -9005,7 +9417,14 @@
 
         _this19.clearTimers();
       }, false);
-    };
+    }
+    /**
+     * onDrmSessionUpdate
+     *
+     * @param {EventTarget~Event} [event]
+     * @param {Object} data
+     */
+    ;
 
     _proto.onDrmSessionUpdate = function onDrmSessionUpdate(event, data) {
       var _this20 = this;
@@ -9022,6 +9441,11 @@
     /**
      * Generic analytics function
      *
+     * @param {string} eventName
+     * @param {Function=} eventFnc
+     * @param {Function=} callback
+     * @param {boolean} checkSessionCreation
+     * @param {boolean=} ignoreDisabled
      */
     ;
 
@@ -9044,6 +9468,8 @@
     /**
      * Check if a session with given sessionId was already created
      *
+     * @param {string} sessionId
+     * @return {string} sessionId
      */
     ;
 
@@ -9091,6 +9517,12 @@
       get: function get() {
         return extplayer.techVersion(this.player_);
       }
+      /**
+       * playerVersion
+       *
+       * @return {string} playerVersion
+       */
+
     }, {
       key: "playerVersion",
       get: function get() {
@@ -9149,7 +9581,7 @@
       log('AnalyticsPlugin', 'create');
       _this.analyticsConnector_ = null;
       _this.options_ = options;
-      _this.onLoadStartBind = _this.onLoadStart_.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+      _this.onLoadStartBind = _this.onLoadStart_.bind(_assertThisInitialized(_this));
 
       _this.player.on(empPlayerEvents.LOAD_START, _this.onLoadStartBind);
 
@@ -9203,7 +9635,7 @@
      * Set or get the key/value store of analytics options.
      *
      * @param {Object=} opt options
-     * @returns {Object=} options
+     * @return {Object} options
      */
     ;
 
@@ -9268,7 +9700,7 @@
     /**
      *  Handle onLoadStart event
      *
-     * @param {Object} event
+     * @param {EventTarget~Event} [event]
      * @private
      */
     ;
@@ -9278,7 +9710,13 @@
       if (!extplayer.getEntitlement(this.player)) {
         this.stop();
       }
-    };
+    }
+    /**
+     * Get version
+     *
+     @return {string} version
+    */
+    ;
 
     _proto.version = function version() {
       if (EMPAnalytics) {
@@ -9298,7 +9736,7 @@
     return AnalyticsPlugin;
   }(Plugin);
 
-  AnalyticsPlugin.VERSION = '2.1.101-319';
+  AnalyticsPlugin.VERSION = '2.1.101-322';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -9362,6 +9800,14 @@
 
   var ExtendableError = unwrapExports(dist);
 
+  /**
+    * EntitlementError
+    *
+    * @class EntitlementError
+    * @extends EntitlementError
+    * @param {Object=} error Object or string describing error
+    */
+
   var EntitlementError =
   /*#__PURE__*/
   function (_ExtendableError) {
@@ -9370,7 +9816,7 @@
     /**
      * Constructor
      *
-     * @param {String=|Object=} Object or string describing error
+     * @param {Object=} error Object or string describing error
      */
     function EntitlementError(error) {
       var _this;
@@ -9404,12 +9850,24 @@
       _this.code = code;
       return _this;
     }
+    /**
+     * Get fatal
+     *
+     * @return {boolean} is fatal
+     */
+
 
     _createClass(EntitlementError, [{
       key: "fatal",
       get: function get() {
         return !!this.fatal_;
-      },
+      }
+      /**
+       * Set fatal
+       *
+       * @param {boolean} fatal
+       */
+      ,
       set: function set(fatal) {
         this.fatal_ = fatal;
       }
@@ -9424,7 +9882,7 @@
    * implement getVodEntitlement and getLiveEntitlement and register is using EntitlementEngine.registerEntitlementEngine(name, class);
    */
   /**
-   * EntitlementEngine Base Class
+   * EntitlementEngine Class
    *
    * @param {Object=} options Object of option names and values
    * @class EntitlementEngine
@@ -9433,6 +9891,11 @@
   var EntitlementEngine =
   /*#__PURE__*/
   function () {
+    /**
+     * Create EntitlementEngine
+     *
+     * @param {Object=} options Object of option names and values
+     */
     function EntitlementEngine(options) {
       if (options === void 0) {
         options = {};
@@ -9548,7 +10011,7 @@
     /**
      * getCachedServerTime
      *
-     * @return {number}
+     * @return {number} getCachedServerTime
      */
     ;
 
@@ -9586,10 +10049,10 @@
     /**
      * Get the program based on EPG
      *
-     * @param channelId
-     * @param date
-     * @param callback
-     * @param programId
+     * @param {string} channelId
+     * @param {Date} date
+     * @param {Function} callback
+     * @param {string} programId
      */
     ;
 
@@ -9599,11 +10062,11 @@
     /**
     * Get EPG
      *
-    * @param channelId
-    * @param from
-    * @param to
-    * @param callback
-    * @return {*}
+    * @param {string} channelId
+    * @param {string} from
+    * @param {string} to
+    * @param {Function} callback
+    * @return {Object} EPG
     */
     ;
 
@@ -9613,8 +10076,8 @@
     /**
     * Get the Asset Info
      *
-    * @param assetId
-    * @param callback
+    * @param {string} assetId
+    * @param {Function} callback
     */
     ;
 
@@ -9622,11 +10085,11 @@
       throw new EntitlementError('EntitlementEngine: getAssetInfo should be implemented in subclass.');
     }
     /**
-    *
-    * @param {string}    channelId Channel to fetch from
-    * @param {function}  callback Callback when entitlement is fetched
-    * @return {Object}   The program
-    */
+     * get ChannelInfo
+     *
+     * @param {string}    channelId Channel to fetch from
+     * @param {function}  callback Callback when entitlement is fetched
+     */
     ;
 
     _proto.getChannelInfo = function getChannelInfo(channelId, callback) {
@@ -9635,8 +10098,8 @@
     /**
      * Verifies if sessionToken is still valid
      *
-     * @param okFn - callback if session is ok
-     * @param nokFn - callback if session is not ok
+     * @param {Function} okFn - callback if session is ok
+     * @param {Function} nokFn - callback if session is not ok
      */
     ;
 
@@ -9647,7 +10110,7 @@
     * verify the entitlement
      *
     * @param {string} assetId
-    * @param {any} entitlement playRequest
+    * @param {Object} playRequest
     * @param {function} callback
     */
     ;
@@ -9658,10 +10121,10 @@
     /**
     * Login
      *
-    * @param username
-    * @param password
-    * @param mfacode
-    * @param callback
+    * @param {string} username
+    * @param {string} password
+    * @param {Function} callback
+    * @param {string} mfacode
     */
     ;
 
@@ -9671,7 +10134,7 @@
     /**
      * logout
      *
-     * @param callBack
+     * @param {Function} callBack
      */
     ;
 
@@ -9681,7 +10144,7 @@
     /**
       * Fetch user Preferences
      *
-      * @param {any} callback
+      * @param {Function} callback
      */
     ;
 
@@ -9691,8 +10154,8 @@
     /**
     * Save user preferences
      *
-    * @param {any} preferences
-    * @param {any} callback
+    * @param {Object} preferences
+    * @param {Function} callback
     */
     ;
 
@@ -9714,7 +10177,8 @@
      * Register an entitlement engine
      *
      * @param {string} name     Name of the entitlement engine
-     * @param entitlementEngine The entitlement engine to register
+     * @param {EntitlementEngine} entitlementEngine The entitlement engine to register
+     * @return {EntitlementEngine} EntitlementEngine
      * @throws Error
      * @static
      */
@@ -9737,7 +10201,7 @@
      *
      * @param {string} name Name of the entitlement engine
      * @static
-     * @return {EntitlementEngine}
+     * @return {EntitlementEngine} EntitlementEngine
      */
     ;
 
@@ -11780,9 +12244,9 @@
       _this = _Plugin.call(this, player, options) || this;
       log('ProgramService', 'create');
       _this.MIN_PROGRAM_CHECK_TIMEOUT = 1000;
-      _this.checkForProgramChangeBind = _this.checkForProgramChange_.bind(_assertThisInitialized(_assertThisInitialized(_this)));
-      _this.onEntitlementChangeBind = _this.onEntitlementChange.bind(_assertThisInitialized(_assertThisInitialized(_this)));
-      _this.clearProgramChangeTimeoutBind = _this.clearProgramChangeTimeout_.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+      _this.checkForProgramChangeBind = _this.checkForProgramChange_.bind(_assertThisInitialized(_this));
+      _this.onEntitlementChangeBind = _this.onEntitlementChange.bind(_assertThisInitialized(_this));
+      _this.clearProgramChangeTimeoutBind = _this.clearProgramChangeTimeout_.bind(_assertThisInitialized(_this));
       _this.options_ = options ? options : {};
       _this.programChangeTimeout_ = null;
       _this.programChangeCheckTimestamp_ = 0;
@@ -11830,7 +12294,7 @@
     /**
      * onEntitlementChange
      *
-     * @param event
+     * @param {EventTarget~Event} [event]
      * @param data
      */
     ;
@@ -11945,7 +12409,7 @@
     /**
      * Check if program changed
      *
-     * @param event
+     * @param {EventTarget~Event} [event]
      * @param data
      * @private
      */
@@ -12512,7 +12976,7 @@
     return ProgramService;
   }(Plugin$1);
 
-  ProgramService.VERSION = '2.1.101-319';
+  ProgramService.VERSION = '2.1.101-322';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -12522,9 +12986,14 @@
 
   var Plugin$2 = videojs.getPlugin('plugin');
   /**
-   * ExpirationService
+   * EntitlementExpirationService
    *
    * Checks if entitlements are still valid according to their expiration and handles refreshing of expired entitlements
+   * @param {Player} player The `Player` that this class should be attached to.
+   * @param {Object=} options The key/value store of player options.
+   * @extends videojs.Plugin
+   * @class EntitlementExpirationService
+   *
    */
 
   var EntitlementExpirationService =
@@ -12532,28 +13001,43 @@
   function (_Plugin) {
     _inheritsLoose(EntitlementExpirationService, _Plugin);
 
+    /**
+     * Create the EntitlementExpirationService
+     *
+     * @param {Player} player The `Player` that this class should be attached to.
+     * @param {Object=} options The key/value store of player options.
+     */
     function EntitlementExpirationService(player, options) {
       var _this;
 
       _this = _Plugin.call(this, player, options) || this;
       log('EntitlementExpirationService', 'create');
       _this.options_ = options;
-      _this.onEntitlementChangeBind = _this.onEntitlementChange.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+      _this.onEntitlementChangeBind = _this.onEntitlementChange.bind(_assertThisInitialized(_this));
       return _this;
     }
     /**
-    * @return {Exposure} current exposure
-    */
+     * exposure
+     *
+     *  @return {Exposure} current exposure
+     */
 
 
     var _proto = EntitlementExpirationService.prototype;
 
+    /**
+     * dispose
+     */
     _proto.dispose = function dispose() {
       log('EntitlementExpirationService', 'dispose');
       this.stop();
 
       _Plugin.prototype.dispose.call(this);
-    };
+    }
+    /**
+     * stop
+     */
+    ;
 
     _proto.stop = function stop() {
       log('EntitlementExpirationService', 'stop');
@@ -12563,7 +13047,11 @@
         clearTimeout(this.expirationTimeout_);
         this.expirationTimeout_ = null;
       }
-    };
+    }
+    /**
+     * start
+     */
+    ;
 
     _proto.start = function start() {
       log('EntitlementExpirationService', 'start');
@@ -12575,7 +13063,14 @@
 
       this.player.off(empPlayerEvents.ENTITLEMENT_CHANGE, this.onEntitlementChangeBind);
       this.player.on(empPlayerEvents.ENTITLEMENT_CHANGE, this.onEntitlementChangeBind);
-    };
+    }
+    /**
+     * get and set entitlement
+     *
+     * @param {Entitlement} value
+     * @return {Entitlement} Entitlement
+     */
+    ;
 
     _proto.entitlement = function entitlement(value) {
       if (typeof value === 'undefined') {
@@ -12584,7 +13079,14 @@
 
       this.entitlement_ = value;
       return value;
-    };
+    }
+    /**
+     * onEntitlementChange
+     *
+     * @param {EventTarget~Event} [event]
+     * @param {Object} data
+     */
+    ;
 
     _proto.onEntitlementChange = function onEntitlementChange(event, data) {
       this.entitlement(data && data.entitlement);
@@ -12595,7 +13097,14 @@
       }
 
       this.checkForExpiration();
-    };
+    }
+    /**
+    * Set/Get The options
+    *
+    * @param {Object} obj
+    * @return {Object} options
+    */
+    ;
 
     _proto.options = function options(obj) {
       if (!obj) {
@@ -12603,7 +13112,11 @@
       }
 
       this.options_ = obj;
-    };
+    }
+    /**
+     * checkForExpiration
+     */
+    ;
 
     _proto.checkForExpiration = function checkForExpiration() {
       var _this2 = this;
@@ -12656,7 +13169,7 @@
      *
      * Returns a human readable string for expiration error
      *
-     * @param {string} error
+     * @param {string} reason Error reason
      * @return {string} Human readable error string
      */
     ;
@@ -12684,7 +13197,7 @@
      *
      * @param {Entitlement} entitlement
      *
-     * @return Bool Does entitlement have an expiration?
+     * @return {boolean} Bool Does entitlement have an expiration?
      */
     ;
 
@@ -12702,7 +13215,7 @@
     return EntitlementExpirationService;
   }(Plugin$2);
 
-  EntitlementExpirationService.VERSION = '2.1.101-319';
+  EntitlementExpirationService.VERSION = '2.1.101-322';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -12977,7 +13490,7 @@
       // Will be send to handleSource
 
       var techOptions = {};
-      assign(techOptions, this.options_[tech.toLowerCase()]);
+      assign(techOptions, player.options_[tech.name.toLowerCase()]);
       var playOptions = {
         autoplay: player.options_.autoplay,
         muted: player.options_.muted,
@@ -13248,7 +13761,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.101-319';
+  EntitlementMiddleware.VERSION = '2.1.101-322';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -13377,7 +13890,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.1.101-319';
+  empPlayer.VERSION = '2.1.101-322';
   /*
    * Universal Module Definition (UMD)
    *
