@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.101-325 
+ * EMP-Player 2.1.101-327 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -3968,11 +3968,8 @@
   }
 
   /**
-   * EmpPlayerErrorCodes - Holds all available error codes
-   * EmpPlayerError - Emp custom Error object
-   *
-   * @class EmpPlayerError
-   */
+  * EmpPlayerErrorCodes - Holds all available error codes
+  */
 
   var EmpPlayerErrorCodes = {
     UNKNOWN: 100,
@@ -4001,8 +3998,8 @@
      * Create EmpPlayerError
      *
      * @param {any} value
-     * @param {number} code = EmpPlayerErrorCodes.UNKNOWN
-     * @param {Object} status = null
+     * @param {number=} code
+     * @param {Object=} status
      */
     function EmpPlayerError(value, code, status) {
       var _this;
@@ -4500,7 +4497,7 @@
     return DownloadService;
   }(Plugin);
 
-  DownloadService.VERSION = '2.1.101-325';
+  DownloadService.VERSION = '2.1.101-327';
 
   if (videojs.getPlugin('DownloadService')) {
     videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -4608,6 +4605,7 @@
      * onLoadStart
      *
      * @param {EventTarget~Event} event
+     * @private
      */
     _proto.onLoadStart = function onLoadStart(event) {
       this.hasMetadata_ = true;
@@ -5286,6 +5284,7 @@
      * @param {!Object.<string, string>} headers
      * @param {shaka.net.NetworkingEngine.RequestType} requestType
      * @param {shakaExtern.Request} request
+     * @private
      */
     ;
 
@@ -6248,7 +6247,7 @@
       /**
        * Get Entitlement PlayRequests
        *
-       * @return {Object} entitlementPlayRequests
+       * @return {Object[]} entitlementPlayRequests
        */
 
     }, {
@@ -6279,7 +6278,7 @@
 
   EmpShaka.prototype.featuresNativeTextTracks = false;
   Tech$1.withSourceHandlers(EmpShaka);
-  EmpShaka.VERSION = '2.1.101-325'; // Unset source handlers set by Html5 super class.
+  EmpShaka.VERSION = '2.1.101-327'; // Unset source handlers set by Html5 super class.
   // We do not intent to support any sources other then sources allowed by nativeSourceHandler
 
   EmpShaka.sourceHandlers = [];
