@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.101-322 
+ * EMP-Player 2.1.101-323 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -6000,6 +6000,13 @@
   function (_VjsPlayer) {
     _inheritsLoose(Player, _VjsPlayer);
 
+    /**
+     * Create the Player
+     *
+     * @param {Element}   tag     The original video tag used for configuring options
+     * @param {Object=}   options Player Options
+     * @param {Function=} ready   Ready callback
+     */
     function Player(tag, options, ready) {
       var _this;
 
@@ -6290,7 +6297,7 @@
     /**
      * get options to add to tech
      *
-     * @return {Object}
+     * @return {Object} Tech Options
      * @private
      */
     ;
@@ -6470,8 +6477,8 @@
     /**
      * Get Avalible Techs
      *
-     * @param excludeTechs
-     * @return {Array}
+     * @param {Object} excludeTechs
+     * @return {Array} Avalible Techs
      */
     ;
 
@@ -6802,7 +6809,7 @@
     /**
      * Is text track is visible
      *
-     * @return {boolean}
+     * @return {boolean} Is the TextTrack Visible
      */
     ;
 
@@ -6841,7 +6848,7 @@
      * Can Seek To position
      *
      * @param {number} position
-     * @return {boolean}
+     * @return {boolean} Can Seek To
      */
     ;
 
@@ -6851,7 +6858,7 @@
     /**
      * Get Contract Restrictions
      *
-     * @return {Object}
+     * @return {Object} Contract Restrictions
      */
     ;
 
@@ -6877,7 +6884,7 @@
      *
      * * > **NOTE**: True if paused
      *
-     * @return {boolean}
+     * @return {boolean} Is video playing
      */
     ;
 
@@ -6887,7 +6894,7 @@
     /**
      * Is playback a live stream
      *
-     * @return {boolean}
+     * @return {boolean} isLive
      */
     ;
 
@@ -6945,10 +6952,20 @@
       _VjsPlayer.prototype.duration.call(this, seconds);
     }
     /**
-     * Main method for start playback
-     *
-     * @param {string|Object} source The Source element of a video element
-     */
+    * Get or set the video source.
+    *
+    * @param {Tech~SourceObject|Tech~SourceObject[]|string} [source]
+    *        A SourceObject, an array of SourceObjects, or a string referencing
+    *        a URL to a media source. It is _highly recommended_ that an object
+    *        or array of objects is used here, so that source selection
+    *        algorithms can take the `type` into account.
+    *
+    *        If not provided, this method acts as a getter.
+    *
+    * @return {string|undefined}
+    *         If the `source` argument is missing, returns the current source
+    *         URL. Otherwise, returns nothing/undefined.
+    */
     ;
 
     _proto.src = function src(source) {
@@ -7177,7 +7194,7 @@
     /**
      * Get Max Bitrate
      *
-     * @return {number}
+     * @return {number} Max Bitrate
      */
     ;
 
@@ -7229,7 +7246,7 @@
     /**
      * Can timeShift be enabled according to contract restriction
      *
-     * @return {boolean}
+     * @return {boolean} Can Enable Timeshift
      */
     ;
 
@@ -7246,7 +7263,7 @@
      * Get or Set timeShiftEnabled
      *
      * @param {boolean} value
-     * @return {boolean}
+     * @return {boolean} is timeShift enabled
      */
     ;
 
@@ -7260,7 +7277,7 @@
     /**
      * No EPG for current program
      *
-     * @return {boolean}
+     * @return {boolean} current program has no EPG
      */
     ;
 
@@ -7280,7 +7297,7 @@
     /**
      * Can video or program restart from begining
      *
-     * @return {boolean}
+     * @return {boolean} Can Restart
      */
     ;
 
@@ -7635,7 +7652,7 @@
     /**
      * Get current Exposure
      *
-    * @return {EntitlementEngine}
+    * @return {Exposure} Exposure
     */
     _proto.getExposure = function getExposure() {
       if (this.programService) {
@@ -7703,7 +7720,7 @@
     /**
      * Get Server Now Time
      *
-     * @return {number}
+     * @return {number} ServerTime
      */
     ;
 
@@ -7777,7 +7794,13 @@
 
     _proto.getBufferedTimerange = function getBufferedTimerange() {
       return extplayer.getBufferedTimerange(this);
-    };
+    }
+    /**
+     * Get StreamType (DASH OR HLS)
+     *
+     * @return {string} StreamType
+     */
+    ;
 
     /**
     * Get or set the current time (in seconds) for the program or video
@@ -8059,7 +8082,7 @@
     /**
      * Get remaining time of the program/vod
      *
-     * @return {number}
+     * @return {number} remaining time
      */
     ;
 
@@ -8155,7 +8178,7 @@
     /**
      * Is the playing program live
      *
-     * @return {boolean}
+     * @return {boolean} is Program Live
      */
     ;
 
@@ -8171,7 +8194,7 @@
     /**
      * Is the playing program a Catchup
      *
-     * @return {boolean}
+     * @return {boolean} Is program a catchup
      */
     ;
 
@@ -8386,7 +8409,7 @@
     _createClass(Player, [{
       key: "version",
       get: function get() {
-        return '2.1.101-322';
+        return '2.1.101-323';
       }
       /**
        * Get entitlement
@@ -8440,7 +8463,7 @@
 
     var autoTechOrder = [chosenDashTech, 'EmpHLS-MSE', 'EmpHLS', 'Html5'];
 
-    if (Player.SupportFairplay_()) {
+    if (Player.SupportFairplay()) {
       autoTechOrder = ['EmpHLS', chosenDashTech, 'Html5'];
     }
 
@@ -8466,7 +8489,7 @@
    */
 
 
-  Player.SupportFairplay_ = function () {
+  Player.SupportFairplay = function () {
     var hlsTech = videojs.getTech('EmpHLS');
 
     if (undefined !== hlsTech && hlsTech.isSupported() && window_1.WebKitMediaKeys && hlsTech.getKeySystem && window_1.WebKitMediaKeys.isTypeSupported(hlsTech.getKeySystem(), 'video/mp4')) {
@@ -9736,7 +9759,7 @@
     return AnalyticsPlugin;
   }(Plugin);
 
-  AnalyticsPlugin.VERSION = '2.1.101-322';
+  AnalyticsPlugin.VERSION = '2.1.101-323';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -10066,7 +10089,6 @@
     * @param {string} from
     * @param {string} to
     * @param {Function} callback
-    * @return {Object} EPG
     */
     ;
 
@@ -10258,6 +10280,9 @@
   var Entitlement =
   /*#__PURE__*/
   function () {
+    /**
+     * Creat Entitlement
+     */
     function Entitlement() {
       // derived properties
       this.channelId = 0;
@@ -10299,6 +10324,13 @@
       this.certificateServer = undefined;
       this.keySystems = undefined;
     }
+    /**
+     * common Initiate
+     *
+     * @param {Object} options Object of option names and values
+     * @private
+     */
+
 
     var _proto = Entitlement.prototype;
 
@@ -10311,7 +10343,15 @@
       this.mdnRequestRouterUrl = options.mdnRequestRouterUrl || '';
       this.playToken = options.playToken || '';
       this.playTokenExpiration = options.playTokenExpiration || '';
-    };
+    }
+    /**
+     * Initiate entitlement Version 1
+     *
+     * @param {Object} options Object of option names and values
+     * @param {number} serverTime
+     * @private
+     */
+    ;
 
     _proto.initiateV1 = function initiateV1(options, serverTime) {
       this.commonInitiate(options);
@@ -10380,7 +10420,14 @@
       if (options.cencConfig) {
         this.keySystems = options.cencConfig;
       }
-    };
+    }
+    /**
+     * Initiate entitlement Version 2
+     *
+     * @param {Object} options Object of option names and values
+     * @private
+     */
+    ;
 
     _proto.initiateV2 = function initiateV2(options) {
       this.commonInitiate(options);
@@ -10431,7 +10478,14 @@
           this.streamInfo.endTime = this.streamInfo.end.getTime();
         }
       }
-    };
+    }
+    /**
+     * setup Media Locator
+     *
+     * @param {Object} format
+     * @private
+     */
+    ;
 
     _proto.setupMediaLocator = function setupMediaLocator(format) {
       this.mediaLocator = format.mediaLocator || '';
@@ -10452,7 +10506,14 @@
       }
 
       this.licenseExpirationReason = format.licenseExpirationReason || '';
-    };
+    }
+    /**
+     * select Format
+     *
+     * @param {Object} playRequest
+     * @private
+     */
+    ;
 
     _proto.selectFormat = function selectFormat(playRequest) {
       var _this = this;
@@ -10517,7 +10578,13 @@
 
         default:
       }
-    };
+    }
+    /**
+     * setup StreamInfo
+     *
+     * @param {number} serverTime
+     */
+    ;
 
     _proto.setupStreamInfo = function setupStreamInfo(serverTime) {
       this.streamInfo = {
@@ -10561,7 +10628,13 @@
           }
         }
       }
-    };
+    }
+    /**
+     * Get Stream Type
+     *
+     * @return {string} Stream Type
+     */
+    ;
 
     _createClass(Entitlement, null, [{
       key: "Type",
@@ -11063,6 +11136,11 @@
   function (_EntitlementEngine) {
     _inheritsLoose(EricssonExposure, _EntitlementEngine);
 
+    /**
+     * Create EricssonExposure
+     *
+     * @param {Object=} options Object of option names and values
+     */
     function EricssonExposure(options) {
       var _this;
 
@@ -11291,7 +11369,14 @@
           });
         });
       }
-    };
+    }
+    /**
+     * logout
+     *
+     * @param {Funktion=} callback
+     * @param {string} sessionToken
+     */
+    ;
 
     _proto.logout = function logout(callback, sessionToken) {
       var _this3 = this;
@@ -11320,7 +11405,7 @@
       }
 
       var queryUrl = this.options_.exposureApiURL + '/' + this.options_.exposureApiVersion + '/customer/' + customer + '/businessunit/' + businessUnit + '/auth/session';
-      return xhr.del(queryUrl, {
+      xhr.del(queryUrl, {
         headers: requestHeaders
       }, function (error, response, data) {
         // Check and handles error
@@ -11421,14 +11506,7 @@
       }
     }
     /**
-     * Get error for response
-     *
-     * @param {Object} response xhr response object
-     *
-     * @private
-     */
-
-    /**
+    * Get error for response
     *
     * @param {Object} response xhr response object
     * @return {EntitlementError} EntitlementError
@@ -11562,7 +11640,7 @@
         }
       } else {
         var requestURL = this.options_.exposureApiURL + '/' + 'v2' + '/customer/' + this.customer + '/businessunit/' + this.businessUnit + '/entitlement/' + assetId + '/play';
-        return xhr.get(requestURL, {
+        xhr.get(requestURL, {
           headers: this.requestHeaders
         }, function (error, response, body) {
           if (error) {
@@ -11641,7 +11719,7 @@
       }
 
       var requestURL = this.options_.exposureApiURL + '/' + this.options_.exposureApiVersion + '/customer/' + customer + '/businessunit/' + businessUnit + '/entitlement/' + assetId + '/play';
-      return xhr.post(requestURL, {
+      xhr.post(requestURL, {
         json: playRequest,
         headers: this.requestHeaders
       }, function (error, response, body) {
@@ -11691,7 +11769,6 @@
      *
      * @param {string}    assetId     Asset to fetch metadata for
      * @param {Function}  callback    Callback when fetching has completed
-     * @return {Object} Asset Metadata
      * @private
      */
     ;
@@ -11712,7 +11789,7 @@
       }
 
       var requestURL = this.options_.exposureApiURL + '/' + this.options_.exposureApiVersion + '/customer/' + this.customer + '/businessunit/' + this.businessUnit + '/content/asset/' + assetId;
-      return xhr.get(requestURL, null, function (error, response, body) {
+      xhr.get(requestURL, null, function (error, response, body) {
         // Check and handles error
         if (_this6.checkForError(error, response, callback)) {
           return;
@@ -11768,7 +11845,7 @@
       }
 
       var requestURL = this.options_.exposureApiURL + '/' + this.options_.exposureApiVersion + '/customer/' + customer + '/businessunit/' + businessUnit + '/entitlement' + channelUrl + programUrl + '/play';
-      return xhr.post(requestURL, {
+      xhr.post(requestURL, {
         json: playRequest,
         headers: this.requestHeaders
       }, function (error, response, body) {
@@ -11810,7 +11887,6 @@
      * Should return the exact servertime
      *
      * @param {function}  callback  Callback when server time is fetched or an error occurs
-     * @return {Date}   ServerTime
      */
     ;
 
@@ -11831,7 +11907,7 @@
       }
 
       var requestURL = this.options_.exposureApiURL + '/' + this.options_.exposureApiVersion + '/customer/' + customer + '/businessunit/' + businessUnit + '/time';
-      return xhr.get(requestURL, null, function (error, response, body) {
+      xhr.get(requestURL, null, function (error, response, body) {
         if (error) {
           callback(null, error);
           return;
@@ -11855,7 +11931,7 @@
       var customer = this.customer;
       var businessUnit = this.businessUnit;
       var requestURL = this.options_.exposureApiURL + '/' + this.options_.exposureApiVersion + '/customer/' + customer + '/businessunit/' + businessUnit + '/preferences';
-      return xhr.get(requestURL, {
+      xhr.get(requestURL, {
         headers: this.requestHeaders
       }, function (error, response, body) {
         if (_this8.checkForError(error, response, callback)) {
@@ -11889,7 +11965,7 @@
         preferences: preferences
       };
       var requestURL = this.options_.exposureApiURL + '/' + this.options_.exposureApiVersion + '/customer/' + customer + '/businessunit/' + businessUnit + '/preferences';
-      return xhr.post(requestURL, {
+      xhr.post(requestURL, {
         json: data,
         headers: this.requestHeaders
       }, function (error, response, body) {
@@ -11904,11 +11980,10 @@
     /**
     * Get EPG
      *
-    * @param channelId
-    * @param from
-    * @param to
-    * @param callback
-    * @return {*}
+    * @param {string} channelId
+    * @param {number} from
+    * @param {number} to
+    * @param {Function} callback
     */
     ;
 
@@ -11919,7 +11994,7 @@
       var businessUnit = this.businessUnit;
       var requestURL = this.options_.exposureApiURL + '/' + this.options_.exposureApiVersion + '/customer/' + customer + '/businessunit/' + businessUnit + '/epg/' + channelId;
       requestURL += '?from=' + from + '&to=' + to;
-      return xhr.get(requestURL, null, function (error, response, body) {
+      xhr.get(requestURL, null, function (error, response, body) {
         if (_this10.checkForError(error, response, callback)) {
           return;
         }
@@ -11931,9 +12006,10 @@
     /**
      * Get the program based on EPG
      *
-     * @param channelId
-     * @param date
-     * @param callback
+     * @param {string} channelId
+     * @param {Date} date
+     * @param {Function} callback
+     * @param {string=} programId
      */
     ;
 
@@ -11948,7 +12024,7 @@
         requestURL += '?from=' + date.getTime() + '&to=' + date.getTime();
       }
 
-      return xhr.get(requestURL, null, function (error, response, body) {
+      xhr.get(requestURL, null, function (error, response, body) {
         if (error) {
           callback(null, error);
           return;
@@ -11978,7 +12054,6 @@
      *
     * @param {string}    channelId Channel to fetch from
     * @param {function} callback Callback when entitlement is fetched
-    * @return {Object}   The program
     */
     ;
 
@@ -11992,8 +12067,8 @@
     /**
      * Get the Asset Info
      *
-     * @param assetId
-     * @param callback
+     * @param {string} assetId
+     * @param {Function} callback
      */
     ;
 
@@ -12003,7 +12078,7 @@
       var customer = this.customer;
       var businessUnit = this.businessUnit;
       var requestURL = this.options_.exposureApiURL + '/' + this.options_.exposureApiVersion + '/customer/' + customer + '/businessunit/' + businessUnit + '/content/asset/' + assetId;
-      return xhr.get(requestURL, null, function (error, response, body) {
+      xhr.get(requestURL, null, function (error, response, body) {
         if (error) {
           callback(null, error);
           return;
@@ -12022,8 +12097,8 @@
      * verify the entitlement
      *
      * @param {string} assetId
-     * @param {any} entitlement playRequest
-     * @param {function} callback
+     * @param {Object} playRequest playRequest
+     * @param {Function=} callback
      */
     ;
 
@@ -12054,7 +12129,7 @@
       }
 
       var requestURL = this.options_.exposureApiURL + '/' + this.options_.exposureApiVersion + '/customer/' + customer + '/businessunit/' + businessUnit + '/entitlement/' + assetId + '?drm=' + playRequest.drm + '&format=' + playRequest.format;
-      return xhr.get(requestURL, {
+      xhr.get(requestURL, {
         headers: this.requestHeaders
       }, function (error, response, body) {
         // Check and handles error
@@ -12070,8 +12145,8 @@
     /**
      * Verifies if sessionToken is still valid
      *
-     * @param okFn - callback if session is ok
-     * @param nokFn - callback if session is not ok
+     * @param {Function} okFn - callback if session is ok
+     * @param {Function} nokFn - callback if session is not ok
      */
     ;
 
@@ -12081,7 +12156,7 @@
       var customer = this.customer;
       var businessUnit = this.businessUnit;
       var requestURL = this.options_.exposureApiURL + '/' + this.options_.exposureApiVersion + '/customer/' + customer + '/businessunit/' + businessUnit + '/auth/session';
-      return xhr.get(requestURL, {
+      xhr.get(requestURL, {
         headers: this.requestHeaders
       }, function (error, response, body) {
         // Check and handles error
@@ -12101,7 +12176,7 @@
     /**
      * Get Play request headers. Including apiKey if set
      *
-     * @return {Object}
+     * @return {Object} Play request headers
      * @private
      */
     ;
@@ -12124,7 +12199,7 @@
       /**
        * Get customer. Defaults to value set in options if available
        *
-       * @return {string}
+       * @return {string} customer
        */
 
     }, {
@@ -12144,7 +12219,7 @@
       /**
        * Get business unit. Defaults to value set in options if available
        *
-       * @return {string}
+       * @return {string} businessUnit
        */
 
     }, {
@@ -12164,7 +12239,7 @@
       /**
        * Get session token. Defaults to value set in options if available
        *
-       * @return {string}
+       * @return {string} sessionToken
        */
 
     }, {
@@ -12188,36 +12263,83 @@
 
   EntitlementEngine.registerEntitlementEngine('EricssonExposure', EricssonExposure);
 
+  /**
+   * EntitlementRequest Class
+   *
+   * @param {Object} options Object of option names and values
+   * @class EntitlementRequest
+   */
   var EntitlementRequest =
   /*#__PURE__*/
   function () {
+    /**
+     * Create EntitlementRequest
+     *
+     * @param {Object=} options Object of option names and values
+     */
     function EntitlementRequest(options) {
       this.assetId = options.assetId || null;
       this.programId = options.programId || null;
       this.channelId = options.channelId || null;
     }
+    /**
+     * get assetId
+     *
+     * @return {string} assetId
+     */
+
 
     _createClass(EntitlementRequest, [{
       key: "assetId",
       get: function get() {
         return this.assetId_;
-      },
+      }
+      /**
+       * Set assetId
+       *
+       * @param {string} assetId
+       */
+      ,
       set: function set(assetId) {
         this.assetId_ = assetId;
       }
+      /**
+       * get programId
+       *
+       * @return {string} programId
+       */
+
     }, {
       key: "programId",
       get: function get() {
         return this.programId_;
-      },
+      }
+      /**
+       * Set programId
+       *
+       * @param {string} programId
+       */
+      ,
       set: function set(programId) {
         this.programId_ = programId;
       }
+      /**
+       * get channelId
+       *
+       * @return {string} channelId
+       */
+
     }, {
       key: "channelId",
       get: function get() {
         return this.channelId_;
-      },
+      }
+      /**
+       * Set channelId
+       *
+       * @param {string} channelId
+       */
+      ,
       set: function set(channelId) {
         this.channelId_ = channelId;
       }
@@ -12976,7 +13098,7 @@
     return ProgramService;
   }(Plugin$1);
 
-  ProgramService.VERSION = '2.1.101-322';
+  ProgramService.VERSION = '2.1.101-323';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -13215,7 +13337,7 @@
     return EntitlementExpirationService;
   }(Plugin$2);
 
-  EntitlementExpirationService.VERSION = '2.1.101-322';
+  EntitlementExpirationService.VERSION = '2.1.101-323';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -13283,7 +13405,7 @@
   /**
    * Inject a Source handler for EMP streams
    *
-   * @param player
+   * @param {Player} player The `Player` that this class should be attached to.
    * @class EntitlementMiddleware
    */
 
@@ -13291,10 +13413,10 @@
     /**
      * start the ProgramService
      *
-     * @param options
-     * @param exposure
-     * @param srcEntitlement
-     * @param callback
+     * @param {Object} options The key/value store of player options.
+     * @param {exposure} exposure
+     * @param {Entitlement} srcEntitlement
+     * @param {Function} callback
      * @private
      */
     function startProgramService_(options, exposure, srcEntitlement, callback) {
@@ -13388,10 +13510,9 @@
     /**
      * Start up analytics
      *
-     * @param player
-     * @param options
-     * @param entitlementOptions
-     * @param exposure
+     * @param {Object} options The key/value store of player options.
+     * @param {Object} entitlementOptions The key/value store of entitlement options.
+     * @param {Exposure} exposure
      * @private
      */
 
@@ -13427,8 +13548,8 @@
     /**
      * Test if it's an entitlement
      *
-     * @param entitlement
-     * @return  {boolean}
+     * @param {Entitlement} entitlement
+     * @return  {boolean} is Entitlement
      * @private
      */
 
@@ -13439,8 +13560,10 @@
     /**
      * Setup Entitlement
      *
-     * @param entitlement
-     * @param tech
+     * @param {Entitlement} entitlement
+     * @param {Tech} tech
+     * @param {Object} options The key/value store of player options.
+     * @return {Entitlement} Entitlement
      * @private
      */
 
@@ -13720,9 +13843,10 @@
   /**
   * Get an Exposure Service by name
   *
+  * @param {Object} options The key/value store of player options.
   * @param {string} name Name of the entitlement engine
   * @static
-  * @return {EntitlementEngine}
+  * @return {Exposure} Exposure
   */
 
   EntitlementMiddleware.getExposure = function (options, name) {
@@ -13737,7 +13861,8 @@
   * Register an Exposure Service
   *
   * @param {string} name     Name of the entitlement engine
-  * @param entitlementEngine The entitlement engine to register
+  * @param {EntitlementEngine} entitlementEngine The entitlement engine to register
+  * @return {EntitlementEngine} EntitlementEngine
   * @throws Error
   * @static
   */
@@ -13750,7 +13875,7 @@
   * get the EMP log object
    *
   * @static
-  * @return {*|log}
+  * @return {*|log} EMP log object
   */
 
 
@@ -13761,7 +13886,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.101-322';
+  EntitlementMiddleware.VERSION = '2.1.101-323';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -13890,7 +14015,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.1.101-322';
+  empPlayer.VERSION = '2.1.101-323';
   /*
    * Universal Module Definition (UMD)
    *
