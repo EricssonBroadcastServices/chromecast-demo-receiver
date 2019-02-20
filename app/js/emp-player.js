@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.101-327 
+ * EMP-Player 2.1.101-328 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -8406,7 +8406,7 @@
     _createClass(Player, [{
       key: "version",
       get: function get() {
-        return '2.1.101-327';
+        return '2.1.101-328';
       }
       /**
        * Get entitlement
@@ -9756,7 +9756,7 @@
     return AnalyticsPlugin;
   }(Plugin);
 
-  AnalyticsPlugin.VERSION = '2.1.101-327';
+  AnalyticsPlugin.VERSION = '2.1.101-328';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -13117,7 +13117,7 @@
     return ProgramService;
   }(Plugin$1);
 
-  ProgramService.VERSION = '2.1.101-327';
+  ProgramService.VERSION = '2.1.101-328';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -13356,7 +13356,7 @@
     return EntitlementExpirationService;
   }(Plugin$2);
 
-  EntitlementExpirationService.VERSION = '2.1.101-327';
+  EntitlementExpirationService.VERSION = '2.1.101-328';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -13905,7 +13905,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.101-327';
+  EntitlementMiddleware.VERSION = '2.1.101-328';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -14034,7 +14034,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.1.101-327';
+  empPlayer.VERSION = '2.1.101-328';
   /*
    * Universal Module Definition (UMD)
    *
