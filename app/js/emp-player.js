@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.101-328 
+ * EMP-Player 2.1.101-329 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -8406,7 +8406,7 @@
     _createClass(Player, [{
       key: "version",
       get: function get() {
-        return '2.1.101-328';
+        return '2.1.101-329';
       }
       /**
        * Get entitlement
@@ -9756,7 +9756,7 @@
     return AnalyticsPlugin;
   }(Plugin);
 
-  AnalyticsPlugin.VERSION = '2.1.101-328';
+  AnalyticsPlugin.VERSION = '2.1.101-329';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -13117,7 +13117,7 @@
     return ProgramService;
   }(Plugin$1);
 
-  ProgramService.VERSION = '2.1.101-328';
+  ProgramService.VERSION = '2.1.101-329';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -13356,7 +13356,7 @@
     return EntitlementExpirationService;
   }(Plugin$2);
 
-  EntitlementExpirationService.VERSION = '2.1.101-328';
+  EntitlementExpirationService.VERSION = '2.1.101-329';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -13580,14 +13580,14 @@
      * Setup Entitlement
      *
      * @param {Entitlement} entitlement
-     * @param {Tech} tech
+     * @param {Object} techOptions The key/value store of tech options.
      * @param {Object} options The key/value store of player options.
      * @return {Entitlement} Entitlement
      * @private
      */
 
 
-    function setupEntitlement_(entitlement, tech, options) {
+    function setupEntitlement_(entitlement, techOptions, options) {
       if (!entitlement) {
         log.error('setupEntitlement_ no entitlement');
         return;
@@ -13631,8 +13631,6 @@
       entitlement.type = entitlement.mimeType; // Grab tech-specific options from player options and add source.
       // Will be send to handleSource
 
-      var techOptions = {};
-      assign(techOptions, player.options_[tech.name.toLowerCase()]);
       var playOptions = {
         autoplay: player.options_.autoplay,
         muted: player.options_.muted,
@@ -13750,6 +13748,7 @@
 
 
           var tech = techs[i][1];
+          var techOptions = options[techs[i][0].toLowerCase()];
 
           if (player.tech_ && player.techName_ !== techs[i][0]) {
             player.techCall_('reset');
@@ -13759,7 +13758,7 @@
           try {
             if (srcEntitlement) {
               // playEntitlement was called by the player
-              srcEntitlement = setupEntitlement_(srcEntitlement, tech, options);
+              srcEntitlement = setupEntitlement_(srcEntitlement, techOptions, options);
               startProgramService_(options, exposure, srcEntitlement, function () {
                 next(null, srcEntitlement);
               });
@@ -13767,7 +13766,6 @@
               return;
             }
 
-            var techOptions = options[techs[i][0].toLowerCase()];
             var playRequest = techOptions && techOptions.streamType && tech.entitlementPlayRequests ? tech.entitlementPlayRequests[techOptions.streamType] : tech.entitlementPlayRequest;
             exposure.getV2Entitlement(entitlementRequest, playRequest, function (entitlement, error) {
               // If we have an fatal error during playcall break out of the loop else try next tech
@@ -13790,7 +13788,7 @@
                 loop.next();
               } else {
                 // Set the entitlement to use, and break out of the loop. No need to get other entitlements.
-                srcEntitlement = setupEntitlement_(entitlement, tech, options);
+                srcEntitlement = setupEntitlement_(entitlement, techOptions, options);
                 extplayer.currentAsset(player, entitlement.assetId, entitlement.programId, entitlement.channelId);
 
                 if (srcEntitlement.adMediaLocator && player.yospace) {
@@ -13905,7 +13903,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.101-328';
+  EntitlementMiddleware.VERSION = '2.1.101-329';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -14034,7 +14032,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.1.101-328';
+  empPlayer.VERSION = '2.1.101-329';
   /*
    * Universal Module Definition (UMD)
    *
