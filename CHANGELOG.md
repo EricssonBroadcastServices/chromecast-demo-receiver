@@ -174,3 +174,10 @@ https://github.com/google/shaka-player/releases
 - Latest HtML5-player 2.1.100
 - **EMP-11617** Update videojs to 7.4.1 [CHANGELOG](https://github.com/videojs/video.js/blob/master/CHANGELOG.md)
 - **EMP-12394** Update shaka to 2.5  (Drift is now tolerated in live streams)
+
+## 2.1.101
+### Bug fixes
+- **EMP-12503** Static catch-up won't start, stop start at 2.1 sec.
+
+### New features
+- Latest HtML5-player 2.1.101
