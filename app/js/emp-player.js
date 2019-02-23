@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.101-331 
+ * EMP-Player 2.1.102-332 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -904,6 +904,17 @@
     }
 
     return decodeURIComponent(results[2].replace(/\+/g, ' '));
+  }
+  /**
+   * getBaseUrl from Url
+   *
+   * @param {string} url url
+   * @return {string} BaseUrl
+   */
+
+  function getBaseUrl(url) {
+    var re = new RegExp(/^.*\//);
+    return re.exec(url)[0];
   }
 
   /**
@@ -2284,6 +2295,11 @@
     setTechProgram: function setTechProgram(player, program) {
       if (player.tech_ && player.tech_.program !== undefined) {
         player.techCall_('program', program);
+      }
+    },
+    setTechVOD: function setTechVOD(player, asset) {
+      if (player.tech_ && player.tech_.VOD !== undefined) {
+        player.techCall_('VOD', asset);
       }
     }
   };
@@ -5857,6 +5873,570 @@
   EmpMediaInfoBar.prototype.controlText_ = 'MediaInfo';
   Component$i.registerComponent('EmpMediaInfoBar', EmpMediaInfoBar);
 
+  var Plugin = videojs.getPlugin('plugin');
+  /* global
+    XMLHttpRequest
+  */
+
+  /**
+   * VTT Thumbnails class.
+   *
+   * This class performs all functions related to displaying the vtt
+   * thumbnails.
+   * @param {Player} player The `Player` that this class should be attached to.
+   * @param {Object=} options The key/value store of player options.
+   * @extends videojs.Plugin
+   * @class CastPlugin
+   */
+
+  var vttThumbnailsPlugin =
+  /*#__PURE__*/
+  function (_Plugin) {
+    _inheritsLoose(vttThumbnailsPlugin, _Plugin);
+
+    /**
+     * Plugin class constructor, called by videojs on
+     * ready event.
+     *
+     * @function  constructor
+     * @param    {Player} player
+     *           A Video.js player object.
+     *
+     * @param    {Object} [options={}]
+     *           A plain object containing options for the plugin.
+     */
+    function vttThumbnailsPlugin(player, options) {
+      var _this;
+
+      _this = _Plugin.call(this, player, options) || this;
+      log('vttThumbnailsPlugin', 'create');
+      _this.options_ = options ? options : {
+        src: 'sprites/sprites.vtt'
+      };
+      _this.enabled_ = true;
+
+      _this.listenForDurationChange();
+
+      _this.registeredEvents = {};
+      player.ready(function () {
+        player.addClass('vjs-vtt-thumbnails');
+      });
+
+      _this.on(player, [empPlayerEvents.FIRST_PLAY], function () {
+        _this.resetPlugin();
+
+        _this.initializeThumbnails();
+
+        log('vttThumbnailsPlugin', 'FIRST_PLAY');
+      });
+
+      return _this;
+    }
+    /**
+    * get enabled
+    *
+    * @return {boolean} enabled
+    */
+
+
+    var _proto = vttThumbnailsPlugin.prototype;
+
+    /**
+     * Set Source
+     *
+     * @param {any} source
+     */
+    _proto.src = function src(source) {
+      this.resetPlugin();
+      this.options_.src = source;
+      this.initializeThumbnails();
+    }
+    /**
+     * detach
+     */
+    ;
+
+    _proto.detach = function detach() {
+      this.resetPlugin();
+    }
+    /**
+    * Set or get the key/value store of analytics options.
+    *
+    * @param {Object=} opt options
+    * @return {Object} options
+    */
+    ;
+
+    _proto.options = function options(opt) {
+      if (!opt) {
+        return this.options_;
+      }
+
+      this.options_ = videojs.mergeOptions(this.options_, opt);
+    }
+    /**
+    * resetPlugin
+    */
+    ;
+
+    _proto.resetPlugin = function resetPlugin() {
+      if (this.thumbnailHolder) {
+        this.thumbnailHolder.parentNode.removeChild(this.thumbnailHolder);
+      }
+
+      if (this.progressBar) {
+        this.progressBar.removeEventListener('mouseenter', this.registeredEvents.progressBarMouseEnter);
+        this.progressBar.removeEventListener('mouseleave', this.registeredEvents.progressBarMouseLeave);
+        this.progressBar.removeEventListener('mousemove', this.registeredEvents.progressBarMouseMove);
+      }
+
+      delete this.registeredEvents.progressBarMouseEnter;
+      delete this.registeredEvents.progressBarMouseLeave;
+      delete this.registeredEvents.progressBarMouseMove;
+      delete this.progressBar;
+      delete this.vttData;
+      delete this.thumbnailHolder;
+      delete this.lastStyle;
+    }
+    /**
+    * listenForDurationChange
+    */
+    ;
+
+    _proto.listenForDurationChange = function listenForDurationChange() {
+      this.player.on('durationchange', function () {});
+    }
+    /**
+    * initializeThumbnails
+    */
+    ;
+
+    _proto.initializeThumbnails = function initializeThumbnails() {
+      var _this2 = this;
+
+      if (!this.options_.src || !this.enabled_) {
+        return;
+      }
+
+      if (!this.player.currentSource() || !this.player.currentSource().src || this.player.currentSource().isDynamicCachupAsLive || this.player.currentSource().isStaticCachupAsLive) {
+        return;
+      }
+
+      var baseUrl = this.getBaseUrl();
+      var url = this.getFullyQualifiedUrl(this.options_.src, baseUrl);
+      this.getVttFile(url).then(function (data) {
+        _this2.vttData = _this2.processVtt(data);
+
+        _this2.setupThumbnailElement();
+      });
+    }
+    /**
+     * Builds a base URL should we require one.
+     *
+     * @return {string} BaseUrl
+     */
+    ;
+
+    _proto.getBaseUrl = function getBaseUrl$$1() {
+      var baseUrl = getBaseUrl(this.player.currentSource().src);
+
+      baseUrl = baseUrl.replace(/\/$/, '');
+      return getBaseUrl(baseUrl);
+    }
+    /**
+     * Grabs the contents of the VTT file.
+     *
+     * @param {string} url
+     * @return {Promise} getVttFile
+     */
+    ;
+
+    _proto.getVttFile = function getVttFile(url) {
+      var _this3 = this;
+
+      return new Promise(function (resolve, reject) {
+        var req = new XMLHttpRequest();
+        req.data = {
+          resolve: resolve
+        };
+        req.addEventListener('load', _this3.vttFileLoaded);
+        req.open('GET', url);
+        req.send();
+      });
+    }
+    /**
+     * Callback for loaded VTT file.
+     */
+    ;
+
+    _proto.vttFileLoaded = function vttFileLoaded() {
+      this.data.resolve(this.responseText);
+    }
+    /**
+     * setupThumbnailElement
+     *
+     * @param {any} data
+     */
+    ;
+
+    _proto.setupThumbnailElement = function setupThumbnailElement(data) {
+      var _this4 = this;
+
+      var mouseDisplay = this.player.$('.vjs-mouse-display');
+      this.progressBar = this.player.$('.vjs-progress-control');
+      var thumbHolder = document_1.createElement('div');
+      thumbHolder.setAttribute('class', 'vjs-vtt-thumbnail-display');
+      this.progressBar.appendChild(thumbHolder);
+      this.thumbnailHolder = thumbHolder;
+
+      if (mouseDisplay) {
+        mouseDisplay.classList.add('vjs-hidden');
+      }
+
+      this.registeredEvents.progressBarMouseEnter = function () {
+        return _this4.onBarMouseenter();
+      };
+
+      this.registeredEvents.progressBarMouseLeave = function () {
+        return _this4.onBarMouseleave();
+      };
+
+      this.progressBar.addEventListener('mouseenter', this.registeredEvents.progressBarMouseEnter);
+      this.progressBar.addEventListener('mouseleave', this.registeredEvents.progressBarMouseLeave);
+    }
+    /**
+     * onBarMouseenter
+     */
+    ;
+
+    _proto.onBarMouseenter = function onBarMouseenter() {
+      var _this5 = this;
+
+      this.mouseMoveCallback = function (e) {
+        _this5.onBarMousemove(e);
+      };
+
+      this.registeredEvents.progressBarMouseMove = this.mouseMoveCallback;
+      this.progressBar.addEventListener('mousemove', this.registeredEvents.progressBarMouseMove);
+      this.showThumbnailHolder();
+    }
+    /**
+     * onBarMouseleave
+     */
+    ;
+
+    _proto.onBarMouseleave = function onBarMouseleave() {
+      if (this.registeredEvents.progressBarMouseMove) {
+        this.progressBar.removeEventListener('mousemove', this.registeredEvents.progressBarMouseMove);
+      }
+
+      this.hideThumbnailHolder();
+    }
+    /**
+     * getXCoord
+     *
+     * @param {any} bar
+     * @param {any} mouseX
+     * @return {number} XCoord
+     */
+    ;
+
+    _proto.getXCoord = function getXCoord(bar, mouseX) {
+      var rect = bar.getBoundingClientRect();
+      var docEl = document_1.documentElement;
+      return mouseX - (rect.left + (window_1.pageXOffset || docEl.scrollLeft || 0));
+    }
+    /**
+     * onBarMousemove
+     *
+     * @param {any} event
+     */
+    ;
+
+    _proto.onBarMousemove = function onBarMousemove(event) {
+      this.updateThumbnailStyle(this.getXCoord(this.progressBar, event.clientX), this.progressBar.offsetWidth);
+    }
+    /**
+    * getStyleForTime
+    *
+    * @param {number} time
+    * @return {string} css
+    */
+    ;
+
+    _proto.getStyleForTime = function getStyleForTime(time) {
+      for (var i = 0; i < this.vttData.length; ++i) {
+        var item = this.vttData[i];
+
+        if (time >= item.start && time < item.end) {
+          return item.css;
+        }
+      }
+    }
+    /**
+     * getStyleForTime
+     */
+    ;
+
+    _proto.showThumbnailHolder = function showThumbnailHolder() {
+      this.thumbnailHolder.style.opacity = '1';
+    }
+    /**
+     * hideThumbnailHolder
+     */
+    ;
+
+    _proto.hideThumbnailHolder = function hideThumbnailHolder() {
+      this.thumbnailHolder.style.opacity = '0';
+    }
+    /**
+     * updateThumbnailStyle
+     *
+     * @param {any} x
+     * @param {any} width
+     */
+    ;
+
+    _proto.updateThumbnailStyle = function updateThumbnailStyle(x, width) {
+      var duration = this.player.duration();
+      var time = (1 - (width - x) / width) * duration;
+      var currentStyle = this.getStyleForTime(time);
+
+      if (!currentStyle) {
+        this.hideThumbnailHolder();
+        return;
+      }
+
+      var xPos = (1 - (width - x) / width) * width;
+      this.thumbnailHolder.style.transform = 'translateX(' + xPos + 'px)';
+      this.thumbnailHolder.style.marginLeft = '-' + parseInt(currentStyle.width, 10) / 2 + 'px';
+
+      if (this.lastStyle && this.lastStyle === currentStyle) {
+        return;
+      }
+
+      this.lastStyle = currentStyle;
+
+      for (var style in currentStyle) {
+        if (currentStyle.hasOwnProperty(style)) {
+          this.thumbnailHolder.style[style] = currentStyle[style];
+        }
+      }
+    }
+    /**
+     * processVtt
+     *
+     * @param {any} data
+     * @return {Array} processedVtts
+     */
+    ;
+
+    _proto.processVtt = function processVtt(data) {
+      var _this6 = this;
+
+      var processedVtts = [];
+      var vttDefinitions = data.split(/[\r\n][\r\n]/i);
+      vttDefinitions.forEach(function (vttDef) {
+        if (vttDef.match(/([0-9]{2}:)?([0-9]{2}:)?[0-9]{2}(.[0-9]{3})?( ?--> ?)([0-9]{2}:)?([0-9]{2}:)?[0-9]{2}(.[0-9]{3})?[\r\n]{1}.*/gi)) {
+          var vttDefSplit = vttDef.split(/[\r\n]/i);
+          var vttTiming = vttDefSplit[0];
+          var vttTimingSplit = vttTiming.split(/ ?--> ?/i);
+          var vttTimeStart = vttTimingSplit[0];
+          var vttTimeEnd = vttTimingSplit[1];
+          var vttImageDef = vttDefSplit[1];
+
+          var vttCssDef = _this6.getVttCss(vttImageDef);
+
+          processedVtts.push({
+            start: _this6.getSecondsFromTimestamp(vttTimeStart),
+            end: _this6.getSecondsFromTimestamp(vttTimeEnd),
+            css: vttCssDef
+          });
+        }
+      });
+      return processedVtts;
+    }
+    /**
+    * getFullyQualifiedUrl
+    *
+    * @param {string} path
+    * @param {string} base
+    * @return {string} getFullyQualifiedUrl
+    */
+    ;
+
+    _proto.getFullyQualifiedUrl = function getFullyQualifiedUrl(path, base) {
+      if (path.indexOf('//') >= 0) {
+        // We have a fully qualified path.
+        return path;
+      }
+
+      if (base.indexOf('//') === 0) {
+        // We don't have a fully qualified path, but need to
+        // be careful with trimming.
+        return [base.replace(/\/$/gi, ''), this.trim(path, '/')].join('/');
+      }
+
+      if (base.indexOf('//') > 0) {
+        // We don't have a fully qualified path, and should
+        // trim both sides of base and path.
+        return [this.trim(base, '/'), this.trim(path, '/')].join('/');
+      } // If all else fails.
+
+
+      return path;
+    }
+    /**
+     * getPropsFromDef
+     *
+     * @param {any} def
+     * @return {Object} PropsFromDef
+     */
+    ;
+
+    _proto.getPropsFromDef = function getPropsFromDef(def) {
+      var imageDefSplit = def.split(/#xywh=/i);
+      var imageUrl = imageDefSplit[0];
+      var imageCoords = imageDefSplit[1];
+      var splitCoords = imageCoords.match(/[0-9]+/gi);
+      return {
+        x: splitCoords[0],
+        y: splitCoords[1],
+        w: splitCoords[2],
+        h: splitCoords[3],
+        image: imageUrl
+      };
+    }
+    /**
+     * getVttCss
+     *
+     * @param {any} vttImageDef
+     * @return {Object} VttCss
+     */
+    ;
+
+    _proto.getVttCss = function getVttCss(vttImageDef) {
+      var cssObj = {}; // If there isn't a protocol, use the VTT source URL.
+
+      var baseSplit;
+
+      if (this.options_.src.indexOf('//') >= 0) {
+        baseSplit = this.options_.src.split(/([^\/]*)$/gi).shift();
+      } else {
+        baseSplit = this.getBaseUrl() + this.options_.src.split(/([^\/]*)$/gi).shift();
+      }
+
+      vttImageDef = this.getFullyQualifiedUrl(vttImageDef, baseSplit);
+
+      if (!vttImageDef.match(/#xywh=/i)) {
+        cssObj.background = 'url("' + vttImageDef + '")';
+        return cssObj;
+      }
+
+      var imageProps = this.getPropsFromDef(vttImageDef);
+      cssObj.background = 'url("' + imageProps.image + '") no-repeat -' + imageProps.x + 'px -' + imageProps.y + 'px';
+      cssObj.width = imageProps.w + 'px';
+      cssObj.height = imageProps.h + 'px';
+      return cssObj;
+    }
+    /**
+     * doconstructTimestamp
+     *
+     * @param {any} timestamp
+     * @return {Object} doconstructTimestamp
+     */
+    ;
+
+    _proto.doconstructTimestamp = function doconstructTimestamp(timestamp) {
+      var splitStampMilliseconds = timestamp.split('.');
+      var timeParts = splitStampMilliseconds[0];
+      var timePartsSplit = timeParts.split(':');
+      return {
+        milliseconds: parseInt(splitStampMilliseconds[1], 10) || 0,
+        seconds: parseInt(timePartsSplit.pop(), 10) || 0,
+        minutes: parseInt(timePartsSplit.pop(), 10) || 0,
+        hours: parseInt(timePartsSplit.pop(), 10) || 0
+      };
+    }
+    /**
+     * getSecondsFromTimestamp
+     *
+     * @param {any} timestamp
+     * @return {Object} SecondsFromTimestamp
+     */
+    ;
+
+    _proto.getSecondsFromTimestamp = function getSecondsFromTimestamp(timestamp) {
+      var timestampParts = this.doconstructTimestamp(timestamp);
+      return parseInt(timestampParts.hours * (60 * 60) + timestampParts.minutes * 60 + timestampParts.seconds + timestampParts.milliseconds / 1000, 10);
+    }
+    /**
+     * trim
+     *
+     * @param {any} str
+     * @param {any} charlist
+     * @return {string} trim
+     */
+    ;
+
+    _proto.trim = function trim(str, charlist) {
+      var whitespace = [' ', '\n', '\r', '\t', '\f', '\x0b', '\xa0', "\u2000", "\u2001", "\u2002", "\u2003", "\u2004", "\u2005", "\u2006", "\u2007", "\u2008", "\u2009", "\u200A", "\u200B", "\u2028", "\u2029", "\u3000"].join('');
+      var l = 0;
+      var i = 0;
+      str += '';
+
+      if (charlist) {
+        whitespace = (charlist + '').replace(/([[\]().?/*{}+$^:])/g, '$1');
+      }
+
+      l = str.length;
+
+      for (i = 0; i < l; i++) {
+        if (whitespace.indexOf(str.charAt(i)) === -1) {
+          str = str.substring(i);
+          break;
+        }
+      }
+
+      l = str.length;
+
+      for (i = l - 1; i >= 0; i--) {
+        if (whitespace.indexOf(str.charAt(i)) === -1) {
+          str = str.substring(0, i + 1);
+          break;
+        }
+      }
+
+      return whitespace.indexOf(str.charAt(0)) === -1 ? str : '';
+    };
+
+    _createClass(vttThumbnailsPlugin, [{
+      key: "enabled",
+      get: function get() {
+        return this.enabled_;
+      }
+      /**
+       * Set enabled
+       *
+       * @param {boolean} value
+       */
+      ,
+      set: function set(value) {
+        this.enabled_ = value;
+      }
+    }]);
+
+    return vttThumbnailsPlugin;
+  }(Plugin);
+
+  vttThumbnailsPlugin.VERSION = '2.1.102-332';
+
+  if (videojs.getPlugin('vttThumbnails')) {
+    videojs.log.warn('A plugin named "vttThumbnails" already exists.');
+  } else {
+    videojs.registerPlugin('vttThumbnails', vttThumbnailsPlugin);
+  }
+
   /**
    * A Custom `MediaError` class which mimics the standard HTML5 `MediaError` class.
    *
@@ -6086,6 +6666,10 @@
         _this.eme();
       }
 
+      if (options.enableThumbnails && _this.vttThumbnails) {
+        _this.vttThumbnails();
+      }
+
       _this.on(empPlayerEvents.ENDED, function () {
         log('ENDED');
         _this.ended_ = true;
@@ -6286,6 +6870,10 @@
 
       if (obj.absoluteStartTime !== undefined) {
         obj.startTime = 0;
+      }
+
+      if (this.vttThumbnails && obj.enableThumbnails !== undefined) {
+        this.vttThumbnails().enabled = obj.enableThumbnails || false;
       }
 
       this.options_ = videojs.mergeOptions(this.options_, obj);
@@ -8406,7 +8994,7 @@
     _createClass(Player, [{
       key: "version",
       get: function get() {
-        return '2.1.101-331';
+        return '2.1.102-332';
       }
       /**
        * Get entitlement
@@ -9574,7 +10162,7 @@
   var empAnalyticsTmp = unwrapExports(empAnalytics_min);
 
   var EMPAnalytics = window_1.empAnalytics ? window_1.empAnalytics : empAnalyticsTmp;
-  var Plugin = videojs.getPlugin('plugin');
+  var Plugin$1 = videojs.getPlugin('plugin');
   /**
    * AnalyticsPlugin
    *
@@ -9754,9 +10342,9 @@
     }]);
 
     return AnalyticsPlugin;
-  }(Plugin);
+  }(Plugin$1);
 
-  AnalyticsPlugin.VERSION = '2.1.101-331';
+  AnalyticsPlugin.VERSION = '2.1.102-332';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -10662,23 +11250,516 @@
         fn === window.prompt))
   }
 
-  var trim_1 = createCommonjsModule(function (module, exports) {
-  exports = module.exports = trim;
+  /* eslint no-invalid-this: 1 */
 
-  function trim(str){
-    return str.replace(/^\s*|\s*$/g, '');
+  var ERROR_MESSAGE = 'Function.prototype.bind called on incompatible ';
+  var slice = Array.prototype.slice;
+  var toStr = Object.prototype.toString;
+  var funcType = '[object Function]';
+
+  var implementation = function bind(that) {
+      var target = this;
+      if (typeof target !== 'function' || toStr.call(target) !== funcType) {
+          throw new TypeError(ERROR_MESSAGE + target);
+      }
+      var args = slice.call(arguments, 1);
+
+      var bound;
+      var binder = function () {
+          if (this instanceof bound) {
+              var result = target.apply(
+                  this,
+                  args.concat(slice.call(arguments))
+              );
+              if (Object(result) === result) {
+                  return result;
+              }
+              return this;
+          } else {
+              return target.apply(
+                  that,
+                  args.concat(slice.call(arguments))
+              );
+          }
+      };
+
+      var boundLength = Math.max(0, target.length - args.length);
+      var boundArgs = [];
+      for (var i = 0; i < boundLength; i++) {
+          boundArgs.push('$' + i);
+      }
+
+      bound = Function('binder', 'return function (' + boundArgs.join(',') + '){ return binder.apply(this,arguments); }')(binder);
+
+      if (target.prototype) {
+          var Empty = function Empty() {};
+          Empty.prototype = target.prototype;
+          bound.prototype = new Empty();
+          Empty.prototype = null;
+      }
+
+      return bound;
+  };
+
+  var functionBind = Function.prototype.bind || implementation;
+
+  var toStr$1 = Object.prototype.toString;
+
+  var isArguments = function isArguments(value) {
+  	var str = toStr$1.call(value);
+  	var isArgs = str === '[object Arguments]';
+  	if (!isArgs) {
+  		isArgs = str !== '[object Array]' &&
+  			value !== null &&
+  			typeof value === 'object' &&
+  			typeof value.length === 'number' &&
+  			value.length >= 0 &&
+  			toStr$1.call(value.callee) === '[object Function]';
+  	}
+  	return isArgs;
+  };
+
+  var keysShim;
+  if (!Object.keys) {
+  	// modified from https://github.com/es-shims/es5-shim
+  	var has = Object.prototype.hasOwnProperty;
+  	var toStr$2 = Object.prototype.toString;
+  	var isArgs = isArguments; // eslint-disable-line global-require
+  	var isEnumerable = Object.prototype.propertyIsEnumerable;
+  	var hasDontEnumBug = !isEnumerable.call({ toString: null }, 'toString');
+  	var hasProtoEnumBug = isEnumerable.call(function () {}, 'prototype');
+  	var dontEnums = [
+  		'toString',
+  		'toLocaleString',
+  		'valueOf',
+  		'hasOwnProperty',
+  		'isPrototypeOf',
+  		'propertyIsEnumerable',
+  		'constructor'
+  	];
+  	var equalsConstructorPrototype = function (o) {
+  		var ctor = o.constructor;
+  		return ctor && ctor.prototype === o;
+  	};
+  	var excludedKeys = {
+  		$applicationCache: true,
+  		$console: true,
+  		$external: true,
+  		$frame: true,
+  		$frameElement: true,
+  		$frames: true,
+  		$innerHeight: true,
+  		$innerWidth: true,
+  		$outerHeight: true,
+  		$outerWidth: true,
+  		$pageXOffset: true,
+  		$pageYOffset: true,
+  		$parent: true,
+  		$scrollLeft: true,
+  		$scrollTop: true,
+  		$scrollX: true,
+  		$scrollY: true,
+  		$self: true,
+  		$webkitIndexedDB: true,
+  		$webkitStorageInfo: true,
+  		$window: true
+  	};
+  	var hasAutomationEqualityBug = (function () {
+  		/* global window */
+  		if (typeof window === 'undefined') { return false; }
+  		for (var k in window) {
+  			try {
+  				if (!excludedKeys['$' + k] && has.call(window, k) && window[k] !== null && typeof window[k] === 'object') {
+  					try {
+  						equalsConstructorPrototype(window[k]);
+  					} catch (e) {
+  						return true;
+  					}
+  				}
+  			} catch (e) {
+  				return true;
+  			}
+  		}
+  		return false;
+  	}());
+  	var equalsConstructorPrototypeIfNotBuggy = function (o) {
+  		/* global window */
+  		if (typeof window === 'undefined' || !hasAutomationEqualityBug) {
+  			return equalsConstructorPrototype(o);
+  		}
+  		try {
+  			return equalsConstructorPrototype(o);
+  		} catch (e) {
+  			return false;
+  		}
+  	};
+
+  	keysShim = function keys(object) {
+  		var isObject = object !== null && typeof object === 'object';
+  		var isFunction = toStr$2.call(object) === '[object Function]';
+  		var isArguments$$1 = isArgs(object);
+  		var isString = isObject && toStr$2.call(object) === '[object String]';
+  		var theKeys = [];
+
+  		if (!isObject && !isFunction && !isArguments$$1) {
+  			throw new TypeError('Object.keys called on a non-object');
+  		}
+
+  		var skipProto = hasProtoEnumBug && isFunction;
+  		if (isString && object.length > 0 && !has.call(object, 0)) {
+  			for (var i = 0; i < object.length; ++i) {
+  				theKeys.push(String(i));
+  			}
+  		}
+
+  		if (isArguments$$1 && object.length > 0) {
+  			for (var j = 0; j < object.length; ++j) {
+  				theKeys.push(String(j));
+  			}
+  		} else {
+  			for (var name in object) {
+  				if (!(skipProto && name === 'prototype') && has.call(object, name)) {
+  					theKeys.push(String(name));
+  				}
+  			}
+  		}
+
+  		if (hasDontEnumBug) {
+  			var skipConstructor = equalsConstructorPrototypeIfNotBuggy(object);
+
+  			for (var k = 0; k < dontEnums.length; ++k) {
+  				if (!(skipConstructor && dontEnums[k] === 'constructor') && has.call(object, dontEnums[k])) {
+  					theKeys.push(dontEnums[k]);
+  				}
+  			}
+  		}
+  		return theKeys;
+  	};
   }
+  var implementation$1 = keysShim;
 
-  exports.left = function(str){
-    return str.replace(/^\s*/, '');
+  var slice$1 = Array.prototype.slice;
+
+
+  var origKeys = Object.keys;
+  var keysShim$1 = origKeys ? function keys(o) { return origKeys(o); } : implementation$1;
+
+  var originalKeys = Object.keys;
+
+  keysShim$1.shim = function shimObjectKeys() {
+  	if (Object.keys) {
+  		var keysWorksWithArguments = (function () {
+  			// Safari 5.0 bug
+  			var args = Object.keys(arguments);
+  			return args && args.length === arguments.length;
+  		}(1, 2));
+  		if (!keysWorksWithArguments) {
+  			Object.keys = function keys(object) { // eslint-disable-line func-name-matching
+  				if (isArguments(object)) {
+  					return originalKeys(slice$1.call(object));
+  				}
+  				return originalKeys(object);
+  			};
+  		}
+  	} else {
+  		Object.keys = keysShim$1;
+  	}
+  	return Object.keys || keysShim$1;
   };
 
-  exports.right = function(str){
-    return str.replace(/\s*$/, '');
+  var objectKeys = keysShim$1;
+
+  var hasSymbols = typeof Symbol === 'function' && typeof Symbol('foo') === 'symbol';
+
+  var toStr$3 = Object.prototype.toString;
+  var concat = Array.prototype.concat;
+  var origDefineProperty = Object.defineProperty;
+
+  var isFunction$1 = function (fn) {
+  	return typeof fn === 'function' && toStr$3.call(fn) === '[object Function]';
   };
-  });
-  var trim_2 = trim_1.left;
-  var trim_3 = trim_1.right;
+
+  var arePropertyDescriptorsSupported = function () {
+  	var obj = {};
+  	try {
+  		origDefineProperty(obj, 'x', { enumerable: false, value: obj });
+  		// eslint-disable-next-line no-unused-vars, no-restricted-syntax
+  		for (var _ in obj) { // jscs:ignore disallowUnusedVariables
+  			return false;
+  		}
+  		return obj.x === obj;
+  	} catch (e) { /* this is IE 8. */
+  		return false;
+  	}
+  };
+  var supportsDescriptors = origDefineProperty && arePropertyDescriptorsSupported();
+
+  var defineProperty = function (object, name, value, predicate) {
+  	if (name in object && (!isFunction$1(predicate) || !predicate())) {
+  		return;
+  	}
+  	if (supportsDescriptors) {
+  		origDefineProperty(object, name, {
+  			configurable: true,
+  			enumerable: false,
+  			value: value,
+  			writable: true
+  		});
+  	} else {
+  		object[name] = value;
+  	}
+  };
+
+  var defineProperties = function (object, map) {
+  	var predicates = arguments.length > 2 ? arguments[2] : {};
+  	var props = objectKeys(map);
+  	if (hasSymbols) {
+  		props = concat.call(props, Object.getOwnPropertySymbols(map));
+  	}
+  	for (var i = 0; i < props.length; i += 1) {
+  		defineProperty(object, props[i], map[props[i]], predicates[props[i]]);
+  	}
+  };
+
+  defineProperties.supportsDescriptors = !!supportsDescriptors;
+
+  var defineProperties_1 = defineProperties;
+
+  /* globals
+  	Set,
+  	Map,
+  	WeakSet,
+  	WeakMap,
+
+  	Promise,
+
+  	Symbol,
+  	Proxy,
+
+  	Atomics,
+  	SharedArrayBuffer,
+
+  	ArrayBuffer,
+  	DataView,
+  	Uint8Array,
+  	Float32Array,
+  	Float64Array,
+  	Int8Array,
+  	Int16Array,
+  	Int32Array,
+  	Uint8ClampedArray,
+  	Uint16Array,
+  	Uint32Array,
+  */
+
+  var undefined$1; // eslint-disable-line no-shadow-restricted-names
+
+  var ThrowTypeError = Object.getOwnPropertyDescriptor
+  	? (function () { return Object.getOwnPropertyDescriptor(arguments, 'callee').get; }())
+  	: function () { throw new TypeError(); };
+
+  var hasSymbols$1 = typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol';
+
+  var getProto = Object.getPrototypeOf || function (x) { return x.__proto__; }; // eslint-disable-line no-proto
+  var generatorFunction = undefined$1;
+  var asyncFunction = undefined$1;
+  var asyncGenFunction = undefined$1;
+
+  var TypedArray = typeof Uint8Array === 'undefined' ? undefined$1 : getProto(Uint8Array);
+
+  var INTRINSICS = {
+  	'$ %Array%': Array,
+  	'$ %ArrayBuffer%': typeof ArrayBuffer === 'undefined' ? undefined$1 : ArrayBuffer,
+  	'$ %ArrayBufferPrototype%': typeof ArrayBuffer === 'undefined' ? undefined$1 : ArrayBuffer.prototype,
+  	'$ %ArrayIteratorPrototype%': hasSymbols$1 ? getProto([][Symbol.iterator]()) : undefined$1,
+  	'$ %ArrayPrototype%': Array.prototype,
+  	'$ %ArrayProto_entries%': Array.prototype.entries,
+  	'$ %ArrayProto_forEach%': Array.prototype.forEach,
+  	'$ %ArrayProto_keys%': Array.prototype.keys,
+  	'$ %ArrayProto_values%': Array.prototype.values,
+  	'$ %AsyncFromSyncIteratorPrototype%': undefined$1,
+  	'$ %AsyncFunction%': asyncFunction,
+  	'$ %AsyncFunctionPrototype%': undefined$1,
+  	'$ %AsyncGenerator%': undefined$1,
+  	'$ %AsyncGeneratorFunction%': asyncGenFunction,
+  	'$ %AsyncGeneratorPrototype%': undefined$1,
+  	'$ %AsyncIteratorPrototype%': undefined$1,
+  	'$ %Atomics%': typeof Atomics === 'undefined' ? undefined$1 : Atomics,
+  	'$ %Boolean%': Boolean,
+  	'$ %BooleanPrototype%': Boolean.prototype,
+  	'$ %DataView%': typeof DataView === 'undefined' ? undefined$1 : DataView,
+  	'$ %DataViewPrototype%': typeof DataView === 'undefined' ? undefined$1 : DataView.prototype,
+  	'$ %Date%': Date,
+  	'$ %DatePrototype%': Date.prototype,
+  	'$ %decodeURI%': decodeURI,
+  	'$ %decodeURIComponent%': decodeURIComponent,
+  	'$ %encodeURI%': encodeURI,
+  	'$ %encodeURIComponent%': encodeURIComponent,
+  	'$ %Error%': Error,
+  	'$ %ErrorPrototype%': Error.prototype,
+  	'$ %eval%': eval, // eslint-disable-line no-eval
+  	'$ %EvalError%': EvalError,
+  	'$ %EvalErrorPrototype%': EvalError.prototype,
+  	'$ %Float32Array%': typeof Float32Array === 'undefined' ? undefined$1 : Float32Array,
+  	'$ %Float32ArrayPrototype%': typeof Float32Array === 'undefined' ? undefined$1 : Float32Array.prototype,
+  	'$ %Float64Array%': typeof Float64Array === 'undefined' ? undefined$1 : Float64Array,
+  	'$ %Float64ArrayPrototype%': typeof Float64Array === 'undefined' ? undefined$1 : Float64Array.prototype,
+  	'$ %Function%': Function,
+  	'$ %FunctionPrototype%': Function.prototype,
+  	'$ %Generator%': undefined$1,
+  	'$ %GeneratorFunction%': generatorFunction,
+  	'$ %GeneratorPrototype%': undefined$1,
+  	'$ %Int8Array%': typeof Int8Array === 'undefined' ? undefined$1 : Int8Array,
+  	'$ %Int8ArrayPrototype%': typeof Int8Array === 'undefined' ? undefined$1 : Int8Array.prototype,
+  	'$ %Int16Array%': typeof Int16Array === 'undefined' ? undefined$1 : Int16Array,
+  	'$ %Int16ArrayPrototype%': typeof Int16Array === 'undefined' ? undefined$1 : Int8Array.prototype,
+  	'$ %Int32Array%': typeof Int32Array === 'undefined' ? undefined$1 : Int32Array,
+  	'$ %Int32ArrayPrototype%': typeof Int32Array === 'undefined' ? undefined$1 : Int32Array.prototype,
+  	'$ %isFinite%': isFinite,
+  	'$ %isNaN%': isNaN,
+  	'$ %IteratorPrototype%': hasSymbols$1 ? getProto(getProto([][Symbol.iterator]())) : undefined$1,
+  	'$ %JSON%': JSON,
+  	'$ %JSONParse%': JSON.parse,
+  	'$ %Map%': typeof Map === 'undefined' ? undefined$1 : Map,
+  	'$ %MapIteratorPrototype%': typeof Map === 'undefined' || !hasSymbols$1 ? undefined$1 : getProto(new Map()[Symbol.iterator]()),
+  	'$ %MapPrototype%': typeof Map === 'undefined' ? undefined$1 : Map.prototype,
+  	'$ %Math%': Math,
+  	'$ %Number%': Number,
+  	'$ %NumberPrototype%': Number.prototype,
+  	'$ %Object%': Object,
+  	'$ %ObjectPrototype%': Object.prototype,
+  	'$ %ObjProto_toString%': Object.prototype.toString,
+  	'$ %ObjProto_valueOf%': Object.prototype.valueOf,
+  	'$ %parseFloat%': parseFloat,
+  	'$ %parseInt%': parseInt,
+  	'$ %Promise%': typeof Promise === 'undefined' ? undefined$1 : Promise,
+  	'$ %PromisePrototype%': typeof Promise === 'undefined' ? undefined$1 : Promise.prototype,
+  	'$ %PromiseProto_then%': typeof Promise === 'undefined' ? undefined$1 : Promise.prototype.then,
+  	'$ %Promise_all%': typeof Promise === 'undefined' ? undefined$1 : Promise.all,
+  	'$ %Promise_reject%': typeof Promise === 'undefined' ? undefined$1 : Promise.reject,
+  	'$ %Promise_resolve%': typeof Promise === 'undefined' ? undefined$1 : Promise.resolve,
+  	'$ %Proxy%': typeof Proxy === 'undefined' ? undefined$1 : Proxy,
+  	'$ %RangeError%': RangeError,
+  	'$ %RangeErrorPrototype%': RangeError.prototype,
+  	'$ %ReferenceError%': ReferenceError,
+  	'$ %ReferenceErrorPrototype%': ReferenceError.prototype,
+  	'$ %Reflect%': typeof Reflect === 'undefined' ? undefined$1 : Reflect,
+  	'$ %RegExp%': RegExp,
+  	'$ %RegExpPrototype%': RegExp.prototype,
+  	'$ %Set%': typeof Set === 'undefined' ? undefined$1 : Set,
+  	'$ %SetIteratorPrototype%': typeof Set === 'undefined' || !hasSymbols$1 ? undefined$1 : getProto(new Set()[Symbol.iterator]()),
+  	'$ %SetPrototype%': typeof Set === 'undefined' ? undefined$1 : Set.prototype,
+  	'$ %SharedArrayBuffer%': typeof SharedArrayBuffer === 'undefined' ? undefined$1 : SharedArrayBuffer,
+  	'$ %SharedArrayBufferPrototype%': typeof SharedArrayBuffer === 'undefined' ? undefined$1 : SharedArrayBuffer.prototype,
+  	'$ %String%': String,
+  	'$ %StringIteratorPrototype%': hasSymbols$1 ? getProto(''[Symbol.iterator]()) : undefined$1,
+  	'$ %StringPrototype%': String.prototype,
+  	'$ %Symbol%': hasSymbols$1 ? Symbol : undefined$1,
+  	'$ %SymbolPrototype%': hasSymbols$1 ? Symbol.prototype : undefined$1,
+  	'$ %SyntaxError%': SyntaxError,
+  	'$ %SyntaxErrorPrototype%': SyntaxError.prototype,
+  	'$ %ThrowTypeError%': ThrowTypeError,
+  	'$ %TypedArray%': TypedArray,
+  	'$ %TypedArrayPrototype%': TypedArray ? TypedArray.prototype : undefined$1,
+  	'$ %TypeError%': TypeError,
+  	'$ %TypeErrorPrototype%': TypeError.prototype,
+  	'$ %Uint8Array%': typeof Uint8Array === 'undefined' ? undefined$1 : Uint8Array,
+  	'$ %Uint8ArrayPrototype%': typeof Uint8Array === 'undefined' ? undefined$1 : Uint8Array.prototype,
+  	'$ %Uint8ClampedArray%': typeof Uint8ClampedArray === 'undefined' ? undefined$1 : Uint8ClampedArray,
+  	'$ %Uint8ClampedArrayPrototype%': typeof Uint8ClampedArray === 'undefined' ? undefined$1 : Uint8ClampedArray.prototype,
+  	'$ %Uint16Array%': typeof Uint16Array === 'undefined' ? undefined$1 : Uint16Array,
+  	'$ %Uint16ArrayPrototype%': typeof Uint16Array === 'undefined' ? undefined$1 : Uint16Array.prototype,
+  	'$ %Uint32Array%': typeof Uint32Array === 'undefined' ? undefined$1 : Uint32Array,
+  	'$ %Uint32ArrayPrototype%': typeof Uint32Array === 'undefined' ? undefined$1 : Uint32Array.prototype,
+  	'$ %URIError%': URIError,
+  	'$ %URIErrorPrototype%': URIError.prototype,
+  	'$ %WeakMap%': typeof WeakMap === 'undefined' ? undefined$1 : WeakMap,
+  	'$ %WeakMapPrototype%': typeof WeakMap === 'undefined' ? undefined$1 : WeakMap.prototype,
+  	'$ %WeakSet%': typeof WeakSet === 'undefined' ? undefined$1 : WeakSet,
+  	'$ %WeakSetPrototype%': typeof WeakSet === 'undefined' ? undefined$1 : WeakSet.prototype
+  };
+
+  var GetIntrinsic = function GetIntrinsic(name, allowMissing) {
+  	if (arguments.length > 1 && typeof allowMissing !== 'boolean') {
+  		throw new TypeError('"allowMissing" argument must be a boolean');
+  	}
+
+  	var key = '$ ' + name;
+  	if (!(key in INTRINSICS)) {
+  		throw new SyntaxError('intrinsic ' + name + ' does not exist!');
+  	}
+
+  	// istanbul ignore if // hopefully this is impossible to test :-)
+  	if (typeof INTRINSICS[key] === 'undefined' && !allowMissing) {
+  		throw new TypeError('intrinsic ' + name + ' exists, but is not available. Please file an issue!');
+  	}
+  	return INTRINSICS[key];
+  };
+
+  var src = functionBind.call(Function.call, Object.prototype.hasOwnProperty);
+
+  var $TypeError = GetIntrinsic('%TypeError%');
+  var $SyntaxError = GetIntrinsic('%SyntaxError%');
+
+
+
+  var predicates = {
+    // https://ecma-international.org/ecma-262/6.0/#sec-property-descriptor-specification-type
+    'Property Descriptor': function isPropertyDescriptor(ES, Desc) {
+      if (ES.Type(Desc) !== 'Object') {
+        return false;
+      }
+      var allowed = {
+        '[[Configurable]]': true,
+        '[[Enumerable]]': true,
+        '[[Get]]': true,
+        '[[Set]]': true,
+        '[[Value]]': true,
+        '[[Writable]]': true
+      };
+
+      for (var key in Desc) { // eslint-disable-line
+        if (src(Desc, key) && !allowed[key]) {
+          return false;
+        }
+      }
+
+      var isData = src(Desc, '[[Value]]');
+      var IsAccessor = src(Desc, '[[Get]]') || src(Desc, '[[Set]]');
+      if (isData && IsAccessor) {
+        throw new $TypeError('Property Descriptors may not be both accessor and data descriptors');
+      }
+      return true;
+    }
+  };
+
+  var assertRecord = function assertRecord(ES, recordType, argumentName, value) {
+    var predicate = predicates[recordType];
+    if (typeof predicate !== 'function') {
+      throw new $SyntaxError('unknown record type: ' + recordType);
+    }
+    if (!predicate(ES, value)) {
+      throw new $TypeError(argumentName + ' must be a ' + recordType);
+    }
+    console.log(predicate(ES, value), value);
+  };
+
+  var _isNaN = Number.isNaN || function isNaN(a) {
+  	return a !== a;
+  };
+
+  var $isNaN = Number.isNaN || function (a) { return a !== a; };
+
+  var _isFinite = Number.isFinite || function (x) { return typeof x === 'number' && !$isNaN(x) && x !== Infinity && x !== -Infinity; };
+
+  var sign = function sign(number) {
+  	return number >= 0 ? 1 : -1;
+  };
+
+  var mod = function mod(number, modulo) {
+  	var remain = number % modulo;
+  	return Math.floor(remain >= 0 ? remain : remain + modulo);
+  };
 
   var fnToStr = Function.prototype.toString;
 
@@ -10701,7 +11782,7 @@
   		return false;
   	}
   };
-  var toStr = Object.prototype.toString;
+  var toStr$4 = Object.prototype.toString;
   var fnClass = '[object Function]';
   var genClass = '[object GeneratorFunction]';
   var hasToStringTag = typeof Symbol === 'function' && typeof Symbol.toStringTag === 'symbol';
@@ -10712,11 +11793,326 @@
   	if (typeof value === 'function' && !value.prototype) { return true; }
   	if (hasToStringTag) { return tryFunctionObject(value); }
   	if (isES6ClassFn(value)) { return false; }
-  	var strClass = toStr.call(value);
+  	var strClass = toStr$4.call(value);
   	return strClass === fnClass || strClass === genClass;
   };
 
-  var toStr$1 = Object.prototype.toString;
+  var isPrimitive = function isPrimitive(value) {
+  	return value === null || (typeof value !== 'function' && typeof value !== 'object');
+  };
+
+  var toStr$5 = Object.prototype.toString;
+
+
+
+
+
+  // http://ecma-international.org/ecma-262/5.1/#sec-8.12.8
+  var ES5internalSlots = {
+  	'[[DefaultValue]]': function (O) {
+  		var actualHint;
+  		if (arguments.length > 1) {
+  			actualHint = arguments[1];
+  		} else {
+  			actualHint = toStr$5.call(O) === '[object Date]' ? String : Number;
+  		}
+
+  		if (actualHint === String || actualHint === Number) {
+  			var methods = actualHint === String ? ['toString', 'valueOf'] : ['valueOf', 'toString'];
+  			var value, i;
+  			for (i = 0; i < methods.length; ++i) {
+  				if (isCallable(O[methods[i]])) {
+  					value = O[methods[i]]();
+  					if (isPrimitive(value)) {
+  						return value;
+  					}
+  				}
+  			}
+  			throw new TypeError('No default value');
+  		}
+  		throw new TypeError('invalid [[DefaultValue]] hint supplied');
+  	}
+  };
+
+  // http://ecma-international.org/ecma-262/5.1/#sec-9.1
+  var es5 = function ToPrimitive(input) {
+  	if (isPrimitive(input)) {
+  		return input;
+  	}
+  	if (arguments.length > 1) {
+  		return ES5internalSlots['[[DefaultValue]]'](input, arguments[1]);
+  	}
+  	return ES5internalSlots['[[DefaultValue]]'](input);
+  };
+
+  var $Object = GetIntrinsic('%Object%');
+  var $TypeError$1 = GetIntrinsic('%TypeError%');
+  var $String = GetIntrinsic('%String%');
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // https://es5.github.io/#x9
+  var ES5 = {
+  	ToPrimitive: es5,
+
+  	ToBoolean: function ToBoolean(value) {
+  		return !!value;
+  	},
+  	ToNumber: function ToNumber(value) {
+  		return +value; // eslint-disable-line no-implicit-coercion
+  	},
+  	ToInteger: function ToInteger(value) {
+  		var number = this.ToNumber(value);
+  		if (_isNaN(number)) { return 0; }
+  		if (number === 0 || !_isFinite(number)) { return number; }
+  		return sign(number) * Math.floor(Math.abs(number));
+  	},
+  	ToInt32: function ToInt32(x) {
+  		return this.ToNumber(x) >> 0;
+  	},
+  	ToUint32: function ToUint32(x) {
+  		return this.ToNumber(x) >>> 0;
+  	},
+  	ToUint16: function ToUint16(value) {
+  		var number = this.ToNumber(value);
+  		if (_isNaN(number) || number === 0 || !_isFinite(number)) { return 0; }
+  		var posInt = sign(number) * Math.floor(Math.abs(number));
+  		return mod(posInt, 0x10000);
+  	},
+  	ToString: function ToString(value) {
+  		return $String(value);
+  	},
+  	ToObject: function ToObject(value) {
+  		this.CheckObjectCoercible(value);
+  		return $Object(value);
+  	},
+  	CheckObjectCoercible: function CheckObjectCoercible(value, optMessage) {
+  		/* jshint eqnull:true */
+  		if (value == null) {
+  			throw new $TypeError$1(optMessage || 'Cannot call method on ' + value);
+  		}
+  		return value;
+  	},
+  	IsCallable: isCallable,
+  	SameValue: function SameValue(x, y) {
+  		if (x === y) { // 0 === -0, but they are not identical.
+  			if (x === 0) { return 1 / x === 1 / y; }
+  			return true;
+  		}
+  		return _isNaN(x) && _isNaN(y);
+  	},
+
+  	// https://www.ecma-international.org/ecma-262/5.1/#sec-8
+  	Type: function Type(x) {
+  		if (x === null) {
+  			return 'Null';
+  		}
+  		if (typeof x === 'undefined') {
+  			return 'Undefined';
+  		}
+  		if (typeof x === 'function' || typeof x === 'object') {
+  			return 'Object';
+  		}
+  		if (typeof x === 'number') {
+  			return 'Number';
+  		}
+  		if (typeof x === 'boolean') {
+  			return 'Boolean';
+  		}
+  		if (typeof x === 'string') {
+  			return 'String';
+  		}
+  	},
+
+  	// https://ecma-international.org/ecma-262/6.0/#sec-property-descriptor-specification-type
+  	IsPropertyDescriptor: function IsPropertyDescriptor(Desc) {
+  		if (this.Type(Desc) !== 'Object') {
+  			return false;
+  		}
+  		var allowed = {
+  			'[[Configurable]]': true,
+  			'[[Enumerable]]': true,
+  			'[[Get]]': true,
+  			'[[Set]]': true,
+  			'[[Value]]': true,
+  			'[[Writable]]': true
+  		};
+
+  		for (var key in Desc) { // eslint-disable-line
+  			if (src(Desc, key) && !allowed[key]) {
+  				return false;
+  			}
+  		}
+
+  		var isData = src(Desc, '[[Value]]');
+  		var IsAccessor = src(Desc, '[[Get]]') || src(Desc, '[[Set]]');
+  		if (isData && IsAccessor) {
+  			throw new $TypeError$1('Property Descriptors may not be both accessor and data descriptors');
+  		}
+  		return true;
+  	},
+
+  	// https://ecma-international.org/ecma-262/5.1/#sec-8.10.1
+  	IsAccessorDescriptor: function IsAccessorDescriptor(Desc) {
+  		if (typeof Desc === 'undefined') {
+  			return false;
+  		}
+
+  		assertRecord(this, 'Property Descriptor', 'Desc', Desc);
+
+  		if (!src(Desc, '[[Get]]') && !src(Desc, '[[Set]]')) {
+  			return false;
+  		}
+
+  		return true;
+  	},
+
+  	// https://ecma-international.org/ecma-262/5.1/#sec-8.10.2
+  	IsDataDescriptor: function IsDataDescriptor(Desc) {
+  		if (typeof Desc === 'undefined') {
+  			return false;
+  		}
+
+  		assertRecord(this, 'Property Descriptor', 'Desc', Desc);
+
+  		if (!src(Desc, '[[Value]]') && !src(Desc, '[[Writable]]')) {
+  			return false;
+  		}
+
+  		return true;
+  	},
+
+  	// https://ecma-international.org/ecma-262/5.1/#sec-8.10.3
+  	IsGenericDescriptor: function IsGenericDescriptor(Desc) {
+  		if (typeof Desc === 'undefined') {
+  			return false;
+  		}
+
+  		assertRecord(this, 'Property Descriptor', 'Desc', Desc);
+
+  		if (!this.IsAccessorDescriptor(Desc) && !this.IsDataDescriptor(Desc)) {
+  			return true;
+  		}
+
+  		return false;
+  	},
+
+  	// https://ecma-international.org/ecma-262/5.1/#sec-8.10.4
+  	FromPropertyDescriptor: function FromPropertyDescriptor(Desc) {
+  		if (typeof Desc === 'undefined') {
+  			return Desc;
+  		}
+
+  		assertRecord(this, 'Property Descriptor', 'Desc', Desc);
+
+  		if (this.IsDataDescriptor(Desc)) {
+  			return {
+  				value: Desc['[[Value]]'],
+  				writable: !!Desc['[[Writable]]'],
+  				enumerable: !!Desc['[[Enumerable]]'],
+  				configurable: !!Desc['[[Configurable]]']
+  			};
+  		} else if (this.IsAccessorDescriptor(Desc)) {
+  			return {
+  				get: Desc['[[Get]]'],
+  				set: Desc['[[Set]]'],
+  				enumerable: !!Desc['[[Enumerable]]'],
+  				configurable: !!Desc['[[Configurable]]']
+  			};
+  		} else {
+  			throw new $TypeError$1('FromPropertyDescriptor must be called with a fully populated Property Descriptor');
+  		}
+  	},
+
+  	// https://ecma-international.org/ecma-262/5.1/#sec-8.10.5
+  	ToPropertyDescriptor: function ToPropertyDescriptor(Obj) {
+  		if (this.Type(Obj) !== 'Object') {
+  			throw new $TypeError$1('ToPropertyDescriptor requires an object');
+  		}
+
+  		var desc = {};
+  		if (src(Obj, 'enumerable')) {
+  			desc['[[Enumerable]]'] = this.ToBoolean(Obj.enumerable);
+  		}
+  		if (src(Obj, 'configurable')) {
+  			desc['[[Configurable]]'] = this.ToBoolean(Obj.configurable);
+  		}
+  		if (src(Obj, 'value')) {
+  			desc['[[Value]]'] = Obj.value;
+  		}
+  		if (src(Obj, 'writable')) {
+  			desc['[[Writable]]'] = this.ToBoolean(Obj.writable);
+  		}
+  		if (src(Obj, 'get')) {
+  			var getter = Obj.get;
+  			if (typeof getter !== 'undefined' && !this.IsCallable(getter)) {
+  				throw new TypeError('getter must be a function');
+  			}
+  			desc['[[Get]]'] = getter;
+  		}
+  		if (src(Obj, 'set')) {
+  			var setter = Obj.set;
+  			if (typeof setter !== 'undefined' && !this.IsCallable(setter)) {
+  				throw new $TypeError$1('setter must be a function');
+  			}
+  			desc['[[Set]]'] = setter;
+  		}
+
+  		if ((src(desc, '[[Get]]') || src(desc, '[[Set]]')) && (src(desc, '[[Value]]') || src(desc, '[[Writable]]'))) {
+  			throw new $TypeError$1('Invalid property descriptor. Cannot both specify accessors and a value or writable attribute');
+  		}
+  		return desc;
+  	}
+  };
+
+  var es5$1 = ES5;
+
+  var replace = functionBind.call(Function.call, String.prototype.replace);
+
+  var leftWhitespace = /^[\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF]+/;
+  var rightWhitespace = /[\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF]+$/;
+
+  var implementation$2 = function trim() {
+  	var S = es5$1.ToString(es5$1.CheckObjectCoercible(this));
+  	return replace(replace(S, leftWhitespace, ''), rightWhitespace, '');
+  };
+
+  var zeroWidthSpace = '\u200b';
+
+  var polyfill = function getPolyfill() {
+  	if (String.prototype.trim && zeroWidthSpace.trim() === zeroWidthSpace) {
+  		return String.prototype.trim;
+  	}
+  	return implementation$2;
+  };
+
+  var shim = function shimStringTrim() {
+  	var polyfill$$1 = polyfill();
+  	defineProperties_1(String.prototype, { trim: polyfill$$1 }, { trim: function () { return String.prototype.trim !== polyfill$$1; } });
+  	return polyfill$$1;
+  };
+
+  var boundTrim = functionBind.call(Function.call, polyfill());
+
+  defineProperties_1(boundTrim, {
+  	getPolyfill: polyfill,
+  	implementation: implementation$2,
+  	shim: shim
+  });
+
+  var string_prototype_trim = boundTrim;
+
+  var toStr$6 = Object.prototype.toString;
   var hasOwnProperty = Object.prototype.hasOwnProperty;
 
   var forEachArray = function forEachArray(array, iterator, receiver) {
@@ -10764,7 +12160,7 @@
           receiver = thisArg;
       }
 
-      if (toStr$1.call(list) === '[object Array]') {
+      if (toStr$6.call(list) === '[object Array]') {
           forEachArray(list, iterator, receiver);
       } else if (typeof list === 'string') {
           forEachString(list, iterator, receiver);
@@ -10786,11 +12182,11 @@
     var result = {};
 
     forEach_1(
-        trim_1(headers).split('\n')
+        string_prototype_trim(headers).split('\n')
       , function (row) {
           var index = row.indexOf(':')
-            , key = trim_1(row.slice(0, index)).toLowerCase()
-            , value = trim_1(row.slice(index + 1));
+            , key = string_prototype_trim(row.slice(0, index)).toLowerCase()
+            , value = string_prototype_trim(row.slice(index + 1));
 
           if (typeof(result[key]) === 'undefined') {
             result[key] = value;
@@ -12345,7 +13741,7 @@
     return EntitlementRequest;
   }();
 
-  var Plugin$1 = videojs.getPlugin('plugin');
+  var Plugin$2 = videojs.getPlugin('plugin');
   /**
    * Program Service Plugin
    * @param {Player} player The `Player` that this class should be attached to.
@@ -12731,6 +14127,7 @@
 
         if (!_this4.currentVOD_ || _this4.currentVOD_.assetId !== asset.assetId) {
           _this4.currentVOD_ = asset;
+          extplayer.setTechVOD(_this4.player, asset);
           log('ASSET_CHANGED');
 
           _this4.player.trigger(empPlayerEvents.ASSET_CHANGED, {
@@ -13115,9 +14512,9 @@
     }]);
 
     return ProgramService;
-  }(Plugin$1);
+  }(Plugin$2);
 
-  ProgramService.VERSION = '2.1.101-331';
+  ProgramService.VERSION = '2.1.102-332';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -13125,7 +14522,7 @@
     videojs.registerPlugin('programService', ProgramService);
   }
 
-  var Plugin$2 = videojs.getPlugin('plugin');
+  var Plugin$3 = videojs.getPlugin('plugin');
   /**
    * EntitlementExpirationService
    *
@@ -13354,9 +14751,9 @@
     }]);
 
     return EntitlementExpirationService;
-  }(Plugin$2);
+  }(Plugin$3);
 
-  EntitlementExpirationService.VERSION = '2.1.101-331';
+  EntitlementExpirationService.VERSION = '2.1.102-332';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -13909,7 +15306,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.101-331';
+  EntitlementMiddleware.VERSION = '2.1.102-332';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -14038,7 +15435,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.1.101-331';
+  empPlayer.VERSION = '2.1.102-332';
   /*
    * Universal Module Definition (UMD)
    *
