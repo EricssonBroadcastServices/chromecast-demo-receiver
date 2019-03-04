@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.102-335 
+ * EMP-Player 2.1.102-336 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -6429,7 +6429,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.1.102-335';
+  vttThumbnailsPlugin.VERSION = '2.1.102-336';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -8994,7 +8994,7 @@
     _createClass(Player, [{
       key: "version",
       get: function get() {
-        return '2.1.102-335';
+        return '2.1.102-336';
       }
       /**
        * Get entitlement
@@ -10344,7 +10344,7 @@
     return AnalyticsPlugin;
   }(Plugin$1);
 
-  AnalyticsPlugin.VERSION = '2.1.102-335';
+  AnalyticsPlugin.VERSION = '2.1.102-336';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -13284,6 +13284,8 @@
     ;
 
     _proto.getServerTime = function getServerTime(callback) {
+      var _this8 = this;
+
       var customer = this.customer;
       var businessUnit = this.businessUnit;
 
@@ -13306,6 +13308,13 @@
           return;
         }
 
+        error = _this8.checkForError(error, response);
+
+        if (error) {
+          callback(null, error);
+          return;
+        }
+
         var json = JSON.parse(body);
         var date = new Date(json.iso8601);
         callback(date);
@@ -13319,7 +13328,7 @@
     ;
 
     _proto.getPreferences = function getPreferences(callback) {
-      var _this8 = this;
+      var _this9 = this;
 
       var customer = this.customer;
       var businessUnit = this.businessUnit;
@@ -13327,7 +13336,7 @@
       xhr.get(requestURL, {
         headers: this.requestHeaders
       }, function (error, response, body) {
-        if (_this8.checkForError(error, response, callback)) {
+        if (_this9.checkForError(error, response, callback)) {
           return;
         }
 
@@ -13344,7 +13353,7 @@
     ;
 
     _proto.savePreferences = function savePreferences(preferences, callback) {
-      var _this9 = this;
+      var _this10 = this;
 
       var customer = this.customer;
       var businessUnit = this.businessUnit;
@@ -13363,7 +13372,7 @@
         headers: this.requestHeaders
       }, function (error, response, body) {
         // Check and handles error
-        if (_this9.checkForError(error, response, callback)) {
+        if (_this10.checkForError(error, response, callback)) {
           return;
         }
 
@@ -13381,14 +13390,14 @@
     ;
 
     _proto.getEPG = function getEPG(channelId, from, to, callback) {
-      var _this10 = this;
+      var _this11 = this;
 
       var customer = this.customer;
       var businessUnit = this.businessUnit;
       var requestURL = this.options_.exposureApiURL + '/' + this.options_.exposureApiVersion + '/customer/' + customer + '/businessunit/' + businessUnit + '/epg/' + channelId;
       requestURL += '?from=' + from + '&to=' + to;
       xhr.get(requestURL, null, function (error, response, body) {
-        if (_this10.checkForError(error, response, callback)) {
+        if (_this11.checkForError(error, response, callback)) {
           return;
         }
 
@@ -13466,7 +13475,7 @@
     ;
 
     _proto.getAssetInfo = function getAssetInfo(assetId, callback) {
-      var _this11 = this;
+      var _this12 = this;
 
       var customer = this.customer;
       var businessUnit = this.businessUnit;
@@ -13478,7 +13487,7 @@
         } // Check and handles error
 
 
-        if (_this11.checkForError(error, response, callback)) {
+        if (_this12.checkForError(error, response, callback)) {
           return;
         }
 
@@ -13496,7 +13505,7 @@
     ;
 
     _proto.verifyEntitlement = function verifyEntitlement(assetId, playRequest, callback) {
-      var _this12 = this;
+      var _this13 = this;
 
       if (callback === void 0) {
         callback = function callback() {};
@@ -13526,7 +13535,7 @@
         headers: this.requestHeaders
       }, function (error, response, body) {
         // Check and handles error
-        if (_this12.checkForError(error, response, callback)) {
+        if (_this13.checkForError(error, response, callback)) {
           return;
         }
 
@@ -13544,7 +13553,7 @@
     ;
 
     _proto.verifySession = function verifySession(okFn, nokFn) {
-      var _this13 = this;
+      var _this14 = this;
 
       var customer = this.customer;
       var businessUnit = this.businessUnit;
@@ -13553,7 +13562,7 @@
         headers: this.requestHeaders
       }, function (error, response, body) {
         // Check and handles error
-        if (_this13.checkForError(error, response)) {
+        if (_this14.checkForError(error, response)) {
           if (nokFn) {
             nokFn();
           }
@@ -14514,7 +14523,7 @@
     return ProgramService;
   }(Plugin$2);
 
-  ProgramService.VERSION = '2.1.102-335';
+  ProgramService.VERSION = '2.1.102-336';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -14753,7 +14762,7 @@
     return EntitlementExpirationService;
   }(Plugin$3);
 
-  EntitlementExpirationService.VERSION = '2.1.102-335';
+  EntitlementExpirationService.VERSION = '2.1.102-336';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -15306,7 +15315,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.102-335';
+  EntitlementMiddleware.VERSION = '2.1.102-336';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -15435,7 +15444,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.1.102-335';
+  empPlayer.VERSION = '2.1.102-336';
   /*
    * Universal Module Definition (UMD)
    *
