@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.102-338 
+ * EMP-Player 2.1.102-339 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -1599,6 +1599,9 @@
 
     return version;
   }();
+  var IS_TIZEN = /Tizen/i.test(USER_AGENT);
+  var IS_WEBOS = /webOS/i.test(USER_AGENT) || /Web0S/i.test(USER_AGENT) || /WebOS/i.test(USER_AGENT) || /NetCast/i.test(USER_AGENT);
+  var IS_SMARTTV = /SmartTV/i.test(USER_AGENT) || IS_WEBOS || IS_TIZEN;
   var IS_SAFARI = /Safari/i.test(USER_AGENT) && !IS_CHROME && !IS_ANDROID && !IS_EDGE;
   var TOUCH_ENABLED = isReal() && ('ontouchstart' in window_1 || window_1.DocumentTouch && window_1.document instanceof window_1.DocumentTouch);
   var BACKGROUND_SIZE_SUPPORTED = isReal() && 'backgroundSize' in window_1.document.createElement('video').style;
@@ -4498,7 +4501,7 @@
     return DownloadService;
   }(Plugin);
 
-  DownloadService.VERSION = '2.1.102-338';
+  DownloadService.VERSION = '2.1.102-339';
 
   if (videojs.getPlugin('DownloadService')) {
     videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -4796,6 +4799,11 @@
         };
       } else if (source.keySystems) {
         config.drm.servers = source.keySystems;
+      } // Remove playready from smartTV, we only use widevine for smartTV
+
+
+      if (IS_SMARTTV && config.drm.servers && config.drm.servers['com.microsoft.playready']) {
+        config.drm.servers['com.microsoft.playready'] = undefined;
       }
 
       if (this.certificate_) {
@@ -6293,7 +6301,7 @@
 
   EmpShaka.prototype.featuresNativeTextTracks = false;
   Tech$1.withSourceHandlers(EmpShaka);
-  EmpShaka.VERSION = '2.1.102-338'; // Unset source handlers set by Html5 super class.
+  EmpShaka.VERSION = '2.1.102-339'; // Unset source handlers set by Html5 super class.
   // We do not intent to support any sources other then sources allowed by nativeSourceHandler
 
   EmpShaka.sourceHandlers = [];
