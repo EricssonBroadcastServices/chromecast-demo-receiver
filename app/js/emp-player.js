@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.103-342 
+ * EMP-Player 2.1.103-343 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -915,18 +915,6 @@
   function getBaseUrl(url) {
     var re = new RegExp(/^.*\//);
     return re.exec(url)[0];
-  }
-  /**
-   * get hashCode
-   *
-   * @param {string} str
-   * @return {string} the hashCode
-   */
-
-  function hashCode(str) {
-    return str.split('').reduce(function (prevHash, currVal) {
-      return (prevHash << 5) - prevHash + currVal.charCodeAt(0) | 0;
-    }, 0);
   }
 
   /**
@@ -2798,6 +2786,29 @@
       name: M[0],
       version: M[1]
     };
+  }
+  /**
+   * Creates GUID for user based on several different browser variables
+   * It will never be RFC4122 compliant but it is robust
+   *
+   * @return {number} GUID
+   */
+
+  function guid() {
+    try {
+      var nav = window_1.navigator;
+      var screen = window_1.screen;
+      var result = nav.mimeTypes.length;
+      result += nav.userAgent.replace(/\D+/g, '');
+      result += nav.plugins.length;
+      result += screen.height || '';
+      result += screen.width || '';
+      result += screen.pixelDepth || '';
+      return result;
+    } catch (e) {// Do nothing
+    }
+
+    return 0;
   }
 
   var Component$5 = videojs.getComponent('Component');
@@ -6447,7 +6458,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.1.103-342';
+  vttThumbnailsPlugin.VERSION = '2.1.103-343';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -9012,7 +9023,7 @@
     _createClass(Player, [{
       key: "version",
       get: function get() {
-        return '2.1.103-342';
+        return '2.1.103-343';
       }
       /**
        * Get entitlement
@@ -10362,7 +10373,7 @@
     return AnalyticsPlugin;
   }(Plugin$1);
 
-  AnalyticsPlugin.VERSION = '2.1.103-342';
+  AnalyticsPlugin.VERSION = '2.1.103-343';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -12694,7 +12705,7 @@
         var requestData = {
           accountId: username,
           userId: username,
-          deviceId: 'WEB_' + hashCode(window_1.navigator && window_1.navigator.userAgent + username),
+          deviceId: 'WEB_' + guid(),
           device: {
             height: window_1.screen.height,
             width: window_1.screen.width,
@@ -12742,7 +12753,7 @@
         }
 
         var _requestData = {
-          deviceId: 'WEB_' + hashCode(window_1.navigator && window_1.navigator.userAgent + username),
+          deviceId: 'WEB_' + guid(),
           device: {
             height: window_1.screen.height,
             width: window_1.screen.width,
@@ -14541,7 +14552,7 @@
     return ProgramService;
   }(Plugin$2);
 
-  ProgramService.VERSION = '2.1.103-342';
+  ProgramService.VERSION = '2.1.103-343';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -14780,7 +14791,7 @@
     return EntitlementExpirationService;
   }(Plugin$3);
 
-  EntitlementExpirationService.VERSION = '2.1.103-342';
+  EntitlementExpirationService.VERSION = '2.1.103-343';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -15333,7 +15344,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.103-342';
+  EntitlementMiddleware.VERSION = '2.1.103-343';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -15462,7 +15473,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.1.103-342';
+  empPlayer.VERSION = '2.1.103-343';
   /*
    * Universal Module Definition (UMD)
    *
