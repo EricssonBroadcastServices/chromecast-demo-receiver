@@ -181,3 +181,14 @@ https://github.com/google/shaka-player/releases
 
 ### New features
 - Latest HtML5-player 2.1.101
+
+## 2.1.102
+
+### New features
+- Latest HtML5-player 2.1.102
+
+## 2.1.103
+
+### New features
+- Latest HtML5-player 2.1.103
+- **EMP-12569**	Program service use new endpoints to fetch next/previous program.
