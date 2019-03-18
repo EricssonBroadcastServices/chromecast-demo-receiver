@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.103-354 
+ * EMP-Player 2.1.103-355 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -6460,7 +6460,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.1.103-354';
+  vttThumbnailsPlugin.VERSION = '2.1.103-355';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -6785,6 +6785,10 @@
             src: _this.cache_.source.yospaceUrl,
             type: 'application/yospace'
           });
+        } else if (_this.cache_ && _this.cache_.source && _this.cache_.source.streamInfo) {
+          _this.cache_.source.type = 'video/emp';
+
+          _this.src(_this.cache_.source);
         } else if (_this.cache_ && _this.cache_.source) {
           _this.src(_this.cache_.source);
         }
@@ -7257,20 +7261,53 @@
       }
     }
     /**
-     * Reset and restart form current playhead position
+     * Restart form current playhead position
+     *
      */
     ;
 
-    _proto.resetAndRestartFormPlayhead = function resetAndRestartFormPlayhead() {
-      var program = this.getProgramDetails();
+    _proto.restartFormPlayhead = function restartFormPlayhead() {
+      this.resetAndRestartFormPlayhead(false);
+    }
+    /**
+     * Reset and restart form current playhead position
+     *
+     * @param {boolean} reset = true
+     */
+    ;
 
-      if (program) {
-        extplayer.currentAsset(this, program.assetId, program.programId, program.channelId);
+    _proto.resetAndRestartFormPlayhead = function resetAndRestartFormPlayhead(reset) {
+      if (reset === void 0) {
+        reset = true;
       }
 
-      var startTime = this.getAbsoluteTime();
-      log('resetAndRestartFormPlayhead', startTime);
-      this.reset();
+      if (this.hasStarted()) {
+        this.options_.autoplay = true;
+      }
+
+      this.autoplay(this.options_.autoplay);
+      var asset = extplayer.currentAsset(this);
+
+      if (asset) {
+        if (this.cache_.source) {
+          this.cache_.source = undefined;
+        }
+
+        extplayer.currentAsset(this, asset.assetId, asset.programId, asset.channelId);
+      }
+
+      var startTime = this.playheadTime();
+
+      if (!startTime) {
+        startTime = this.prePlayheadTime_;
+      }
+
+      log('resetAndRestartFormPlayhead', startTime, reset);
+
+      if (reset) {
+        this.reset();
+      }
+
       this.startResetAndReloadTimer_();
       this.restart(null, startTime);
     }
@@ -7724,8 +7761,18 @@
     ;
 
     _proto.reset = function reset() {
+      var _this5 = this;
+
       this.clearResetAndReloadTimer_();
       this.hasStarted(false);
+      this.options_.source = undefined;
+      Object.keys(Tech.techs_).forEach(function (techName) {
+        var techOpt = _this5.options_[techName.toLowerCase()];
+
+        if (techOpt) {
+          techOpt.source = undefined;
+        }
+      });
 
       _VjsPlayer.prototype.reset.call(this);
     }
@@ -7751,7 +7798,7 @@
     ;
 
     _proto.startResetAndReloadTimer_ = function startResetAndReloadTimer_() {
-      var _this5 = this;
+      var _this6 = this;
 
       if (!IS_CHROMECAST || !this.hasStarted()) {
         this.clearResetAndReloadTimer_();
@@ -7773,10 +7820,10 @@
           }
 
           this.resetAndReloadTimer_ = this.setTimeout(function () {
-            _this5.clearResetAndReloadTimer_();
+            _this6.clearResetAndReloadTimer_();
 
-            if (_this5.isLive() && _this5.streamType === 'DASH') {
-              _this5.resetAndRestartFormPlayhead();
+            if (_this6.isLive() && _this6.streamType === 'DASH') {
+              _this6.resetAndRestartFormPlayhead();
             }
           }, time * 1000 * 60);
         }
@@ -8751,7 +8798,7 @@
     ;
 
     _proto.playPreviousProgram = function playPreviousProgram(end) {
-      var _this6 = this;
+      var _this7 = this;
 
       if (this.sourceChanging_) {
         log('playPreviousProgram ignore sourceChanging');
@@ -8768,9 +8815,9 @@
             if (error) {
               log.warn('playPreviousProgram', error);
             } else if (end) {
-              _this6.playheadTime(program.end.getTime() - 30000);
+              _this7.playheadTime(program.end.getTime() - 30000);
             } else {
-              _this6.playheadTime(program.start.getTime() + 1000);
+              _this7.playheadTime(program.start.getTime() + 1000);
             }
           });
         } else {
@@ -8784,7 +8831,7 @@
     ;
 
     _proto.playNextProgram = function playNextProgram() {
-      var _this7 = this;
+      var _this8 = this;
 
       if (this.sourceChanging_) {
         log('playNextProgram ignore sourceChanging');
@@ -8804,7 +8851,7 @@
             } // Play 1 sec from the end not nextProgram start
 
 
-            _this7.playheadTime(program.end.getTime() + 1000);
+            _this8.playheadTime(program.end.getTime() + 1000);
           });
         } else {
           extplayer.playNextProgram(this);
@@ -8871,17 +8918,17 @@
     ;
 
     _proto.handleTechWaiting_ = function handleTechWaiting_() {
-      var _this8 = this;
+      var _this9 = this;
 
       if (this.hasStarted() && !this.ended() && !this.paused() && !this.hasClass('vjs-waiting')) {
         this.playheadMoving_(function (moving) {
           // log('playheadMoving', moving);
           if (!moving) {
-            _this8.addClass('vjs-waiting');
+            _this9.addClass('vjs-waiting');
 
-            _this8.trigger(empPlayerEvents.WAITING);
+            _this9.trigger(empPlayerEvents.WAITING);
 
-            _this8.removeWaitingClass_();
+            _this9.removeWaitingClass_();
           }
         });
       }
@@ -8894,24 +8941,24 @@
     ;
 
     _proto.removeWaitingClass_ = function removeWaitingClass_() {
-      var _this9 = this;
+      var _this10 = this;
 
       this.one('timeupdate', function () {
         // log('playheadMoving off', this.prePlayheadTime_, this.playheadTime(), this.playheadTime() - this.prePlayheadTime_);
-        if (_this9.playheadTime() - _this9.prePlayheadTime_ > 1 || _this9.playheadTime() - _this9.prePlayheadTime_ < -1) {
+        if (_this10.playheadTime() - _this10.prePlayheadTime_ > 1 || _this10.playheadTime() - _this10.prePlayheadTime_ < -1) {
           // log('playheadMoving off', true);
-          _this9.prePlayheadTime_ = 0;
+          _this10.prePlayheadTime_ = 0;
 
-          _this9.removeClass('vjs-waiting'); // edgeIELoadingBugWorkaround_(); Add if need
+          _this10.removeClass('vjs-waiting'); // edgeIELoadingBugWorkaround_(); Add if need
 
 
-          if (_this9.paused()) {
-            _this9.trigger(empPlayerEvents.PAUSE);
+          if (_this10.paused()) {
+            _this10.trigger(empPlayerEvents.PAUSE);
           } else {
-            _this9.trigger(empPlayerEvents.PLAYING);
+            _this10.trigger(empPlayerEvents.PLAYING);
           }
         } else {
-          _this9.removeWaitingClass_();
+          _this10.removeWaitingClass_();
         }
       });
     }
@@ -9045,7 +9092,7 @@
     _createClass(Player, [{
       key: "version",
       get: function get() {
-        return '2.1.103-354';
+        return '2.1.103-355';
       }
       /**
        * Get entitlement
@@ -9275,6 +9322,7 @@
       this.INITIAL_REFERENCE_TIME = 1;
       this.player_ = player;
       this.analytics_ = analytics;
+      this.analytics_.afterSendData_ = this.onDataSent.bind(this);
       this.sessionId_ = null;
       this.customAttributes = analyticsConfig.analytics && analyticsConfig.analytics.customAttributes;
       this.exposure = analyticsConfig.exposure;
@@ -9379,7 +9427,9 @@
 
         if (sessionId && _this.analytics_ && _this.analytics_.ok && _this.analytics_.ok(sessionId) === false) {
           if (_this.exposure) {
-            _this.exposure.verifySession(null, function () {
+            _this.exposure.verifySession(function () {
+              _this.player_.resetAndRestartFormPlayhead();
+            }, function () {
               if (_this.player_.el_) {
                 _this.player_.trigger(empPlayerEvents.ERROR, '401 INVALID_SESSION_TOKEN: The session token is no longer valid.');
 
@@ -9598,6 +9648,24 @@
       });
       this.player_.one(empPlayerEvents.ERROR, this.onErrorBeforeAssetBind);
       this.player_.one(empPlayerEvents.ENTITLEMENT_CHANGE, this.onEntitlementChangeBind);
+    }
+    /**
+     * Callback after data sent to analytics
+     *
+     * @param {Date} newRequestDate
+     * @param {Date} lastRequestDate
+     */
+    ;
+
+    _proto.onDataSent = function onDataSent(newRequestDate, lastRequestDate) {
+      log('onDataSent', newRequestDate, lastRequestDate);
+
+      if (newRequestDate && lastRequestDate) {
+        // resetAndRestart if 10 minutes since last heartbeat
+        if (newRequestDate.getTime() > lastRequestDate.getTime() + 1000 * 60 * 10) {
+          this.player_.resetAndRestartFormPlayhead();
+        }
+      }
     }
     /**
      * Callback when starting to load new media chunks
@@ -10395,7 +10463,7 @@
     return AnalyticsPlugin;
   }(Plugin$1);
 
-  AnalyticsPlugin.VERSION = '2.1.103-354';
+  AnalyticsPlugin.VERSION = '2.1.103-355';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -14377,6 +14445,7 @@
 
       this.currentProgram_ = null;
       this.shiftProgram_ = null;
+      extplayer.currentAsset(this.player, assetId);
 
       if (this.currentVOD_ && this.currentVOD_.assetId === assetId) {
         return;
@@ -14819,7 +14888,7 @@
     return ProgramService;
   }(Plugin$2);
 
-  ProgramService.VERSION = '2.1.103-354';
+  ProgramService.VERSION = '2.1.103-355';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -15058,7 +15127,7 @@
     return EntitlementExpirationService;
   }(Plugin$3);
 
-  EntitlementExpirationService.VERSION = '2.1.103-354';
+  EntitlementExpirationService.VERSION = '2.1.103-355';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -15611,7 +15680,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.103-354';
+  EntitlementMiddleware.VERSION = '2.1.103-355';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -15740,7 +15809,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.1.103-354';
+  empPlayer.VERSION = '2.1.103-355';
   /*
    * Universal Module Definition (UMD)
    *
