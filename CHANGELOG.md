@@ -192,3 +192,6 @@ https://github.com/google/shaka-player/releases
 ### New features
 - Latest HtML5-player 2.1.103
 - **EMP-12569**	Program service use new endpoints to fetch next/previous program.
+- **New options** epgPollingDisabled
+- **EMP-12627** Handle endless sessions.
+- **EMP-12637** Don't stop playback when network disconnected or io_suppended.
