@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.103-355 
+ * EMP-Player 2.1.103-356 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -1685,12 +1685,6 @@
       var code = error.code || '';
       var msg = error.message || '';
       var message = 'Tech: ' + techName + '  Can\'t load video: error category: ' + category + ' code: ' + code + ' message: ' + msg;
-
-      if (category !== 6 && code !== 6001) {
-        // Hide DRM error for Safari with Shaka-Dash
-        log.error(message);
-      }
-
       this.trigger(empPlayerEvents.RECOVERABLE_ASSET_ERROR, {
         source: this.options_.source,
         techName: techName,
@@ -4501,7 +4495,7 @@
     return DownloadService;
   }(Plugin);
 
-  DownloadService.VERSION = '2.1.103-355';
+  DownloadService.VERSION = '2.1.103-356';
 
   if (videojs.getPlugin('DownloadService')) {
     videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -5159,11 +5153,14 @@
       }
 
       switch (error.category) {
-        // 404s on MPD
+        // Errors from the network stack.
         case 1:
           if (error.code === 1002) {
-            this.triggerRecoverableError(error);
-            break;
+            log.warn('An HTTP network request failed with an error, but not from the server.');
+            return;
+          } else if (error.code === 1003) {
+            log.warn('A network request timed out.');
+            return;
           }
 
         // Errors parsing or processing audio or video streams.
@@ -6301,7 +6298,7 @@
 
   EmpShaka.prototype.featuresNativeTextTracks = false;
   Tech$1.withSourceHandlers(EmpShaka);
-  EmpShaka.VERSION = '2.1.103-355'; // Unset source handlers set by Html5 super class.
+  EmpShaka.VERSION = '2.1.103-356'; // Unset source handlers set by Html5 super class.
   // We do not intent to support any sources other then sources allowed by nativeSourceHandler
 
   EmpShaka.sourceHandlers = [];
