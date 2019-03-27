@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.104-372 
+ * EMP-Player 2.1.104-373 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -6460,7 +6460,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.1.104-372';
+  vttThumbnailsPlugin.VERSION = '2.1.104-373';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -9087,7 +9087,7 @@
     _createClass(Player, [{
       key: "version",
       get: function get() {
-        return '2.1.104-372';
+        return '2.1.104-373';
       }
       /**
        * Get entitlement
@@ -9139,7 +9139,7 @@
       chosenDashTech = 'EmpDashif';
     }
 
-    var autoTechOrder = [chosenDashTech, 'EmpHLS-MSE', 'EmpHLS', 'Html5'];
+    var autoTechOrder = [chosenDashTech, 'EmpHLS-MSE', 'EmpHLS', 'EmpSmooth', 'Html5'];
 
     if (Player.SupportFairplay()) {
       autoTechOrder = ['EmpHLS', chosenDashTech, 'Html5'];
@@ -9214,6 +9214,12 @@
       return Promise.resolve(true);
     }
 
+    var smoothTech = videojs.getTech('EmpSmooth');
+
+    if (undefined !== smoothTech && smoothTech.isSupported()) {
+      return Promise.resolve(true);
+    }
+
     return Promise.resolve(false);
   }
   /**
@@ -9244,8 +9250,9 @@
 
       var shakaTech = videojs.getTech('EmpShaka');
       var dashifTech = videojs.getTech('EmpDashif');
+      var smoothTech = videojs.getTech('EmpSmooth');
 
-      if (undefined !== shakaTech && shakaTech.isSupported() || undefined !== dashifTech && dashifTech.isSupported()) {
+      if (undefined !== shakaTech && shakaTech.isSupported() || undefined !== dashifTech && dashifTech.isSupported() || undefined !== smoothTech && smoothTech.isSupported()) {
         ptable.push(new Promise(function (resolve, reject) {
           window_1.navigator.requestMediaKeySystemAccess('com.microsoft.playready', config).then(function () {
             resolve(true);
@@ -9266,7 +9273,9 @@
 
       var _dashifTech = videojs.getTech('EmpDashif');
 
-      if (undefined !== _shakaTech && _shakaTech.isSupported() || undefined !== _dashifTech && _dashifTech.isSupported()) {
+      var _smoothTech = videojs.getTech('EmpSmooth');
+
+      if (undefined !== _shakaTech && _shakaTech.isSupported() || undefined !== _dashifTech && _dashifTech.isSupported() || undefined !== _smoothTech && _smoothTech.isSupported()) {
         if (IE_VERSION === 11 && window_1.MSMediaKeys) {
           if (window_1.MSMediaKeys.isTypeSupported('com.microsoft.playready', 'video/mp4')) {
             ptable.push(true);
@@ -10458,7 +10467,7 @@
     return AnalyticsPlugin;
   }(Plugin$1);
 
-  AnalyticsPlugin.VERSION = '2.1.104-372';
+  AnalyticsPlugin.VERSION = '2.1.104-373';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -11271,25 +11280,50 @@
 
           break;
 
-        case 'HLS':
+        case 'SMOOTHSTREAMING':
           formats = this.formats.filter(function (obj) {
-            return obj.format === 'HLS';
+            return obj.format === 'SMOOTHSTREAMING';
           });
 
           if (formats.length > 0) {
             var _format = formats[0];
             this.setupMediaLocator(_format);
 
-            if (_format.drm && _format.drm['com.apple.fps']) {
+            if (_format.drm) {
+              this.keySystems = _format.drm;
+
+              if (_format.drm['com.widevine.alpha']) {
+                this.certificateServer = _format.drm['com.widevine.alpha'].certificateUrl;
+              }
+
+              this.keySystems = {};
+              Object.keys(_format.drm).forEach(function (key) {
+                _this.keySystems[key] = _format.drm[key].licenseServerUrl;
+              });
+            }
+          }
+
+          break;
+
+        case 'HLS':
+          formats = this.formats.filter(function (obj) {
+            return obj.format === 'HLS';
+          });
+
+          if (formats.length > 0) {
+            var _format2 = formats[0];
+            this.setupMediaLocator(_format2);
+
+            if (_format2.drm && _format2.drm['com.apple.fps']) {
               this.protection = {};
-              this.protection.certificateUrl = _format.drm['com.apple.fps'].certificateUrl || '';
-              this.protection.licenseUrl = _format.drm['com.apple.fps'].licenseServerUrl || '';
+              this.protection.certificateUrl = _format2.drm['com.apple.fps'].certificateUrl || '';
+              this.protection.licenseUrl = _format2.drm['com.apple.fps'].licenseServerUrl || '';
               this.protection.version = 'irdeto'; // For Html5 tech with videojs-contrib-eme
 
               this.keySystems = {
                 'com.apple.fps.1_0': {
-                  certificateUri: _format.drm['com.apple.fps'].certificateUrl || '',
-                  licenseUri: _format.drm['com.apple.fps'].licenseServerUrl || ''
+                  certificateUri: _format2.drm['com.apple.fps'].certificateUrl || '',
+                  licenseUri: _format2.drm['com.apple.fps'].licenseServerUrl || ''
                 }
               };
             }
@@ -12682,6 +12716,7 @@
         exposureApiVersion: 'v1'
       }, options);
       _this = _EntitlementEngine.call(this, options) || this;
+      _this.statusMessageZero = 'An HTTP request failed with an error (Statuscode:0), but not from the server.';
       _this.errorMap = {
         400: {
           INVALID_JSON: {
@@ -13112,11 +13147,19 @@
       if (!xhrError) {
         // Check xhrResponse for error
         error = this.getErrorForResponse(xhrResponse);
+
+        if (error) {
+          error.statusCode = xhrResponse.statusCode;
+        }
       }
 
       if (error) {
+        if (error.statusCode === 0) {
+          error.message = this.statusMessageZero;
+        }
+
         if (callback) {
-          callback(null, error);
+          callback(xhrResponse.body, error);
         }
 
         return error;
@@ -13173,10 +13216,11 @@
           headers: this.requestHeaders
         }, function (error, response, body) {
           if (error) {
-            log.warn('Fallback to Entitlement request v1', error);
+            if (error.statusCode === 0) {
+              error.message = _this4.statusMessageZero;
+            }
 
-            _this4.getEntitlement(entitlementRequest, playRequest, callback);
-
+            callback(null, error);
             return;
           } // Check and handles error
 
@@ -13184,9 +13228,13 @@
           error = _this4.checkForError(error, response);
 
           if (error) {
-            log.warn('Fallback to Entitlement request v1', error.message);
+            if (error.statusCode === 400 || error.statusCode === 404 && body && body.indexOf('message') === -1) {
+              log.warn('Fallback to Entitlement play v1', error.message);
 
-            _this4.getEntitlement(entitlementRequest, playRequest, callback);
+              _this4.getEntitlement(entitlementRequest, playRequest, callback);
+            } else {
+              callback(null, error);
+            }
 
             return;
           }
@@ -13282,7 +13330,7 @@
 
     _proto.setStreamReferenceTime_ = function setStreamReferenceTime_(entitlement) {
       if (entitlement.isDynamicCachupAsLive || entitlement.isStaticCachupAsLive) {
-        if (entitlement.mimeType === 'application/dash+xml') {
+        if (entitlement.mimeType === 'application/dash+xml' || entitlement.mimeType === 'application/vnd.ms-sstr+xml') {
           if (entitlement.isStaticCachupAsLive) {
             entitlement.streamInfo.referenceTime = entitlement.streamInfo.startTime;
           } else {
@@ -13440,6 +13488,10 @@
       var requestURL = this.options_.exposureApiURL + '/' + this.options_.exposureApiVersion + '/customer/' + customer + '/businessunit/' + businessUnit + '/time';
       xhr.get(requestURL, null, function (error, response, body) {
         if (error) {
+          if (error.statusCode === 0) {
+            error.message = _this8.statusMessageZero;
+          }
+
           callback(null, error);
           return;
         }
@@ -13566,6 +13618,10 @@
 
       xhr.get(requestURL, null, function (error, response, body) {
         if (error) {
+          if (error.statusCode === 0) {
+            error.message = _this12.statusMessageZero;
+          }
+
           callback(null, error);
           return;
         } // Check and handles error
@@ -13609,6 +13665,10 @@
       var requestURL = this.options_.exposureApiURL + '/' + this.options_.exposureApiVersion + '/customer/' + customer + '/businessunit/' + businessUnit + '/epg/program/' + programId + '/next';
       xhr.get(requestURL, null, function (error, response, body) {
         if (error) {
+          if (error.statusCode === 0) {
+            error.message = _this13.statusMessageZero;
+          }
+
           callback(null, error);
           return;
         } // Check and handles error
@@ -13650,6 +13710,10 @@
       var requestURL = this.options_.exposureApiURL + '/' + this.options_.exposureApiVersion + '/customer/' + customer + '/businessunit/' + businessUnit + '/epg/program/' + programId + '/previous';
       xhr.get(requestURL, null, function (error, response, body) {
         if (error) {
+          if (error.statusCode === 0) {
+            error.message = _this14.statusMessageZero;
+          }
+
           callback(null, error);
           return;
         } // Check and handles error
@@ -13707,6 +13771,10 @@
       var requestURL = this.options_.exposureApiURL + '/' + this.options_.exposureApiVersion + '/customer/' + customer + '/businessunit/' + businessUnit + '/content/asset/' + assetId;
       xhr.get(requestURL, null, function (error, response, body) {
         if (error) {
+          if (error.statusCode === 0) {
+            error.message = _this15.statusMessageZero;
+          }
+
           callback(null, error);
           return;
         } // Check and handles error
@@ -13755,18 +13823,47 @@
         throw new EntitlementError('verifyEntitlement: playRequest was not provided.');
       }
 
-      var requestURL = this.options_.exposureApiURL + '/' + this.options_.exposureApiVersion + '/customer/' + customer + '/businessunit/' + businessUnit + '/entitlement/' + assetId + '?drm=' + playRequest.drm + '&format=' + playRequest.format;
+      var requestV1Url = this.options_.exposureApiURL + '/' + this.options_.exposureApiVersion + '/customer/' + customer + '/businessunit/' + businessUnit + '/entitlement/' + assetId + '?drm=' + playRequest.drm + '&format=' + playRequest.format;
+      var requestV2Url = this.options_.exposureApiURL + '/' + 'v2' + '/customer/' + customer + '/businessunit/' + businessUnit + '/entitlement/' + assetId + '/entitle';
+
+      var internalCallback = function internalCallback(data, error) {
+        if (error) {
+          // TODO: check this with error
+          if (error.statusCode === 400 || error.statusCode === 404 && data && data.indexOf('status') === -1) {
+            log.warn('Fallback to Entitlement entitle v1', error.message);
+
+            _this16.internalVerifyEntitlement(requestV1Url, callback);
+          } else if (callback) {
+            callback(data, error);
+          }
+        } else {
+          callback(data, error);
+        }
+      };
+
+      this.internalVerifyEntitlement(requestV2Url, internalCallback);
+    }
+    /**
+     * internalVerifyEntitlement
+     *
+     * @param {string} requestURL
+     * @param {Function} callback
+     * @private
+     */
+    ;
+
+    _proto.internalVerifyEntitlement = function internalVerifyEntitlement(requestURL, callback) {
+      var _this17 = this;
+
       xhr.get(requestURL, {
         headers: this.requestHeaders
       }, function (error, response, body) {
         // Check and handles error
-        if (_this16.checkForError(error, response, callback)) {
+        if (_this17.checkForError(error, response, callback)) {
           return;
         }
 
-        if (typeof callback !== undefined) {
-          callback(JSON.parse(body));
-        }
+        callback(JSON.parse(body));
       });
     }
     /**
@@ -13778,7 +13875,7 @@
     ;
 
     _proto.verifySession = function verifySession(okFn, nokFn) {
-      var _this17 = this;
+      var _this18 = this;
 
       var customer = this.customer;
       var businessUnit = this.businessUnit;
@@ -13787,7 +13884,7 @@
         headers: this.requestHeaders
       }, function (error, response, body) {
         // Check and handles error
-        if (_this17.checkForError(error, response)) {
+        if (_this18.checkForError(error, response)) {
           if (nokFn) {
             nokFn();
           }
@@ -14883,7 +14980,7 @@
     return ProgramService;
   }(Plugin$2);
 
-  ProgramService.VERSION = '2.1.104-372';
+  ProgramService.VERSION = '2.1.104-373';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -15122,7 +15219,7 @@
     return EntitlementExpirationService;
   }(Plugin$3);
 
-  EntitlementExpirationService.VERSION = '2.1.104-372';
+  EntitlementExpirationService.VERSION = '2.1.104-373';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -15227,7 +15324,7 @@
             // Use timeParams.start as startTime
             var startTime = srcEntitlement.streamInfo.start.getTime() + 100;
 
-            if (srcEntitlement.mimeType === 'application/dash+xml') {
+            if (srcEntitlement.mimeType === 'application/dash+xml' || srcEntitlement.mimeType === 'application/vnd.ms-sstr+xml') {
               log('SET startTime', startTime);
               player.options({
                 startTime: startTime / 1000
@@ -15675,7 +15772,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.104-372';
+  EntitlementMiddleware.VERSION = '2.1.104-373';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -15804,7 +15901,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.1.104-372';
+  empPlayer.VERSION = '2.1.104-373';
   /*
    * Universal Module Definition (UMD)
    *
