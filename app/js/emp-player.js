@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.104-374 
+ * EMP-Player 2.1.104-375 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -6461,7 +6461,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.1.104-374';
+  vttThumbnailsPlugin.VERSION = '2.1.104-375';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -9088,7 +9088,7 @@
     _createClass(Player, [{
       key: "version",
       get: function get() {
-        return '2.1.104-374';
+        return '2.1.104-375';
       }
       /**
        * Get entitlement
@@ -10468,7 +10468,7 @@
     return AnalyticsPlugin;
   }(Plugin$1);
 
-  AnalyticsPlugin.VERSION = '2.1.104-374';
+  AnalyticsPlugin.VERSION = '2.1.104-375';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -13229,7 +13229,7 @@
           error = _this4.checkForError(error, response);
 
           if (error) {
-            if (error.statusCode === 400 || error.statusCode === 404 && body && body.indexOf('message') === -1) {
+            if (error.statusCode === 400 || error.statusCode === 404 && body && body.indexOf('message') === -1 || error.statusCode === 404 && error.message === '404 Not found') {
               log.warn('Fallback to Entitlement play v1', error.message);
 
               _this4.getEntitlement(entitlementRequest, playRequest, callback);
@@ -13829,8 +13829,7 @@
 
       var internalCallback = function internalCallback(data, error) {
         if (error) {
-          // TODO: check this with error
-          if (error.statusCode === 400 || error.statusCode === 404 && data && data.indexOf('status') === -1) {
+          if (error.statusCode === 400 || error.statusCode === 404 && data && data.indexOf('status') === -1 || error.statusCode === 404 && error.message === '404 Not found') {
             log.warn('Fallback to Entitlement entitle v1', error.message);
 
             _this16.internalVerifyEntitlement(requestV1Url, callback);
@@ -14981,7 +14980,7 @@
     return ProgramService;
   }(Plugin$2);
 
-  ProgramService.VERSION = '2.1.104-374';
+  ProgramService.VERSION = '2.1.104-375';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -15220,7 +15219,7 @@
     return EntitlementExpirationService;
   }(Plugin$3);
 
-  EntitlementExpirationService.VERSION = '2.1.104-374';
+  EntitlementExpirationService.VERSION = '2.1.104-375';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -15773,7 +15772,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.104-374';
+  EntitlementMiddleware.VERSION = '2.1.104-375';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -15902,7 +15901,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.1.104-374';
+  empPlayer.VERSION = '2.1.104-375';
   /*
    * Universal Module Definition (UMD)
    *
