@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.104-380 
+ * EMP-Player 2.1.104-381 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -1895,6 +1895,44 @@
 
       this.clearTracks(['text']);
       return true;
+    }
+    /**
+    * Set current Program
+    *
+    * @param {Object} currentProgram
+    */
+    ;
+
+    _proto.program = function program(currentProgram) {
+      if (currentProgram !== undefined) {
+        this.currentProgram_ = currentProgram;
+        this.currentVOD_ = null;
+
+        if (currentProgram && currentProgram.asset) {
+          this.options_.source.assetId = currentProgram.asset.assetId;
+        }
+      } else {
+        return this.currentProgram_;
+      }
+    }
+    /**
+     * Set current VOD
+     *
+     * @param {Object} currentVOD
+     */
+    ;
+
+    _proto.VOD = function VOD(currentVOD) {
+      if (currentVOD !== undefined) {
+        this.currentVOD_ = currentVOD;
+        this.currentProgram_ = null;
+
+        if (currentVOD) {
+          this.options_.source.assetId = currentVOD.assetId;
+        }
+      } else {
+        return this.currentVOD_;
+      }
     } // /////////////////// Text tracks
 
     /**
@@ -4496,7 +4534,7 @@
     return DownloadService;
   }(Plugin);
 
-  DownloadService.VERSION = '2.1.104-380';
+  DownloadService.VERSION = '2.1.104-381';
 
   if (videojs.getPlugin('DownloadService')) {
     videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -6113,32 +6151,6 @@
       this.isDispose_ = true;
     }
     /**
-    * Set current Program
-    *
-    * @param {Object} currentProgram
-    */
-    ;
-
-    _proto.program = function program(currentProgram) {
-      if (currentProgram) {
-        this.currentProgram_ = currentProgram;
-        this.currentVOD_ = null;
-      }
-    }
-    /**
-     * Set current VOD
-     *
-     * @param {Object} currentVOD
-     */
-    ;
-
-    _proto.VOD = function VOD(currentVOD) {
-      if (currentVOD) {
-        this.currentVOD_ = currentVOD;
-        this.currentProgram_ = null;
-      }
-    }
-    /**
      * Returns the TimeRanges of the media that are currently available
      * for seeking to.
      *
@@ -6299,7 +6311,7 @@
 
   EmpShaka.prototype.featuresNativeTextTracks = false;
   Tech$1.withSourceHandlers(EmpShaka);
-  EmpShaka.VERSION = '2.1.104-380'; // Unset source handlers set by Html5 super class.
+  EmpShaka.VERSION = '2.1.104-381'; // Unset source handlers set by Html5 super class.
   // We do not intent to support any sources other then sources allowed by nativeSourceHandler
 
   EmpShaka.sourceHandlers = [];
