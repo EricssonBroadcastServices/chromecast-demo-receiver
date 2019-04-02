@@ -195,3 +195,9 @@ https://github.com/google/shaka-player/releases
 - **New options** epgPollingDisabled
 - **EMP-12627** Handle endless sessions.
 - **EMP-12637** Don't stop playback when network disconnected or io_suppended.
+
+## 2.1.104
+
+### New features
+- Latest HtML5-player 2.1.104
+- **EMP-12697** Use the new entitlement service V2 for entitle call. 
