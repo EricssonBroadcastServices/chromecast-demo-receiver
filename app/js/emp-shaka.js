@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.104-386 
+ * EMP-Player 2.1.104-387 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -124,7 +124,7 @@
     return self;
   }
 
-  var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+  var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
   function createCommonjsModule(fn, module) {
   	return module = { exports: {} }, fn(module, module.exports), module.exports;
@@ -1131,6 +1131,10 @@
      */
 
     this.RESTARTING = 'restarting';
+    /**
+     * Fired when ad timeline changed
+     */
+
     this.AD_TIMELINE_CHANGED = 'adtimelinechanged';
     /**
      * Fired when chromecast begins casting
@@ -1187,6 +1191,11 @@
     */
 
     this.DRM_SESSION_UPDATE = 'drmsessionupdate';
+    /**
+    * Fired when switch to picture-in-picture
+    */
+
+    this.PIP_START = 'pipStart';
   };
 
   var empPlayerEvents = new EmpPlayerEvents();
@@ -4536,7 +4545,7 @@
     return DownloadService;
   }(Plugin);
 
-  DownloadService.VERSION = '2.1.104-386';
+  DownloadService.VERSION = '2.1.104-387';
 
   if (videojs.getPlugin('DownloadService')) {
     videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -6313,7 +6322,7 @@
 
   EmpShaka.prototype.featuresNativeTextTracks = false;
   Tech$1.withSourceHandlers(EmpShaka);
-  EmpShaka.VERSION = '2.1.104-386'; // Unset source handlers set by Html5 super class.
+  EmpShaka.VERSION = '2.1.104-387'; // Unset source handlers set by Html5 super class.
   // We do not intent to support any sources other then sources allowed by nativeSourceHandler
 
   EmpShaka.sourceHandlers = [];

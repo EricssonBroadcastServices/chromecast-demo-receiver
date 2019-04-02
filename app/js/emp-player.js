@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.104-386 
+ * EMP-Player 2.1.104-387 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -133,14 +133,14 @@
     return strings;
   }
 
-  var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+  var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
   function commonjsRequire () {
   	throw new Error('Dynamic requires are not currently supported by rollup-plugin-commonjs');
   }
 
   function unwrapExports (x) {
-  	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x.default : x;
+  	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
   }
 
   function createCommonjsModule(fn, module) {
@@ -619,6 +619,10 @@
      */
 
     this.RESTARTING = 'restarting';
+    /**
+     * Fired when ad timeline changed
+     */
+
     this.AD_TIMELINE_CHANGED = 'adtimelinechanged';
     /**
      * Fired when chromecast begins casting
@@ -675,6 +679,11 @@
     */
 
     this.DRM_SESSION_UPDATE = 'drmsessionupdate';
+    /**
+    * Fired when switch to picture-in-picture
+    */
+
+    this.PIP_START = 'pipStart';
   };
 
   var empPlayerEvents = new EmpPlayerEvents();
@@ -4354,6 +4363,173 @@
   EmpPreviousButton.prototype.controlText_ = 'Previous';
   Component$e.registerComponent('EmpPreviousButton', EmpPreviousButton);
 
+  var Button$9 = videojs.getComponent('Button');
+  /**
+   * The class for picture-in-picture Toggle
+   *
+   * @class PipToggle
+   * @extends Button
+  */
+
+  var PipToggle =
+  /*#__PURE__*/
+  function (_Button) {
+    _inheritsLoose(PipToggle, _Button);
+
+    /**
+     * Create a PipToggle button
+     *
+     * @param {Player|Object} player
+     * @param {Object=} options
+     */
+    function PipToggle(player, options) {
+      var _this;
+
+      _this = _Button.call(this, player, options) || this;
+
+      _this.addClass('vjs-hidden');
+
+      player.ready(function () {
+        _this.initPip();
+      });
+      return _this;
+    }
+    /**
+     * Get isPipSupported
+     *
+     * @return {bool} isPipSupported
+     * @private
+     */
+
+
+    var _proto = PipToggle.prototype;
+
+    /**
+     * initiate picture-in-picture
+     *
+     * @private
+     */
+    _proto.initPip = function initPip() {
+      var _this2 = this;
+
+      if (this.isPipSupported_) {
+        var player = this.player();
+        log('picture-in-picture supported');
+        player.on(empPlayerEvents.LOADED_DATA, function () {
+          _this2.toggleShowing_();
+        });
+        player.on(empPlayerEvents.TRACK_CHANGE, function () {
+          _this2.toggleShowing_();
+        });
+        player.on(empPlayerEvents.CHROMECAST_CASTING, function () {
+          if (!_this2.videoEl_) {
+            return;
+          }
+
+          if (document_1.pictureInPictureElement === _this2.videoEl_) {
+            document_1.exitPictureInPicture();
+          } else if (_this2.videoEl_.webkitSupportsPresentationMode && typeof _this2.videoEl_.webkitSetPresentationMode === 'function' && !_this2.videoEl_.playsInline) {
+            _this2.videoEl_.webkitSetPresentationMode('inline');
+          }
+        });
+      } else {
+        log('picture-in-picture not supported');
+      }
+    }
+    /**
+     * toggleShowing
+     *
+     * @private
+     */
+    ;
+
+    _proto.toggleShowing_ = function toggleShowing_() {
+      var player = this.player();
+
+      if (player.controlBar.childNameIndex_.hasOwnProperty('PipToggle')) {
+        if (!player.isAudioOnly() && !player.isCasting()) {
+          player.controlBar.pipToggle.show();
+        } else {
+          player.controlBar.pipToggle.hide();
+        }
+      }
+    }
+    /**
+     * Builds the default DOM class name.
+     *
+     * @return {string}
+     *         The DOM class name for this object.
+     * @private
+     */
+    ;
+
+    _proto.buildCSSClass = function buildCSSClass() {
+      return "vjs-pip-button " + _Button.prototype.buildCSSClass.call(this);
+    }
+    /**
+     * handleClick
+     */
+    ;
+
+    _proto.handleClick = function handleClick() {
+      if (!this.videoEl_) {
+        return;
+      }
+
+      var player = this.player();
+
+      if (document_1.pictureInPictureElement === this.videoEl_) {
+        document_1.exitPictureInPicture();
+      } else if (this.videoEl_.webkitSupportsPresentationMode && typeof this.videoEl_.webkitSetPresentationMode === 'function' && !this.videoEl_.playsInline) {
+        this.videoEl_.webkitSetPresentationMode('inline');
+      } else if (this.isPipSupported_) {
+        if (player.isPlaying() && !player.isAudioOnly() && !player.isCasting()) {
+          if ('pictureInPictureEnabled' in document_1) {
+            this.videoEl_.requestPictureInPicture();
+          } else {
+            this.videoEl_.webkitSetPresentationMode('picture-in-picture');
+          }
+
+          player.trigger(empPlayerEvents.PIP_START);
+        }
+      } else {
+        log('picture-in-picture not supported');
+      }
+    };
+
+    _createClass(PipToggle, [{
+      key: "isPipSupported_",
+      get: function get() {
+        if (this.videoEl_) {
+          return this.videoEl_.webkitSupportsPresentationMode && typeof this.videoEl_.webkitSetPresentationMode === 'function' || 'pictureInPictureEnabled' in document_1;
+        }
+
+        return false;
+      }
+      /**
+       * get the video element
+       *
+       * @return {Element} Video Element
+       * @private
+       */
+
+    }, {
+      key: "videoEl_",
+      get: function get() {
+        if (this.player().el()) {
+          return this.player().el().getElementsByTagName('video')[0];
+        }
+
+        return null;
+      }
+    }]);
+
+    return PipToggle;
+  }(Button$9);
+
+  PipToggle.prototype.controlText_ = 'picture-in-picture';
+  videojs.registerComponent('PipToggle', PipToggle);
+
   var ControlBar = videojs.getComponent('ControlBar');
   var Component$f = videojs.getComponent('Component');
   /**
@@ -4406,6 +4582,7 @@
       audioTrackButton: {},
       subsCapsButton: {},
       airplayToggle: {},
+      pipToggle: {},
       fullscreenToggle: {}
     }
   }; // loadProgressBar > seekBar > mouseTimeDisplay uses a reference to 'controlbar' so we need to override the name for compatibility with our own controlbar
@@ -5943,9 +6120,6 @@
         src: 'sprites/sprites.vtt'
       };
       _this.enabled_ = true;
-
-      _this.listenForDurationChange();
-
       _this.registeredEvents = {};
       player.ready(function () {
         player.addClass('vjs-vtt-thumbnails');
@@ -6028,14 +6202,6 @@
       delete this.lastStyle;
     }
     /**
-    * listenForDurationChange
-    */
-    ;
-
-    _proto.listenForDurationChange = function listenForDurationChange() {
-      this.player.on('durationchange', function () {});
-    }
-    /**
     * initializeThumbnails
     */
     ;
@@ -6043,7 +6209,7 @@
     _proto.initializeThumbnails = function initializeThumbnails() {
       var _this2 = this;
 
-      if (!this.options_.src || !this.enabled_) {
+      if (!this.options_.src || !this.enabled_ || this.player.isCasting()) {
         return;
       }
 
@@ -6051,7 +6217,7 @@
         return;
       }
 
-      var baseUrl = this.getBaseUrl();
+      var baseUrl = this.getBaseUrl_();
       var url = this.getFullyQualifiedUrl(this.options_.src, baseUrl);
       this.getVttFile(url).then(function (data) {
         _this2.vttData = _this2.processVtt(data);
@@ -6063,12 +6229,12 @@
      * Builds a base URL should we require one.
      *
      * @return {string} BaseUrl
+     * @private
      */
     ;
 
-    _proto.getBaseUrl = function getBaseUrl$$1() {
+    _proto.getBaseUrl_ = function getBaseUrl_() {
       var baseUrl = getBaseUrl(this.player.currentSource().src);
-
       baseUrl = baseUrl.replace(/\/$/, '');
       return getBaseUrl(baseUrl);
     }
@@ -6355,7 +6521,7 @@
       if (this.options_.src.indexOf('//') >= 0) {
         baseSplit = this.options_.src.split(/([^\/]*)$/gi).shift();
       } else {
-        baseSplit = this.getBaseUrl() + this.options_.src.split(/([^\/]*)$/gi).shift();
+        baseSplit = this.getBaseUrl_() + this.options_.src.split(/([^\/]*)$/gi).shift();
       }
 
       vttImageDef = this.getFullyQualifiedUrl(vttImageDef, baseSplit);
@@ -6461,7 +6627,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.1.104-386';
+  vttThumbnailsPlugin.VERSION = '2.1.104-387';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -9084,12 +9250,23 @@
 
     _proto.isCasting = function isCasting() {
       return this.techName_ === 'EmpCast';
+    }
+    /**
+     * Check if tream is only Audio
+     *
+     * @return {boolean}  true stream is only Audio
+     */
+    ;
+
+    _proto.isAudioOnly = function isAudioOnly() {
+      var bitrates = this.bitrates();
+      return !(bitrates.length > 0 && bitrates[0] > 0);
     };
 
     _createClass(Player, [{
       key: "version",
       get: function get() {
-        return '2.1.104-386';
+        return '2.1.104-387';
       }
       /**
        * Get entitlement
@@ -10469,7 +10646,7 @@
     return AnalyticsPlugin;
   }(Plugin$1);
 
-  AnalyticsPlugin.VERSION = '2.1.104-386';
+  AnalyticsPlugin.VERSION = '2.1.104-387';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -14981,7 +15158,7 @@
     return ProgramService;
   }(Plugin$2);
 
-  ProgramService.VERSION = '2.1.104-386';
+  ProgramService.VERSION = '2.1.104-387';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -15220,7 +15397,7 @@
     return EntitlementExpirationService;
   }(Plugin$3);
 
-  EntitlementExpirationService.VERSION = '2.1.104-386';
+  EntitlementExpirationService.VERSION = '2.1.104-387';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -15773,7 +15950,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.104-386';
+  EntitlementMiddleware.VERSION = '2.1.104-387';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -15902,7 +16079,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.1.104-386';
+  empPlayer.VERSION = '2.1.104-387';
   /*
    * Universal Module Definition (UMD)
    *
