@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.105-388 
+ * EMP-Player 2.1.105-389 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -4426,15 +4426,40 @@
             return;
           }
 
-          if (document_1.pictureInPictureElement === _this2.videoEl_) {
-            document_1.exitPictureInPicture();
-          } else if (_this2.videoEl_.webkitSupportsPresentationMode && typeof _this2.videoEl_.webkitSetPresentationMode === 'function' && !_this2.videoEl_.playsInline) {
-            _this2.videoEl_.webkitSetPresentationMode('inline');
-          }
+          _this2.exitPictureInPicture_();
         });
       } else {
         log('picture-in-picture not supported');
       }
+    }
+    /**
+     * exit PictureInPicture
+     *
+     * @return {boolean} if exit PictureInPicture was done
+     * @private
+     */
+    ;
+
+    _proto.exitPictureInPicture_ = function exitPictureInPicture_() {
+      if (this.isPipSupported_) {
+        if (document_1.pictureInPictureElement === this.videoEl_) {
+          // Chrome exit picture-in-picture
+          document_1.exitPictureInPicture(); // if (this.wasTextTrackVisible_ === true) {
+          //  this.player().textTrackVisible(true);
+          // }
+
+          return true;
+        } else if (this.videoEl_.webkitPresentationMode === 'picture-in-picture') {
+          // Safari exit picture-in-picture
+          this.videoEl_.webkitSetPresentationMode('inline'); // if (this.wasTextTrackVisible_ === true) {
+          //   this.player().textTrackVisible(true);
+          // }
+
+          return true;
+        }
+      }
+
+      return false;
     }
     /**
      * toggleShowing
@@ -4478,17 +4503,18 @@
 
       var player = this.player();
 
-      if (document_1.pictureInPictureElement === this.videoEl_) {
-        document_1.exitPictureInPicture();
-      } else if (this.videoEl_.webkitSupportsPresentationMode && typeof this.videoEl_.webkitSetPresentationMode === 'function' && !this.videoEl_.playsInline) {
-        this.videoEl_.webkitSetPresentationMode('inline');
-      } else if (this.isPipSupported_) {
+      if (this.exitPictureInPicture_()) ; else if (this.isPipSupported_) {
         if (player.isPlaying() && !player.isAudioOnly() && !player.isCasting()) {
           if ('pictureInPictureEnabled' in document_1) {
+            // Chrome request picture-in-picture
             this.videoEl_.requestPictureInPicture();
           } else {
+            // Safari request picture-in-picture
             this.videoEl_.webkitSetPresentationMode('picture-in-picture');
-          }
+          } // this.wasTextTrackVisible_ = player.isTextTrackVisible();
+          // // Subs not working with picture-in-picture
+          // player.textTrackVisible(false);
+
 
           player.trigger(empPlayerEvents.PIP_START);
         }
@@ -4859,7 +4885,7 @@
           preferredTrack = null;
           firstDesc = null;
           firstCaptions = null;
-        } else if (track.default) {
+        } else if (track["default"]) {
           if (track.kind === 'descriptions' && !firstDesc) {
             firstDesc = track;
           } else if (track.kind in modes && !firstCaptions) {
@@ -5290,7 +5316,7 @@
       id: '%s',
       label: 'Text Edge Style',
       options: [['none', 'None'], ['raised', 'Raised'], ['depressed', 'Depressed'], ['uniform', 'Uniform'], ['dropshadow', 'Dropshadow']],
-      default: 4
+      "default": 4
     },
     fontFamily: {
       selector: '.vjs-font-family > select',
@@ -5303,7 +5329,7 @@
       id: 'captions-font-size-%s',
       label: 'Font Size',
       options: [['0.25', '25%'], ['0.50', '50%'], ['0.75', '75%'], ['1.00', '100%'], ['1.25', '125%'], ['1.50', '150%'], ['1.75', '175%'], ['2.00', '200%'], ['2.50', '250%']],
-      default: 3,
+      "default": 3,
       parser: function parser(v) {
         return v === '1.00' ? null : Number(v);
       }
@@ -5698,7 +5724,7 @@
       var _this5 = this;
 
       each(selectConfigs, function (config) {
-        var index = config.hasOwnProperty('default') ? config.default : 0;
+        var index = config.hasOwnProperty('default') ? config["default"] : 0;
         _this5.$(config.selector).selectedIndex = index;
       });
     }
@@ -6627,7 +6653,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.1.105-388';
+  vttThumbnailsPlugin.VERSION = '2.1.105-389';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -7907,7 +7933,7 @@
             };
 
             _VjsPlayer.prototype.src.call(_this4, sources);
-          }).catch(function (errMsg) {
+          })["catch"](function (errMsg) {
             _this4.error(errMsg);
           });
           return;
@@ -9266,7 +9292,7 @@
     _createClass(Player, [{
       key: "version",
       get: function get() {
-        return '2.1.105-388';
+        return '2.1.105-389';
       }
       /**
        * Get entitlement
@@ -10646,7 +10672,7 @@
     return AnalyticsPlugin;
   }(Plugin$1);
 
-  AnalyticsPlugin.VERSION = '2.1.105-388';
+  AnalyticsPlugin.VERSION = '2.1.105-389';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -11373,9 +11399,9 @@
         this.programId = streamInfo.programId || undefined;
         this.streamInfo.channelId = streamInfo.channelId || undefined;
         this.streamInfo.programId = streamInfo.programId || undefined;
-        this.streamInfo.static = streamInfo.static || false;
-        this.isDynamicCachupAsLive = !streamInfo.static && streamInfo.start !== undefined;
-        this.isStaticCachupAsLive = streamInfo.static && streamInfo.end !== undefined;
+        this.streamInfo["static"] = streamInfo["static"] || false;
+        this.isDynamicCachupAsLive = !streamInfo["static"] && streamInfo.start !== undefined;
+        this.isStaticCachupAsLive = streamInfo["static"] && streamInfo.end !== undefined;
 
         if (streamInfo.start) {
           this.streamInfo.start = new Date(streamInfo.start * 1000);
@@ -15158,7 +15184,7 @@
     return ProgramService;
   }(Plugin$2);
 
-  ProgramService.VERSION = '2.1.105-388';
+  ProgramService.VERSION = '2.1.105-389';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -15397,7 +15423,7 @@
     return EntitlementExpirationService;
   }(Plugin$3);
 
-  EntitlementExpirationService.VERSION = '2.1.105-388';
+  EntitlementExpirationService.VERSION = '2.1.105-389';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -15448,7 +15474,7 @@
       iteration: function iteration() {
         return index - 1;
       },
-      break: function _break() {
+      "break": function _break() {
         done = true;
         callback();
       }
@@ -15809,7 +15835,7 @@
               startProgramService_(options, exposure, srcEntitlement, function () {
                 next(null, srcEntitlement);
               });
-              loop.break();
+              loop["break"]();
               return;
             }
 
@@ -15847,8 +15873,8 @@
                     startProgramService_(options, exposure, srcEntitlement, function () {
                       next(null, srcEntitlement);
                     });
-                    loop.break();
-                  }).catch(function (errMsg) {
+                    loop["break"]();
+                  })["catch"](function (errMsg) {
                     entitlementRequestError = new EmpPlayerError(errMsg, EmpPlayerErrorCodes.ENTITLEMENT);
                     player.error(entitlementRequestError);
                     extplayer.stop(player);
@@ -15858,7 +15884,7 @@
                   startProgramService_(options, exposure, srcEntitlement, function () {
                     next(null, srcEntitlement);
                   });
-                  loop.break();
+                  loop["break"]();
                 }
               }
             }, preEntitlement);
@@ -15950,7 +15976,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.105-388';
+  EntitlementMiddleware.VERSION = '2.1.105-389';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -16079,7 +16105,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.1.105-388';
+  empPlayer.VERSION = '2.1.105-389';
   /*
    * Universal Module Definition (UMD)
    *
