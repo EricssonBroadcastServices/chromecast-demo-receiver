@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.105-389 
+ * EMP-Player 2.1.105-390 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -2119,25 +2119,28 @@
         return;
       }
 
+      var entitlement = this.getEntitlement(player);
+
+      if (entitlement && entitlement.isStaticCachupAsLive && player.isProgramEvent) {
+        log('Not suppoted for static event program');
+        return;
+      }
+
       if (player.tech_.gotoLive) {
         player.techCall_('gotoLive');
-      } else {
-        var entitlement = this.getEntitlement(player);
+      } else if (entitlement && entitlement.isDynamicCachupAsLive) {
+        this.setAbsoluteTime(player, new Date(player.getServerTime()));
+      } else if (entitlement && entitlement.isStaticCachupAsLive) {
+        var asset = this.currentAsset(player);
 
-        if (entitlement && entitlement.isDynamicCachupAsLive) {
-          this.setAbsoluteTime(player, new Date(player.getServerTime()));
-        } else if (entitlement && entitlement.isStaticCachupAsLive) {
-          var asset = this.currentAsset(player);
-
-          if (asset && asset.channelId) {
-            player.startPlayback(null, asset.channelId, null);
-          }
-        } else if (this.isLive(player)) {
-          var duration = player.duration();
-          player.currentTime(duration);
-        } else {
-          log.warn('Not suppoted for VOD');
+        if (asset && asset.channelId) {
+          player.startPlayback(null, asset.channelId, null);
         }
+      } else if (this.isLive(player)) {
+        var duration = player.duration();
+        player.currentTime(duration);
+      } else {
+        log.warn('Not suppoted for VOD');
       }
     },
     setPlayheadTime: function setPlayheadTime(player, unixTime) {
@@ -2158,8 +2161,8 @@
       return player.techGet_('program');
     },
     playPreviousProgram: function playPreviousProgram(player, theEnd) {
-      if (player.sourceChanging_) {
-        log('playPreviousProgram ignore sourceChanging');
+      if (player.sourceChanging_ || player.isProgramEvent) {
+        log('playPreviousProgram ignore');
         return;
       }
 
@@ -2187,8 +2190,8 @@
       }
     },
     playNextProgram: function playNextProgram(player) {
-      if (player.sourceChanging_) {
-        log('playNextProgram ignore sourceChanging');
+      if (player.sourceChanging_ || player.isProgramEvent) {
+        log('playNextProgram ignore');
         return;
       }
 
@@ -2398,7 +2401,7 @@
      * @private
      */
     _proto.updateShowing = function updateShowing() {
-      if (this.player().isLive() || this.entitlement && this.entitlement.isStaticCachupAsLive) {
+      if (this.player().isLive() || this.entitlement && this.entitlement.isStaticCachupAsLive && !this.player().isProgramEvent) {
         this.show();
       } else {
         this.hide();
@@ -4202,7 +4205,7 @@
     _proto.updateShowing = function updateShowing(program) {
       program = program ? program : this.player().getProgramDetails();
 
-      if (!this.player().noEPG() && this.entitlement && program) {
+      if (!this.player().noEPG() && this.entitlement && program && !this.player().isProgramEvent) {
         this.show();
         this.enable();
       } else {
@@ -4315,7 +4318,7 @@
     _proto.updateShowing = function updateShowing() {
       var program = this.player().getProgramDetails();
 
-      if (!this.player().noEPG() && this.entitlement && program) {
+      if (!this.player().noEPG() && this.entitlement && program && !this.player().isProgramEvent) {
         this.show();
       } else {
         this.hide();
@@ -4607,8 +4610,8 @@
       bitrateButton: {},
       audioTrackButton: {},
       subsCapsButton: {},
-      airplayToggle: {},
       pipToggle: {},
+      airplayToggle: {},
       fullscreenToggle: {}
     }
   }; // loadProgressBar > seekBar > mouseTimeDisplay uses a reference to 'controlbar' so we need to override the name for compatibility with our own controlbar
@@ -6653,7 +6656,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.1.105-389';
+  vttThumbnailsPlugin.VERSION = '2.1.105-390';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -8158,12 +8161,17 @@
       return false;
     }
     /**
+     * Is current program an event
+     *
+     * @return {boolean} Is current program an event
+     */
+    ;
+
+    /**
      * Can video or program restart from begining
      *
      * @return {boolean} Can Restart
      */
-    ;
-
     _proto.canRestart = function canRestart() {
       var entitlement = extplayer.getEntitlement(this);
 
@@ -8989,8 +8997,8 @@
     _proto.playPreviousProgram = function playPreviousProgram(end) {
       var _this7 = this;
 
-      if (this.sourceChanging_) {
-        log('playPreviousProgram ignore sourceChanging');
+      if (this.sourceChanging_ || this.player.isProgramEvent) {
+        log('playPreviousProgram ignore');
         return;
       }
 
@@ -9022,8 +9030,8 @@
     _proto.playNextProgram = function playNextProgram() {
       var _this8 = this;
 
-      if (this.sourceChanging_) {
-        log('playNextProgram ignore sourceChanging');
+      if (this.sourceChanging_ || this.player.isProgramEvent) {
+        log('playNextProgram ignore');
         return;
       }
 
@@ -9290,9 +9298,20 @@
     };
 
     _createClass(Player, [{
+      key: "isProgramEvent",
+      get: function get() {
+        var entitlement = extplayer.getEntitlement(this);
+
+        if (entitlement && entitlement.streamInfo && entitlement.streamInfo.event) {
+          return true;
+        }
+
+        return false;
+      }
+    }, {
       key: "version",
       get: function get() {
-        return '2.1.105-389';
+        return '2.1.105-390';
       }
       /**
        * Get entitlement
@@ -10672,7 +10691,7 @@
     return AnalyticsPlugin;
   }(Plugin$1);
 
-  AnalyticsPlugin.VERSION = '2.1.105-389';
+  AnalyticsPlugin.VERSION = '2.1.105-390';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -11181,35 +11200,7 @@
    * Entitlement Base Class
    *
    * @class Entitlement
-   * @param {Object}  [options]              - Object of option names and values
-   * @param {string}  [options.assetId]      - asset identifier
-   * @param {string}  [options.programId]     - program identifier
-   * @param {string}  [options.channelId]     - channel identifier
-   * @param {string}  [options.playToken=''] - play token string to be used to authenticate the DRM license requests
-   * @param {string}  [options.mediaLocator=''] - stream locator to be used by the underlying playback technology
-   * @param {Object}  [options.edrmConfig=null] - EDRM configuration object as provided by EMP Exposure API
-   * @param {boolean} [options.live=false]   - set to true if the Entitlement represents a Live stream
-   * @param {integer} [options.minBitrate=0] - set to any value >0 to limit the minimum playback bitrate
-   * @param {integer} [options.maxBitrate=0] - set to any value >0 to limit the maximum playback bitrate
-   * @param {integer} [options.maxResWidth=0] - set to any value >0 to limit the maximum playback resolution width
-   * @param {integer} [options.maxResHeight=0] - set to any value >0 to limit the maximum playback resolution height
-   * @param {boolean} [options.rwEnabled=true] - set to false to disable rewind option
-   * @param {boolean} [options.ffEnabled=true] - set to false to disable fast forward option
-   * @param {boolean} [options.airplayBlocked=false] - set to true to disable airplay option
-   * @param {boolean} [options.timeshiftEnabled=undefined] - set to false to disable timeshift option
-   * @param {Object}  [options.protection] - certificateUrl and licenseAcquisitionUrl for fairplay
-   * @param {string}  [options.mdnRequestRouterUrl= ''] - MDN request router URL
-   * @param {Array}   [options.baseUris= ''] -  baseUris from MDN request router
-   * @param {Object}  [options.analyticsConfig=null] - analytics props to override on analytics object
-   * @param {string}  [options.lastViewedOffset=null] - Last viewed offset
-   * @param {string}  [options.lastViewedTime=null] - Last viewed offset absolute time
-   * @param {string}  [options.liveTime=null] - Last viewed offset liveTime
-   * @param {Object}  [options.keySystems] - keySystems for dash
-   * @param {Object}  [options.requestId] - requestId for the play call
-   * @param {Object}  [options.adMediaLocator] - MediaLocator for ad override MediaLocator
-   * @param {Object}  [options.fairplayConfig] - fairplayConfig {certificateUrl, licenseAcquisitionUrl}
-   * @param {Object}  [options.widevineConfig]  - widevineConfig {certificateServer}
-
+   * @param {Object}  [options] - Object of option names and values
    */
 
   var Entitlement =
@@ -11412,6 +11403,8 @@
           this.streamInfo.end = new Date(streamInfo.end * 1000);
           this.streamInfo.endTime = this.streamInfo.end.getTime();
         }
+
+        this.streamInfo.event = streamInfo.event && streamInfo.programId !== undefined;
       }
     }
     /**
@@ -14492,6 +14485,8 @@
      * @private
      */
     _proto.checkForProgramChange_ = function checkForProgramChange_(event, data) {
+      var _this2 = this;
+
       if (!event) {
         log.error('checkForProgramChange', 'event was not provided.');
         return;
@@ -14533,9 +14528,36 @@
         return;
       }
 
-      var dateTime; // Reagula Live
+      var dateTime; // event program at end
+
+      if (event.type !== 'startplayback' && this.currentProgram_ && this.player.isProgramEvent) {
+        if (extplayer.getPlayheadTime(this.player) + 2000 >= this.currentProgram_.end.getTime()) {
+          if (this.entitlement().isStaticCachupAsLive) {
+            log('event program ended');
+            this.player.stop();
+          } else {
+            // TODO: Update end time first maybe with entitle call first
+            this.getNextProgram(function (program, error) {
+              if (error) {
+                log.warn('shiftToNextProgram', error);
+              }
+
+              if (program && program.start.getTime() - 2000 <= extplayer.getPlayheadTime(_this2.player) && program.end.getTime() >= extplayer.getPlayheadTime(_this2.player)) {
+                _this2.updateCurrentProgram_(program, false);
+              } else {
+                log('event program ended');
+
+                _this2.player.stop();
+              }
+            });
+          }
+
+          return;
+        }
+      }
 
       if (isLive && !programId) {
+        // Reagula Live
         var serverDate = new Date(this.exposure.getCachedServerTime()); // Margin to live edge
 
         var secondsBehind = event.type === 'startplayback' ? 15 : extplayer.timeBehindLive(this.player);
@@ -14608,7 +14630,7 @@
     ;
 
     _proto.shiftCurrentProgram_ = function shiftCurrentProgram_(programId, channelId, dateTime, startplayback) {
-      var _this2 = this;
+      var _this3 = this;
 
       if (startplayback === void 0) {
         startplayback = false;
@@ -14618,17 +14640,17 @@
         this.updateCurrentProgram_(this.shiftProgram_, false);
       } else {
         this.exposure.getProgramInfo(channelId, dateTime, function (program, error) {
-          _this2.currentVOD_ = null;
+          _this3.currentVOD_ = null;
 
           if (error) {
             log('getProgramInfo', 'No EPG found.', error);
 
-            _this2.pollingForEPG_();
+            _this3.pollingForEPG_();
 
             return;
           }
 
-          _this2.updateCurrentProgram_(program, startplayback);
+          _this3.updateCurrentProgram_(program, startplayback);
         }, dateTime ? null : programId);
       }
     }
@@ -14643,7 +14665,7 @@
     ;
 
     _proto.shiftToPreviousProgram_ = function shiftToPreviousProgram_(programId, channelId, dateTime) {
-      var _this3 = this;
+      var _this4 = this;
 
       if (this.shiftProgram_ && channelId === this.shiftProgram_.channelId && this.shiftProgram_.start.getTime() <= dateTime.getTime() && this.shiftProgram_.end.getTime() >= dateTime.getTime()) {
         this.updateCurrentProgram_(this.shiftProgram_, false);
@@ -14652,11 +14674,11 @@
           if (error) {
             log.warn('shiftToPreviousProgram', error);
 
-            _this3.shiftCurrentProgram_(programId, channelId, dateTime);
+            _this4.shiftCurrentProgram_(programId, channelId, dateTime);
           } else if (program.start.getTime() <= dateTime.getTime() && program.end.getTime() >= dateTime.getTime()) {
-            _this3.updateCurrentProgram_(program, false);
+            _this4.updateCurrentProgram_(program, false);
           } else {
-            _this3.shiftCurrentProgram_(programId, channelId, dateTime);
+            _this4.shiftCurrentProgram_(programId, channelId, dateTime);
           }
         });
       }
@@ -14672,7 +14694,7 @@
     ;
 
     _proto.shiftToNextProgram_ = function shiftToNextProgram_(programId, channelId, dateTime) {
-      var _this4 = this;
+      var _this5 = this;
 
       if (this.shiftProgram_ && channelId === this.shiftProgram_.channelId && this.shiftProgram_.start.getTime() <= dateTime.getTime() && this.shiftProgram_.end.getTime() >= dateTime.getTime()) {
         this.updateCurrentProgram_(this.shiftProgram_, false);
@@ -14681,11 +14703,11 @@
           if (error) {
             log.warn('shiftToNextProgram', error);
 
-            _this4.shiftCurrentProgram_(programId, channelId, dateTime);
+            _this5.shiftCurrentProgram_(programId, channelId, dateTime);
           } else if (program.start.getTime() <= dateTime.getTime() && program.end.getTime() >= dateTime.getTime()) {
-            _this4.updateCurrentProgram_(program, false);
+            _this5.updateCurrentProgram_(program, false);
           } else {
-            _this4.shiftCurrentProgram_(programId, channelId, dateTime);
+            _this5.shiftCurrentProgram_(programId, channelId, dateTime);
           }
         });
       }
@@ -14700,7 +14722,7 @@
     ;
 
     _proto.updateChannelInfo_ = function updateChannelInfo_(program, callback) {
-      var _this5 = this;
+      var _this6 = this;
 
       if (!program || !program.channelId) {
         log.error('updateChannelInfo', 'program or channelId empty');
@@ -14722,8 +14744,8 @@
         }
 
         log('updateChannelInfo', program.channelId);
-        _this5.currentChannelAsset_ = channelAsset;
-        program.channelInfo = _this5.extractAssetMetadata(_this5.currentChannelAsset_);
+        _this6.currentChannelAsset_ = channelAsset;
+        program.channelInfo = _this6.extractAssetMetadata(_this6.currentChannelAsset_);
         callback();
         return;
       });
@@ -14737,7 +14759,7 @@
     ;
 
     _proto.updateVOD_ = function updateVOD_(assetId) {
-      var _this6 = this;
+      var _this7 = this;
 
       this.currentProgram_ = null;
       this.shiftProgram_ = null;
@@ -14748,27 +14770,27 @@
       }
 
       this.exposure.getAssetInfo(assetId, function (asset, error) {
-        if (!_this6.player) {
+        if (!_this7.player) {
           return;
         }
 
         if (error) {
           log.warn('No AssetInfo found.', error);
-          _this6.currentVOD_ = null;
+          _this7.currentVOD_ = null;
 
-          _this6.player.trigger(empPlayerEvents.ASSET_CHANGED, {
+          _this7.player.trigger(empPlayerEvents.ASSET_CHANGED, {
             asset: null
           });
 
           return;
         }
 
-        if (!_this6.currentVOD_ || _this6.currentVOD_.assetId !== asset.assetId) {
-          _this6.currentVOD_ = asset;
-          extplayer.setTechVOD(_this6.player, asset);
+        if (!_this7.currentVOD_ || _this7.currentVOD_.assetId !== asset.assetId) {
+          _this7.currentVOD_ = asset;
+          extplayer.setTechVOD(_this7.player, asset);
           log('ASSET_CHANGED');
 
-          _this6.player.trigger(empPlayerEvents.ASSET_CHANGED, {
+          _this7.player.trigger(empPlayerEvents.ASSET_CHANGED, {
             asset: asset
           });
         }
@@ -14784,7 +14806,7 @@
     ;
 
     _proto.updateCurrentProgram_ = function updateCurrentProgram_(program, startplayback) {
-      var _this7 = this;
+      var _this8 = this;
 
       if (startplayback === void 0) {
         startplayback = false;
@@ -14808,28 +14830,28 @@
         }
 
         this.updateChannelInfo_(program, function () {
-          if (!_this7.player) {
+          if (!_this8.player) {
             return;
           }
 
-          extplayer.currentAsset(_this7.player, program.assetId, program.programId, program.channelId);
+          extplayer.currentAsset(_this8.player, program.assetId, program.programId, program.channelId);
 
-          if (_this7.entitlement_) {
-            _this7.entitlement_.channelId = program.channelId;
-            _this7.entitlement_.assetId = program.assetId;
-            _this7.entitlement_.programId = program.programId;
+          if (_this8.entitlement_) {
+            _this8.entitlement_.channelId = program.channelId;
+            _this8.entitlement_.assetId = program.assetId;
+            _this8.entitlement_.programId = program.programId;
           }
 
-          extplayer.setTechProgram(_this7.player, program);
+          extplayer.setTechProgram(_this8.player, program);
 
-          _this7.player.removeClass('vjs-live');
+          _this8.player.removeClass('vjs-live');
 
-          _this7.player.trigger(empPlayerEvents.PROGRAM_CHANGED, {
+          _this8.player.trigger(empPlayerEvents.PROGRAM_CHANGED, {
             program: program
           }); // Update progressbar
 
 
-          _this7.player.trigger(empPlayerEvents.DURATION_CHANGE);
+          _this8.player.trigger(empPlayerEvents.DURATION_CHANGE);
         });
       }
 
@@ -14875,11 +14897,11 @@
         this.programChangeCheckTimestamp_ = Date.now() + timediff;
         log('updateCurrentProgram', 'programChangeTimeout', new Date(this.programChangeCheckTimestamp_));
         this.programChangeTimeout_ = setTimeout(function () {
-          _this7.checkForProgramChange_({
+          _this8.checkForProgramChange_({
             type: 'programend'
           });
 
-          _this7.programChangeTimeout_ = null;
+          _this8.programChangeTimeout_ = null;
         }, timediff > 0x7FFFFFFF ? 0x7FFFFFFF : timediff);
       }
 
@@ -14898,7 +14920,7 @@
     ;
 
     _proto.pollingForEPG_ = function pollingForEPG_() {
-      var _this8 = this;
+      var _this9 = this;
 
       this.currentProgram_ = null;
       this.player.trigger(empPlayerEvents.PROGRAM_CHANGED, {
@@ -14911,11 +14933,11 @@
       var pollingRate = 2 * 60 * 1000 + Math.random() * 60 * 1000;
       this.programChangeCheckTimestamp_ = Date.now() + pollingRate;
       this.programChangeTimeout_ = setTimeout(function () {
-        _this8.checkForProgramChange_({
+        _this9.checkForProgramChange_({
           type: 'pollingforepg'
         });
 
-        _this8.programChangeTimeout_ = null;
+        _this9.programChangeTimeout_ = null;
       }, pollingRate);
     }
     /**
@@ -14926,7 +14948,7 @@
     ;
 
     _proto.getNextProgram = function getNextProgram(callback) {
-      var _this9 = this;
+      var _this10 = this;
 
       if (!this.currentProgram) {
         if (callback) {
@@ -14946,7 +14968,7 @@
         if (error) {
           callback(null, error);
         } else {
-          _this9.shiftProgram_ = program;
+          _this10.shiftProgram_ = program;
           callback(program);
         }
       }, null);
@@ -14959,7 +14981,7 @@
     ;
 
     _proto.getPreviousProgram = function getPreviousProgram(callback) {
-      var _this10 = this;
+      var _this11 = this;
 
       if (!this.currentProgram) {
         if (callback) {
@@ -14974,7 +14996,7 @@
         if (error) {
           callback(null, error);
         } else {
-          _this10.shiftProgram_ = program;
+          _this11.shiftProgram_ = program;
           callback(program);
         }
       }, null);
@@ -14988,7 +15010,7 @@
     ;
 
     _proto.getProgram = function getProgram(dateTime, callback) {
-      var _this11 = this;
+      var _this12 = this;
 
       if (!this.currentProgram) {
         if (callback) {
@@ -15013,7 +15035,7 @@
         if (error) {
           callback(null, error);
         } else {
-          _this11.shiftProgram_ = program;
+          _this12.shiftProgram_ = program;
           callback(program);
         }
       }, null);
@@ -15024,7 +15046,7 @@
     ;
 
     _proto.verifyEntitlement = function verifyEntitlement() {
-      var _this12 = this;
+      var _this13 = this;
 
       if (!this.currentProgram) {
         return;
@@ -15032,16 +15054,16 @@
 
       this.exposure.verifyEntitlement(this.currentProgram.assetId, this.entitlement().playRequest, function (data, error) {
         if (error) {
-          _this12.player.error('verifyEntitlement ' + error.message);
+          _this13.player.error('verifyEntitlement ' + error.message);
 
-          extplayer.stop(_this12.player);
+          extplayer.stop(_this13.player);
           return;
         }
 
         if (!data || data.status !== 'SUCCESS') {
-          _this12.player.error(data ? data.status : 'verifyEntitlement no status');
+          _this13.player.error(data ? data.status : 'verifyEntitlement no status');
 
-          extplayer.stop(_this12.player);
+          extplayer.stop(_this13.player);
           return;
         }
 
@@ -15057,7 +15079,7 @@
     ;
 
     _proto.getAssetMetadata = function getAssetMetadata(assetId, callback) {
-      var _this13 = this;
+      var _this14 = this;
 
       var asset = this.currentProgram ? this.currentProgram.asset : this.currentVOD;
 
@@ -15069,7 +15091,7 @@
             return;
           }
 
-          callback(_this13.extractAssetMetadata(assetMetadata));
+          callback(_this14.extractAssetMetadata(assetMetadata));
           return;
         });
       } else {
@@ -15138,6 +15160,10 @@
     }, {
       key: "epgPolling",
       get: function get() {
+        if (this.player.isProgramEvent) {
+          return false;
+        }
+
         var opt = this.player.options();
 
         if (opt) {
@@ -15184,7 +15210,7 @@
     return ProgramService;
   }(Plugin$2);
 
-  ProgramService.VERSION = '2.1.105-389';
+  ProgramService.VERSION = '2.1.105-390';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -15423,7 +15449,7 @@
     return EntitlementExpirationService;
   }(Plugin$3);
 
-  EntitlementExpirationService.VERSION = '2.1.105-389';
+  EntitlementExpirationService.VERSION = '2.1.105-390';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -15976,7 +16002,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.105-389';
+  EntitlementMiddleware.VERSION = '2.1.105-390';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -16105,7 +16131,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.1.105-389';
+  empPlayer.VERSION = '2.1.105-390';
   /*
    * Universal Module Definition (UMD)
    *
