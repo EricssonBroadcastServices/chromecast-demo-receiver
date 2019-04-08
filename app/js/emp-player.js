@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.105-392 
+ * EMP-Player 2.1.105-393 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -6662,7 +6662,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.1.105-392';
+  vttThumbnailsPlugin.VERSION = '2.1.105-393';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -9339,7 +9339,7 @@
     }, {
       key: "version",
       get: function get() {
-        return '2.1.105-392';
+        return '2.1.105-393';
       }
       /**
        * Get entitlement
@@ -10719,7 +10719,7 @@
     return AnalyticsPlugin;
   }(Plugin$1);
 
-  AnalyticsPlugin.VERSION = '2.1.105-392';
+  AnalyticsPlugin.VERSION = '2.1.105-393';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -11412,28 +11412,38 @@
         this.streamInfo = {
           referenceTime: 0
         };
-        this.live = streamInfo.live || false;
-        this.streamInfo.live = streamInfo.live || false;
-        this.channelId = streamInfo.channelId || undefined;
-        this.programId = streamInfo.programId || undefined;
-        this.streamInfo.channelId = streamInfo.channelId || undefined;
-        this.streamInfo.programId = streamInfo.programId || undefined;
-        this.streamInfo["static"] = streamInfo["static"] || false;
-        this.isDynamicCachupAsLive = !streamInfo["static"] && streamInfo.start !== undefined;
-        this.isStaticCachupAsLive = streamInfo["static"] && streamInfo.end !== undefined;
-
-        if (streamInfo.start) {
-          this.streamInfo.start = new Date(streamInfo.start * 1000);
-          this.streamInfo.startTime = this.streamInfo.start.getTime();
-        }
-
-        if (streamInfo.end) {
-          this.streamInfo.end = new Date(streamInfo.end * 1000);
-          this.streamInfo.endTime = this.streamInfo.end.getTime();
-        }
-
-        this.streamInfo.event = streamInfo.event && streamInfo.programId !== undefined;
+        this.updateStreamInfoV2(streamInfo);
       }
+    }
+    /**
+     * updateStreamInfo V2
+     *
+     * @param {Object} streamInfo
+     */
+    ;
+
+    _proto.updateStreamInfoV2 = function updateStreamInfoV2(streamInfo) {
+      this.live = streamInfo.live || false;
+      this.streamInfo.live = streamInfo.live || false;
+      this.channelId = streamInfo.channelId || undefined;
+      this.programId = streamInfo.programId || undefined;
+      this.streamInfo.channelId = streamInfo.channelId || undefined;
+      this.streamInfo.programId = streamInfo.programId || undefined;
+      this.streamInfo["static"] = streamInfo["static"] || false;
+      this.isDynamicCachupAsLive = !streamInfo["static"] && streamInfo.start !== undefined;
+      this.isStaticCachupAsLive = streamInfo["static"] && streamInfo.end !== undefined;
+
+      if (streamInfo.start) {
+        this.streamInfo.start = new Date(streamInfo.start * 1000);
+        this.streamInfo.startTime = this.streamInfo.start.getTime();
+      }
+
+      if (streamInfo.end) {
+        this.streamInfo.end = new Date(streamInfo.end * 1000);
+        this.streamInfo.endTime = this.streamInfo.end.getTime();
+      }
+
+      this.streamInfo.event = streamInfo.event && streamInfo.programId !== undefined;
     }
     /**
      * setup Media Locator
@@ -14644,6 +14654,7 @@
           log('event program ended');
 
           if (this.entitlement().isStaticCachupAsLive) {
+            log('Static live program, stop playback');
             this.player.stop();
           } else {
             // Check if current program has been extended
@@ -14670,7 +14681,11 @@
               } else {
                 _this2.getNextProgram(function (nextProgram, errorNextProgram) {
                   if (errorNextProgram) {
-                    log.warn('shiftToNextProgram', errorNextProgram);
+                    if (errorNextProgram.message !== '404 NO_NEXT_PROGRAM') {
+                      log.warn('shiftToNextProgram', errorNextProgram);
+                    }
+
+                    log('No upcomming program, stop playback');
 
                     _this2.player.stop();
                   }
@@ -14678,7 +14693,7 @@
                   if (nextProgram && nextProgram.start.getTime() - 2000 <= extplayer.getPlayheadTime(_this2.player) && nextProgram.end.getTime() >= extplayer.getPlayheadTime(_this2.player)) {
                     _this2.updateCurrentProgram_(nextProgram, false);
                   } else {
-                    log('event program ended');
+                    log('Gap before upcomming program, stop playback');
 
                     _this2.player.stop();
                   }
@@ -14776,7 +14791,11 @@
       } else {
         this.getNextProgram(function (program, error) {
           if (error) {
-            log.warn('shiftToNextProgram', error);
+            if (error.message !== '404 NO_NEXT_PROGRAM') {
+              log.warn('shiftToNextProgram', error);
+            } else {
+              log('shiftToNextProgram', error.message);
+            }
 
             _this5.shiftCurrentProgram_(programId, channelId, dateTime);
           } else if (program.start.getTime() <= dateTime.getTime() && program.end.getTime() >= dateTime.getTime()) {
@@ -15142,6 +15161,8 @@
 
           extplayer.stop(_this13.player);
           return;
+        } else if (data.streamInfo) {
+          _this13.entitlement().updateStreamInfoV2(data.streamInfo);
         }
 
         log('verifyEntitlement', data.status);
@@ -15287,7 +15308,7 @@
     return ProgramService;
   }(Plugin$2);
 
-  ProgramService.VERSION = '2.1.105-392';
+  ProgramService.VERSION = '2.1.105-393';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -15526,7 +15547,7 @@
     return EntitlementExpirationService;
   }(Plugin$3);
 
-  EntitlementExpirationService.VERSION = '2.1.105-392';
+  EntitlementExpirationService.VERSION = '2.1.105-393';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -16079,7 +16100,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.105-392';
+  EntitlementMiddleware.VERSION = '2.1.105-393';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -16208,7 +16229,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.1.105-392';
+  empPlayer.VERSION = '2.1.105-393';
   /*
    * Universal Module Definition (UMD)
    *
