@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.105-391 
+ * EMP-Player 2.1.105-392 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -2121,8 +2121,8 @@
 
       var entitlement = this.getEntitlement(player);
 
-      if (entitlement && entitlement.isStaticCachupAsLive && player.isProgramEvent) {
-        log('Not suppoted for static event program');
+      if (entitlement && !entitlement.live && player.isProgramEvent) {
+        log('gotoLive ignore, event program is not live');
         return;
       }
 
@@ -2161,8 +2161,14 @@
       return player.techGet_('program');
     },
     playPreviousProgram: function playPreviousProgram(player, theEnd) {
-      if (player.sourceChanging_ || player.isProgramEvent) {
-        log('playPreviousProgram ignore');
+      if (player.sourceChanging_) {
+        log('playPreviousProgram ignore, sourceChanging');
+        return;
+      }
+
+      if (player.isProgramEvent) {
+        log('playPreviousProgram ignore, isProgramEvent');
+        player.gotoBeginning();
         return;
       }
 
@@ -2401,7 +2407,7 @@
      * @private
      */
     _proto.updateShowing = function updateShowing() {
-      if (this.player().isLive() || this.entitlement && this.entitlement.isStaticCachupAsLive && !this.player().isProgramEvent) {
+      if (this.player().isLive() && !this.player().isProgramEvent || this.entitlement && this.entitlement.live) {
         this.show();
       } else {
         this.hide();
@@ -6656,7 +6662,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.1.105-391';
+  vttThumbnailsPlugin.VERSION = '2.1.105-392';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -8988,6 +8994,22 @@
       extplayer.gotoLive(this);
     }
     /**
+     * Jump to the Beginning
+     */
+    ;
+
+    _proto.gotoBeginning = function gotoBeginning() {
+      this.scrubbing(true);
+      var videoWasPlaying = !this.paused();
+      this.pause();
+      this.currentTime(0);
+      this.scrubbing(false);
+
+      if (videoWasPlaying) {
+        silencePromise(this.play());
+      }
+    }
+    /**
      * Play Previous Program
      *
      * @param {boolean} end If it should play 30 sec from the end
@@ -8997,8 +9019,14 @@
     _proto.playPreviousProgram = function playPreviousProgram(end) {
       var _this7 = this;
 
-      if (this.sourceChanging_ || this.player.isProgramEvent) {
-        log('playPreviousProgram ignore');
+      if (this.sourceChanging_ || this.isProgramEvent) {
+        log('playPreviousProgram ignore, sourceChanging');
+        return;
+      }
+
+      if (this.isProgramEvent) {
+        log('playPreviousProgram ignore, isProgramEvent');
+        this.gotoBeginning();
         return;
       }
 
@@ -9030,7 +9058,7 @@
     _proto.playNextProgram = function playNextProgram() {
       var _this8 = this;
 
-      if (this.sourceChanging_ || this.player.isProgramEvent) {
+      if (this.sourceChanging_ || this.isProgramEvent) {
         log('playNextProgram ignore');
         return;
       }
@@ -9311,7 +9339,7 @@
     }, {
       key: "version",
       get: function get() {
-        return '2.1.105-391';
+        return '2.1.105-392';
       }
       /**
        * Get entitlement
@@ -10691,7 +10719,7 @@
     return AnalyticsPlugin;
   }(Plugin$1);
 
-  AnalyticsPlugin.VERSION = '2.1.105-391';
+  AnalyticsPlugin.VERSION = '2.1.105-392';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -11718,6 +11746,8 @@
   		$frames: true,
   		$innerHeight: true,
   		$innerWidth: true,
+  		$onmozfullscreenchange: true,
+  		$onmozfullscreenerror: true,
   		$outerHeight: true,
   		$outerWidth: true,
   		$pageXOffset: true,
@@ -14485,8 +14515,6 @@
      * @private
      */
     _proto.checkForProgramChange_ = function checkForProgramChange_(event, data) {
-      var _this2 = this;
-
       if (!event) {
         log.error('checkForProgramChange', 'event was not provided.');
         return;
@@ -14528,33 +14556,13 @@
         return;
       }
 
-      var dateTime; // event program at end
-
-      if (event.type !== 'startplayback' && this.currentProgram_ && this.player.isProgramEvent) {
-        if (extplayer.getPlayheadTime(this.player) + 2000 >= this.currentProgram_.end.getTime()) {
-          if (this.entitlement().isStaticCachupAsLive) {
-            log('event program ended');
-            this.player.stop();
-          } else {
-            // TODO: Update end time first maybe with entitle call first
-            this.getNextProgram(function (program, error) {
-              if (error) {
-                log.warn('shiftToNextProgram', error);
-              }
-
-              if (program && program.start.getTime() - 2000 <= extplayer.getPlayheadTime(_this2.player) && program.end.getTime() >= extplayer.getPlayheadTime(_this2.player)) {
-                _this2.updateCurrentProgram_(program, false);
-              } else {
-                log('event program ended');
-
-                _this2.player.stop();
-              }
-            });
-          }
-
+      if (event.type !== 'startplayback') {
+        if (this.eventProgramHasEnded_(channelId, programId)) {
           return;
         }
       }
+
+      var dateTime;
 
       if (isLive && !programId) {
         // Reagula Live
@@ -14617,6 +14625,73 @@
         // Start next polling
         this.pollingForEPG_();
       }
+    }
+    /**
+     * Check if Event Program Has Ended and preform action
+     *
+     * @param {number} channelId
+     * @param {number} programId
+     * @return {boolean} If Event Program Has Ended
+     * @private
+     */
+    ;
+
+    _proto.eventProgramHasEnded_ = function eventProgramHasEnded_(channelId, programId) {
+      var _this2 = this;
+
+      if (this.currentProgram_ && this.player.isProgramEvent) {
+        if (extplayer.getPlayheadTime(this.player) + 2000 >= this.currentProgram_.end.getTime()) {
+          log('event program ended');
+
+          if (this.entitlement().isStaticCachupAsLive) {
+            this.player.stop();
+          } else {
+            // Check if current program has been extended
+            this.exposure.getProgramInfo(channelId, null, function (program, error) {
+              if (error) {
+                log('getProgramInfo', 'No EPG found.', error);
+              }
+
+              if (!error && program.end.getTime() > _this2.currentProgram_.end.getTime()) {
+                log('Current program has been extended');
+                program.start = new Date(program.startTime);
+                _this2.currentProgram_.startTime = program.startTime;
+                _this2.currentProgram_.endTime = program.endTime;
+                _this2.currentProgram_.start = program.start;
+                _this2.currentProgram_.end = program.end;
+                _this2.currentProgram_.duration = program.duration;
+
+                _this2.player.trigger(empPlayerEvents.PROGRAM_CHANGED, {
+                  program: _this2.currentProgram_
+                }); // Update progressbar
+
+
+                _this2.player.trigger(empPlayerEvents.DURATION_CHANGE);
+              } else {
+                _this2.getNextProgram(function (nextProgram, errorNextProgram) {
+                  if (errorNextProgram) {
+                    log.warn('shiftToNextProgram', errorNextProgram);
+
+                    _this2.player.stop();
+                  }
+
+                  if (nextProgram && nextProgram.start.getTime() - 2000 <= extplayer.getPlayheadTime(_this2.player) && nextProgram.end.getTime() >= extplayer.getPlayheadTime(_this2.player)) {
+                    _this2.updateCurrentProgram_(nextProgram, false);
+                  } else {
+                    log('event program ended');
+
+                    _this2.player.stop();
+                  }
+                });
+              }
+            }, programId);
+          }
+
+          return true;
+        }
+      }
+
+      return false;
     }
     /**
      * Shift the Current Program
@@ -14923,6 +14998,8 @@
       var _this9 = this;
 
       this.currentProgram_ = null;
+      this.entitlement_.programId = null;
+      this.entitlement_.assetId = null;
       this.player.trigger(empPlayerEvents.PROGRAM_CHANGED, {
         program: null
       }); // Update progressbar
@@ -15210,7 +15287,7 @@
     return ProgramService;
   }(Plugin$2);
 
-  ProgramService.VERSION = '2.1.105-391';
+  ProgramService.VERSION = '2.1.105-392';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -15449,7 +15526,7 @@
     return EntitlementExpirationService;
   }(Plugin$3);
 
-  EntitlementExpirationService.VERSION = '2.1.105-391';
+  EntitlementExpirationService.VERSION = '2.1.105-392';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -16002,7 +16079,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.105-391';
+  EntitlementMiddleware.VERSION = '2.1.105-392';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -16131,7 +16208,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.1.105-391';
+  empPlayer.VERSION = '2.1.105-392';
   /*
    * Universal Module Definition (UMD)
    *
