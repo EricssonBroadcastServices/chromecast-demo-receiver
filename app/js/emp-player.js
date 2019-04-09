@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.105-396 
+ * EMP-Player 2.1.105-397 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -2260,6 +2260,13 @@
 
       return null;
     },
+    getIsProgramEvent: function getIsProgramEvent(player) {
+      if (player.programService) {
+        return player.programService().isProgramEvent;
+      }
+
+      return false;
+    },
     getSeekTimerange: function getSeekTimerange(player) {
       var result = {
         start: 0,
@@ -2407,7 +2414,7 @@
      * @private
      */
     _proto.updateShowing = function updateShowing() {
-      if (this.player().isLive() && !this.player().isProgramEvent || this.entitlement && this.entitlement.live) {
+      if (this.player().isLive() && !extplayer.getIsProgramEvent(this.player()) || this.entitlement && this.entitlement.live) {
         this.show();
       } else {
         this.hide();
@@ -4211,7 +4218,7 @@
     _proto.updateShowing = function updateShowing(program) {
       program = program ? program : this.player().getProgramDetails();
 
-      if (!this.player().noEPG() && this.entitlement && program && !this.player().isProgramEvent) {
+      if (!this.player().noEPG() && this.entitlement && program && !extplayer.getIsProgramEvent(this.player())) {
         this.show();
         this.enable();
       } else {
@@ -4324,7 +4331,7 @@
     _proto.updateShowing = function updateShowing() {
       var program = this.player().getProgramDetails();
 
-      if (!this.player().noEPG() && this.entitlement && program && !this.player().isProgramEvent) {
+      if (!this.player().noEPG() && this.entitlement && program && !extplayer.getIsProgramEvent(this.player())) {
         this.show();
       } else {
         this.hide();
@@ -6662,7 +6669,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.1.105-396';
+  vttThumbnailsPlugin.VERSION = '2.1.105-397';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -9344,18 +9351,12 @@
     _createClass(Player, [{
       key: "isProgramEvent",
       get: function get() {
-        var entitlement = extplayer.getEntitlement(this);
-
-        if (entitlement && entitlement.streamInfo && entitlement.streamInfo.event) {
-          return true;
-        }
-
-        return false;
+        return extplayer.getIsProgramEvent(this);
       }
     }, {
       key: "version",
       get: function get() {
-        return '2.1.105-396';
+        return '2.1.105-397';
       }
       /**
        * Get entitlement
@@ -10735,7 +10736,7 @@
     return AnalyticsPlugin;
   }(Plugin$1);
 
-  AnalyticsPlugin.VERSION = '2.1.105-396';
+  AnalyticsPlugin.VERSION = '2.1.105-397';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -14665,7 +14666,7 @@
     _proto.eventProgramHasEnded_ = function eventProgramHasEnded_(channelId, programId) {
       var _this2 = this;
 
-      if (this.currentProgram_ && this.player.isProgramEvent) {
+      if (this.currentProgram_ && this.isProgramEvent) {
         if (extplayer.getPlayheadTime(this.player) + 2000 >= this.currentProgram_.end.getTime()) {
           log('event program ended');
 
@@ -14681,19 +14682,8 @@
 
               if (!error && program.end.getTime() > _this2.currentProgram_.end.getTime()) {
                 log('Current program has been extended');
-                program.start = new Date(program.startTime);
-                _this2.currentProgram_.startTime = program.startTime;
-                _this2.currentProgram_.endTime = program.endTime;
-                _this2.currentProgram_.start = program.start;
-                _this2.currentProgram_.end = program.end;
-                _this2.currentProgram_.duration = program.duration;
 
-                _this2.player.trigger(empPlayerEvents.PROGRAM_CHANGED, {
-                  program: _this2.currentProgram_
-                }); // Update progressbar
-
-
-                _this2.player.trigger(empPlayerEvents.DURATION_CHANGE);
+                _this2.updateCurrentProgram_(program, false, true);
               } else {
                 _this2.getNextProgram(function (nextProgram, errorNextProgram) {
                   if (errorNextProgram) {
@@ -14911,59 +14901,72 @@
      *
      * @param {string} program
      * @param {boolean=} startplayback
+     * @param {boolean=} extendProgram
      * @private
      */
     ;
 
-    _proto.updateCurrentProgram_ = function updateCurrentProgram_(program, startplayback) {
+    _proto.updateCurrentProgram_ = function updateCurrentProgram_(program, startplayback, extendProgram) {
       var _this8 = this;
 
       if (startplayback === void 0) {
         startplayback = false;
       }
 
+      if (extendProgram === void 0) {
+        extendProgram = false;
+      }
+
       log('updateCurrentProgram', program, startplayback);
       this.clearProgramChangeTimeout_();
       this.shiftProgram_ = null;
+      this.currentVOD_ = null;
 
       if (!this.player) {
         return;
-      } // Program changed due to seek or other event
+      }
 
+      extplayer.currentAsset(this.player, program.assetId, program.programId, program.channelId);
+
+      if (this.entitlement_) {
+        this.entitlement_.channelId = program.channelId;
+        this.entitlement_.assetId = program.assetId;
+        this.entitlement_.programId = program.programId;
+      }
+
+      extplayer.setTechProgram(this.player, program);
+      this.player.removeClass('vjs-live'); // Program changed due to seek or other event
 
       if (!this.currentProgram_ || this.currentProgram_.programId !== program.programId) {
-        this.currentVOD_ = null;
-        this.currentProgram_ = program;
-
         if (!startplayback) {
-          this.verifyEntitlement();
+          this.verifyEntitlement(program);
         }
 
-        this.updateChannelInfo_(program, function () {
-          if (!_this8.player) {
-            return;
-          }
+        if (!this.isProgramEvent) {
+          this.updateChannelInfo_(program, function () {
+            _this8.player.trigger(empPlayerEvents.PROGRAM_CHANGED, {
+              program: program
+            }); // Update progressbar
 
-          extplayer.currentAsset(_this8.player, program.assetId, program.programId, program.channelId);
 
-          if (_this8.entitlement_) {
-            _this8.entitlement_.channelId = program.channelId;
-            _this8.entitlement_.assetId = program.assetId;
-            _this8.entitlement_.programId = program.programId;
-          }
-
-          extplayer.setTechProgram(_this8.player, program);
-
-          _this8.player.removeClass('vjs-live');
-
-          _this8.player.trigger(empPlayerEvents.PROGRAM_CHANGED, {
+            _this8.player.trigger(empPlayerEvents.DURATION_CHANGE);
+          });
+        } else {
+          this.player.trigger(empPlayerEvents.PROGRAM_CHANGED, {
             program: program
           }); // Update progressbar
 
+          this.player.trigger(empPlayerEvents.DURATION_CHANGE);
+        }
+      } else if (extendProgram) {
+        this.player.trigger(empPlayerEvents.PROGRAM_CHANGED, {
+          program: program
+        }); // Update progressbar
 
-          _this8.player.trigger(empPlayerEvents.DURATION_CHANGE);
-        });
+        this.player.trigger(empPlayerEvents.DURATION_CHANGE);
       }
+
+      this.currentProgram_ = program;
 
       if (startplayback) {
         log('updateCurrentProgram', 'startplayback');
@@ -15023,12 +15026,17 @@
       this.player.one(empPlayerEvents.PAUSE, this.clearProgramChangeTimeoutBind);
     }
     /**
+     * Is current program an event
+     *
+     * @return {boolean} Is current program an event
+     */
+    ;
+
+    /**
      * polling backend for new EPG
      *
      * @private
      */
-    ;
-
     _proto.pollingForEPG_ = function pollingForEPG_() {
       var _this9 = this;
 
@@ -15154,17 +15162,15 @@
     }
     /**
      * verifyEntitlement
+     *
+     * @param {Object} program
      */
     ;
 
-    _proto.verifyEntitlement = function verifyEntitlement() {
+    _proto.verifyEntitlement = function verifyEntitlement(program) {
       var _this13 = this;
 
-      if (!this.currentProgram) {
-        return;
-      }
-
-      this.exposure.verifyEntitlement(this.currentProgram.assetId, this.entitlement().playRequest, function (data, error) {
+      this.exposure.verifyEntitlement(program.assetId, this.entitlement().playRequest, function (data, error) {
         if (error) {
           _this13.player.error('verifyEntitlement ' + error.message);
 
@@ -15278,7 +15284,7 @@
     }, {
       key: "epgPolling",
       get: function get() {
-        if (this.player.isProgramEvent) {
+        if (this.isProgramEvent) {
           return false;
         }
 
@@ -15323,12 +15329,21 @@
         // FOR CC currentVOD comming from tech
         return this.currentVOD_;
       }
+    }, {
+      key: "isProgramEvent",
+      get: function get() {
+        if (this.entitlement_ && this.entitlement_.streamInfo && this.entitlement_.streamInfo.event) {
+          return true;
+        }
+
+        return false;
+      }
     }]);
 
     return ProgramService;
   }(Plugin$2);
 
-  ProgramService.VERSION = '2.1.105-396';
+  ProgramService.VERSION = '2.1.105-397';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -15567,7 +15582,7 @@
     return EntitlementExpirationService;
   }(Plugin$3);
 
-  EntitlementExpirationService.VERSION = '2.1.105-396';
+  EntitlementExpirationService.VERSION = '2.1.105-397';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -16120,7 +16135,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.105-396';
+  EntitlementMiddleware.VERSION = '2.1.105-397';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -16249,7 +16264,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.1.105-396';
+  empPlayer.VERSION = '2.1.105-397';
   /*
    * Universal Module Definition (UMD)
    *
