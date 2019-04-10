@@ -201,3 +201,8 @@ https://github.com/google/shaka-player/releases
 ### New features
 - Latest HtML5-player 2.1.104
 - **EMP-12697** Use the new entitlement service V2 for entitle call. 
+
+## 2.1.105
+
+### New features
+- **EMP-12715** Live Events in HTML5 and CC SDK
