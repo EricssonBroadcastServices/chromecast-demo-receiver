@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.105-400 
+ * EMP-Player 2.1.105-401 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -6669,7 +6669,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.1.105-400';
+  vttThumbnailsPlugin.VERSION = '2.1.105-401';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -9356,7 +9356,7 @@
     }, {
       key: "version",
       get: function get() {
-        return '2.1.105-400';
+        return '2.1.105-401';
       }
       /**
        * Get entitlement
@@ -10736,7 +10736,7 @@
     return AnalyticsPlugin;
   }(Plugin$1);
 
-  AnalyticsPlugin.VERSION = '2.1.105-400';
+  AnalyticsPlugin.VERSION = '2.1.105-401';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -15345,7 +15345,7 @@
     return ProgramService;
   }(Plugin$2);
 
-  ProgramService.VERSION = '2.1.105-400';
+  ProgramService.VERSION = '2.1.105-401';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -15584,7 +15584,7 @@
     return EntitlementExpirationService;
   }(Plugin$3);
 
-  EntitlementExpirationService.VERSION = '2.1.105-400';
+  EntitlementExpirationService.VERSION = '2.1.105-401';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -16137,7 +16137,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.105-400';
+  EntitlementMiddleware.VERSION = '2.1.105-401';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -16266,7 +16266,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.1.105-400';
+  empPlayer.VERSION = '2.1.105-401';
   /*
    * Universal Module Definition (UMD)
    *
