@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.105-402 
+ * EMP-Player 2.1.105-403 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -1846,12 +1846,14 @@
 
       if (!source.src) {
         return false;
-      } // Don't fetch certificate if IE or Edge or CC
+      }
 
+      var licenseServer = source.licenseServer || source.licenseserver;
+      var keySystems = source.keySystems || source.keysystems; // Don't fetch certificate if IE or Edge or CC
 
       if (window_1.document.documentMode || /Edge/.test(window_1.navigator.userAgent) || IS_CHROMECAST || IS_ANDROID) {
         this.certificate_ = null;
-      } else if (source.certificateServer && !this.certificate_ && (source.licenseServer || source.keySystems && !isEmpty(source.keySystems))) {
+      } else if (source.certificateServer && !this.certificate_ && (licenseServer || keySystems && !isEmpty(keySystems))) {
         this.fetchWidevineCertificate(source.certificateServer, function (cert, error) {
           if (cert) {
             if (_this2.name_ === 'EmpDashif') {
@@ -1898,8 +1900,8 @@
       this.currentProgram_ = null;
       this.currentVOD_ = null;
 
-      if (source.licenseServer || source.keySystems) {
-        this.playToken = source.playToken;
+      if (licenseServer || keySystems) {
+        this.playToken = source.playToken || source.playtoken;
       }
 
       this.clearTracks(['text']);
@@ -4335,14 +4337,17 @@
         };
       }
 
-      if (source.licenseServer) {
+      var licenseServer = source.licenseServer || source.licenseserver;
+      var keySystems = source.keySystems || source.keysystems;
+
+      if (licenseServer) {
         config.drm.servers = {
-          'com.widevine.alpha': source.licenseServer,
-          'com.microsoft.playready': source.licenseServer,
-          'com.adobe.primetime': source.licenseServer
+          'com.widevine.alpha': licenseServer,
+          'com.microsoft.playready': licenseServer,
+          'com.adobe.primetime': licenseServer
         };
-      } else if (source.keySystems) {
-        config.drm.servers = source.keySystems;
+      } else if (keySystems) {
+        config.drm.servers = keySystems;
       }
 
       config.offline = {
@@ -4469,7 +4474,7 @@
         this.player.options(options);
 
         if (options.autoplay) {
-          this.player.autoplay(true);
+          this.player.autoplay(options.autoplay);
         }
       }
 
@@ -4545,7 +4550,7 @@
     return DownloadService;
   }(Plugin);
 
-  DownloadService.VERSION = '2.1.105-402';
+  DownloadService.VERSION = '2.1.105-403';
 
   if (videojs.getPlugin('DownloadService')) {
     videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -4835,14 +4840,17 @@
         };
       }
 
-      if (source.licenseServer) {
+      var licenseServer = source.licenseServer || source.licenseserver;
+      var keySystems = source.keySystems || source.keysystems;
+
+      if (licenseServer) {
         config.drm.servers = {
-          'com.widevine.alpha': source.licenseServer,
-          'com.microsoft.playready': source.licenseServer,
-          'com.adobe.primetime': source.licenseServer
+          'com.widevine.alpha': licenseServer,
+          'com.microsoft.playready': licenseServer,
+          'com.adobe.primetime': licenseServer
         };
-      } else if (source.keySystems) {
-        config.drm.servers = source.keySystems;
+      } else if (keySystems) {
+        config.drm.servers = keySystems;
       } // Remove playready from smartTV, we only use widevine for smartTV
 
 
@@ -6322,7 +6330,7 @@
 
   EmpShaka.prototype.featuresNativeTextTracks = false;
   Tech$1.withSourceHandlers(EmpShaka);
-  EmpShaka.VERSION = '2.1.105-402'; // Unset source handlers set by Html5 super class.
+  EmpShaka.VERSION = '2.1.105-403'; // Unset source handlers set by Html5 super class.
   // We do not intent to support any sources other then sources allowed by nativeSourceHandler
 
   EmpShaka.sourceHandlers = [];

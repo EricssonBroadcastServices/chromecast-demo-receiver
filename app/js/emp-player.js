@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.105-402 
+ * EMP-Player 2.1.105-403 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -6269,7 +6269,7 @@
         return;
       }
 
-      if (!this.player.currentSource() || !this.player.currentSource().src || this.player.currentSource().isDynamicCachupAsLive || this.player.currentSource().isStaticCachupAsLive) {
+      if (!this.player.currentSource() || !this.player.currentSource().src || this.player.currentSource().isDynamicCachupAsLive || this.player.currentSource().isStaticCachupAsLive || this.player.currentSource().type === 'video/emp') {
         return;
       }
 
@@ -6683,7 +6683,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.1.105-402';
+  vttThumbnailsPlugin.VERSION = '2.1.105-403';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -7454,10 +7454,10 @@
       this.resetWithoutReload_();
 
       if (this.hasStarted()) {
-        this.options_.autoplay = true;
-      }
+        this.options_.autoplay = 'any';
+      } // this.autoplay(this.options_.autoplay);
 
-      this.autoplay(this.options_.autoplay);
+
       this.options_.absoluteStartTime = this.previousAbsoluteStartTime_;
 
       if (data.source.channelId) {
@@ -7517,10 +7517,10 @@
       }
 
       if (this.hasStarted()) {
-        this.options_.autoplay = true;
-      }
+        this.options_.autoplay = 'any';
+      } // this.autoplay(this.options_.autoplay);
 
-      this.autoplay(this.options_.autoplay);
+
       var asset = extplayer.currentAsset(this);
 
       if (asset) {
@@ -8456,20 +8456,20 @@
 
       if (!playbackProperties.playFrom) {
         playbackProperties.playFrom = 'defaultBehaviour';
-      }
+      } // Use  autoplay: 'any'
+
 
       var options = {
         playFrom: playbackProperties.playFrom,
-        autoplay: true
+        autoplay: 'any'
       };
 
-      if (playbackProperties.autoplay !== undefined) {
+      if (playbackProperties.autoplay !== undefined && playbackProperties.autoplay !== true) {
         options.autoplay = playbackProperties.autoplay;
-      }
+      } // if (options.autoplay) {
+      //  this.autoplay(options.autoplay);
+      // }
 
-      if (options.autoplay) {
-        this.autoplay(options.autoplay);
-      }
 
       if (playbackProperties.startTime && playbackProperties.playFrom === 'startTime') {
         options.absoluteStartTime = playbackProperties.startTime;
@@ -8710,7 +8710,7 @@
       return extplayer.getBufferedTimerange(this);
     }
     /**
-     * Get StreamType (DASH OR HLS)
+     * Get StreamType (DASH OR HLS OR SMOOTHSTREAMING)
      *
      * @return {string} StreamType
      */
@@ -9370,7 +9370,7 @@
     }, {
       key: "version",
       get: function get() {
-        return '2.1.105-402';
+        return '2.1.105-403';
       }
       /**
        * Get entitlement
@@ -10750,7 +10750,7 @@
     return AnalyticsPlugin;
   }(Plugin$1);
 
-  AnalyticsPlugin.VERSION = '2.1.105-402';
+  AnalyticsPlugin.VERSION = '2.1.105-403';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -15359,7 +15359,7 @@
     return ProgramService;
   }(Plugin$2);
 
-  ProgramService.VERSION = '2.1.105-402';
+  ProgramService.VERSION = '2.1.105-403';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -15598,7 +15598,7 @@
     return EntitlementExpirationService;
   }(Plugin$3);
 
-  EntitlementExpirationService.VERSION = '2.1.105-402';
+  EntitlementExpirationService.VERSION = '2.1.105-403';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -16151,7 +16151,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.105-402';
+  EntitlementMiddleware.VERSION = '2.1.105-403';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -16280,7 +16280,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.1.105-402';
+  empPlayer.VERSION = '2.1.105-403';
   /*
    * Universal Module Definition (UMD)
    *
