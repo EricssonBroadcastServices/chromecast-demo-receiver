@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.105-405 
+ * EMP-Player 2.1.105-406 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -5870,27 +5870,15 @@
       _this.assetMetadata = null;
 
       _this.on(_this.player(), empPlayerEvents.ENDED, function () {
-        _this.hide();
-
-        _this.clearEl();
-
-        _this.assetMetadata = null;
+        _this.clearAll();
       });
 
       _this.on(_this.player(), empPlayerEvents.ABORT, function () {
-        _this.hide();
-
-        _this.clearEl();
-
-        _this.assetMetadata = null;
+        _this.clearAll();
       });
 
       _this.on(_this.player(), empPlayerEvents.CHROMECAST_CASTING, function () {
-        _this.hide();
-
-        _this.clearEl();
-
-        _this.assetMetadata = null;
+        _this.clearAll();
       });
 
       _this.on(_this.player(), empPlayerEvents.PLAYING, function () {
@@ -5925,11 +5913,7 @@
 
           _this.updateMediaInformation_(_this.assetMetadata);
         } else {
-          _this.hide();
-
-          _this.clearEl();
-
-          _this.assetMetadata = null;
+          _this.clearAll();
         }
       });
 
@@ -5939,23 +5923,30 @@
 
           _this.updateMediaInformation_(_this.assetMetadata);
         } else {
-          _this.hide();
-
-          _this.clearEl();
-
-          _this.assetMetadata = null;
+          _this.clearAll();
         }
       });
 
       _this.on(_this.player(), empPlayerEvents.DISPOSE, function () {
-        _this.hide();
-
-        _this.clearEl();
+        _this.clearAll();
       });
 
       _this.fillEl();
 
       return _this;
+    }
+    /**
+     *  Hide and clear control
+     *
+     */
+
+
+    var _proto = EmpMediaInfoBar.prototype;
+
+    _proto.clearAll = function clearAll() {
+      this.hide();
+      this.clearEl();
+      this.assetMetadata = null;
     }
     /**
      * Builds the default DOM class name.
@@ -5964,9 +5955,7 @@
      *         The DOM class name for this object.
      * @private
      */
-
-
-    var _proto = EmpMediaInfoBar.prototype;
+    ;
 
     _proto.buildCSSClass = function buildCSSClass() {
       return "emp-mediainfo-bar " + _Component.prototype.buildCSSClass.call(this);
@@ -6683,7 +6672,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.1.105-405';
+  vttThumbnailsPlugin.VERSION = '2.1.105-406';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -7946,6 +7935,7 @@
       }
 
       if (this.isPlaying()) {
+        this.trigger(empPlayerEvents.ABORT);
         this.sourceChanging_ = true;
       } // Will start casting if connected
 
@@ -9370,7 +9360,7 @@
     }, {
       key: "version",
       get: function get() {
-        return '2.1.105-405';
+        return '2.1.105-406';
       }
       /**
        * Get entitlement
@@ -10750,7 +10740,7 @@
     return AnalyticsPlugin;
   }(Plugin$1);
 
-  AnalyticsPlugin.VERSION = '2.1.105-405';
+  AnalyticsPlugin.VERSION = '2.1.105-406';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -15359,7 +15349,7 @@
     return ProgramService;
   }(Plugin$2);
 
-  ProgramService.VERSION = '2.1.105-405';
+  ProgramService.VERSION = '2.1.105-406';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -15598,7 +15588,7 @@
     return EntitlementExpirationService;
   }(Plugin$3);
 
-  EntitlementExpirationService.VERSION = '2.1.105-405';
+  EntitlementExpirationService.VERSION = '2.1.105-406';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -16151,7 +16141,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.105-405';
+  EntitlementMiddleware.VERSION = '2.1.105-406';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -16280,7 +16270,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.1.105-405';
+  empPlayer.VERSION = '2.1.105-406';
   /*
    * Universal Module Definition (UMD)
    *
