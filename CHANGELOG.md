@@ -205,4 +205,8 @@ https://github.com/google/shaka-player/releases
 ## 2.1.105
 
 ### New features
+- Latest HtML5-player 2.1.105
 - **EMP-12715** Live Events in HTML5 and CC SDK
+
+### Bug fixes
+- **EMP-12727** Autoplay and stream stalling
