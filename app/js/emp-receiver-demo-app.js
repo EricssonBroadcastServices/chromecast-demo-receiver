@@ -26,8 +26,14 @@ class EMPReceiverApp {
     let options = {
       debug: false,
       statusText: 'EMP Receiver App',
-        playerOptions: {
-        errorDisplay: false //error displayed with showError method in EMPReceiverApp
+      playerOptions: {
+        errorDisplay: false, //error displayed with showError method in EMPReceiverApp
+        mediaInfo: {
+          artworkEnable: true,
+          titleEnable: true,
+          subtitleEnable: true,
+          logoEnable: true
+        }
       }
     };
 
@@ -55,50 +61,12 @@ class EMPReceiverApp {
   */
   onMetadataUpdate(metadata) {
     this.onStateChange('update');
-    let mediaArtworkImg = document.getElementById('media-artwork-img');
-    let mediaTitle = document.getElementById('media-title');
-    let mediaSubtitle = document.getElementById('media-subtitle');
-    if (mediaTitle) {
-      mediaTitle.innerHTML = metadata.title || '';
-    }
-    if (mediaSubtitle) {
-      mediaSubtitle.innerHTML = metadata.subtitle || '';
-    }
-    if (mediaArtworkImg && metadata.images && metadata.images.length > 0) {
-      let image = this.imageSelector(metadata.images, 'chromecast');
-      mediaArtworkImg.src = image.url;
-      mediaArtworkImg.height = image.height;
-      mediaArtworkImg.width = image.width;
-      mediaArtworkImg.style.display = 'block';
-      mediaArtworkImg.style.position = 'absolute';
-      mediaArtworkImg.style.bottom = '0px';
-    }
-    else {
-      mediaArtworkImg.style.display = 'none';
-    }
+    //Code to handle Metadata Update
+
     //Show media info
     setTimeout(function () {
       this.onStateChange('playing');
     }.bind(this), 1000);
-  }
-
-  /**
-  * Select the image to display for the asset
-  * @param {Array} images image objects
-  * @param {string} imageType image type in backend
-  * @returns {image} image object
-  */
-  imageSelector(images, imageType) {
-    let image;
-    if (images.length > 0) {
-      image = images[0];
-    }
-    for (var i = 0; i < images.length; i++) {
-      if (images[i].url && images[i].type === imageType) {
-        return images[i];
-      }
-    }
-    return image;
   }
 
 
@@ -108,17 +76,7 @@ class EMPReceiverApp {
   * @param {string} resolution ['SD','HD','2K','4K']
   */
   onResolutionChanged(resolution) {
-    let mediaResolutionHtml = document.getElementById('media-resolution');
-    if (!mediaResolutionHtml) {
-      return;
-    }
-    if (resolution) {
-      mediaResolutionHtml.innerHTML = resolution;
-      mediaResolutionHtml.style.display = 'inline';
-    }
-    else {
-      mediaResolutionHtml.style.display = 'none';
-    }
+    //Code to handle resolution change
   }
 
 
@@ -238,13 +196,7 @@ class EMPReceiverApp {
   */
   onProgramChanged(event, data) {
     if (data && data.program) {
-      if (data.program.channelInfo) {
-        let logo = document.getElementById('media-logo');
-        let channelLogo = this.imageSelector(data.program.channelInfo.images, 'thumbnail');
-        if (channelLogo && channelLogo.url) {
-          logo.style.backgroundImage = 'url("' + channelLogo.url + '")';
-        }
-      }
+     //Code to handle Program Asset Changed
     }
   }
 
