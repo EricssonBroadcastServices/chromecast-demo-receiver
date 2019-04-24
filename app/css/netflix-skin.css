@@ -5,13 +5,21 @@
     left: 4em;
     right: 4em;
     bottom: 2em;
-    height: 18em;
-    border-radius: 0.5em;
-    padding-top: 11em;
+    height: 8em;
+    border-bottom-right-radius: 0.5em;
+    border-bottom-left-radius: 0.5em;
+    padding-top: 0.5em;
     padding-right: 2em;
     padding-bottom: 0.5em;
     padding-left: 2em;
     opacity: 1;
+}
+
+.emp-mediainfo-bar {
+    background: rgba(38, 38, 38, 0.9);
+    background-color: rgba(38, 38, 38, 0.9);
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
 }
 
 .video-js .vjs-slider {
@@ -67,9 +75,6 @@
         height: 0.9em !important;
     }
 
-.receiver .media-info {
-    bottom: 5.5em;
-}
 
 .receiver .logo {
     background-position: top;
@@ -78,29 +83,14 @@
 .receiver[type="video"][state="paused"] .video-js .vjs-progress-holder .vjs-load-progress,
 .receiver[type="video"][state="paused"] .video-js .vjs-current-time,
 .receiver[type="video"][state="paused"] .video-js .vjs-time-control,
-.receiver[type="video"][state="paused"] .video-js .vjs-progress-control,
-.receiver[type="video"][state="paused"] > .logo,
-.receiver[type="video"][state="paused"] > .media-info {
+.receiver[type="video"][state="paused"] .video-js .vjs-progress-control {
     animation: none !important;
     animation-fill-mode: forwards;
     animation-delay: 0s;
 }
 
-.receiver .media-info .media-subtitle {
-    font-size: 1em;
-    max-height: 3.5em;
-}
-
-#media-artwork-img {
-    border-radius: 0.3em;
-}
-
 .video-js .vjs-time-control {
     min-width: 5.8em;
-}
-
-.receiver .media-text {
-    align-self: flex-start;
 }
 
 
