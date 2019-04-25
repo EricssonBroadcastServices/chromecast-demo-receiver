@@ -211,10 +211,11 @@ https://github.com/google/shaka-player/releases
 ### Bug fixes
 - **EMP-12727** Autoplay and stream stalling
 
-## 2.1.105
+## 2.1.106
 
 ### New features
 - Use empMediaInfoBar
+- Add redbee-cc-skin.css
 
 ### Bug fixes
-- Fix send duration update
+- Fix send duration on update
