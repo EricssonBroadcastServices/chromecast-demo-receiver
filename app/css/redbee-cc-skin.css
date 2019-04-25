@@ -23,8 +23,8 @@
 }
 
 .video-js .vjs-slider {
-    background-color: #2e2e2e;
-    background-color: rgba(46, 46, 46, 0.8);
+    background-color: #73859f;
+    background-color: rgba(115, 133, 159, 0.5);
     border-radius: 1em;
     /*margin: 0;*/
 }
@@ -36,8 +36,8 @@
 }
 
 .video-js .vjs-play-progress {
-    color: #b7090b;
-    background: #b7090b;
+    color: #dc281e;
+    background: #dc281e;
     font-size: 1.3em;
 }
 
@@ -64,13 +64,13 @@
 }
 
 .video-js .vjs-load-progress {
-    background: rgba(46, 46, 46, 0.5);
+    background: #dc281e;
     border-radius: 1em;
     height: 0.9em !important;
 }
 
     .video-js .vjs-load-progress div {
-        background: rgba(46, 46, 46, 0.75);
+        background: transparent;
         border-radius: 1em;
         height: 0.9em !important;
     }
