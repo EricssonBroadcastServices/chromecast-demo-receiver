@@ -214,8 +214,8 @@ https://github.com/google/shaka-player/releases
 ## 2.1.106
 
 ### New features
-- Use empMediaInfoBar
+- **EMP-11676 Improvement** - Use Mediainfo bar in Cromecast receiver
 - Add redbee-cc-skin.css
 
 ### Bug fixes
-- Fix send duration on update
+- Fix send duration on update duration if duration has changed.
