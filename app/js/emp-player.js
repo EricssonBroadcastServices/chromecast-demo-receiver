@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.106-409 
+ * EMP-Player 2.1.106-410 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -6702,7 +6702,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.1.106-409';
+  vttThumbnailsPlugin.VERSION = '2.1.106-410';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -9390,7 +9390,7 @@
     }, {
       key: "version",
       get: function get() {
-        return '2.1.106-409';
+        return '2.1.106-410';
       }
       /**
        * Get entitlement
@@ -10770,7 +10770,7 @@
     return AnalyticsPlugin;
   }(Plugin$1);
 
-  AnalyticsPlugin.VERSION = '2.1.106-409';
+  AnalyticsPlugin.VERSION = '2.1.106-410';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -14662,7 +14662,7 @@
 
             dateTime.setSeconds(dateTime.getSeconds() + 2);
             this.shiftToNextProgram_(programId, channelId, dateTime);
-          } else if (dateTime.getTime() < this.currentProgram.end.getTime() && dateTime.getTime() >= this.currentProgram.start.getTime()) {
+          } else if (dateTime.getTime() < this.currentProgram.end.getTime() && dateTime.getTime() + 2000 > this.currentProgram.start.getTime()) {
             log('checkForProgramChange', 'Same', dateTime);
             dateTime = null;
             this.updateCurrentProgram_(this.currentProgram, false);
@@ -14973,7 +14973,17 @@
 
       if (!this.currentProgram_ || this.currentProgram_.programId !== program.programId) {
         if (!startplayback) {
-          this.verifyEntitlement(program);
+          var timeBehindLive = (this.player.getServerTime() - program.start.getTime()) / 1000;
+          log('verifyEntitlement timeBehindLive', timeBehindLive);
+
+          if (timeBehindLive < 30) {
+            log('Wait for verifyEntitlement ', 30 - timeBehindLive);
+            setTimeout(function () {
+              _this8.verifyEntitlement(program);
+            }, (30 - timeBehindLive) * 1000);
+          } else {
+            this.verifyEntitlement(program);
+          }
         }
 
         if (!this.isProgramEvent) {
@@ -15379,7 +15389,7 @@
     return ProgramService;
   }(Plugin$2);
 
-  ProgramService.VERSION = '2.1.106-409';
+  ProgramService.VERSION = '2.1.106-410';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -15618,7 +15628,7 @@
     return EntitlementExpirationService;
   }(Plugin$3);
 
-  EntitlementExpirationService.VERSION = '2.1.106-409';
+  EntitlementExpirationService.VERSION = '2.1.106-410';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -16076,6 +16086,30 @@
                     srcEntitlement = null;
                   });
                 } else {
+                  if (srcEntitlement && srcEntitlement.streamInfo) {
+                    var timeBehindLive = (player.getServerTime() - srcEntitlement.streamInfo.startTime) / 1000;
+                    log('start play program timeBehindLive', timeBehindLive);
+
+                    if (timeBehindLive < -30) {
+                      player.error(new EmpPlayerError('Unable to load asset: The program has not started yet.', EmpPlayerErrorCodes.ENTITLEMENT));
+                      extplayer.stop(player);
+                      loop["break"]();
+                      return;
+                    } else if (timeBehindLive < 30) {
+                      player.addClass('vjs-waiting');
+                      player.trigger(empPlayerEvents.WAITING);
+                      log.warn('Wait for program to start', 30 - timeBehindLive);
+                      setTimeout(function () {
+                        startProgramService_(options, exposure, srcEntitlement, function () {
+                          player.removeClass('vjs-waiting');
+                          next(null, srcEntitlement);
+                        });
+                      }, (30 - timeBehindLive) * 1000);
+                      loop["break"]();
+                      return;
+                    }
+                  }
+
                   startProgramService_(options, exposure, srcEntitlement, function () {
                     next(null, srcEntitlement);
                   });
@@ -16171,7 +16205,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.106-409';
+  EntitlementMiddleware.VERSION = '2.1.106-410';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -16300,7 +16334,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.1.106-409';
+  empPlayer.VERSION = '2.1.106-410';
   /*
    * Universal Module Definition (UMD)
    *
