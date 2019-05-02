@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.106-411 
+ * EMP-Player 2.1.106-412 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -6702,7 +6702,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.1.106-411';
+  vttThumbnailsPlugin.VERSION = '2.1.106-412';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -9390,7 +9390,7 @@
     }, {
       key: "version",
       get: function get() {
-        return '2.1.106-411';
+        return '2.1.106-412';
       }
       /**
        * Get entitlement
@@ -10770,7 +10770,7 @@
     return AnalyticsPlugin;
   }(Plugin$1);
 
-  AnalyticsPlugin.VERSION = '2.1.106-411';
+  AnalyticsPlugin.VERSION = '2.1.106-412';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -14974,13 +14974,14 @@
       if (!this.currentProgram_ || this.currentProgram_.programId !== program.programId) {
         if (!startplayback) {
           var timeBehindLive = (this.player.getServerTime() - program.start.getTime()) / 1000;
+          var verifyEntitlementDelay = 5;
           log('verifyEntitlement timeBehindLive', timeBehindLive);
 
-          if (timeBehindLive < 30) {
-            log('Wait for verifyEntitlement ', 30 - timeBehindLive);
+          if (timeBehindLive < verifyEntitlementDelay) {
+            log('Wait for verifyEntitlement ', verifyEntitlementDelay - timeBehindLive);
             setTimeout(function () {
               _this8.verifyEntitlement(program);
-            }, (30 - timeBehindLive) * 1000);
+            }, (verifyEntitlementDelay - timeBehindLive) * 1000);
           } else {
             this.verifyEntitlement(program);
           }
@@ -15389,7 +15390,7 @@
     return ProgramService;
   }(Plugin$2);
 
-  ProgramService.VERSION = '2.1.106-411';
+  ProgramService.VERSION = '2.1.106-412';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -15628,7 +15629,7 @@
     return EntitlementExpirationService;
   }(Plugin$3);
 
-  EntitlementExpirationService.VERSION = '2.1.106-411';
+  EntitlementExpirationService.VERSION = '2.1.106-412';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -16088,23 +16089,24 @@
                 } else {
                   if (srcEntitlement && srcEntitlement.streamInfo) {
                     var timeBehindLive = (player.getServerTime() - srcEntitlement.streamInfo.startTime) / 1000;
+                    var playDelay = 5;
                     log('start play program timeBehindLive', timeBehindLive);
 
-                    if (timeBehindLive < -30) {
+                    if (timeBehindLive < -playDelay) {
                       player.error(new EmpPlayerError('Unable to load asset: The program has not started yet.', EmpPlayerErrorCodes.ENTITLEMENT));
                       extplayer.stop(player);
                       loop["break"]();
                       return;
-                    } else if (timeBehindLive < 30) {
+                    } else if (timeBehindLive < playDelay) {
                       player.addClass('vjs-waiting');
                       player.trigger(empPlayerEvents.WAITING);
-                      log.warn('Wait for program to start', 30 - timeBehindLive);
+                      log.warn('Wait for program to start', playDelay - timeBehindLive);
                       setTimeout(function () {
                         startProgramService_(options, exposure, srcEntitlement, function () {
                           player.removeClass('vjs-waiting');
                           next(null, srcEntitlement);
                         });
-                      }, (30 - timeBehindLive) * 1000);
+                      }, (playDelay - timeBehindLive) * 1000);
                       loop["break"]();
                       return;
                     }
@@ -16205,7 +16207,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.106-411';
+  EntitlementMiddleware.VERSION = '2.1.106-412';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -16334,7 +16336,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.1.106-411';
+  empPlayer.VERSION = '2.1.106-412';
   /*
    * Universal Module Definition (UMD)
    *
