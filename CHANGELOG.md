@@ -219,3 +219,8 @@ https://github.com/google/shaka-player/releases
 
 ### Bug fixes
 - Fix send duration on update duration if duration has changed.
+
+## 2.1.108
+
+### New features
+- **EMP-12780** Add a playlist to the player

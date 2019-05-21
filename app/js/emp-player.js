@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.107-413 
+ * EMP-Player 2.1.108-421 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -692,6 +692,33 @@
   * @file obj.js
   * @module obj
   */
+
+  /**
+   * @callback obj:EachCallback
+   *
+   * @param {Mixed} value
+   *        The current key for the object that is being iterated over.
+   *
+   * @param {string} key
+   *        The current key-value for object that is being iterated over
+   */
+
+  /**
+   * @callback obj:ReduceCallback
+   *
+   * @param {Mixed} accum
+   *        The value that is accumulating over the reduce loop.
+   *
+   * @param {Mixed} value
+   *        The current key for the object that is being iterated over.
+   *
+   * @param {string} key
+   *        The current key-value for object that is being iterated over
+   *
+   * @return {Mixed}
+   *         The new accumulated value.
+   */
+  var toString = Object.prototype.toString;
   /**
    * Get the keys of an Object
    *
@@ -789,6 +816,17 @@
 
   function isObject(value) {
     return !!value && typeof value === 'object';
+  }
+  /**
+   * Returns whether an object appears to be a "plain" object - that is, a
+   * direct instance of `Object`.
+   *
+   * @param  {Object} value value
+   * @return {boolean} isPlain
+   */
+
+  function isPlain(value) {
+    return isObject(value) && toString.call(value) === '[object Object]' && value.constructor === Object;
   }
   /**
    * Check is Object is isEmpty
@@ -913,6 +951,30 @@
     }
 
     return decodeURIComponent(results[2].replace(/\+/g, ' '));
+  }
+  /**
+   * get file name from Url
+   *
+   * @param {string} url url
+   * @return {string} FileName
+   */
+
+  function getFileNameFromUrl(url) {
+    var filename = url;
+
+    try {
+      var partOfUrl = url.split('/');
+      var filenameWithExt = partOfUrl.pop().split('#')[0].split('?')[0];
+      filename = filenameWithExt.substr(0, filenameWithExt.lastIndexOf('.')) || filenameWithExt;
+
+      if (!filename || filenameWithExt.lastIndexOf('.') === 0) {
+        filenameWithExt = partOfUrl.pop().split('#')[0].split('?')[0];
+        filename = filenameWithExt.substr(0, filenameWithExt.lastIndexOf('.')) || filenameWithExt;
+      }
+    } catch (e) {// Do nothing
+    }
+
+    return filename;
   }
   /**
    * getBaseUrl from Url
@@ -1239,16 +1301,9 @@
       options.selected = bitrate === 0;
       _this = _MenuItem.call(this, player, options) || this;
       _this.bitrate = bitrate;
+      _this.bitrateChangedBind = _this.bitrateChanged.bind(_assertThisInitialized(_this));
 
-      _this.player_.on(empPlayerEvents.BITRATE_CHANGED, function (event, data) {
-        if (_this.el()) {
-          if (_this.bitrate === 0) {
-            _this.selected(data.auto);
-          } else {
-            _this.selected(!data.auto && data.bitrate === _this.bitrate);
-          }
-        }
-      });
+      _this.player_.on(empPlayerEvents.BITRATE_CHANGED, _this.bitrateChangedBind);
 
       return _this;
     }
@@ -1263,6 +1318,33 @@
 
     _proto.handleClick = function handleClick(event) {
       this.player_.bitrate(this.bitrate);
+    }
+    /**
+    * dispose BitrateMenuItem
+    */
+    ;
+
+    _proto.dispose = function dispose() {
+      this.player_.off(empPlayerEvents.BITRATE_CHANGED, this.bitrateChangedBind);
+
+      _MenuItem.prototype.dispose.call(this);
+    }
+    /**
+     * Handle bitrateChanged
+     *
+     * @param {EventTarget~Event} [event]
+     * @param {Object} data
+     */
+    ;
+
+    _proto.bitrateChanged = function bitrateChanged(event, data) {
+      if (this.el()) {
+        if (this.bitrate === 0) {
+          this.selected(data.auto);
+        } else {
+          this.selected(!data.auto && data.bitrate === this.bitrate);
+        }
+      }
     };
 
     return BitrateMenuItem;
@@ -1334,10 +1416,7 @@
 
     _proto.buildCSSClass = function buildCSSClass() {
       return "vjs-bitrate-button " + _MenuButton.prototype.buildCSSClass.call(this);
-    } // buildWrapperCSSClass() {
-    //  return `vjs-bitrate-button ${super.buildWrapperCSSClass()}`;
-    // }
-
+    }
     /**
      * Create sub-menu items
      *
@@ -1821,7 +1900,16 @@
 
       log('Update currentAsset', assetId, programId, channelId);
 
-      if (player.cache_.source && player.cache_.source.type === 'video/emp') {
+      if (player.techName_ === 'EmpCast') {
+        player.cache_.source = {
+          type: 'video/emp',
+          src: JSON.stringify({
+            assetId: assetId,
+            programId: programId,
+            channelId: channelId
+          })
+        };
+      } else if (player.cache_.source && player.cache_.source.type === 'video/emp') {
         player.cache_.source.src = JSON.stringify({
           assetId: assetId,
           programId: programId,
@@ -1832,18 +1920,21 @@
         player.cache_.source.programId = programId;
         player.cache_.source.channelId = channelId;
       } else {
-        var _asset = {
-          assetId: assetId,
-          programId: programId,
-          channelId: channelId
-        };
         player.cache_.source = {
           type: 'video/emp',
-          src: JSON.stringify(_asset)
+          src: JSON.stringify({
+            assetId: assetId,
+            programId: programId,
+            channelId: channelId
+          })
         };
       }
 
-      player.cache_.sources = [player.cache_.source];
+      if (player.techName_ === 'EmpCast') {
+        player.cache_.sources = [player.cache_.source];
+      } // TODO: Maybe break something
+      //  player.cache_.sources = [player.cache_.source];
+
     },
     getAbsoluteTime: function getAbsoluteTime(player) {
       if (!player.tech_ || player.tech_.getAbsoluteTime === undefined) {
@@ -4586,8 +4677,560 @@
   PipToggle.prototype.controlText_ = 'picture-in-picture';
   videojs.registerComponent('PipToggle', PipToggle);
 
-  var ControlBar = videojs.getComponent('ControlBar');
+  var MenuItem$1 = videojs.getComponent('MenuItem');
   var Component$f = videojs.getComponent('Component');
+  /**
+   * The specific menu item type for selecting a bitrate
+   *
+   * @param {Player|Object} player
+   * @param {Object=} options
+   * @extends MenuItem
+   * @class PlaylistMenuItem
+   */
+
+  var PlaylistMenuItem =
+  /*#__PURE__*/
+  function (_MenuItem) {
+    _inheritsLoose(PlaylistMenuItem, _MenuItem);
+
+    /**
+     * Create a PlaylistMenuItem button
+     *
+     * @param {Player|Object} player
+     * @param {Object=} options
+     */
+    function PlaylistMenuItem(player, options) {
+      var _this;
+
+      log('PlaylistMenuItem', 'create');
+      options.label = options.source && options.source.title ? options.source.title : getFileNameFromUrl(options.source.src);
+      _this = _MenuItem.call(this, player, options) || this;
+      _this.source = options.source;
+
+      _this.selected(_this.source.selected);
+
+      return _this;
+    }
+    /**
+     * Get the item asset
+     *
+     * @return {Object} The item asset
+     */
+
+
+    var _proto = PlaylistMenuItem.prototype;
+
+    /**
+     * Handle click on audio track
+     *
+     * @param {EventTarget~Event} [event]
+     */
+    _proto.handleClick = function handleClick(event) {
+      // super.handleClick(event);
+      this.player().playList().currentSource(this.source);
+    };
+
+    _createClass(PlaylistMenuItem, [{
+      key: "itemAsset",
+      get: function get() {
+        return parseSrc(this.source.src);
+      }
+    }]);
+
+    return PlaylistMenuItem;
+  }(MenuItem$1);
+
+  Component$f.registerComponent('PlaylistMenuItem', PlaylistMenuItem);
+
+  var Plugin = videojs.getPlugin('plugin');
+  /**
+   * PlaylistPlugin Plugin
+   *  This manages persistent offline data including storage, listing, and deleting stored manifests.
+   *  Playback of offline manifests are done through the Player using a special URI (see shaka.offline.OfflineUri).
+   *  First, check isSupported to see if offline is supported by the platform.
+   *  Second, listen to EmpPlayerEvents.DOWNLOAD_PROGRESS on the download plugin
+   *  Third, call startDownload(), remove(), or list() as needed.
+   *  Start playback with load().
+   *
+   * @param {Player} player The `Player` that this class should be attached to.
+   * @param {Object=} options The key/value store of player options.
+   * @extends videojs.Plugin
+   * @class PlaylistPlugin
+   */
+
+  var PlaylistPlugin =
+  /*#__PURE__*/
+  function (_Plugin) {
+    _inheritsLoose(PlaylistPlugin, _Plugin);
+
+    /**
+     * Create the PlaylistPlugin
+     *
+     * @param {Player} player The `Player` that this class should be attached to.
+     * @param {Object=} options The key/value store of player options.
+     */
+    function PlaylistPlugin(player, options) {
+      var _this;
+
+      _this = _Plugin.call(this, player, options) || this;
+      log('PlaylistPlugin', 'create');
+      _this.options_ = options ? options : {};
+      _this.sources_ = [];
+      _this.playingChangedBind = _this.playingChanged.bind(_assertThisInitialized(_this));
+
+      _this.player.on(empPlayerEvents.PLAYING, _this.playingChangedBind);
+
+      _this.assetChangedBind = _this.assetChanged.bind(_assertThisInitialized(_this));
+
+      _this.player.on(empPlayerEvents.ASSET_CHANGED, _this.assetChangedBind);
+
+      return _this;
+    }
+    /**
+     * Handel playingChanged
+     *
+     * @private
+     */
+
+
+    var _proto = PlaylistPlugin.prototype;
+
+    _proto.playingChanged = function playingChanged() {
+      var asset = this.player.currentAsset();
+
+      if (!asset) {
+        asset = {
+          assetId: this.player.currentSrc()
+        };
+      }
+
+      this.selectSource_(asset);
+    }
+    /**
+    * Handel assetChanged
+    *
+    * @param {EventTarget~Event} [event]
+    * @param {Object} data
+    * @private
+    */
+    ;
+
+    _proto.assetChanged = function assetChanged(event, data) {
+      if (data && data.asset) {
+        this.selectSource_(data.asset);
+      }
+    }
+    /**
+     * clear the sources
+     */
+    ;
+
+    _proto.clear = function clear() {
+      this.sources_ = [];
+      this.updateComponent_();
+    }
+    /**
+    * dispose PlaylistPlugin
+    */
+    ;
+
+    _proto.dispose = function dispose() {
+      log('PlaylistPlugin', 'dispose');
+      this.player.off(empPlayerEvents.PLAYING, this.playingChangedBind);
+      this.player.off(empPlayerEvents.ASSET_CHANGED, this.assetChangedBind);
+      this.sources_ = [];
+      this.component_ = null;
+
+      _Plugin.prototype.dispose.call(this);
+    }
+    /**
+     * selectSource internally
+     *
+     * @param {Object} asset
+     * @private
+     */
+    ;
+
+    _proto.selectSource_ = function selectSource_(asset) {
+      this.setSelectedIndex_(-1);
+
+      for (var i = 0; i < this.sources_.length; i++) {
+        var itemAsset = parseSrc(this.sources_[i].src);
+
+        if (!itemAsset) {
+          itemAsset = {
+            assetId: this.sources_[i].src
+          };
+        }
+
+        if (asset && itemAsset && itemAsset.assetId === asset.assetId) {
+          this.setSelectedIndex_(i);
+          break;
+        }
+      }
+
+      this.updateComponent_();
+    }
+    /**
+     * update GUI Component internally
+     *
+     * @private
+     */
+    ;
+
+    _proto.updateComponent_ = function updateComponent_() {
+      if (this.component_) {
+        this.component_.update();
+      }
+    }
+    /**
+     * add the button component
+     *
+     * @param {Object} component
+     * @private
+     */
+    ;
+
+    _proto.addComponent = function addComponent(component) {
+      this.component_ = component;
+    }
+    /**
+    * Get or set the video source.
+    *
+    * @param {Tech~SourceObject|Tech~SourceObject[]|string} [source]
+    *        A SourceObject, an array of SourceObjects, or a string referencing
+    *        a URL to a media source. It is _highly recommended_ that an object
+    *        or array of objects is used here, so that source selection
+    *        algorithms can take the `type` into account.
+    *
+    *        If not provided, this method acts as a getter.
+    *
+    * @return {string|undefined}
+    *         If the `source` argument is missing, returns the current source
+    *         URL. Otherwise, returns nothing/undefined.
+    */
+    ;
+
+    _proto.src = function src(source) {
+      var _this2 = this;
+
+      if (typeof source === 'undefined') {
+        return this.sources_;
+      }
+
+      if (!this.player.isCreated) {
+        this.one(empPlayerEvents.PLAYER_CREATED, function () {
+          _this2.src(source);
+        });
+        return;
+      } // filter out invalid sources and turn our source into
+      // an array of source objects
+
+
+      this.sources_ = filterSource(source);
+
+      for (var i = 0; i < this.sources_.length; i++) {
+        if (this.sources_[i].selected || this.sources_[i].selected === '') {
+          this.sources_[i].selected = true;
+          this.index = i;
+          return;
+        }
+      }
+
+      this.player.src(this.sources);
+      this.updateComponent_();
+    }
+    /**
+     * Play next source
+     */
+    ;
+
+    _proto.next = function next() {
+      var i = this.index + 1;
+
+      if (i < this.sources_.length) {
+        this.index = i;
+      } else {
+        log.warn('playlist: playing last source');
+      }
+    }
+    /**
+     * length, number of sources
+     *
+     * @return {number} number of sources
+     */
+    ;
+
+    /**
+     * Play previous source
+     */
+    _proto.previous = function previous() {
+      var i = this.index - 1;
+
+      if (i > -1) {
+        this.index = i;
+      } else {
+        log.warn('playlist: playing first source');
+      }
+    }
+    /**
+     * Get the selected Source Index
+     *
+     * @return {number} Selected Source Index
+     */
+    ;
+
+    /**
+     * set SelectedIndex gui internally
+     *
+     * @param {number} value
+     * @private
+     */
+    _proto.setSelectedIndex_ = function setSelectedIndex_(value) {
+      for (var i = 0; i < this.sources_.length; i++) {
+        this.sources_[i].selected = false;
+      }
+
+      if (value > -1) {
+        this.sources_[value >= this.sources_.length ? this.sources_.length - 1 : value].selected = true;
+      }
+    }
+    /**
+     * get SelectedIndex internally
+     *
+     * @return {number} SelectedIndex
+     * @private
+     */
+    ;
+
+    _proto.getSelectedIndex_ = function getSelectedIndex_() {
+      for (var i = 0; i < this.sources_.length; i++) {
+        if (this.sources_[i].selected) {
+          return i;
+        }
+      }
+
+      return -1;
+    }
+    /**
+    * Returns the current source object.
+    *
+    * @return {Tech~SourceObject[]}
+    *         The current source objects
+    */
+    ;
+
+    /**
+     * Returns the current source object.
+     *
+     * @param {Tech~SourceObject} source
+     *        The source object you want to play.
+     * @return {Tech~SourceObject}
+     *         The current source object
+     */
+    _proto.currentSource = function currentSource(source) {
+      if (typeof source === 'undefined') {
+        for (var i = 0; i < this.sources_.length; i++) {
+          if (this.sources_[i].selected) {
+            return this.sources_[i];
+          }
+        }
+      } else {
+        for (var _i = 0; _i < this.sources_.length; _i++) {
+          var itemAsset = parseSrc(this.sources_[_i].src);
+          var asset = parseSrc(source.src);
+
+          if (!itemAsset) {
+            itemAsset = {
+              assetId: this.sources_[_i].src
+            };
+          }
+
+          if (!asset) {
+            asset = {
+              assetId: this.player.currentSrc()
+            };
+          }
+
+          if (asset && itemAsset && itemAsset.assetId === asset.assetId) {
+            this.index = _i;
+            return true;
+          }
+        }
+      }
+
+      return false;
+    };
+
+    _createClass(PlaylistPlugin, [{
+      key: "length",
+      get: function get() {
+        return this.sources_.length;
+      }
+    }, {
+      key: "index",
+      get: function get() {
+        return this.getSelectedIndex_();
+      }
+      /**
+       * Set and play the Source index
+       *
+       * @param {number} value Play Source Index
+       */
+      ,
+      set: function set(value) {
+        if (value > -1 && this.sources_.length > value) {
+          this.setSelectedIndex_(value);
+          this.player.src(this.sources.slice(value));
+        } else {
+          log.warn('playlist: index out of bounds', value);
+        }
+
+        this.updateComponent_();
+      }
+    }, {
+      key: "sources",
+      get: function get() {
+        // Clone it, don't let user mess with it.
+        var sources = [];
+
+        for (var i = 0; i < this.sources_.length; i++) {
+          sources.push(assign({}, this.sources_[i]));
+        }
+
+        return sources;
+      }
+    }]);
+
+    return PlaylistPlugin;
+  }(Plugin);
+
+  PlaylistPlugin.VERSION = '2.1.108-421';
+
+  if (videojs.getPlugin('playList')) {
+    videojs.log.warn('A plugin named "PlaylistPlugin" already exists.');
+  } else {
+    videojs.registerPlugin('playList', PlaylistPlugin);
+  }
+
+  var MenuButton$1 = videojs.getComponent('MenuButton');
+  var Component$g = videojs.getComponent('Component');
+  /**
+   * The class for PlaylistButton
+   *
+   * @extends MenuButton
+   * @class PlaylistButton
+   */
+
+  var PlaylistButton =
+  /*#__PURE__*/
+  function (_MenuButton) {
+    _inheritsLoose(PlaylistButton, _MenuButton);
+
+    /**
+     * Create a PlaylistButton button
+     *
+     * @param {Player|Object} player
+     * @param {Object=} options
+     */
+    function PlaylistButton(player, options) {
+      var _this;
+
+      _this = _MenuButton.call(this, player, options) || this;
+
+      _this.el_.setAttribute('aria-label', 'Playlist menu');
+
+      _this.hide();
+
+      _this.loadedDataBind = _this.loadedData.bind(_assertThisInitialized(_this));
+
+      _this.player_.on(empPlayerEvents.LOADED_DATA, _this.loadedDataBind);
+
+      player.on(empPlayerEvents.LOADED_DATA, function () {
+        if (_this.items && _this.items.length > 0) {
+          _this.show();
+        }
+      });
+      player.ready(function () {
+        _this.player_.playList().addComponent(_assertThisInitialized(_this));
+      });
+      return _this;
+    }
+    /**
+     * handle loadedData event
+     */
+
+
+    var _proto = PlaylistButton.prototype;
+
+    _proto.loadedData = function loadedData() {
+      if (this.items && this.items.length > 0) {
+        this.show();
+      }
+    }
+    /**
+    * dispose PlaylistButton
+    */
+    ;
+
+    _proto.dispose = function dispose() {
+      this.player_.off(empPlayerEvents.LOADED_DATA, this.loadedDataBind);
+
+      _MenuButton.prototype.dispose.call(this);
+    }
+    /**
+     * Builds the default DOM class name.
+     *
+     * @return {string}
+     *         The DOM class name for this object.
+     * @private
+     */
+    ;
+
+    _proto.buildCSSClass = function buildCSSClass() {
+      return 'vjs-playlist-button vjs-icon-chapters ' + _MenuButton.prototype.buildCSSClass.call(this);
+    }
+    /**
+     * Create sub-menu items
+     *
+     * @param {Array=} items
+     * @return {Array} Array of BitrateMenuItems
+     */
+    ;
+
+    _proto.createItems = function createItems(items) {
+      if (items === void 0) {
+        items = [];
+      }
+
+      var sources = this.player_.playList ? this.player_.playList().sources_ : [];
+
+      if (!sources || sources.length === 1) {
+        this.hide();
+        return items;
+      }
+
+      for (var i = 0; i < sources.length; i++) {
+        var source = sources[i];
+        items.push(new PlaylistMenuItem(this.player_, {
+          // MenuItem is selectable
+          selectable: true,
+          source: source
+        }));
+      }
+
+      this.show();
+      return items;
+    };
+
+    return PlaylistButton;
+  }(MenuButton$1);
+
+  PlaylistButton.prototype.controlText_ = 'Playlist';
+  Component$g.registerComponent('PlaylistButton', PlaylistButton);
+
+  var ControlBar = videojs.getComponent('ControlBar');
+  var Component$h = videojs.getComponent('Component');
   /**
    * Container of main controls
    *
@@ -4637,13 +5280,14 @@
       bitrateButton: {},
       audioTrackButton: {},
       subsCapsButton: {},
+      playlistButton: {},
       pipToggle: {},
       airplayToggle: {},
       fullscreenToggle: {}
     }
   }; // loadProgressBar > seekBar > mouseTimeDisplay uses a reference to 'controlbar' so we need to override the name for compatibility with our own controlbar
 
-  Component$f.registerComponent('ControlBar', EmpControlBar);
+  Component$h.registerComponent('ControlBar', EmpControlBar);
 
   /**
    * @file time-ranges.js
@@ -4757,7 +5401,7 @@
     }
   }
 
-  var Component$g = videojs.getComponent('Component');
+  var Component$i = videojs.getComponent('Component');
   var darkGray = '#222';
   var lightGray = '#ccc';
   var fontMap = {
@@ -5293,11 +5937,11 @@
     };
 
     return TextTrackDisplay;
-  }(Component$g);
+  }(Component$i);
 
-  Component$g.registerComponent('TextTrackDisplay', TextTrackDisplay);
+  Component$i.registerComponent('TextTrackDisplay', TextTrackDisplay);
 
-  var Component$h = videojs.getComponent('Component');
+  var Component$j = videojs.getComponent('Component');
   var ModalDialog = videojs.getComponent('ModalDialog');
   var LOCAL_STORAGE_KEY = 'vjs-text-track-settings';
   var COLOR_BLACK = ['#000', 'Black'];
@@ -5840,9 +6484,9 @@
     return TextTrackSettings;
   }(ModalDialog);
 
-  Component$h.registerComponent('TextTrackSettings', TextTrackSettings);
+  Component$j.registerComponent('TextTrackSettings', TextTrackSettings);
 
-  var Component$i = videojs.getComponent('Component');
+  var Component$k = videojs.getComponent('Component');
   /**
    * EmpMediaInfoBar Show media-title, media-artwork, media-resolution and media-subtitle
    *
@@ -6149,12 +6793,12 @@
     };
 
     return EmpMediaInfoBar;
-  }(Component$i);
+  }(Component$k);
 
   EmpMediaInfoBar.prototype.controlText_ = 'MediaInfo';
-  Component$i.registerComponent('EmpMediaInfoBar', EmpMediaInfoBar);
+  Component$k.registerComponent('EmpMediaInfoBar', EmpMediaInfoBar);
 
-  var Plugin = videojs.getPlugin('plugin');
+  var Plugin$1 = videojs.getPlugin('plugin');
   /* global
     XMLHttpRequest
   */
@@ -6700,9 +7344,9 @@
     }]);
 
     return vttThumbnailsPlugin;
-  }(Plugin);
+  }(Plugin$1);
 
-  vttThumbnailsPlugin.VERSION = '2.1.107-413';
+  vttThumbnailsPlugin.VERSION = '2.1.108-421';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -6826,6 +7470,179 @@
 
     MediaError.prototype[MediaError.errorTypes[errNum]] = errNum;
   } // jsdocs for instance/static members added above
+
+  /**
+   * @file url.js
+   * @module url
+   */
+  /**
+   * Returns the extension of the passed file name. It will return an empty string
+   * if passed an invalid path.
+   *
+   * @function
+   * @param    {string} path
+   *           The fileName path like '/path/to/file.mp4'
+   *
+   * @return  {string}
+   *           The extension in lower case or an empty string if no
+   *           extension could be found.
+   */
+
+  var getFileExtension = function getFileExtension(path) {
+    if (typeof path === 'string') {
+      var splitPathRe = /^(\/?)([\s\S]*?)((?:\.{1,2}|[^\/]+?)(\.([^\.\/\?]+)))(?:[\/]*|[\?].*)$/i;
+      var pathParts = splitPathRe.exec(path);
+
+      if (pathParts) {
+        return pathParts.pop().toLowerCase();
+      }
+    }
+
+    return '';
+  };
+
+  /**
+   * Mimetypes
+   *
+   * @see http://hul.harvard.edu/ois/////systems/wax/wax-public-help/mimetypes.htm
+   * @typedef Mimetypes~Kind
+   * @enum
+   */
+
+  var MimetypesKind = {
+    opus: 'video/ogg',
+    ogv: 'video/ogg',
+    mp4: 'video/mp4',
+    mov: 'video/mp4',
+    m4v: 'video/mp4',
+    mkv: 'video/x-matroska',
+    mp3: 'audio/mpeg',
+    aac: 'audio/aac',
+    oga: 'audio/ogg',
+    m3u8: 'application/x-mpegURL',
+    jpg: 'image/jpeg',
+    jpeg: 'image/jpeg',
+    gif: 'image/gif',
+    png: 'image/png',
+    svg: 'image/svg+xml',
+    webp: 'image/webp'
+  };
+  /**
+   * Get the mimetype of a given src url if possible
+   *
+   * @param {string} src
+   *        The url to the src
+   *
+   * @return {string}
+   *         return the mimetype if it was known or empty string otherwise
+   */
+
+  var getMimetype = function getMimetype(src) {
+    if (src === void 0) {
+      src = '';
+    }
+
+    var ext = getFileExtension(src);
+    var mimetype = MimetypesKind[ext.toLowerCase()];
+    return mimetype || '';
+  };
+  /**
+   * Find the mime type of a given source string if possible. Uses the player
+   * source cache.
+   *
+   * @param {Player} player
+   *        The player object
+   *
+   * @param {string} src
+   *        The source string
+   *
+   * @return {string}
+   *         The type that was found
+   */
+
+  var findMimetype = function findMimetype(player, src) {
+    if (!src) {
+      return '';
+    } // 1. check for the type in the `source` cache
+
+
+    if (player.cache_.source.src === src && player.cache_.source.type) {
+      return player.cache_.source.type;
+    } // 2. see if we have this source in our `currentSources` cache
+
+
+    var matchingSources = player.cache_.sources.filter(function (s) {
+      return s.src === src;
+    });
+
+    if (matchingSources.length) {
+      return matchingSources[0].type;
+    } // 3. look for the src url in source elements and use the type there
+
+
+    var sources = player.$$('source');
+
+    for (var i = 0; i < sources.length; i++) {
+      var s = sources[i];
+
+      if (s.type && s.src && s.src === src) {
+        return s.type;
+      }
+    } // 4. finally fallback to our list of mime types based on src url extension
+
+
+    return getMimetype(src);
+  };
+
+  /**
+   * @file merge-options.js
+   * @module merge-options
+   */
+  /**
+   * Merge two objects recursively.
+   *
+   * Performs a deep merge like
+   * {@link https://lodash.com/docs/4.17.10#merge|lodash.merge}, but only merges
+   * plain objects (not arrays, elements, or anything else).
+   *
+   * Non-plain object values will be copied directly from the right-most
+   * argument.
+   *
+   * @static
+   * @param   {Object[]} sources
+   *          One or more objects to merge into a new object.
+   *
+   * @return {Object}
+   *          A new object that is the merged result of all sources.
+   */
+
+  function mergeOptions() {
+    var result = {};
+
+    for (var _len = arguments.length, sources = new Array(_len), _key = 0; _key < _len; _key++) {
+      sources[_key] = arguments[_key];
+    }
+
+    sources.forEach(function (source) {
+      if (!source) {
+        return;
+      }
+
+      each(source, function (value, key) {
+        if (!isPlain(value)) {
+          result[key] = value;
+          return;
+        }
+
+        if (!isPlain(result[key])) {
+          result[key] = {};
+        }
+
+        result[key] = mergeOptions(result[key], value);
+      });
+    });
+    return result;
+  }
 
   var VjsPlayer = videojs.getComponent('Player');
   var Tech = videojs.getComponent('Tech');
@@ -7028,9 +7845,17 @@
             type: 'application/yospace'
           });
         } else if (_this.cache_ && _this.cache_.source && _this.cache_.source.streamInfo) {
-          _this.cache_.source.type = 'video/emp';
+          var asset = _this.currentAsset();
 
-          _this.src(_this.cache_.source);
+          if (_this.playList && !_this.playList().currentSource({
+            type: 'video/emp',
+            src: asset.assetId
+          })) {
+            _this.src({
+              type: 'video/emp',
+              src: JSON.stringify(asset)
+            });
+          }
         } else if (_this.cache_ && _this.cache_.source) {
           _this.src(_this.cache_.source);
         }
@@ -7212,6 +8037,10 @@
         var program = data && data.program;
 
         if (program) {
+          extplayer.currentAsset(_this2, program.assetId, program.programId, program.channelId);
+        }
+
+        if (program) {
           _this2.removeClass('vjs-live');
         } else {
           _this2.addClass('vjs-live');
@@ -7219,6 +8048,20 @@
 
         _this2.trigger(empPlayerEvents.PROGRAM_CHANGED, {
           program: program
+        });
+
+        _this2.trigger(empPlayerEvents.DURATION_CHANGE);
+      });
+      this.on(this.tech_, empPlayerEvents.ASSET_CHANGED, function (event, data) {
+        log('ASSET_CHANGED');
+        var asset = data && data.asset;
+
+        if (asset) {
+          extplayer.currentAsset(_this2, asset.assetId);
+        }
+
+        _this2.trigger(empPlayerEvents.ASSET_CHANGED, {
+          asset: asset
         });
 
         _this2.trigger(empPlayerEvents.DURATION_CHANGE);
@@ -7247,6 +8090,7 @@
         this.techCall_('loadNextSource');
         return true;
       } else if (this.cache_.sources && this.cache_.sources.length > 1) {
+        log('loadNextSource');
         this.cache_.sources.shift();
         this.src(this.cache_.sources);
         return true;
@@ -7898,6 +8742,16 @@
           _this4.src(source);
         });
         return;
+      } // Add sources to playList
+
+
+      if (!IS_CHROMECAST && Array.isArray(this.options_.sources) && this.options_.sources.length > 0 && this.playList) {
+        var optSources = this.options_.sources;
+        this.options_.sources = [];
+        this.playList().src(optSources);
+        return;
+      } else if (!IS_CHROMECAST && this.playList && !Array.isArray(source)) {
+        this.playList().clear();
       } // filter out invalid sources and turn our source into
       // an array of source objects
 
@@ -9380,6 +10234,72 @@
     _proto.isAudioOnly = function isAudioOnly() {
       var bitrates = this.bitrates();
       return !(bitrates.length > 0 && bitrates[0] > 0);
+    }
+    /**
+       * Update the internal source caches so that we return the correct source from
+       * `src()`, `currentSource()`, and `currentSources()`.
+       *
+       * > Note: `currentSources` will not be updated if the source that is passed in exists
+       *         in the current `currentSources` cache.
+       *
+       *
+       * @param {Tech~SourceObject} srcObj
+       *        A string or object source to update our caches to.
+       */
+    ;
+
+    _proto.updateSourceCaches_ = function updateSourceCaches_(srcObj) {
+      if (srcObj === void 0) {
+        srcObj = '';
+      }
+
+      var src = srcObj;
+      var type = '';
+
+      if (typeof src !== 'string') {
+        src = srcObj.src;
+        type = srcObj.type;
+      } // make sure all the caches are set to default values
+      // to prevent null checking
+
+
+      this.cache_.source = this.cache_.source || {};
+      this.cache_.sources = this.cache_.sources || []; // try to get the type of the src that was passed in
+
+      if (src && !type) {
+        type = findMimetype(this, src);
+      } // update `currentSource` cache always
+
+
+      this.cache_.source = mergeOptions({}, srcObj, {
+        src: src,
+        type: type
+      });
+      /* Don't work the new video el has no source
+      const matchingSources = this.cache_.sources.filter((s) => s.src && s.src === src);
+      const sourceElSources = [];
+      const sourceEls = this.$$('source');
+      const matchingSourceEls = [];
+       for (let i = 0; i < sourceEls.length; i++) {
+        const sourceObj = Dom.getAttributes(sourceEls[i]);
+         sourceElSources.push(sourceObj);
+         if (sourceObj.src && sourceObj.src === src) {
+          matchingSourceEls.push(sourceObj.src);
+        }
+      }
+       // if we have matching source els but not matching sources
+      // the current source cache is not up to date
+      if (matchingSourceEls.length && !matchingSources.length) {
+        this.cache_.sources = sourceElSources;
+        // if we don't have matching source or source els set the
+        // sources cache to the `currentSource` cache
+      } else if (!matchingSources.length) {
+        this.cache_.sources = [this.cache_.source];
+      }
+      */
+      // update the tech `src` cache
+
+      this.cache_.src = src;
     };
 
     _createClass(Player, [{
@@ -9390,7 +10310,7 @@
     }, {
       key: "version",
       get: function get() {
-        return '2.1.107-413';
+        return '2.1.108-421';
       }
       /**
        * Get entitlement
@@ -9481,8 +10401,8 @@
   }; // Override default 'Player' component
 
 
-  var Component$j = videojs.getComponent('Component');
-  Component$j.registerComponent('Player', Player);
+  var Component$l = videojs.getComponent('Component');
+  Component$l.registerComponent('Player', Player);
 
   /**
    * Detects if the current browser has the required technology to play an unencrypted stream provided by EMP.
@@ -10588,7 +11508,7 @@
   var empAnalyticsTmp = unwrapExports(empAnalytics_min);
 
   var EMPAnalytics = window_1.empAnalytics ? window_1.empAnalytics : empAnalyticsTmp;
-  var Plugin$1 = videojs.getPlugin('plugin');
+  var Plugin$2 = videojs.getPlugin('plugin');
   /**
    * AnalyticsPlugin
    *
@@ -10768,9 +11688,9 @@
     }]);
 
     return AnalyticsPlugin;
-  }(Plugin$1);
+  }(Plugin$2);
 
-  AnalyticsPlugin.VERSION = '2.1.107-413';
+  AnalyticsPlugin.VERSION = '2.1.108-421';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -14360,7 +15280,7 @@
     return EntitlementRequest;
   }();
 
-  var Plugin$2 = videojs.getPlugin('plugin');
+  var Plugin$3 = videojs.getPlugin('plugin');
   /**
    * Program Service Plugin
    * @param {Player} player The `Player` that this class should be attached to.
@@ -15392,9 +16312,9 @@
     }]);
 
     return ProgramService;
-  }(Plugin$2);
+  }(Plugin$3);
 
-  ProgramService.VERSION = '2.1.107-413';
+  ProgramService.VERSION = '2.1.108-421';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -15402,7 +16322,7 @@
     videojs.registerPlugin('programService', ProgramService);
   }
 
-  var Plugin$3 = videojs.getPlugin('plugin');
+  var Plugin$4 = videojs.getPlugin('plugin');
   /**
    * EntitlementExpirationService
    *
@@ -15631,9 +16551,9 @@
     }]);
 
     return EntitlementExpirationService;
-  }(Plugin$3);
+  }(Plugin$4);
 
-  EntitlementExpirationService.VERSION = '2.1.107-413';
+  EntitlementExpirationService.VERSION = '2.1.108-421';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -16210,7 +17130,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.107-413';
+  EntitlementMiddleware.VERSION = '2.1.108-421';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -16339,7 +17259,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.1.107-413';
+  empPlayer.VERSION = '2.1.108-421';
   /*
    * Universal Module Definition (UMD)
    *
