@@ -1,3 +1,6 @@
+# ![RED BEE MEDIA](https://github.com/EricssonBroadcastServices/chromecast-demo-receiver/blob/master/tutorials/econ-blue.png) 
+[RED BEE MEDIA](https://www.redbeemedia.com/)
+
 # EMP Chromecast Receiver 2
 
 This document provides an overview of building a custom Google Cast receiver application.
