@@ -1,4 +1,4 @@
-# ![RED BEE MEDIA](https://github.com/EricssonBroadcastServices/chromecast-demo-receiver/blob/master/tutorials/econ-blue.png) 
+# ![RED BEE MEDIA](https://emps-chromecast-receiver.azurewebsites.net/html5-player-2/reference/docs/img/econ-blue.png) 
 [RED BEE MEDIA](https://www.redbeemedia.com/)
 
 # EMP Chromecast Receiver 2

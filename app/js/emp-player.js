@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.108-421 
+ * EMP-Player 2.1.108-423 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -4784,10 +4784,14 @@
 
       _this.player.on(empPlayerEvents.ASSET_CHANGED, _this.assetChangedBind);
 
+      _this.programChangedBind = _this.programChanged.bind(_assertThisInitialized(_this));
+
+      _this.player.on(empPlayerEvents.PROGRAM_CHANGED, _this.programChangedBind);
+
       return _this;
     }
     /**
-     * Handel playingChanged
+     * Handle Playing Changed
      *
      * @private
      */
@@ -4807,7 +4811,7 @@
       this.selectSource_(asset);
     }
     /**
-    * Handel assetChanged
+    * Handle Asset Changed
     *
     * @param {EventTarget~Event} [event]
     * @param {Object} data
@@ -4818,6 +4822,20 @@
     _proto.assetChanged = function assetChanged(event, data) {
       if (data && data.asset) {
         this.selectSource_(data.asset);
+      }
+    }
+    /**
+    * Handle Program Changed
+    *
+    * @param {EventTarget~Event} [event]
+    * @param {Object} data
+    * @private
+    */
+    ;
+
+    _proto.programChanged = function programChanged(event, data) {
+      if (data && data.program) {
+        this.selectSource_(data.program);
       }
     }
     /**
@@ -4838,6 +4856,7 @@
       log('PlaylistPlugin', 'dispose');
       this.player.off(empPlayerEvents.PLAYING, this.playingChangedBind);
       this.player.off(empPlayerEvents.ASSET_CHANGED, this.assetChangedBind);
+      this.player.off(empPlayerEvents.PROGRAM_CHANGED, this.programChangedBind);
       this.sources_ = [];
       this.component_ = null;
 
@@ -4937,6 +4956,7 @@
         }
       }
 
+      this.player.options_.playlist = true;
       this.player.src(this.sources);
       this.updateComponent_();
     }
@@ -5105,7 +5125,7 @@
     return PlaylistPlugin;
   }(Plugin);
 
-  PlaylistPlugin.VERSION = '2.1.108-421';
+  PlaylistPlugin.VERSION = '2.1.108-423';
 
   if (videojs.getPlugin('playList')) {
     videojs.log.warn('A plugin named "PlaylistPlugin" already exists.');
@@ -7346,7 +7366,7 @@
     return vttThumbnailsPlugin;
   }(Plugin$1);
 
-  vttThumbnailsPlugin.VERSION = '2.1.108-421';
+  vttThumbnailsPlugin.VERSION = '2.1.108-423';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -7718,7 +7738,8 @@
         'startTime': tagOptions.startTime ? tagOptions.startTime : 0,
         'absoluteStartTime': tagOptions.absoluteStartTime ? tagOptions.absoluteStartTime : undefined,
         'persistTextTrackSettings': tagOptions.persistTextTrackSettings ? tagOptions.persistTextTrackSettings : !IS_IE_OR_EDGE,
-        'textTrackSettings': tagOptions.textTrackSettings ? tagOptions.textTrackSettings : !IS_IE_OR_EDGE
+        'textTrackSettings': tagOptions.textTrackSettings ? tagOptions.textTrackSettings : !IS_IE_OR_EDGE,
+        'playFrom': tagOptions.playFrom ? tagOptions.playFrom : 'defaultBehaviour'
       }, options); // Fix that HTML attribute is lowercase
 
       if (options.sources) {
@@ -8121,10 +8142,11 @@
      * @param {?string} channelId optional
      * @param {?string} programId optional
      * @param {?number} startTime optional startTime in unix time (ms)
+     * @param {?boolean} noPlaylist optional If the lineUpAsset should not be played as Playlist asset
      */
     ;
 
-    _proto.lineUpAsset = function lineUpAsset(assetId, channelId, programId, startTime) {
+    _proto.lineUpAsset = function lineUpAsset(assetId, channelId, programId, startTime, noPlaylist) {
       var asset = {
         assetId: assetId,
         programId: programId,
@@ -8133,8 +8155,9 @@
 
       if (startTime) {
         this.options({
-          playFrom: 'beginning',
-          absoluteStartTime: startTime
+          playFrom: 'startTime',
+          absoluteStartTime: startTime,
+          noPlaylist: noPlaylist
         });
       }
 
@@ -8750,8 +8773,16 @@
         this.options_.sources = [];
         this.playList().src(optSources);
         return;
-      } else if (!IS_CHROMECAST && this.playList && !Array.isArray(source)) {
-        this.playList().clear();
+      } else if (!Array.isArray(source)) {
+        if (!IS_CHROMECAST && this.playList) {
+          this.playList().clear();
+        }
+
+        this.options_.playlist = undefined;
+        this.options_.playlist.noPlaylist = undefined;
+      } else {
+        this.options_.playlist = this.options_.playlist.noPlaylist ? undefined : true;
+        this.options_.playlist.noPlaylist = undefined;
       } // filter out invalid sources and turn our source into
       // an array of source objects
 
@@ -10310,7 +10341,7 @@
     }, {
       key: "version",
       get: function get() {
-        return '2.1.108-421';
+        return '2.1.108-423';
       }
       /**
        * Get entitlement
@@ -11690,7 +11721,7 @@
     return AnalyticsPlugin;
   }(Plugin$2);
 
-  AnalyticsPlugin.VERSION = '2.1.108-421';
+  AnalyticsPlugin.VERSION = '2.1.108-423';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -15570,7 +15601,7 @@
           if (this.entitlement().isStaticCachupAsLive && dateTime.getTime() + 2000 >= this.entitlement().streamInfo.end.getTime()) {
             if (this.player.lineUpAsset && dateTime.getTime() + 2000 < this.currentProgram.end.getTime()) {
               log('checkForProgramChange', 'Load next stream', dateTime);
-              this.player.lineUpAsset(null, this.currentProgram.channelId, this.currentProgram.programId, dateTime.getTime());
+              this.player.lineUpAsset(this.currentProgram.assetId, null, null, dateTime.getTime(), true);
             } else {
               log('checkForProgramChange', 'playNextProgram', dateTime);
               this.player.playNextProgram();
@@ -15612,6 +15643,21 @@
       }
     }
     /**
+     * Stop Event Program or playlist program
+     *
+     * @private
+     */
+    ;
+
+    _proto.stopEventProgram = function stopEventProgram() {
+      if (this.player.options_.playlist && this.player.currentSources().length > 1) {
+        // If we have a list of Sources we don't change program we play next source
+        this.player.loadNextSource();
+      } else {
+        this.player.stop();
+      }
+    }
+    /**
      * Check if Event Program Has Ended and preform action
      *
      * @param {number} channelId
@@ -15624,13 +15670,13 @@
     _proto.eventProgramHasEnded_ = function eventProgramHasEnded_(channelId, programId) {
       var _this2 = this;
 
-      if (this.currentProgram_ && this.isProgramEvent) {
-        if (extplayer.getPlayheadTime(this.player) + 2000 >= this.currentProgram_.end.getTime()) {
+      if (this.currentProgram && this.isProgramEvent) {
+        if (extplayer.getPlayheadTime(this.player) + 2000 >= this.currentProgram.end.getTime()) {
           log('event program ended');
 
           if (this.entitlement().isStaticCachupAsLive) {
             log('Static live program, stop playback');
-            this.player.stop();
+            this.stopEventProgram();
           } else {
             // Check if current program has been extended
             this.exposure.getProgramInfo(channelId, null, function (program, error) {
@@ -15638,11 +15684,11 @@
                 log('getProgramInfo', 'No EPG found.', error);
               }
 
-              if (!error && program.end.getTime() > _this2.currentProgram_.end.getTime()) {
+              if (!error && program.end.getTime() > _this2.currentProgram.end.getTime()) {
                 log('Current program has been extended');
 
                 _this2.updateCurrentProgram_(program, false, true);
-              } else {
+              } else if (!_this2.player.options_.playlist) {
                 _this2.getNextProgram(function (nextProgram, errorNextProgram) {
                   if (errorNextProgram) {
                     if (errorNextProgram.message !== '404 NO_NEXT_PROGRAM') {
@@ -15651,7 +15697,7 @@
 
                     log('No upcomming program, stop playback');
 
-                    _this2.player.stop();
+                    _this2.stopEventProgram();
                   }
 
                   if (nextProgram && nextProgram.start.getTime() - 2000 <= extplayer.getPlayheadTime(_this2.player) && nextProgram.end.getTime() >= extplayer.getPlayheadTime(_this2.player)) {
@@ -15659,9 +15705,11 @@
                   } else {
                     log('Gap before upcomming program, stop playback');
 
-                    _this2.player.stop();
+                    _this2.stopEventProgram();
                   }
                 });
+              } else {
+                _this2.stopEventProgram();
               }
             }, programId);
           }
@@ -15895,7 +15943,7 @@
       extplayer.setTechProgram(this.player, program);
       this.player.removeClass('vjs-live'); // Program changed due to seek or other event
 
-      if (!this.currentProgram_ || this.currentProgram_.programId !== program.programId) {
+      if (!this.currentProgram || this.currentProgram.programId !== program.programId) {
         if (!startplayback) {
           var timeBehindLive = (this.player.getServerTime() - program.start.getTime()) / 1000;
           var verifyEntitlementDelay = 5;
@@ -16303,7 +16351,7 @@
     }, {
       key: "isProgramEvent",
       get: function get() {
-        if (this.entitlement_ && this.entitlement_.streamInfo && this.entitlement_.streamInfo.event) {
+        if (this.entitlement_ && this.entitlement_.streamInfo && this.entitlement_.streamInfo.event || this.player.options_.playlist) {
           return true;
         }
 
@@ -16314,7 +16362,7 @@
     return ProgramService;
   }(Plugin$3);
 
-  ProgramService.VERSION = '2.1.108-421';
+  ProgramService.VERSION = '2.1.108-423';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -16553,7 +16601,7 @@
     return EntitlementExpirationService;
   }(Plugin$4);
 
-  EntitlementExpirationService.VERSION = '2.1.108-421';
+  EntitlementExpirationService.VERSION = '2.1.108-423';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -17130,7 +17178,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.108-421';
+  EntitlementMiddleware.VERSION = '2.1.108-423';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -17259,7 +17307,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.1.108-421';
+  empPlayer.VERSION = '2.1.108-423';
   /*
    * Universal Module Definition (UMD)
    *
