@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.108-423 
+ * EMP-Player 2.1.108-437 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -684,6 +684,11 @@
     */
 
     this.PIP_START = 'pipStart';
+    /**
+    * Fired when playlist change
+    */
+
+    this.PLAYLIST_CHANGE = 'playlistchange';
   };
 
   var empPlayerEvents = new EmpPlayerEvents();
@@ -4742,397 +4747,6 @@
 
   Component$f.registerComponent('PlaylistMenuItem', PlaylistMenuItem);
 
-  var Plugin = videojs.getPlugin('plugin');
-  /**
-   * PlaylistPlugin Plugin
-   *  This manages persistent offline data including storage, listing, and deleting stored manifests.
-   *  Playback of offline manifests are done through the Player using a special URI (see shaka.offline.OfflineUri).
-   *  First, check isSupported to see if offline is supported by the platform.
-   *  Second, listen to EmpPlayerEvents.DOWNLOAD_PROGRESS on the download plugin
-   *  Third, call startDownload(), remove(), or list() as needed.
-   *  Start playback with load().
-   *
-   * @param {Player} player The `Player` that this class should be attached to.
-   * @param {Object=} options The key/value store of player options.
-   * @extends videojs.Plugin
-   * @class PlaylistPlugin
-   */
-
-  var PlaylistPlugin =
-  /*#__PURE__*/
-  function (_Plugin) {
-    _inheritsLoose(PlaylistPlugin, _Plugin);
-
-    /**
-     * Create the PlaylistPlugin
-     *
-     * @param {Player} player The `Player` that this class should be attached to.
-     * @param {Object=} options The key/value store of player options.
-     */
-    function PlaylistPlugin(player, options) {
-      var _this;
-
-      _this = _Plugin.call(this, player, options) || this;
-      log('PlaylistPlugin', 'create');
-      _this.options_ = options ? options : {};
-      _this.sources_ = [];
-      _this.playingChangedBind = _this.playingChanged.bind(_assertThisInitialized(_this));
-
-      _this.player.on(empPlayerEvents.PLAYING, _this.playingChangedBind);
-
-      _this.assetChangedBind = _this.assetChanged.bind(_assertThisInitialized(_this));
-
-      _this.player.on(empPlayerEvents.ASSET_CHANGED, _this.assetChangedBind);
-
-      _this.programChangedBind = _this.programChanged.bind(_assertThisInitialized(_this));
-
-      _this.player.on(empPlayerEvents.PROGRAM_CHANGED, _this.programChangedBind);
-
-      return _this;
-    }
-    /**
-     * Handle Playing Changed
-     *
-     * @private
-     */
-
-
-    var _proto = PlaylistPlugin.prototype;
-
-    _proto.playingChanged = function playingChanged() {
-      var asset = this.player.currentAsset();
-
-      if (!asset) {
-        asset = {
-          assetId: this.player.currentSrc()
-        };
-      }
-
-      this.selectSource_(asset);
-    }
-    /**
-    * Handle Asset Changed
-    *
-    * @param {EventTarget~Event} [event]
-    * @param {Object} data
-    * @private
-    */
-    ;
-
-    _proto.assetChanged = function assetChanged(event, data) {
-      if (data && data.asset) {
-        this.selectSource_(data.asset);
-      }
-    }
-    /**
-    * Handle Program Changed
-    *
-    * @param {EventTarget~Event} [event]
-    * @param {Object} data
-    * @private
-    */
-    ;
-
-    _proto.programChanged = function programChanged(event, data) {
-      if (data && data.program) {
-        this.selectSource_(data.program);
-      }
-    }
-    /**
-     * clear the sources
-     */
-    ;
-
-    _proto.clear = function clear() {
-      this.sources_ = [];
-      this.updateComponent_();
-    }
-    /**
-    * dispose PlaylistPlugin
-    */
-    ;
-
-    _proto.dispose = function dispose() {
-      log('PlaylistPlugin', 'dispose');
-      this.player.off(empPlayerEvents.PLAYING, this.playingChangedBind);
-      this.player.off(empPlayerEvents.ASSET_CHANGED, this.assetChangedBind);
-      this.player.off(empPlayerEvents.PROGRAM_CHANGED, this.programChangedBind);
-      this.sources_ = [];
-      this.component_ = null;
-
-      _Plugin.prototype.dispose.call(this);
-    }
-    /**
-     * selectSource internally
-     *
-     * @param {Object} asset
-     * @private
-     */
-    ;
-
-    _proto.selectSource_ = function selectSource_(asset) {
-      this.setSelectedIndex_(-1);
-
-      for (var i = 0; i < this.sources_.length; i++) {
-        var itemAsset = parseSrc(this.sources_[i].src);
-
-        if (!itemAsset) {
-          itemAsset = {
-            assetId: this.sources_[i].src
-          };
-        }
-
-        if (asset && itemAsset && itemAsset.assetId === asset.assetId) {
-          this.setSelectedIndex_(i);
-          break;
-        }
-      }
-
-      this.updateComponent_();
-    }
-    /**
-     * update GUI Component internally
-     *
-     * @private
-     */
-    ;
-
-    _proto.updateComponent_ = function updateComponent_() {
-      if (this.component_) {
-        this.component_.update();
-      }
-    }
-    /**
-     * add the button component
-     *
-     * @param {Object} component
-     * @private
-     */
-    ;
-
-    _proto.addComponent = function addComponent(component) {
-      this.component_ = component;
-    }
-    /**
-    * Get or set the video source.
-    *
-    * @param {Tech~SourceObject|Tech~SourceObject[]|string} [source]
-    *        A SourceObject, an array of SourceObjects, or a string referencing
-    *        a URL to a media source. It is _highly recommended_ that an object
-    *        or array of objects is used here, so that source selection
-    *        algorithms can take the `type` into account.
-    *
-    *        If not provided, this method acts as a getter.
-    *
-    * @return {string|undefined}
-    *         If the `source` argument is missing, returns the current source
-    *         URL. Otherwise, returns nothing/undefined.
-    */
-    ;
-
-    _proto.src = function src(source) {
-      var _this2 = this;
-
-      if (typeof source === 'undefined') {
-        return this.sources_;
-      }
-
-      if (!this.player.isCreated) {
-        this.one(empPlayerEvents.PLAYER_CREATED, function () {
-          _this2.src(source);
-        });
-        return;
-      } // filter out invalid sources and turn our source into
-      // an array of source objects
-
-
-      this.sources_ = filterSource(source);
-
-      for (var i = 0; i < this.sources_.length; i++) {
-        if (this.sources_[i].selected || this.sources_[i].selected === '') {
-          this.sources_[i].selected = true;
-          this.index = i;
-          return;
-        }
-      }
-
-      this.player.options_.playlist = true;
-      this.player.src(this.sources);
-      this.updateComponent_();
-    }
-    /**
-     * Play next source
-     */
-    ;
-
-    _proto.next = function next() {
-      var i = this.index + 1;
-
-      if (i < this.sources_.length) {
-        this.index = i;
-      } else {
-        log.warn('playlist: playing last source');
-      }
-    }
-    /**
-     * length, number of sources
-     *
-     * @return {number} number of sources
-     */
-    ;
-
-    /**
-     * Play previous source
-     */
-    _proto.previous = function previous() {
-      var i = this.index - 1;
-
-      if (i > -1) {
-        this.index = i;
-      } else {
-        log.warn('playlist: playing first source');
-      }
-    }
-    /**
-     * Get the selected Source Index
-     *
-     * @return {number} Selected Source Index
-     */
-    ;
-
-    /**
-     * set SelectedIndex gui internally
-     *
-     * @param {number} value
-     * @private
-     */
-    _proto.setSelectedIndex_ = function setSelectedIndex_(value) {
-      for (var i = 0; i < this.sources_.length; i++) {
-        this.sources_[i].selected = false;
-      }
-
-      if (value > -1) {
-        this.sources_[value >= this.sources_.length ? this.sources_.length - 1 : value].selected = true;
-      }
-    }
-    /**
-     * get SelectedIndex internally
-     *
-     * @return {number} SelectedIndex
-     * @private
-     */
-    ;
-
-    _proto.getSelectedIndex_ = function getSelectedIndex_() {
-      for (var i = 0; i < this.sources_.length; i++) {
-        if (this.sources_[i].selected) {
-          return i;
-        }
-      }
-
-      return -1;
-    }
-    /**
-    * Returns the current source object.
-    *
-    * @return {Tech~SourceObject[]}
-    *         The current source objects
-    */
-    ;
-
-    /**
-     * Returns the current source object.
-     *
-     * @param {Tech~SourceObject} source
-     *        The source object you want to play.
-     * @return {Tech~SourceObject}
-     *         The current source object
-     */
-    _proto.currentSource = function currentSource(source) {
-      if (typeof source === 'undefined') {
-        for (var i = 0; i < this.sources_.length; i++) {
-          if (this.sources_[i].selected) {
-            return this.sources_[i];
-          }
-        }
-      } else {
-        for (var _i = 0; _i < this.sources_.length; _i++) {
-          var itemAsset = parseSrc(this.sources_[_i].src);
-          var asset = parseSrc(source.src);
-
-          if (!itemAsset) {
-            itemAsset = {
-              assetId: this.sources_[_i].src
-            };
-          }
-
-          if (!asset) {
-            asset = {
-              assetId: this.player.currentSrc()
-            };
-          }
-
-          if (asset && itemAsset && itemAsset.assetId === asset.assetId) {
-            this.index = _i;
-            return true;
-          }
-        }
-      }
-
-      return false;
-    };
-
-    _createClass(PlaylistPlugin, [{
-      key: "length",
-      get: function get() {
-        return this.sources_.length;
-      }
-    }, {
-      key: "index",
-      get: function get() {
-        return this.getSelectedIndex_();
-      }
-      /**
-       * Set and play the Source index
-       *
-       * @param {number} value Play Source Index
-       */
-      ,
-      set: function set(value) {
-        if (value > -1 && this.sources_.length > value) {
-          this.setSelectedIndex_(value);
-          this.player.src(this.sources.slice(value));
-        } else {
-          log.warn('playlist: index out of bounds', value);
-        }
-
-        this.updateComponent_();
-      }
-    }, {
-      key: "sources",
-      get: function get() {
-        // Clone it, don't let user mess with it.
-        var sources = [];
-
-        for (var i = 0; i < this.sources_.length; i++) {
-          sources.push(assign({}, this.sources_[i]));
-        }
-
-        return sources;
-      }
-    }]);
-
-    return PlaylistPlugin;
-  }(Plugin);
-
-  PlaylistPlugin.VERSION = '2.1.108-423';
-
-  if (videojs.getPlugin('playList')) {
-    videojs.log.warn('A plugin named "PlaylistPlugin" already exists.');
-  } else {
-    videojs.registerPlugin('playList', PlaylistPlugin);
-  }
-
   var MenuButton$1 = videojs.getComponent('MenuButton');
   var Component$g = videojs.getComponent('Component');
   /**
@@ -5166,22 +4780,26 @@
 
       _this.player_.on(empPlayerEvents.LOADED_DATA, _this.loadedDataBind);
 
-      player.on(empPlayerEvents.LOADED_DATA, function () {
-        if (_this.items && _this.items.length > 0) {
-          _this.show();
-        }
-      });
-      player.ready(function () {
-        _this.player_.playList().addComponent(_assertThisInitialized(_this));
-      });
+      _this.playListChangeBind = _this.playListChange.bind(_assertThisInitialized(_this));
+
+      _this.player_.on(empPlayerEvents.PLAYLIST_CHANGE, _this.playListChangeBind);
+
       return _this;
+    }
+    /**
+    * handle playList Change event
+    */
+
+
+    var _proto = PlaylistButton.prototype;
+
+    _proto.playListChange = function playListChange() {
+      this.update();
     }
     /**
      * handle loadedData event
      */
-
-
-    var _proto = PlaylistButton.prototype;
+    ;
 
     _proto.loadedData = function loadedData() {
       if (this.items && this.items.length > 0) {
@@ -5195,6 +4813,7 @@
 
     _proto.dispose = function dispose() {
       this.player_.off(empPlayerEvents.LOADED_DATA, this.loadedDataBind);
+      this.player_.off(empPlayerEvents.PLAYLIST_CHANGE, this.playListChangeBind);
 
       _MenuButton.prototype.dispose.call(this);
     }
@@ -6818,7 +6437,7 @@
   EmpMediaInfoBar.prototype.controlText_ = 'MediaInfo';
   Component$k.registerComponent('EmpMediaInfoBar', EmpMediaInfoBar);
 
-  var Plugin$1 = videojs.getPlugin('plugin');
+  var Plugin = videojs.getPlugin('plugin');
   /* global
     XMLHttpRequest
   */
@@ -7364,9 +6983,9 @@
     }]);
 
     return vttThumbnailsPlugin;
-  }(Plugin$1);
+  }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.1.108-423';
+  vttThumbnailsPlugin.VERSION = '2.1.108-437';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -7664,6 +7283,461 @@
     return result;
   }
 
+  var Plugin$1 = videojs.getPlugin('plugin');
+  /**
+   * PlaylistPlugin Plugin
+   * You can jump between programs, assets and external streams in the playlist.
+   * The 'selected' source will be updated during playback.
+   * There is a Pop-up menu 'playlistButton' for the playlist.
+   * Playlist is independent of the Pop-up menu and 'playlistButton' can be exclude, your can render the playlist GUI by yourself.
+   * You can't jump between programs in a channel it will always play next source in the playlist.
+   * After last source in the playlist has been played, playback will stop.
+   *
+   * Load playlist and start playback with first or selected source with SRC method
+   *
+   * @param {Player} player The `Player` that this class should be attached to.
+   * @param {Object=} options The key/value store of player options.
+   * @extends videojs.Plugin
+   * @class PlaylistPlugin
+   */
+
+  var PlaylistPlugin =
+  /*#__PURE__*/
+  function (_Plugin) {
+    _inheritsLoose(PlaylistPlugin, _Plugin);
+
+    /**
+     * Create the PlaylistPlugin
+     *
+     * @param {Player} player The `Player` that this class should be attached to.
+     * @param {Object=} options The key/value store of player options.
+     */
+    function PlaylistPlugin(player, options) {
+      var _this;
+
+      _this = _Plugin.call(this, player, options) || this;
+      log('PlaylistPlugin', IS_CHROMECAST ? 'Not on Chromecast' : 'create');
+      _this.options_ = options ? options : {};
+      _this.sources_ = [];
+
+      if (!IS_CHROMECAST) {
+        _this.playingChangedBind = _this.playingChanged.bind(_assertThisInitialized(_this));
+
+        _this.player.on(empPlayerEvents.PLAYING, _this.playingChangedBind);
+
+        _this.assetChangedBind = _this.assetChanged.bind(_assertThisInitialized(_this));
+
+        _this.player.on(empPlayerEvents.ASSET_CHANGED, _this.assetChangedBind);
+
+        _this.programChangedBind = _this.programChanged.bind(_assertThisInitialized(_this));
+
+        _this.player.on(empPlayerEvents.PROGRAM_CHANGED, _this.programChangedBind);
+
+        _this.onEndedBind = _this.onEnded.bind(_assertThisInitialized(_this));
+
+        _this.player.on(empPlayerEvents.ENDED, _this.onEndedBind);
+      }
+
+      return _this;
+    }
+    /**
+     * Get autoSequence option
+     *
+     * @return {boolean} If playlist should play next source automatic
+     */
+
+
+    var _proto = PlaylistPlugin.prototype;
+
+    /**
+    * Handle Ended
+    *
+    * @private
+    */
+    _proto.onEnded = function onEnded() {
+      if (!this.autoSequence) {
+        log('playlist: ended', this.autoSequence);
+        this.trigger(empPlayerEvents.ENDED);
+      } else if (this.sources_.length > 0 && this.index === this.sources_.length - 1) {
+        log('playlist: ended', this.autoSequence);
+        this.trigger(empPlayerEvents.ENDED);
+      }
+    }
+    /**
+     * Handle Playing Changed
+     *
+     * @private
+     */
+    ;
+
+    _proto.playingChanged = function playingChanged() {
+      var asset = this.player.currentAsset();
+
+      if (!asset) {
+        asset = {
+          assetId: this.player.currentSrc()
+        };
+      }
+
+      this.selectSource_(asset);
+    }
+    /**
+    * Handle Asset Changed
+    *
+    * @param {EventTarget~Event} [event]
+    * @param {Object} data
+    * @private
+    */
+    ;
+
+    _proto.assetChanged = function assetChanged(event, data) {
+      if (data && data.asset) {
+        this.selectSource_(data.asset);
+      }
+    }
+    /**
+    * Handle Program Changed
+    *
+    * @param {EventTarget~Event} [event]
+    * @param {Object} data
+    * @private
+    */
+    ;
+
+    _proto.programChanged = function programChanged(event, data) {
+      if (data && data.program) {
+        this.selectSource_(data.program);
+      }
+    }
+    /**
+     * clear the sources
+     */
+    ;
+
+    _proto.clear = function clear() {
+      if (this.sources_ > 0) {
+        this.sources_ = [];
+        this.triggerChange_();
+      }
+    }
+    /**
+    * dispose PlaylistPlugin
+    */
+    ;
+
+    _proto.dispose = function dispose() {
+      log('PlaylistPlugin', 'dispose');
+      this.player.off(empPlayerEvents.PLAYING, this.playingChangedBind);
+      this.player.off(empPlayerEvents.ASSET_CHANGED, this.assetChangedBind);
+      this.player.off(empPlayerEvents.PROGRAM_CHANGED, this.programChangedBind);
+      this.player.off(empPlayerEvents.ENDED, this.onEndedBind);
+      this.sources_ = [];
+      this.component_ = null;
+
+      _Plugin.prototype.dispose.call(this);
+    }
+    /**
+     * selectSource internally
+     *
+     * @param {Object} asset
+     * @private
+     */
+    ;
+
+    _proto.selectSource_ = function selectSource_(asset) {
+      var preIndex = this.index;
+      this.setSelectedIndex_(-1);
+
+      for (var i = 0; i < this.sources_.length; i++) {
+        var itemAsset = parseSrc(this.sources_[i].src);
+
+        if (!itemAsset) {
+          itemAsset = {
+            assetId: this.sources_[i].src
+          };
+        }
+
+        if (asset && itemAsset && (itemAsset.assetId === asset.assetId || itemAsset.assetId === asset.channelId)) {
+          this.setSelectedIndex_(i);
+          break;
+        }
+      }
+
+      if (preIndex !== this.index) {
+        this.triggerChange_();
+      }
+    }
+    /**
+     * Trigger PLAYLIST_CHANGE
+     *
+     * @private
+     */
+    ;
+
+    _proto.triggerChange_ = function triggerChange_() {
+      this.trigger(empPlayerEvents.PLAYLIST_CHANGE);
+      this.player.trigger(empPlayerEvents.PLAYLIST_CHANGE);
+    }
+    /**
+    * Get or set the video source.
+    *
+    * @param {Tech~SourceObject|Tech~SourceObject[]|string} [source]
+    *        A SourceObject, an array of SourceObjects, or a string referencing
+    *        a URL to a media source. It is _highly recommended_ that an object
+    *        or array of objects is used here, so that source selection
+    *        algorithms can take the `type` into account.
+    *
+    *        If not provided, this method acts as a getter.
+    *
+    * @return {string|undefined}
+    *         If the `source` argument is missing, returns the current source
+    *         URL. Otherwise, returns nothing/undefined.
+    */
+    ;
+
+    _proto.src = function src(source) {
+      var _this2 = this;
+
+      if (typeof source === 'undefined') {
+        return this.sources_;
+      }
+
+      if (!this.player.isCreated) {
+        this.one(empPlayerEvents.PLAYER_CREATED, function () {
+          _this2.src(source);
+        });
+        return;
+      } // filter out invalid sources and turn our source into
+      // an array of source objects
+
+
+      var sources = filterSource(source); // if a source was passed in then it is invalid because
+      // it was filtered to a zero length Array. So we have to
+      // show an error
+
+      if (!sources.length) {
+        this.setTimeout(function () {
+          this.error({
+            code: 4,
+            message: this.localize(this.options_.notSupportedMessage)
+          });
+        }, 0);
+        return;
+      }
+
+      sources.forEach(function (srcobj) {
+        if (!srcobj.type) {
+          srcobj.type = 'video/emp';
+        }
+      });
+      this.sources_ = sources;
+
+      for (var i = 0; i < this.sources_.length; i++) {
+        if (this.sources_[i].selected || this.sources_[i].selected === '') {
+          this.sources_[i].selected = true;
+          this.index = i;
+          this.triggerChange_();
+          return;
+        }
+      }
+
+      this.sources_[this.sources_.length - 1].selected = true;
+      this.player.src(this.sources);
+      this.triggerChange_();
+    }
+    /**
+     * Play next source
+     */
+    ;
+
+    _proto.next = function next() {
+      var i = this.index + 1;
+
+      if (i < this.sources_.length) {
+        this.index = i;
+      } else {
+        log.warn('playlist: playing last source');
+      }
+    }
+    /**
+     * length, number of sources
+     *
+     * @return {number} number of sources
+     */
+    ;
+
+    /**
+     * Play previous source
+     */
+    _proto.previous = function previous() {
+      var i = this.index - 1;
+
+      if (i > -1) {
+        this.index = i;
+      } else {
+        log.warn('playlist: playing first source');
+      }
+    }
+    /**
+     * Get the selected Source Index
+     *
+     * @return {number} Selected Source Index
+     */
+    ;
+
+    /**
+     * set SelectedIndex gui internally
+     *
+     * @param {number} value
+     * @private
+     */
+    _proto.setSelectedIndex_ = function setSelectedIndex_(value) {
+      for (var i = 0; i < this.sources_.length; i++) {
+        this.sources_[i].selected = false;
+      }
+
+      if (value > -1) {
+        this.sources_[value >= this.sources_.length ? this.sources_.length - 1 : value].selected = true;
+      }
+    }
+    /**
+     * get SelectedIndex internally
+     *
+     * @return {number} SelectedIndex
+     * @private
+     */
+    ;
+
+    _proto.getSelectedIndex_ = function getSelectedIndex_() {
+      for (var i = 0; i < this.sources_.length; i++) {
+        if (this.sources_[i].selected) {
+          return i;
+        }
+      }
+
+      return -1;
+    }
+    /**
+    * Returns a list with sources
+    *
+    * @return {Tech~SourceObject[]}
+    *         The current source objects
+    */
+    ;
+
+    /**
+     * Returns the current source object.
+     *
+     * @param {Tech~SourceObject} source
+     *        The source object you want to play.
+     *
+     *        If not provided, this method acts as a getter.
+     * @return {Tech~SourceObject}
+     *         The current source object
+     */
+    _proto.currentSource = function currentSource(source) {
+      if (typeof source === 'undefined') {
+        for (var i = 0; i < this.sources_.length; i++) {
+          if (this.sources_[i].selected) {
+            return this.sources_[i];
+          }
+        }
+      } else {
+        for (var _i = 0; _i < this.sources_.length; _i++) {
+          var itemAsset = parseSrc(this.sources_[_i].src);
+          var asset = parseSrc(source.src);
+
+          if (!itemAsset) {
+            itemAsset = {
+              assetId: this.sources_[_i].src
+            };
+          }
+
+          if (!asset) {
+            asset = {
+              assetId: this.player.currentSrc()
+            };
+          }
+
+          if (asset && itemAsset && itemAsset.assetId === asset.assetId) {
+            this.index = _i;
+            return true;
+          }
+        }
+      }
+
+      return false;
+    };
+
+    _createClass(PlaylistPlugin, [{
+      key: "autoSequence",
+      get: function get() {
+        return !(this.player && this.player.options_.autosequence === false);
+      }
+      /**
+       * Set autoSequence option
+       *
+       * @param {boolean} value If playlist should play next source automatic (default true)
+       */
+      ,
+      set: function set(value) {
+        this.player.options_.autosequence = value;
+      }
+    }, {
+      key: "length",
+      get: function get() {
+        return this.sources_.length;
+      }
+    }, {
+      key: "index",
+      get: function get() {
+        return this.getSelectedIndex_();
+      }
+      /**
+       * Set and play the Source index
+       *
+       * @param {number} value Play Source Index
+       */
+      ,
+      set: function set(value) {
+        var preIndex = this.index;
+
+        if (value > -1 && this.sources_.length > value) {
+          this.setSelectedIndex_(value);
+          this.player.src(this.sources.slice(value));
+        } else {
+          log.warn('playlist: index out of bounds', value);
+        }
+
+        if (preIndex !== this.index) {
+          this.triggerChange_();
+        }
+      }
+    }, {
+      key: "sources",
+      get: function get() {
+        // Clone it, don't let user mess with it.
+        var sources = [];
+
+        for (var i = 0; i < this.sources_.length; i++) {
+          sources.push(assign({}, this.sources_[i]));
+        }
+
+        return sources;
+      }
+    }]);
+
+    return PlaylistPlugin;
+  }(Plugin$1);
+
+  PlaylistPlugin.VERSION = '2.1.108-437';
+
+  if (videojs.getPlugin('playList')) {
+    videojs.log.warn('A plugin named "PlaylistPlugin" already exists.');
+  } else {
+    videojs.registerPlugin('playList', PlaylistPlugin);
+  }
+
   var VjsPlayer = videojs.getComponent('Player');
   var Tech = videojs.getComponent('Tech');
   var CaptionSettingsMenuItem = videojs.getComponent('CaptionSettingsMenuItem'); // Shaka polyfill this
@@ -7792,7 +7866,7 @@
           _this.entitlementExpirationService().stop();
         }
 
-        if (_this.techName_ !== 'EmpCast') {
+        if (_this.techName_ !== 'EmpCast' && _this.options_.autosequence !== false) {
           _this.loadNextSource();
         }
 
@@ -7850,13 +7924,18 @@
       _this.on(empPlayerEvents.LOADED_DATA, function () {
         _this.addClass('vjs-has-started');
 
-        _this.ended_ = false; // Don't set referenceTime
+        _this.ended_ = false;
+
+        if (_this.paused() && _this.autoplay()) {
+          _this.trigger(empPlayerEvents.LOAD_START);
+        } // Don't set referenceTime
         // if (this.programService) {
         //  var entitlement = this.programService().entitlement();
         //  if (entitlement) {
         //    entitlement.streamInfo.referenceTime = this.startTimeLive();
         //  }
         // }
+
       });
 
       _this.on(empPlayerEvents.REPLAY, function () {
@@ -8779,10 +8858,10 @@
         }
 
         this.options_.playlist = undefined;
-        this.options_.playlist.noPlaylist = undefined;
+        this.options_.noPlaylist = undefined;
       } else {
-        this.options_.playlist = this.options_.playlist.noPlaylist ? undefined : true;
-        this.options_.playlist.noPlaylist = undefined;
+        this.options_.playlist = this.options_.noPlaylist ? undefined : true;
+        this.options_.noPlaylist = undefined;
       } // filter out invalid sources and turn our source into
       // an array of source objects
 
@@ -8909,7 +8988,7 @@
       Object.keys(Tech.techs_).forEach(function (techName) {
         var techOpt = _this5.options_[techName.toLowerCase()];
 
-        if (techOpt && techName !== 'EmpCast') {
+        if (techOpt && techName !== 'EmpCast' && techOpt.source) {
           techOpt.source = undefined;
         }
       });
@@ -10341,7 +10420,7 @@
     }, {
       key: "version",
       get: function get() {
-        return '2.1.108-423';
+        return '2.1.108-437';
       }
       /**
        * Get entitlement
@@ -11721,7 +11800,7 @@
     return AnalyticsPlugin;
   }(Plugin$2);
 
-  AnalyticsPlugin.VERSION = '2.1.108-423';
+  AnalyticsPlugin.VERSION = '2.1.108-437';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -15650,7 +15729,7 @@
     ;
 
     _proto.stopEventProgram = function stopEventProgram() {
-      if (this.player.options_.playlist && this.player.currentSources().length > 1) {
+      if (this.player.options_.playlist && this.player.currentSources().length > 1 && this.player.options_.autosequence !== false) {
         // If we have a list of Sources we don't change program we play next source
         this.player.loadNextSource();
       } else {
@@ -16362,7 +16441,7 @@
     return ProgramService;
   }(Plugin$3);
 
-  ProgramService.VERSION = '2.1.108-423';
+  ProgramService.VERSION = '2.1.108-437';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -16601,7 +16680,7 @@
     return EntitlementExpirationService;
   }(Plugin$4);
 
-  EntitlementExpirationService.VERSION = '2.1.108-423';
+  EntitlementExpirationService.VERSION = '2.1.108-437';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -17178,7 +17257,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.108-423';
+  EntitlementMiddleware.VERSION = '2.1.108-437';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -17307,7 +17386,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.1.108-423';
+  empPlayer.VERSION = '2.1.108-437';
   /*
    * Universal Module Definition (UMD)
    *
