@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.108-439 
+ * EMP-Player 2.1.109-440 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -4481,7 +4481,7 @@
       }
 
       if (!this.player.tech_.shakaPlayer_) {
-        this.player.tech_.createPlayer_();
+        this.player.tech_.createPlayer_(true);
       }
 
       this.storage_ = new shaka.offline.Storage(this.player.tech_.shakaPlayer_);
@@ -4631,7 +4631,7 @@
     return DownloadService;
   }(Plugin);
 
-  DownloadService.VERSION = '2.1.108-439';
+  DownloadService.VERSION = '2.1.109-440';
 
   if (videojs.getPlugin('DownloadService')) {
     videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -4807,7 +4807,7 @@
       if (!this.shakaPlayer_) {
         // We can re-use the old player. calling the 'load' method automatically calls 'unload' if a previous manifest has
         // been loaded
-        this.createPlayer_();
+        this.createPlayer_(this.options_.autoplay);
       } else if (!this.el_.paused) {
         // Needed for not get Promise rejected error
         // If playing, pause first before load new asset
@@ -4985,6 +4985,7 @@
       this.shakaPlayer_.load(source.src, startTime).then(function () {
         log('after load stream');
         _this2.loading_ = false;
+        _this2.hasMetadata_ = true;
 
         _this2.trackDuration(); // this.trigger(EmpPlayerEvents.LOAD_START);
 
@@ -5045,15 +5046,21 @@
     /**
      * Creates an instance of Shaka.Player for use and sets the relevant listeners
      *
+     * @param {boolean} autoplay
      * @return {Object} shaka.Player
      * @private
      */
     ;
 
-    _proto.createPlayer_ = function createPlayer_() {
+    _proto.createPlayer_ = function createPlayer_(autoplay) {
       var _this3 = this;
 
       log('createPlayer Shaka');
+
+      if (autoplay) {
+        this.el_.autoplay = true;
+      }
+
       this.shakaPlayer_ = new shaka.Player(this.el_);
       this.shakaPlayer_.addEventListener('texttrackvisibility', function (event) {
         log('texttrackvisibility', _this3.hasMetadata_, _this3.shakaPlayer_.isTextTrackVisible());
@@ -5142,7 +5149,7 @@
             _this3.shakaPlayer_.setTextTrackVisibility(false);
           }
 
-          if (_this3.shakaPlayer_.getTextTracks().length || _this3.textTracks().length) {
+          if (_this3.filterUniqueTexttracks_(_this3.shakaPlayer_.getTextTracks()).length || _this3.textTracks().length) {
             _this3.blockLocalTrackChange = true;
 
             _this3.configureVideojsTextTracks();
@@ -6056,7 +6063,7 @@
     ;
 
     _proto.getActiveTextTrack = function getActiveTextTrack() {
-      var textTracks = this.shakaPlayer_.getTextTracks();
+      var textTracks = this.filterUniqueTexttracks_(this.shakaPlayer_.getTextTracks());
       var activeTextTrack = textTracks.filter(function (track) {
         return track.active;
       });
@@ -6087,7 +6094,7 @@
     ;
 
     _proto.isTextTrackSynchronized = function isTextTrackSynchronized() {
-      var shakaTextTracksLanguages = this.shakaPlayer_.getTextTracks().map(function (track) {
+      var shakaTextTracksLanguages = this.filterUniqueTexttracks_(this.shakaPlayer_.getTextTracks()).map(function (track) {
         return track.language;
       });
       return this.isTechTextTrackSynchronized(shakaTextTracksLanguages);
@@ -6114,7 +6121,7 @@
 
       this.clearTracks(['text']); // Add available text tracks to videojs
 
-      var textTracks = this.shakaPlayer_.getTextTracks();
+      var textTracks = this.filterUniqueTexttracks_(this.shakaPlayer_.getTextTracks());
       var selectedVideojsTrack;
       var selectedShakaTextLanguage = this.getSelectedTechTextLanguage();
       /*
@@ -6145,6 +6152,32 @@
       }
 
       this.stopBlockLocalTrackChange('configureVideojsTextTracks');
+    }
+    /**
+     * filter Unique Texttracks
+     * use fragmented version if exists
+     *
+     * @param {Array} tracks
+     * @return {Array} filtred tracks
+     * @private
+     */
+    ;
+
+    _proto.filterUniqueTexttracks_ = function filterUniqueTexttracks_(tracks) {
+      var uniqueTexttracks = [];
+      tracks.forEach(function (track) {
+        var found = uniqueTexttracks.find(function (t) {
+          return t.language === track.language;
+        });
+
+        if (!found) {
+          uniqueTexttracks.push(track);
+        } else if (track.mimeType === 'application/mp4' && found.mimeType !== 'application/mp4') {
+          var index = uniqueTexttracks.indexOf(found);
+          uniqueTexttracks[index] = track;
+        }
+      });
+      return uniqueTexttracks;
     }
     /**
     * selectTechTextLanguage
@@ -6429,7 +6462,7 @@
 
   EmpShaka.prototype.featuresNativeTextTracks = false;
   Tech$1.withSourceHandlers(EmpShaka);
-  EmpShaka.VERSION = '2.1.108-439'; // Unset source handlers set by Html5 super class.
+  EmpShaka.VERSION = '2.1.109-440'; // Unset source handlers set by Html5 super class.
   // We do not intent to support any sources other then sources allowed by nativeSourceHandler
 
   EmpShaka.sourceHandlers = [];
