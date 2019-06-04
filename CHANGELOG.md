@@ -224,3 +224,10 @@ https://github.com/google/shaka-player/releases
 
 ### New features
 - **EMP-12780** Add a playlist to the player
+- **EMP-12728** Update Shaka to 2.5.1
+
+## 2.1.109
+
+### Bug fixes
+- **EMP-12813** Autoplay does not always work.
+- **EMP-12770**  Subtitle menu shows 2 entries for each language.
