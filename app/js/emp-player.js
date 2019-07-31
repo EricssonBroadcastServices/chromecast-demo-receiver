@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.109-445 
+ * EMP-Player 2.1.110-446 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -6985,7 +6985,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.1.109-445';
+  vttThumbnailsPlugin.VERSION = '2.1.110-446';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -7730,7 +7730,7 @@
     return PlaylistPlugin;
   }(Plugin$1);
 
-  PlaylistPlugin.VERSION = '2.1.109-445';
+  PlaylistPlugin.VERSION = '2.1.110-446';
 
   if (videojs.getPlugin('playList')) {
     videojs.log.warn('A plugin named "PlaylistPlugin" already exists.');
@@ -7799,7 +7799,9 @@
       } // element data-setup
 
 
-      var tagOptions = Player.getTagSettings(tag); // Add default options for every player instance
+      var tagOptions = Player.getTagSettings(tag); // Don't show textTrack setting dialog if IE11, Edge or smartTV
+
+      var showTextTrackSettings = !IS_IE_OR_EDGE && !IS_SMARTTV; // Add default options for every player instance
       // default options are overidden by options set in the options parameter
 
       options = videojs.mergeOptions({
@@ -7811,8 +7813,8 @@
         'useLastViewedOffset': tagOptions.useLastViewedOffset ? tagOptions.useLastViewedOffset : false,
         'startTime': tagOptions.startTime ? tagOptions.startTime : 0,
         'absoluteStartTime': tagOptions.absoluteStartTime ? tagOptions.absoluteStartTime : undefined,
-        'persistTextTrackSettings': tagOptions.persistTextTrackSettings ? tagOptions.persistTextTrackSettings : !IS_IE_OR_EDGE,
-        'textTrackSettings': tagOptions.textTrackSettings ? tagOptions.textTrackSettings : !IS_IE_OR_EDGE,
+        'persistTextTrackSettings': tagOptions.persistTextTrackSettings ? tagOptions.persistTextTrackSettings : showTextTrackSettings,
+        'textTrackSettings': tagOptions.textTrackSettings ? tagOptions.textTrackSettings : showTextTrackSettings,
         'playFrom': tagOptions.playFrom ? tagOptions.playFrom : 'defaultBehaviour'
       }, options); // Fix that HTML attribute is lowercase
 
@@ -9656,6 +9658,8 @@
       if (this.programService) {
         return this.programService().currentProgram;
       }
+
+      return null;
     }
     /**
      * Get Asset/VOD Details
@@ -9665,13 +9669,15 @@
     ;
 
     _proto.getAssetDetails = function getAssetDetails() {
-      if (this.tech_ && this.tech_.VOD) {
+      if (this.tech_ && this.tech_.VOD && this.techGet_('VOD')) {
         return this.techGet_('VOD');
       }
 
       if (this.programService) {
         return this.programService().currentVOD;
       }
+
+      return null;
     }
     /**
     * Get a unix time (ms) `TimeRange` object for seekable range.
@@ -10420,7 +10426,7 @@
     }, {
       key: "version",
       get: function get() {
-        return '2.1.109-445';
+        return '2.1.110-446';
       }
       /**
        * Get entitlement
@@ -11800,7 +11806,7 @@
     return AnalyticsPlugin;
   }(Plugin$2);
 
-  AnalyticsPlugin.VERSION = '2.1.109-445';
+  AnalyticsPlugin.VERSION = '2.1.110-446';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -12413,9 +12419,10 @@
       this.mediaLocator = options.mediaLocator || '';
 
       if (this.mediaLocator) {
-        if (window_1.location.hostname === 'localhost') {
+        if (window_1.location.hostname === 'localhost' || IS_SMARTTV) {
           this.src = this.mediaLocator;
         } else {
+          // change to Protocol-relative URL
           this.src = this.mediaLocator.replace(/^(http:)/, '').replace(/^(https:)/, '');
         }
       }
@@ -12538,9 +12545,10 @@
       this.mediaLocator = format.mediaLocator || '';
 
       if (this.mediaLocator) {
-        if (window_1.location.hostname === 'localhost') {
+        if (window_1.location.hostname === 'localhost' || IS_SMARTTV) {
           this.src = this.mediaLocator;
         } else {
+          // change to Protocol-relative URL
           this.src = this.mediaLocator.replace(/^(http:)/, '').replace(/^(https:)/, '');
         }
       }
@@ -13568,8 +13576,10 @@
 
   var replace = functionBind.call(Function.call, String.prototype.replace);
 
+  /* eslint-disable no-control-regex */
   var leftWhitespace = /^[\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF]+/;
   var rightWhitespace = /[\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF]+$/;
+  /* eslint-enable no-control-regex */
 
   var implementation$2 = function trim() {
   	var S = es5$1.ToString(es5$1.CheckObjectCoercible(this));
@@ -13587,7 +13597,11 @@
 
   var shim = function shimStringTrim() {
   	var polyfill$$1 = polyfill();
-  	defineProperties_1(String.prototype, { trim: polyfill$$1 }, { trim: function () { return String.prototype.trim !== polyfill$$1; } });
+  	defineProperties_1(String.prototype, { trim: polyfill$$1 }, {
+  		trim: function testTrim() {
+  			return String.prototype.trim !== polyfill$$1;
+  		}
+  	});
   	return polyfill$$1;
   };
 
@@ -16441,7 +16455,7 @@
     return ProgramService;
   }(Plugin$3);
 
-  ProgramService.VERSION = '2.1.109-445';
+  ProgramService.VERSION = '2.1.110-446';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -16680,7 +16694,7 @@
     return EntitlementExpirationService;
   }(Plugin$4);
 
-  EntitlementExpirationService.VERSION = '2.1.109-445';
+  EntitlementExpirationService.VERSION = '2.1.110-446';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -17257,7 +17271,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.109-445';
+  EntitlementMiddleware.VERSION = '2.1.110-446';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -17386,7 +17400,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.1.109-445';
+  empPlayer.VERSION = '2.1.110-446';
   /*
    * Universal Module Definition (UMD)
    *

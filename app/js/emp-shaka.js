@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.109-445 
+ * EMP-Player 2.1.110-446 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -1930,9 +1930,9 @@
       }
 
       var licenseServer = source.licenseServer || source.licenseserver;
-      var keySystems = source.keySystems || source.keysystems; // Don't fetch certificate if IE or Edge or CC
+      var keySystems = source.keySystems || source.keysystems; // Don't fetch certificate if IE or Edge or CC or smartTV
 
-      if (window_1.document.documentMode || /Edge/.test(window_1.navigator.userAgent) || IS_CHROMECAST || IS_ANDROID) {
+      if (window_1.document.documentMode || /Edge/.test(window_1.navigator.userAgent) || IS_CHROMECAST || IS_ANDROID || IS_SMARTTV) {
         this.certificate_ = null;
       } else if (source.certificateServer && !this.certificate_ && (licenseServer || keySystems && !isEmpty(keySystems))) {
         this.fetchWidevineCertificate(source.certificateServer, function (cert, error) {
@@ -4631,7 +4631,7 @@
     return DownloadService;
   }(Plugin);
 
-  DownloadService.VERSION = '2.1.109-445';
+  DownloadService.VERSION = '2.1.110-446';
 
   if (videojs.getPlugin('DownloadService')) {
     videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -4902,7 +4902,7 @@
 
       };
 
-      if (IS_ANDROID) {
+      if (IS_ANDROID || IS_SMARTTV) {
         config.drm = {
           advanced: {
             'com.widevine.alpha': {
@@ -4936,11 +4936,11 @@
       } // Remove playready from smartTV, we only use widevine for smartTV
 
 
-      if (IS_SMARTTV || IS_CHROMECAST && config.drm.servers && config.drm.servers['com.microsoft.playready']) {
+      if ((IS_SMARTTV || IS_CHROMECAST) && config.drm.servers && config.drm.servers['com.microsoft.playready']) {
         delete config.drm.servers['com.microsoft.playready']; // config.drm.servers['com.microsoft.playready'] = undefined;
       }
 
-      if (this.certificate_) {
+      if (this.certificate_ && config.drm.advanced && config.drm.advanced['com.widevine.alpha']) {
         config.drm.advanced['com.widevine.alpha'].serverCertificate = this.certificate_;
       }
 
@@ -4968,7 +4968,7 @@
         startTime = this.options_.startTime;
       }
 
-      log('before load stream'); // Block load call if loading
+      log('before load stream', source.src); // Block load call if loading
 
       this.loading_ = true;
 
@@ -6462,7 +6462,7 @@
 
   EmpShaka.prototype.featuresNativeTextTracks = false;
   Tech$1.withSourceHandlers(EmpShaka);
-  EmpShaka.VERSION = '2.1.109-445'; // Unset source handlers set by Html5 super class.
+  EmpShaka.VERSION = '2.1.110-446'; // Unset source handlers set by Html5 super class.
   // We do not intent to support any sources other then sources allowed by nativeSourceHandler
 
   EmpShaka.sourceHandlers = [];
