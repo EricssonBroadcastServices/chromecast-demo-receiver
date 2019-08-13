@@ -25,7 +25,7 @@ class EMPReceiverApp {
 
     let options = {
       debug: false,
-      statusText: 'EMP Receiver App',
+      statusText: 'Chromecast-TV',
       playerOptions: {
         errorDisplay: false, //error displayed with showError method in EMPReceiverApp
         mediaInfo: {
