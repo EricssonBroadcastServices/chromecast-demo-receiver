@@ -231,3 +231,9 @@ https://github.com/google/shaka-player/releases
 ### Bug fixes
 - **EMP-12813** Autoplay does not always work.
 - **EMP-12770**  Subtitle menu shows 2 entries for each language.
+
+## 2.1.110
+
+### New features
+- **EMP-12825** HTML5 2.0 - Create WLA CC Receiver.
+
