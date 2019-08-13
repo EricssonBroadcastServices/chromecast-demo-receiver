@@ -109,6 +109,15 @@ module.exports = function(grunt) {
         },
         src: 'dist/',
         dest: "/site/wwwroot/chromecast-demo-receiver/stage/"
+      },
+      prod: {
+        auth: {
+          host: 'waws-prod-am2-121.ftp.azurewebsites.windows.net',
+          port: 21,
+          authKey: 'chromecast-azure-stage'
+        },
+        src: 'dist/',
+        dest: "/site/wwwroot/chromecast-wla-receiver/"
       }
     },
     zip: {
@@ -145,7 +154,8 @@ module.exports = function(grunt) {
 
 
   grunt.registerTask('default', ['build']);
-  grunt.registerTask('deploy', ['build', 'ftpush']);
+  grunt.registerTask('deploy', ['build', 'ftpush:stage']);
+  grunt.registerTask('production', ['build', 'ftpush:prod']);
   grunt.registerTask('update', ['shell:updateNPM', 'copy:fromNPM']);
   grunt.loadTasks('build/tasks');
 };
