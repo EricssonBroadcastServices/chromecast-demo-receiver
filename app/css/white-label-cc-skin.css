@@ -1,0 +1,129 @@
+﻿.video-js .vjs-control-bar {
+    background: rgba(38, 38, 38, 0.9);
+    background-color: rgba(38, 38, 38, 0.9);
+    width: auto;
+    left: 4em;
+    right: 4em;
+    bottom: 2em;
+    height: 8em;
+    border-bottom-right-radius: 0.5em;
+    border-bottom-left-radius: 0.5em;
+    padding-top: 0.5em;
+    padding-right: 2em;
+    padding-bottom: 0.5em;
+    padding-left: 2em;
+    opacity: 1;
+}
+
+.emp-mediainfo-bar {
+    background: rgba(38, 38, 38, 0.9);
+    background-color: rgba(38, 38, 38, 0.9);
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.video-js .vjs-slider {
+    background-color: #73859f;
+    background-color: rgba(115, 133, 159, 0.5);
+    border-radius: 1em;
+    /*margin: 0;*/
+}
+
+.video-js .vjs-play-progress,
+.video-js .vjs-slider-bar {
+    background: #cacaca;
+    border-radius: 1em;
+}
+
+.video-js .vjs-play-progress {
+    color: #ffffff;
+    background: #ffffff;
+    font-size: 1.3em;
+}
+
+    .video-js .vjs-play-progress:before {
+        transition: width .1s ease-out, height .1s ease-out;
+        content: "";
+        top: -0.2em;
+        border: 0;
+        background: radial-gradient(#b7090b 33%, #830607);
+        width: 1em;
+        height: 1em;
+        border-radius: 50%;
+        box-shadow: #000 0 0 2px;
+    }
+
+
+.video-js .vjs-play-progress,
+.video-js .vjs-load-progress {
+    height: 0.7em !important;
+}
+
+.video-js .vjs-progress-holder {
+    height: 0.9em;
+}
+
+.video-js .vjs-load-progress {
+    background: #ffffff;
+    border-radius: 1em;
+    height: 0.9em !important;
+}
+
+    .video-js .vjs-load-progress div {
+        background: transparent;
+        border-radius: 1em;
+        height: 0.9em !important;
+    }
+
+
+.receiver .logo {
+    background-position: top;
+}
+
+.receiver[type="video"][state="paused"] .video-js .vjs-progress-holder .vjs-load-progress,
+.receiver[type="video"][state="paused"] .video-js .vjs-current-time,
+.receiver[type="video"][state="paused"] .video-js .vjs-time-control,
+.receiver[type="video"][state="paused"] .video-js .vjs-progress-control {
+    animation: none !important;
+    animation-fill-mode: forwards;
+    animation-delay: 0s;
+}
+
+.video-js .vjs-time-control {
+    min-width: 5.8em;
+}
+
+
+.vjs-loading-spinner {
+    border: none;
+    opacity: 0;
+    visibility: hidden;
+    animation: vjs-spinner-fade-out 2s linear 1;
+    animation-delay: 2s;
+}
+
+    .vjs-loading-spinner:before, .vjs-loading-spinner:after {
+        border: none;
+    }
+
+    .vjs-loading-spinner:after {
+        background-image: url(../images/site-white-spinner.png);
+        background-repeat: no-repeat;
+        background-position-x: 50%;
+        background-position-y: 50%;
+        -moz-background-size: 100%;
+        -o-background-size: 100%;
+        background-size: 100%;
+    }
+
+.vjs-waiting .vjs-loading-spinner:after {
+    animation: vjs-spinner-spin 1.1s linear infinite, vjs-spinner-fade 1.1s linear 1 !important;
+    animation-delay: 2s;
+}
+
+.vjs-waiting .vjs-loading-spinner {
+    opacity: 1;
+    visibility: visible;
+    animation: vjs-spinner-fade-in 2s linear 1;
+    animation-delay: 2s;
+}
