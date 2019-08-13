@@ -52,11 +52,25 @@ body {
   bottom: 50%;
   left: 50%;
   background-image: url("../images/logo.png");
-  margin-bottom: -96px;
-  margin-left: -96px;
-  width: 192px;
-  height: 192px;
+  margin-bottom: -67px;
+  margin-left: -400px;
+  width: 800px;
+  height: 133px;
   animation: fadeOutFadeIn 4s infinite; }
+
+.receiver .readytocast {
+  display: none;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: bottom;
+  position: absolute;
+  bottom: 12%;
+  left: 50%;
+  background-image: url("../images/readytocast.png");
+  margin-bottom: -26px;
+  margin-left: -168px;
+  width: 337px;
+  height: 52px; }
 
 .receiver .emp-error-display {
   display: none;
@@ -129,6 +143,9 @@ body {
   display: block; }
 
 .receiver[state="idle"] .logo {
+  display: block; }
+
+.receiver[state="idle"] .readytocast {
   display: block; }
 
 .receiver[state="loading"] .vjs-play-progress.vjs-slider-bar {
