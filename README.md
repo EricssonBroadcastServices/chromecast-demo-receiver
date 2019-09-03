@@ -16,7 +16,7 @@ The receiver is compliant with the default chromecast receiver API unless otherw
 * **[Upgrade Guide](https://github.com/EricssonBroadcastServices/chromecast-demo-receiver/blob/master/tutorials/upgrade-guide.md)**
 * **[Chromcast sender tutorials](https://github.com/EricssonBroadcastServices/chromecast-demo-receiver/blob/master/tutorials/chromecast.md)**
 * **[Release notes](https://github.com/EricssonBroadcastServices/chromecast-demo-receiver/blob/master/CHANGELOG.md)**
-* **[Hosted API docs](https://emps-chromecast-receiver.azurewebsites.net/chromecast-demo-receiver/stage/docs/)**
+* **[Hosted API docs](https://github.com/EricssonBroadcastServices/chromecast-demo-receiver/blob/master/api.md)**
 
 
 Hosted Demo receiverAppId E5A43176 (private)
