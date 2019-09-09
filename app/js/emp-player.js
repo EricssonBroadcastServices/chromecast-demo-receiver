@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.110-448 
+ * EMP-Player 2.1.110-449 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -6985,7 +6985,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.1.110-448';
+  vttThumbnailsPlugin.VERSION = '2.1.110-449';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -7730,7 +7730,7 @@
     return PlaylistPlugin;
   }(Plugin$1);
 
-  PlaylistPlugin.VERSION = '2.1.110-448';
+  PlaylistPlugin.VERSION = '2.1.110-449';
 
   if (videojs.getPlugin('playList')) {
     videojs.log.warn('A plugin named "PlaylistPlugin" already exists.');
@@ -10426,7 +10426,7 @@
     }, {
       key: "version",
       get: function get() {
-        return '2.1.110-448';
+        return '2.1.110-449';
       }
       /**
        * Get entitlement
@@ -11806,7 +11806,7 @@
     return AnalyticsPlugin;
   }(Plugin$2);
 
-  AnalyticsPlugin.VERSION = '2.1.110-448';
+  AnalyticsPlugin.VERSION = '2.1.110-449';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -13023,30 +13023,8 @@
   var defineProperties_1 = defineProperties;
 
   /* globals
-  	Set,
-  	Map,
-  	WeakSet,
-  	WeakMap,
-
-  	Promise,
-
-  	Symbol,
-  	Proxy,
-
   	Atomics,
   	SharedArrayBuffer,
-
-  	ArrayBuffer,
-  	DataView,
-  	Uint8Array,
-  	Float32Array,
-  	Float64Array,
-  	Int8Array,
-  	Int16Array,
-  	Int32Array,
-  	Uint8ClampedArray,
-  	Uint16Array,
-  	Uint32Array,
   */
 
   var undefined$1; // eslint-disable-line no-shadow-restricted-names
@@ -13201,44 +13179,70 @@
 
 
   var predicates = {
-    // https://ecma-international.org/ecma-262/6.0/#sec-property-descriptor-specification-type
-    'Property Descriptor': function isPropertyDescriptor(ES, Desc) {
-      if (ES.Type(Desc) !== 'Object') {
-        return false;
-      }
-      var allowed = {
-        '[[Configurable]]': true,
-        '[[Enumerable]]': true,
-        '[[Get]]': true,
-        '[[Set]]': true,
-        '[[Value]]': true,
-        '[[Writable]]': true
-      };
+  	// https://ecma-international.org/ecma-262/6.0/#sec-property-descriptor-specification-type
+  	'Property Descriptor': function isPropertyDescriptor(ES, Desc) {
+  		if (ES.Type(Desc) !== 'Object') {
+  			return false;
+  		}
+  		var allowed = {
+  			'[[Configurable]]': true,
+  			'[[Enumerable]]': true,
+  			'[[Get]]': true,
+  			'[[Set]]': true,
+  			'[[Value]]': true,
+  			'[[Writable]]': true
+  		};
 
-      for (var key in Desc) { // eslint-disable-line
-        if (src(Desc, key) && !allowed[key]) {
-          return false;
-        }
-      }
+  		for (var key in Desc) { // eslint-disable-line
+  			if (src(Desc, key) && !allowed[key]) {
+  				return false;
+  			}
+  		}
 
-      var isData = src(Desc, '[[Value]]');
-      var IsAccessor = src(Desc, '[[Get]]') || src(Desc, '[[Set]]');
-      if (isData && IsAccessor) {
-        throw new $TypeError('Property Descriptors may not be both accessor and data descriptors');
-      }
-      return true;
-    }
+  		var isData = src(Desc, '[[Value]]');
+  		var IsAccessor = src(Desc, '[[Get]]') || src(Desc, '[[Set]]');
+  		if (isData && IsAccessor) {
+  			throw new $TypeError('Property Descriptors may not be both accessor and data descriptors');
+  		}
+  		return true;
+  	}
   };
 
   var assertRecord = function assertRecord(ES, recordType, argumentName, value) {
-    var predicate = predicates[recordType];
-    if (typeof predicate !== 'function') {
-      throw new $SyntaxError('unknown record type: ' + recordType);
-    }
-    if (!predicate(ES, value)) {
-      throw new $TypeError(argumentName + ' must be a ' + recordType);
-    }
-    console.log(predicate(ES, value), value);
+  	var predicate = predicates[recordType];
+  	if (typeof predicate !== 'function') {
+  		throw new $SyntaxError('unknown record type: ' + recordType);
+  	}
+  	if (!predicate(ES, value)) {
+  		throw new $TypeError(argumentName + ' must be a ' + recordType);
+  	}
+  };
+
+  var $TypeError$1 = GetIntrinsic('%TypeError%');
+
+  var isPropertyDescriptor = function IsPropertyDescriptor(ES, Desc) {
+  	if (ES.Type(Desc) !== 'Object') {
+  		return false;
+  	}
+  	var allowed = {
+  		'[[Configurable]]': true,
+  		'[[Enumerable]]': true,
+  		'[[Get]]': true,
+  		'[[Set]]': true,
+  		'[[Value]]': true,
+  		'[[Writable]]': true
+  	};
+
+      for (var key in Desc) { // eslint-disable-line
+  		if (src(Desc, key) && !allowed[key]) {
+  			return false;
+  		}
+  	}
+
+  	if (ES.IsDataDescriptor(Desc) && ES.IsAccessorDescriptor(Desc)) {
+  		throw new $TypeError$1('Property Descriptors may not be both accessor and data descriptors');
+  	}
+  	return true;
   };
 
   var _isNaN = Number.isNaN || function isNaN(a) {
@@ -13342,9 +13346,23 @@
   	return ES5internalSlots['[[DefaultValue]]'](input);
   };
 
+  var $Function = GetIntrinsic('%Function%');
+  var $apply = $Function.apply;
+  var $call = $Function.call;
+
+  var callBind = function callBind() {
+  	return functionBind.apply($call, arguments);
+  };
+
+  var apply = function applyBind() {
+  	return functionBind.apply($apply, arguments);
+  };
+  callBind.apply = apply;
+
   var $Object = GetIntrinsic('%Object%');
-  var $TypeError$1 = GetIntrinsic('%TypeError%');
+  var $TypeError$2 = GetIntrinsic('%TypeError%');
   var $String = GetIntrinsic('%String%');
+  var $Number = GetIntrinsic('%Number%');
 
 
 
@@ -13357,6 +13375,20 @@
 
 
 
+
+
+
+  var strSlice = callBind($String.prototype.slice);
+
+  var isPrefixOf = function isPrefixOf(prefix, string) {
+  	if (prefix === string) {
+  		return true;
+  	}
+  	if (prefix.length > string.length) {
+  		return false;
+  	}
+  	return strSlice(string, 0, prefix.length) === prefix;
+  };
 
   // https://es5.github.io/#x9
   var ES5 = {
@@ -13396,7 +13428,7 @@
   	CheckObjectCoercible: function CheckObjectCoercible(value, optMessage) {
   		/* jshint eqnull:true */
   		if (value == null) {
-  			throw new $TypeError$1(optMessage || 'Cannot call method on ' + value);
+  			throw new $TypeError$2(optMessage || 'Cannot call method on ' + value);
   		}
   		return value;
   	},
@@ -13433,30 +13465,7 @@
 
   	// https://ecma-international.org/ecma-262/6.0/#sec-property-descriptor-specification-type
   	IsPropertyDescriptor: function IsPropertyDescriptor(Desc) {
-  		if (this.Type(Desc) !== 'Object') {
-  			return false;
-  		}
-  		var allowed = {
-  			'[[Configurable]]': true,
-  			'[[Enumerable]]': true,
-  			'[[Get]]': true,
-  			'[[Set]]': true,
-  			'[[Value]]': true,
-  			'[[Writable]]': true
-  		};
-
-  		for (var key in Desc) { // eslint-disable-line
-  			if (src(Desc, key) && !allowed[key]) {
-  				return false;
-  			}
-  		}
-
-  		var isData = src(Desc, '[[Value]]');
-  		var IsAccessor = src(Desc, '[[Get]]') || src(Desc, '[[Set]]');
-  		if (isData && IsAccessor) {
-  			throw new $TypeError$1('Property Descriptors may not be both accessor and data descriptors');
-  		}
-  		return true;
+  		return isPropertyDescriptor(this, Desc);
   	},
 
   	// https://ecma-international.org/ecma-262/5.1/#sec-8.10.1
@@ -13527,14 +13536,14 @@
   				configurable: !!Desc['[[Configurable]]']
   			};
   		} else {
-  			throw new $TypeError$1('FromPropertyDescriptor must be called with a fully populated Property Descriptor');
+  			throw new $TypeError$2('FromPropertyDescriptor must be called with a fully populated Property Descriptor');
   		}
   	},
 
   	// https://ecma-international.org/ecma-262/5.1/#sec-8.10.5
   	ToPropertyDescriptor: function ToPropertyDescriptor(Obj) {
   		if (this.Type(Obj) !== 'Object') {
-  			throw new $TypeError$1('ToPropertyDescriptor requires an object');
+  			throw new $TypeError$2('ToPropertyDescriptor requires an object');
   		}
 
   		var desc = {};
@@ -13560,15 +13569,110 @@
   		if (src(Obj, 'set')) {
   			var setter = Obj.set;
   			if (typeof setter !== 'undefined' && !this.IsCallable(setter)) {
-  				throw new $TypeError$1('setter must be a function');
+  				throw new $TypeError$2('setter must be a function');
   			}
   			desc['[[Set]]'] = setter;
   		}
 
   		if ((src(desc, '[[Get]]') || src(desc, '[[Set]]')) && (src(desc, '[[Value]]') || src(desc, '[[Writable]]'))) {
-  			throw new $TypeError$1('Invalid property descriptor. Cannot both specify accessors and a value or writable attribute');
+  			throw new $TypeError$2('Invalid property descriptor. Cannot both specify accessors and a value or writable attribute');
   		}
   		return desc;
+  	},
+
+  	// https://www.ecma-international.org/ecma-262/5.1/#sec-11.9.3
+  	'Abstract Equality Comparison': function AbstractEqualityComparison(x, y) {
+  		var xType = this.Type(x);
+  		var yType = this.Type(y);
+  		if (xType === yType) {
+  			return x === y; // ES6+ specified this shortcut anyways.
+  		}
+  		if (x == null && y == null) {
+  			return true;
+  		}
+  		if (xType === 'Number' && yType === 'String') {
+  			return this['Abstract Equality Comparison'](x, this.ToNumber(y));
+  		}
+  		if (xType === 'String' && yType === 'Number') {
+  			return this['Abstract Equality Comparison'](this.ToNumber(x), y);
+  		}
+  		if (xType === 'Boolean') {
+  			return this['Abstract Equality Comparison'](this.ToNumber(x), y);
+  		}
+  		if (yType === 'Boolean') {
+  			return this['Abstract Equality Comparison'](x, this.ToNumber(y));
+  		}
+  		if ((xType === 'String' || xType === 'Number') && yType === 'Object') {
+  			return this['Abstract Equality Comparison'](x, this.ToPrimitive(y));
+  		}
+  		if (xType === 'Object' && (yType === 'String' || yType === 'Number')) {
+  			return this['Abstract Equality Comparison'](this.ToPrimitive(x), y);
+  		}
+  		return false;
+  	},
+
+  	// https://www.ecma-international.org/ecma-262/5.1/#sec-11.9.6
+  	'Strict Equality Comparison': function StrictEqualityComparison(x, y) {
+  		var xType = this.Type(x);
+  		var yType = this.Type(y);
+  		if (xType !== yType) {
+  			return false;
+  		}
+  		if (xType === 'Undefined' || xType === 'Null') {
+  			return true;
+  		}
+  		return x === y; // shortcut for steps 4-7
+  	},
+
+  	// https://www.ecma-international.org/ecma-262/5.1/#sec-11.8.5
+  	// eslint-disable-next-line max-statements
+  	'Abstract Relational Comparison': function AbstractRelationalComparison(x, y, LeftFirst) {
+  		if (this.Type(LeftFirst) !== 'Boolean') {
+  			throw new $TypeError$2('Assertion failed: LeftFirst argument must be a Boolean');
+  		}
+  		var px;
+  		var py;
+  		if (LeftFirst) {
+  			px = this.ToPrimitive(x, $Number);
+  			py = this.ToPrimitive(y, $Number);
+  		} else {
+  			py = this.ToPrimitive(y, $Number);
+  			px = this.ToPrimitive(x, $Number);
+  		}
+  		var bothStrings = this.Type(px) === 'String' && this.Type(py) === 'String';
+  		if (!bothStrings) {
+  			var nx = this.ToNumber(px);
+  			var ny = this.ToNumber(py);
+  			if (_isNaN(nx) || _isNaN(ny)) {
+  				return undefined;
+  			}
+  			if (_isFinite(nx) && _isFinite(ny) && nx === ny) {
+  				return false;
+  			}
+  			if (nx === 0 && ny === 0) {
+  				return false;
+  			}
+  			if (nx === Infinity) {
+  				return false;
+  			}
+  			if (ny === Infinity) {
+  				return true;
+  			}
+  			if (ny === -Infinity) {
+  				return false;
+  			}
+  			if (nx === -Infinity) {
+  				return true;
+  			}
+  			return nx < ny; // by now, these are both nonzero, finite, and not equal
+  		}
+  		if (isPrefixOf(py, px)) {
+  			return false;
+  		}
+  		if (isPrefixOf(px, py)) {
+  			return true;
+  		}
+  		return px < py; // both strings, neither a prefix of the other. shortcut for steps c-f
   	}
   };
 
@@ -16455,7 +16559,7 @@
     return ProgramService;
   }(Plugin$3);
 
-  ProgramService.VERSION = '2.1.110-448';
+  ProgramService.VERSION = '2.1.110-449';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -16694,7 +16798,7 @@
     return EntitlementExpirationService;
   }(Plugin$4);
 
-  EntitlementExpirationService.VERSION = '2.1.110-448';
+  EntitlementExpirationService.VERSION = '2.1.110-449';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -17271,7 +17375,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.110-448';
+  EntitlementMiddleware.VERSION = '2.1.110-449';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -17400,7 +17504,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.1.110-448';
+  empPlayer.VERSION = '2.1.110-449';
   /*
    * Universal Module Definition (UMD)
    *
