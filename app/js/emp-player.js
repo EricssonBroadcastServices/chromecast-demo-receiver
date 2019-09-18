@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.110-451 
+ * EMP-Player 2.1.111-452 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -3662,6 +3662,10 @@
       var newTime = this.player().currentTime() + this.options_.seconds;
       this.player().currentTime(newTime);
       this.player().scrubbing(false);
+
+      if (this.player().vttThumbnails() && this.player().vttThumbnails().hasThumbnail()) {
+        this.player().vttThumbnails().showThumbnailHolder(true);
+      }
     };
 
     _createClass(EmpForwardButton, [{
@@ -3788,6 +3792,10 @@
       var newTime = this.player().currentTime() - this.options_.seconds;
       this.player().currentTime(newTime);
       this.player().scrubbing(false);
+
+      if (this.player().vttThumbnails() && this.player().vttThumbnails().hasThumbnail()) {
+        this.player().vttThumbnails().showThumbnailHolder(true);
+      }
     };
 
     _createClass(EmpRewindButton, [{
@@ -6479,6 +6487,7 @@
       };
       _this.enabled_ = true;
       _this.registeredEvents = {};
+      _this.scale = 1;
       player.ready(function () {
         player.addClass('vjs-vtt-thumbnails');
       });
@@ -6489,6 +6498,18 @@
         _this.initializeThumbnails();
 
         log('vttThumbnailsPlugin', 'FIRST_PLAY');
+      });
+
+      _this.on(player, [empPlayerEvents.USERIN_ACTIVE], function () {
+        if (_this.thumbnailHolder) {
+          _this.thumbnailHolder.style.opacity = '0';
+        }
+      });
+
+      _this.on(player, [empPlayerEvents.ENDED], function () {
+        if (_this.thumbnailHolder) {
+          _this.thumbnailHolder.style.opacity = '0';
+        }
       });
 
       return _this;
@@ -6727,11 +6748,21 @@
       }
     }
     /**
-     * getStyleForTime
+     * showThumbnailHolder
+     *
+     * @param {boolean} atCurrentPosition Show it at tCurrent Position
      */
     ;
 
-    _proto.showThumbnailHolder = function showThumbnailHolder() {
+    _proto.showThumbnailHolder = function showThumbnailHolder(atCurrentPosition) {
+      if (!this.thumbnailHolder) {
+        return;
+      }
+
+      if (atCurrentPosition) {
+        this.updateThumbnailStyle(this.player.currentTime() / this.player.duration() * this.progressBar.offsetWidth, this.progressBar.offsetWidth);
+      }
+
       this.thumbnailHolder.style.opacity = '1';
     }
     /**
@@ -6740,7 +6771,21 @@
     ;
 
     _proto.hideThumbnailHolder = function hideThumbnailHolder() {
+      if (!this.thumbnailHolder) {
+        return;
+      }
+
       this.thumbnailHolder.style.opacity = '0';
+    }
+    /**
+     * Has a Thumbnail
+     *
+     * @return {boolean} true if it has Thumbnail
+     */
+    ;
+
+    _proto.hasThumbnail = function hasThumbnail() {
+      return this.thumbnailHolder !== undefined;
     }
     /**
      * updateThumbnailStyle
@@ -6760,12 +6805,44 @@
         return;
       }
 
-      var xPos = (1 - (width - x) / width) * width;
-      this.thumbnailHolder.style.msTransform = 'translateX(' + xPos + 'px)';
-      this.thumbnailHolder.style.webkitTransform = 'translateX(' + xPos + 'px)';
-      this.thumbnailHolder.style.MozTransform = 'translateX(' + xPos + 'px)';
-      this.thumbnailHolder.style.transform = 'translateX(' + xPos + 'px)';
+      var xPos = Math.round((1 - (width - x) / width) * width);
+
+      if (this.options_.scale) {
+        this.scale = this.options_.scale;
+      } else {
+        var playerWith = this.player.currentWidth();
+
+        if (playerWith <= 640) {
+          this.scale = 0.5;
+        } else if (playerWith <= 1024) {
+          this.scale = 1;
+        } else if (playerWith <= 1920) {
+          this.scale = 2;
+        } else if (playerWith <= 3840) {
+          this.scale = 4;
+        }
+      }
+
+      var scaleStyle = '';
+      var translateYStyle = '';
+
+      if (this.scale !== 1) {
+        var thumbnailHight = parseInt(currentStyle.height, 10);
+        var scaleHight = Math.round((thumbnailHight * this.scale - thumbnailHight) / 2 / this.scale);
+        scaleHight = scaleHight * -1;
+        translateYStyle = ' translateY(' + scaleHight + 'px)';
+        xPos = xPos / this.scale;
+        scaleStyle = 'scale(' + this.scale + ') ';
+      }
+
+      var translateXStyle = 'translateX(' + xPos + 'px)';
+      var transformStyle = scaleStyle + translateXStyle + translateYStyle;
+      this.thumbnailHolder.style.msTransform = transformStyle;
+      this.thumbnailHolder.style.webkitTransform = transformStyle;
+      this.thumbnailHolder.style.MozTransform = transformStyle;
+      this.thumbnailHolder.style.transform = transformStyle;
       this.thumbnailHolder.style.marginLeft = '-' + parseInt(currentStyle.width, 10) / 2 + 'px';
+      this.thumbnailHolder.style.borderRadius = '3px';
 
       if (this.lastStyle && this.lastStyle === currentStyle) {
         return;
@@ -6985,7 +7062,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.1.110-451';
+  vttThumbnailsPlugin.VERSION = '2.1.111-452';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -7730,7 +7807,7 @@
     return PlaylistPlugin;
   }(Plugin$1);
 
-  PlaylistPlugin.VERSION = '2.1.110-451';
+  PlaylistPlugin.VERSION = '2.1.111-452';
 
   if (videojs.getPlugin('playList')) {
     videojs.log.warn('A plugin named "PlaylistPlugin" already exists.');
@@ -10426,7 +10503,7 @@
     }, {
       key: "version",
       get: function get() {
-        return '2.1.110-451';
+        return '2.1.111-452';
       }
       /**
        * Get entitlement
@@ -11806,7 +11883,7 @@
     return AnalyticsPlugin;
   }(Plugin$2);
 
-  AnalyticsPlugin.VERSION = '2.1.110-451';
+  AnalyticsPlugin.VERSION = '2.1.111-452';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -16559,7 +16636,7 @@
     return ProgramService;
   }(Plugin$3);
 
-  ProgramService.VERSION = '2.1.110-451';
+  ProgramService.VERSION = '2.1.111-452';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -16798,7 +16875,7 @@
     return EntitlementExpirationService;
   }(Plugin$4);
 
-  EntitlementExpirationService.VERSION = '2.1.110-451';
+  EntitlementExpirationService.VERSION = '2.1.111-452';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -17375,7 +17452,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.110-451';
+  EntitlementMiddleware.VERSION = '2.1.111-452';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -17504,7 +17581,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.1.110-451';
+  empPlayer.VERSION = '2.1.111-452';
   /*
    * Universal Module Definition (UMD)
    *
