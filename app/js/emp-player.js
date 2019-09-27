@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.111-453 
+ * EMP-Player 2.1.111-454 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -2492,7 +2492,7 @@
 
     _proto.createEl = function createEl$$1() {
       var el = _Button.prototype.createEl.call(this, 'button', {
-        className: 'emp-live-control vjs-control'
+        className: 'emp-live-control vjs-control vjs-button'
       });
 
       this.contentEl_ = createEl('div', {
@@ -7073,7 +7073,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.1.111-453';
+  vttThumbnailsPlugin.VERSION = '2.1.111-454';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -7818,7 +7818,7 @@
     return PlaylistPlugin;
   }(Plugin$1);
 
-  PlaylistPlugin.VERSION = '2.1.111-453';
+  PlaylistPlugin.VERSION = '2.1.111-454';
 
   if (videojs.getPlugin('playList')) {
     videojs.log.warn('A plugin named "PlaylistPlugin" already exists.');
@@ -10514,7 +10514,7 @@
     }, {
       key: "version",
       get: function get() {
-        return '2.1.111-453';
+        return '2.1.111-454';
       }
       /**
        * Get entitlement
@@ -11894,7 +11894,7 @@
     return AnalyticsPlugin;
   }(Plugin$2);
 
-  AnalyticsPlugin.VERSION = '2.1.111-453';
+  AnalyticsPlugin.VERSION = '2.1.111-454';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -16647,7 +16647,7 @@
     return ProgramService;
   }(Plugin$3);
 
-  ProgramService.VERSION = '2.1.111-453';
+  ProgramService.VERSION = '2.1.111-454';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -16886,7 +16886,7 @@
     return EntitlementExpirationService;
   }(Plugin$4);
 
-  EntitlementExpirationService.VERSION = '2.1.111-453';
+  EntitlementExpirationService.VERSION = '2.1.111-454';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -17463,7 +17463,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.111-453';
+  EntitlementMiddleware.VERSION = '2.1.111-454';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -17592,7 +17592,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.1.111-453';
+  empPlayer.VERSION = '2.1.111-454';
   /*
    * Universal Module Definition (UMD)
    *
