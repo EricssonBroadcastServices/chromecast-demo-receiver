@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.111-454 
+ * EMP-Player 2.1.111-455 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -7073,7 +7073,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.1.111-454';
+  vttThumbnailsPlugin.VERSION = '2.1.111-455';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -7818,7 +7818,7 @@
     return PlaylistPlugin;
   }(Plugin$1);
 
-  PlaylistPlugin.VERSION = '2.1.111-454';
+  PlaylistPlugin.VERSION = '2.1.111-455';
 
   if (videojs.getPlugin('playList')) {
     videojs.log.warn('A plugin named "PlaylistPlugin" already exists.');
@@ -10514,7 +10514,7 @@
     }, {
       key: "version",
       get: function get() {
-        return '2.1.111-454';
+        return '2.1.111-455';
       }
       /**
        * Get entitlement
@@ -11894,7 +11894,7 @@
     return AnalyticsPlugin;
   }(Plugin$2);
 
-  AnalyticsPlugin.VERSION = '2.1.111-454';
+  AnalyticsPlugin.VERSION = '2.1.111-455';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -13110,6 +13110,59 @@
 
   var defineProperties_1 = defineProperties;
 
+  /* eslint complexity: [2, 17], max-statements: [2, 33] */
+  var shams = function hasSymbols() {
+  	if (typeof Symbol !== 'function' || typeof Object.getOwnPropertySymbols !== 'function') { return false; }
+  	if (typeof Symbol.iterator === 'symbol') { return true; }
+
+  	var obj = {};
+  	var sym = Symbol('test');
+  	var symObj = Object(sym);
+  	if (typeof sym === 'string') { return false; }
+
+  	if (Object.prototype.toString.call(sym) !== '[object Symbol]') { return false; }
+  	if (Object.prototype.toString.call(symObj) !== '[object Symbol]') { return false; }
+
+  	// temp disabled per https://github.com/ljharb/object.assign/issues/17
+  	// if (sym instanceof Symbol) { return false; }
+  	// temp disabled per https://github.com/WebReflection/get-own-property-symbols/issues/4
+  	// if (!(symObj instanceof Symbol)) { return false; }
+
+  	// if (typeof Symbol.prototype.toString !== 'function') { return false; }
+  	// if (String(sym) !== Symbol.prototype.toString.call(sym)) { return false; }
+
+  	var symVal = 42;
+  	obj[sym] = symVal;
+  	for (sym in obj) { return false; } // eslint-disable-line no-restricted-syntax
+  	if (typeof Object.keys === 'function' && Object.keys(obj).length !== 0) { return false; }
+
+  	if (typeof Object.getOwnPropertyNames === 'function' && Object.getOwnPropertyNames(obj).length !== 0) { return false; }
+
+  	var syms = Object.getOwnPropertySymbols(obj);
+  	if (syms.length !== 1 || syms[0] !== sym) { return false; }
+
+  	if (!Object.prototype.propertyIsEnumerable.call(obj, sym)) { return false; }
+
+  	if (typeof Object.getOwnPropertyDescriptor === 'function') {
+  		var descriptor = Object.getOwnPropertyDescriptor(obj, sym);
+  		if (descriptor.value !== symVal || descriptor.enumerable !== true) { return false; }
+  	}
+
+  	return true;
+  };
+
+  var origSymbol = commonjsGlobal.Symbol;
+
+
+  var hasSymbols$1 = function hasNativeSymbols() {
+  	if (typeof origSymbol !== 'function') { return false; }
+  	if (typeof Symbol !== 'function') { return false; }
+  	if (typeof origSymbol('foo') !== 'symbol') { return false; }
+  	if (typeof Symbol('bar') !== 'symbol') { return false; }
+
+  	return shams();
+  };
+
   /* globals
   	Atomics,
   	SharedArrayBuffer,
@@ -13117,11 +13170,13 @@
 
   var undefined$1; // eslint-disable-line no-shadow-restricted-names
 
+  var $TypeError = TypeError;
+
   var ThrowTypeError = Object.getOwnPropertyDescriptor
   	? (function () { return Object.getOwnPropertyDescriptor(arguments, 'callee').get; }())
-  	: function () { throw new TypeError(); };
+  	: function () { throw new $TypeError(); };
 
-  var hasSymbols$1 = typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol';
+  var hasSymbols$2 = hasSymbols$1();
 
   var getProto = Object.getPrototypeOf || function (x) { return x.__proto__; }; // eslint-disable-line no-proto
   var generatorFunction = undefined$1;
@@ -13134,7 +13189,7 @@
   	'$ %Array%': Array,
   	'$ %ArrayBuffer%': typeof ArrayBuffer === 'undefined' ? undefined$1 : ArrayBuffer,
   	'$ %ArrayBufferPrototype%': typeof ArrayBuffer === 'undefined' ? undefined$1 : ArrayBuffer.prototype,
-  	'$ %ArrayIteratorPrototype%': hasSymbols$1 ? getProto([][Symbol.iterator]()) : undefined$1,
+  	'$ %ArrayIteratorPrototype%': hasSymbols$2 ? getProto([][Symbol.iterator]()) : undefined$1,
   	'$ %ArrayPrototype%': Array.prototype,
   	'$ %ArrayProto_entries%': Array.prototype.entries,
   	'$ %ArrayProto_forEach%': Array.prototype.forEach,
@@ -13180,11 +13235,11 @@
   	'$ %Int32ArrayPrototype%': typeof Int32Array === 'undefined' ? undefined$1 : Int32Array.prototype,
   	'$ %isFinite%': isFinite,
   	'$ %isNaN%': isNaN,
-  	'$ %IteratorPrototype%': hasSymbols$1 ? getProto(getProto([][Symbol.iterator]())) : undefined$1,
+  	'$ %IteratorPrototype%': hasSymbols$2 ? getProto(getProto([][Symbol.iterator]())) : undefined$1,
   	'$ %JSON%': JSON,
   	'$ %JSONParse%': JSON.parse,
   	'$ %Map%': typeof Map === 'undefined' ? undefined$1 : Map,
-  	'$ %MapIteratorPrototype%': typeof Map === 'undefined' || !hasSymbols$1 ? undefined$1 : getProto(new Map()[Symbol.iterator]()),
+  	'$ %MapIteratorPrototype%': typeof Map === 'undefined' || !hasSymbols$2 ? undefined$1 : getProto(new Map()[Symbol.iterator]()),
   	'$ %MapPrototype%': typeof Map === 'undefined' ? undefined$1 : Map.prototype,
   	'$ %Math%': Math,
   	'$ %Number%': Number,
@@ -13210,22 +13265,22 @@
   	'$ %RegExp%': RegExp,
   	'$ %RegExpPrototype%': RegExp.prototype,
   	'$ %Set%': typeof Set === 'undefined' ? undefined$1 : Set,
-  	'$ %SetIteratorPrototype%': typeof Set === 'undefined' || !hasSymbols$1 ? undefined$1 : getProto(new Set()[Symbol.iterator]()),
+  	'$ %SetIteratorPrototype%': typeof Set === 'undefined' || !hasSymbols$2 ? undefined$1 : getProto(new Set()[Symbol.iterator]()),
   	'$ %SetPrototype%': typeof Set === 'undefined' ? undefined$1 : Set.prototype,
   	'$ %SharedArrayBuffer%': typeof SharedArrayBuffer === 'undefined' ? undefined$1 : SharedArrayBuffer,
   	'$ %SharedArrayBufferPrototype%': typeof SharedArrayBuffer === 'undefined' ? undefined$1 : SharedArrayBuffer.prototype,
   	'$ %String%': String,
-  	'$ %StringIteratorPrototype%': hasSymbols$1 ? getProto(''[Symbol.iterator]()) : undefined$1,
+  	'$ %StringIteratorPrototype%': hasSymbols$2 ? getProto(''[Symbol.iterator]()) : undefined$1,
   	'$ %StringPrototype%': String.prototype,
-  	'$ %Symbol%': hasSymbols$1 ? Symbol : undefined$1,
-  	'$ %SymbolPrototype%': hasSymbols$1 ? Symbol.prototype : undefined$1,
+  	'$ %Symbol%': hasSymbols$2 ? Symbol : undefined$1,
+  	'$ %SymbolPrototype%': hasSymbols$2 ? Symbol.prototype : undefined$1,
   	'$ %SyntaxError%': SyntaxError,
   	'$ %SyntaxErrorPrototype%': SyntaxError.prototype,
   	'$ %ThrowTypeError%': ThrowTypeError,
   	'$ %TypedArray%': TypedArray,
   	'$ %TypedArrayPrototype%': TypedArray ? TypedArray.prototype : undefined$1,
-  	'$ %TypeError%': TypeError,
-  	'$ %TypeErrorPrototype%': TypeError.prototype,
+  	'$ %TypeError%': $TypeError,
+  	'$ %TypeErrorPrototype%': $TypeError.prototype,
   	'$ %Uint8Array%': typeof Uint8Array === 'undefined' ? undefined$1 : Uint8Array,
   	'$ %Uint8ArrayPrototype%': typeof Uint8Array === 'undefined' ? undefined$1 : Uint8Array.prototype,
   	'$ %Uint8ClampedArray%': typeof Uint8ClampedArray === 'undefined' ? undefined$1 : Uint8ClampedArray,
@@ -13242,11 +13297,22 @@
   	'$ %WeakSetPrototype%': typeof WeakSet === 'undefined' ? undefined$1 : WeakSet.prototype
   };
 
-  var GetIntrinsic = function GetIntrinsic(name, allowMissing) {
-  	if (arguments.length > 1 && typeof allowMissing !== 'boolean') {
-  		throw new TypeError('"allowMissing" argument must be a boolean');
-  	}
 
+  var $replace = functionBind.call(Function.call, String.prototype.replace);
+
+  /* adapted from https://github.com/lodash/lodash/blob/4.17.15/dist/lodash.js#L6735-L6744 */
+  var rePropName = /[^%.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|%$))/g;
+  var reEscapeChar = /\\(\\)?/g; /** Used to match backslashes in property paths. */
+  var stringToPath = function stringToPath(string) {
+  	var result = [];
+  	$replace(string, rePropName, function (match, number, quote, subString) {
+  		result[result.length] = quote ? $replace(subString, reEscapeChar, '$1') : (number || match);
+  	});
+  	return result;
+  };
+  /* end adaptation */
+
+  var getBaseIntrinsic = function getBaseIntrinsic(name, allowMissing) {
   	var key = '$ ' + name;
   	if (!(key in INTRINSICS)) {
   		throw new SyntaxError('intrinsic ' + name + ' does not exist!');
@@ -13254,14 +13320,35 @@
 
   	// istanbul ignore if // hopefully this is impossible to test :-)
   	if (typeof INTRINSICS[key] === 'undefined' && !allowMissing) {
-  		throw new TypeError('intrinsic ' + name + ' exists, but is not available. Please file an issue!');
+  		throw new $TypeError('intrinsic ' + name + ' exists, but is not available. Please file an issue!');
   	}
+
   	return INTRINSICS[key];
+  };
+
+  var GetIntrinsic = function GetIntrinsic(name, allowMissing) {
+  	if (arguments.length > 1 && typeof allowMissing !== 'boolean') {
+  		throw new TypeError('"allowMissing" argument must be a boolean');
+  	}
+
+  	var parts = stringToPath(name);
+
+  	if (parts.length === 0) {
+  		return getBaseIntrinsic(name, allowMissing);
+  	}
+
+  	var value = getBaseIntrinsic('%' + parts[0] + '%', allowMissing);
+  	for (var i = 1; i < parts.length; i += 1) {
+  		if (value != null) {
+  			value = value[parts[i]];
+  		}
+  	}
+  	return value;
   };
 
   var src = functionBind.call(Function.call, Object.prototype.hasOwnProperty);
 
-  var $TypeError = GetIntrinsic('%TypeError%');
+  var $TypeError$1 = GetIntrinsic('%TypeError%');
   var $SyntaxError = GetIntrinsic('%SyntaxError%');
 
 
@@ -13290,7 +13377,7 @@
   		var isData = src(Desc, '[[Value]]');
   		var IsAccessor = src(Desc, '[[Get]]') || src(Desc, '[[Set]]');
   		if (isData && IsAccessor) {
-  			throw new $TypeError('Property Descriptors may not be both accessor and data descriptors');
+  			throw new $TypeError$1('Property Descriptors may not be both accessor and data descriptors');
   		}
   		return true;
   	}
@@ -13302,11 +13389,11 @@
   		throw new $SyntaxError('unknown record type: ' + recordType);
   	}
   	if (!predicate(ES, value)) {
-  		throw new $TypeError(argumentName + ' must be a ' + recordType);
+  		throw new $TypeError$1(argumentName + ' must be a ' + recordType);
   	}
   };
 
-  var $TypeError$1 = GetIntrinsic('%TypeError%');
+  var $TypeError$2 = GetIntrinsic('%TypeError%');
 
   var isPropertyDescriptor = function IsPropertyDescriptor(ES, Desc) {
   	if (ES.Type(Desc) !== 'Object') {
@@ -13328,7 +13415,7 @@
   	}
 
   	if (ES.IsDataDescriptor(Desc) && ES.IsAccessorDescriptor(Desc)) {
-  		throw new $TypeError$1('Property Descriptors may not be both accessor and data descriptors');
+  		throw new $TypeError$2('Property Descriptors may not be both accessor and data descriptors');
   	}
   	return true;
   };
@@ -13348,6 +13435,41 @@
   var mod = function mod(number, modulo) {
   	var remain = number % modulo;
   	return Math.floor(remain >= 0 ? remain : remain + modulo);
+  };
+
+  var $Function = GetIntrinsic('%Function%');
+  var $apply = $Function.apply;
+  var $call = $Function.call;
+
+  var callBind = function callBind() {
+  	return functionBind.apply($call, arguments);
+  };
+
+  var apply = function applyBind() {
+  	return functionBind.apply($apply, arguments);
+  };
+  callBind.apply = apply;
+
+  var $indexOf = callBind(GetIntrinsic('String.prototype.indexOf'));
+
+  var callBound = function callBoundIntrinsic(name, allowMissing) {
+  	var intrinsic = GetIntrinsic(name, !!allowMissing);
+  	if (typeof intrinsic === 'function' && $indexOf(name, '.prototype.')) {
+  		return callBind(intrinsic);
+  	}
+  	return intrinsic;
+  };
+
+  var $strSlice = callBound('String.prototype.slice');
+
+  var isPrefixOf = function isPrefixOf(prefix, string) {
+  	if (prefix === string) {
+  		return true;
+  	}
+  	if (prefix.length > string.length) {
+  		return false;
+  	}
+  	return $strSlice(string, 0, prefix.length) === prefix;
   };
 
   var fnToStr = Function.prototype.toString;
@@ -13434,23 +13556,15 @@
   	return ES5internalSlots['[[DefaultValue]]'](input);
   };
 
-  var $Function = GetIntrinsic('%Function%');
-  var $apply = $Function.apply;
-  var $call = $Function.call;
-
-  var callBind = function callBind() {
-  	return functionBind.apply($call, arguments);
-  };
-
-  var apply = function applyBind() {
-  	return functionBind.apply($apply, arguments);
-  };
-  callBind.apply = apply;
-
   var $Object = GetIntrinsic('%Object%');
-  var $TypeError$2 = GetIntrinsic('%TypeError%');
+  var $EvalError = GetIntrinsic('%EvalError%');
+  var $TypeError$3 = GetIntrinsic('%TypeError%');
   var $String = GetIntrinsic('%String%');
+  var $Date = GetIntrinsic('%Date%');
   var $Number = GetIntrinsic('%Number%');
+  var $floor = GetIntrinsic('%Math.floor%');
+  var $DateUTC = GetIntrinsic('%Date.UTC%');
+  var $abs = GetIntrinsic('%Math.abs%');
 
 
 
@@ -13466,17 +13580,15 @@
 
 
 
-  var strSlice = callBind($String.prototype.slice);
+  var $getUTCFullYear = callBound('Date.prototype.getUTCFullYear');
 
-  var isPrefixOf = function isPrefixOf(prefix, string) {
-  	if (prefix === string) {
-  		return true;
-  	}
-  	if (prefix.length > string.length) {
-  		return false;
-  	}
-  	return strSlice(string, 0, prefix.length) === prefix;
-  };
+  var HoursPerDay = 24;
+  var MinutesPerHour = 60;
+  var SecondsPerMinute = 60;
+  var msPerSecond = 1e3;
+  var msPerMinute = msPerSecond * SecondsPerMinute;
+  var msPerHour = msPerMinute * MinutesPerHour;
+  var msPerDay = 86400000;
 
   // https://es5.github.io/#x9
   var ES5 = {
@@ -13516,7 +13628,7 @@
   	CheckObjectCoercible: function CheckObjectCoercible(value, optMessage) {
   		/* jshint eqnull:true */
   		if (value == null) {
-  			throw new $TypeError$2(optMessage || 'Cannot call method on ' + value);
+  			throw new $TypeError$3(optMessage || 'Cannot call method on ' + value);
   		}
   		return value;
   	},
@@ -13529,7 +13641,7 @@
   		return _isNaN(x) && _isNaN(y);
   	},
 
-  	// https://www.ecma-international.org/ecma-262/5.1/#sec-8
+  	// https://ecma-international.org/ecma-262/5.1/#sec-8
   	Type: function Type(x) {
   		if (x === null) {
   			return 'Null';
@@ -13624,14 +13736,14 @@
   				configurable: !!Desc['[[Configurable]]']
   			};
   		} else {
-  			throw new $TypeError$2('FromPropertyDescriptor must be called with a fully populated Property Descriptor');
+  			throw new $TypeError$3('FromPropertyDescriptor must be called with a fully populated Property Descriptor');
   		}
   	},
 
   	// https://ecma-international.org/ecma-262/5.1/#sec-8.10.5
   	ToPropertyDescriptor: function ToPropertyDescriptor(Obj) {
   		if (this.Type(Obj) !== 'Object') {
-  			throw new $TypeError$2('ToPropertyDescriptor requires an object');
+  			throw new $TypeError$3('ToPropertyDescriptor requires an object');
   		}
 
   		var desc = {};
@@ -13657,18 +13769,18 @@
   		if (src(Obj, 'set')) {
   			var setter = Obj.set;
   			if (typeof setter !== 'undefined' && !this.IsCallable(setter)) {
-  				throw new $TypeError$2('setter must be a function');
+  				throw new $TypeError$3('setter must be a function');
   			}
   			desc['[[Set]]'] = setter;
   		}
 
   		if ((src(desc, '[[Get]]') || src(desc, '[[Set]]')) && (src(desc, '[[Value]]') || src(desc, '[[Writable]]'))) {
-  			throw new $TypeError$2('Invalid property descriptor. Cannot both specify accessors and a value or writable attribute');
+  			throw new $TypeError$3('Invalid property descriptor. Cannot both specify accessors and a value or writable attribute');
   		}
   		return desc;
   	},
 
-  	// https://www.ecma-international.org/ecma-262/5.1/#sec-11.9.3
+  	// https://ecma-international.org/ecma-262/5.1/#sec-11.9.3
   	'Abstract Equality Comparison': function AbstractEqualityComparison(x, y) {
   		var xType = this.Type(x);
   		var yType = this.Type(y);
@@ -13699,7 +13811,7 @@
   		return false;
   	},
 
-  	// https://www.ecma-international.org/ecma-262/5.1/#sec-11.9.6
+  	// https://ecma-international.org/ecma-262/5.1/#sec-11.9.6
   	'Strict Equality Comparison': function StrictEqualityComparison(x, y) {
   		var xType = this.Type(x);
   		var yType = this.Type(y);
@@ -13712,11 +13824,11 @@
   		return x === y; // shortcut for steps 4-7
   	},
 
-  	// https://www.ecma-international.org/ecma-262/5.1/#sec-11.8.5
+  	// https://ecma-international.org/ecma-262/5.1/#sec-11.8.5
   	// eslint-disable-next-line max-statements
   	'Abstract Relational Comparison': function AbstractRelationalComparison(x, y, LeftFirst) {
   		if (this.Type(LeftFirst) !== 'Boolean') {
-  			throw new $TypeError$2('Assertion failed: LeftFirst argument must be a Boolean');
+  			throw new $TypeError$3('Assertion failed: LeftFirst argument must be a Boolean');
   		}
   		var px;
   		var py;
@@ -13761,6 +13873,225 @@
   			return true;
   		}
   		return px < py; // both strings, neither a prefix of the other. shortcut for steps c-f
+  	},
+
+  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.10
+  	msFromTime: function msFromTime(t) {
+  		return mod(t, msPerSecond);
+  	},
+
+  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.10
+  	SecFromTime: function SecFromTime(t) {
+  		return mod($floor(t / msPerSecond), SecondsPerMinute);
+  	},
+
+  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.10
+  	MinFromTime: function MinFromTime(t) {
+  		return mod($floor(t / msPerMinute), MinutesPerHour);
+  	},
+
+  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.10
+  	HourFromTime: function HourFromTime(t) {
+  		return mod($floor(t / msPerHour), HoursPerDay);
+  	},
+
+  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.2
+  	Day: function Day(t) {
+  		return $floor(t / msPerDay);
+  	},
+
+  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.2
+  	TimeWithinDay: function TimeWithinDay(t) {
+  		return mod(t, msPerDay);
+  	},
+
+  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.3
+  	DayFromYear: function DayFromYear(y) {
+  		return (365 * (y - 1970)) + $floor((y - 1969) / 4) - $floor((y - 1901) / 100) + $floor((y - 1601) / 400);
+  	},
+
+  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.3
+  	TimeFromYear: function TimeFromYear(y) {
+  		return msPerDay * this.DayFromYear(y);
+  	},
+
+  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.3
+  	YearFromTime: function YearFromTime(t) {
+  		// largest y such that this.TimeFromYear(y) <= t
+  		return $getUTCFullYear(new $Date(t));
+  	},
+
+  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.6
+  	WeekDay: function WeekDay(t) {
+  		return mod(this.Day(t) + 4, 7);
+  	},
+
+  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.3
+  	DaysInYear: function DaysInYear(y) {
+  		if (mod(y, 4) !== 0) {
+  			return 365;
+  		}
+  		if (mod(y, 100) !== 0) {
+  			return 366;
+  		}
+  		if (mod(y, 400) !== 0) {
+  			return 365;
+  		}
+  		return 366;
+  	},
+
+  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.3
+  	InLeapYear: function InLeapYear(t) {
+  		var days = this.DaysInYear(this.YearFromTime(t));
+  		if (days === 365) {
+  			return 0;
+  		}
+  		if (days === 366) {
+  			return 1;
+  		}
+  		throw new $EvalError('Assertion failed: there are not 365 or 366 days in a year, got: ' + days);
+  	},
+
+  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.4
+  	DayWithinYear: function DayWithinYear(t) {
+  		return this.Day(t) - this.DayFromYear(this.YearFromTime(t));
+  	},
+
+  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.4
+  	MonthFromTime: function MonthFromTime(t) {
+  		var day = this.DayWithinYear(t);
+  		if (0 <= day && day < 31) {
+  			return 0;
+  		}
+  		var leap = this.InLeapYear(t);
+  		if (31 <= day && day < (59 + leap)) {
+  			return 1;
+  		}
+  		if ((59 + leap) <= day && day < (90 + leap)) {
+  			return 2;
+  		}
+  		if ((90 + leap) <= day && day < (120 + leap)) {
+  			return 3;
+  		}
+  		if ((120 + leap) <= day && day < (151 + leap)) {
+  			return 4;
+  		}
+  		if ((151 + leap) <= day && day < (181 + leap)) {
+  			return 5;
+  		}
+  		if ((181 + leap) <= day && day < (212 + leap)) {
+  			return 6;
+  		}
+  		if ((212 + leap) <= day && day < (243 + leap)) {
+  			return 7;
+  		}
+  		if ((243 + leap) <= day && day < (273 + leap)) {
+  			return 8;
+  		}
+  		if ((273 + leap) <= day && day < (304 + leap)) {
+  			return 9;
+  		}
+  		if ((304 + leap) <= day && day < (334 + leap)) {
+  			return 10;
+  		}
+  		if ((334 + leap) <= day && day < (365 + leap)) {
+  			return 11;
+  		}
+  	},
+
+  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.5
+  	DateFromTime: function DateFromTime(t) {
+  		var m = this.MonthFromTime(t);
+  		var d = this.DayWithinYear(t);
+  		if (m === 0) {
+  			return d + 1;
+  		}
+  		if (m === 1) {
+  			return d - 30;
+  		}
+  		var leap = this.InLeapYear(t);
+  		if (m === 2) {
+  			return d - 58 - leap;
+  		}
+  		if (m === 3) {
+  			return d - 89 - leap;
+  		}
+  		if (m === 4) {
+  			return d - 119 - leap;
+  		}
+  		if (m === 5) {
+  			return d - 150 - leap;
+  		}
+  		if (m === 6) {
+  			return d - 180 - leap;
+  		}
+  		if (m === 7) {
+  			return d - 211 - leap;
+  		}
+  		if (m === 8) {
+  			return d - 242 - leap;
+  		}
+  		if (m === 9) {
+  			return d - 272 - leap;
+  		}
+  		if (m === 10) {
+  			return d - 303 - leap;
+  		}
+  		if (m === 11) {
+  			return d - 333 - leap;
+  		}
+  		throw new $EvalError('Assertion failed: MonthFromTime returned an impossible value: ' + m);
+  	},
+
+  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.12
+  	MakeDay: function MakeDay(year, month, date) {
+  		if (!_isFinite(year) || !_isFinite(month) || !_isFinite(date)) {
+  			return NaN;
+  		}
+  		var y = this.ToInteger(year);
+  		var m = this.ToInteger(month);
+  		var dt = this.ToInteger(date);
+  		var ym = y + $floor(m / 12);
+  		var mn = mod(m, 12);
+  		var t = $DateUTC(ym, mn, 1);
+  		if (this.YearFromTime(t) !== ym || this.MonthFromTime(t) !== mn || this.DateFromTime(t) !== 1) {
+  			return NaN;
+  		}
+  		return this.Day(t) + dt - 1;
+  	},
+
+  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.13
+  	MakeDate: function MakeDate(day, time) {
+  		if (!_isFinite(day) || !_isFinite(time)) {
+  			return NaN;
+  		}
+  		return (day * msPerDay) + time;
+  	},
+
+  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.11
+  	MakeTime: function MakeTime(hour, min, sec, ms) {
+  		if (!_isFinite(hour) || !_isFinite(min) || !_isFinite(sec) || !_isFinite(ms)) {
+  			return NaN;
+  		}
+  		var h = this.ToInteger(hour);
+  		var m = this.ToInteger(min);
+  		var s = this.ToInteger(sec);
+  		var milli = this.ToInteger(ms);
+  		var t = (h * msPerHour) + (m * msPerMinute) + (s * msPerSecond) + milli;
+  		return t;
+  	},
+
+  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.14
+  	TimeClip: function TimeClip(time) {
+  		if (!_isFinite(time) || $abs(time) > 8.64e15) {
+  			return NaN;
+  		}
+  		return $Number(new $Date(this.ToNumber(time)));
+  	},
+
+  	// https://ecma-international.org/ecma-262/5.1/#sec-5.2
+  	modulo: function modulo(x, y) {
+  		return mod(x, y);
   	}
   };
 
@@ -16647,7 +16978,7 @@
     return ProgramService;
   }(Plugin$3);
 
-  ProgramService.VERSION = '2.1.111-454';
+  ProgramService.VERSION = '2.1.111-455';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -16886,7 +17217,7 @@
     return EntitlementExpirationService;
   }(Plugin$4);
 
-  EntitlementExpirationService.VERSION = '2.1.111-454';
+  EntitlementExpirationService.VERSION = '2.1.111-455';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -17463,7 +17794,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.111-454';
+  EntitlementMiddleware.VERSION = '2.1.111-455';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -17592,7 +17923,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.1.111-454';
+  empPlayer.VERSION = '2.1.111-455';
   /*
    * Universal Module Definition (UMD)
    *
