@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.112-457 
+ * EMP-Player 2.1.112-458 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -134,10 +134,6 @@
   }
 
   var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
-
-  function commonjsRequire () {
-  	throw new Error('Dynamic requires are not currently supported by rollup-plugin-commonjs');
-  }
 
   function unwrapExports (x) {
   	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
@@ -7073,7 +7069,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.1.112-457';
+  vttThumbnailsPlugin.VERSION = '2.1.112-458';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -7818,7 +7814,7 @@
     return PlaylistPlugin;
   }(Plugin$1);
 
-  PlaylistPlugin.VERSION = '2.1.112-457';
+  PlaylistPlugin.VERSION = '2.1.112-458';
 
   if (videojs.getPlugin('playList')) {
     videojs.log.warn('A plugin named "PlaylistPlugin" already exists.');
@@ -10514,7 +10510,7 @@
     }, {
       key: "version",
       get: function get() {
-        return '2.1.112-457';
+        return '2.1.112-458';
       }
       /**
        * Get entitlement
@@ -11704,12 +11700,2472 @@
     return EMPAnalyticsConnector;
   }();
 
-  var empAnalytics_min = createCommonjsModule(function (module, exports) {
-  !function(a){module.exports=a();}(function(){return function b(a,c,d){function e(g,h){if(!c[g]){if(!a[g]){var i="function"==typeof commonjsRequire&&commonjsRequire;if(!h&&i)return i(g,!0);if(f)return f(g,!0);var j=new Error("Cannot find module '"+g+"'");throw j.code="MODULE_NOT_FOUND",j}var k=c[g]={exports:{}};a[g][0].call(k.exports,function(b){var c=a[g][1][b];return e(c?c:b)},k,k.exports,b,a,c,d);}return c[g].exports}for(var f="function"==typeof commonjsRequire&&commonjsRequire,g=0;g<d.length;g++)e(d[g]);return e}({1:[function(a,b,c){(function(a){var c;c="undefined"!=typeof window?window:"undefined"!=typeof a?a:"undefined"!=typeof self?self:{},b.exports=c;}).call(this,"undefined"!=typeof commonjsGlobal?commonjsGlobal:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{});},{}],2:[function(b,c,d){!function(e,f){"object"==typeof d&&"undefined"!=typeof c?f(d,b("worker-timers-broker")):f(e.workerTimers={},e.workerTimersBroker);}(this,function(a,b){var c='!function(r){var n={};function o(e){if(n[e])return n[e].exports;var t=n[e]={i:e,l:!1,exports:{}};return r[e].call(t.exports,t,t.exports,o),t.l=!0,t.exports}o.m=r,o.c=n,o.d=function(e,t,r){o.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:r})},o.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},o.t=function(t,e){if(1&e&&(t=o(t)),8&e)return t;if(4&e&&"object"==typeof t&&t&&t.__esModule)return t;var r=Object.create(null);if(o.r(r),Object.defineProperty(r,"default",{enumerable:!0,value:t}),2&e&&"string"!=typeof t)for(var n in t)o.d(r,n,function(e){return t[e]}.bind(null,n));return r},o.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return o.d(t,"a",t),t},o.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},o.p="",o(o.s=0)}([function(e,t,r){"use strict";r.r(t);r(1)},function(e,t,r){!function(){"use strict";var w=new Map,T=new Map,b=function(e,t){var r,n;if("performance"in self){var o=performance.now(),i=Math.max(0,o-t);r=o,n=e-i}else r=Date.now(),n=e;var a=r+n;return{expected:a,remainingDelay:n}},M=function e(t,r,n,o){var i="performance"in self?performance.now():Date.now();n<i?postMessage({id:null,method:"call",params:{timerId:r,timerType:o}}):t.set(r,setTimeout(e,n-i,t,r,n,o))};addEventListener("message",function(e){var t,r,n,o,i,a,u,s,c=e.data;try{if("clear"===c.method){var l=c.id,d=c.params,f=d.timerId,p=d.timerType;if("interval"===p)!function(e){var t=w.get(e);if(void 0===t)throw new Error(\'There is no interval scheduled with the given id "\'.concat(e,\'".\'));clearTimeout(t),w.delete(e)}(f),postMessage({error:null,id:l});else{if("timeout"!==p)throw new Error(\'The given type "\'.concat(p,\'" is not supported\'));!function(e){var t=T.get(e);if(void 0===t)throw new Error(\'There is no timeout scheduled with the given id "\'.concat(e,\'".\'));clearTimeout(t),T.delete(e)}(f),postMessage({error:null,id:l})}}else{if("set"!==c.method)throw new Error(\'The given method "\'.concat(c.method,\'" is not supported\'));var m=c.params,v=m.delay,h=m.now,g=m.timerId,y=m.timerType;if("interval"===y)i=g,a=b(v,h),u=a.expected,s=a.remainingDelay,w.set(i,setTimeout(M,s,w,i,u,"interval"));else{if("timeout"!==y)throw new Error(\'The given type "\'.concat(y,\'" is not supported\'));t=g,r=b(v,h),n=r.expected,o=r.remainingDelay,T.set(t,setTimeout(M,o,T,t,n,"timeout"))}}}catch(e){postMessage({error:{message:e.message},id:c.id,result:null})}})}()}]);',d=new Blob([c],{type:"application/javascript; charset=utf-8"}),e=URL.createObjectURL(d),f=b.load(e),g=f.clearInterval,h=f.clearTimeout,i=f.setInterval,j=f.setTimeout;URL.revokeObjectURL(e),a.clearInterval=g,a.clearTimeout=h,a.setInterval=i,a.setTimeout=j,Object.defineProperty(a,"__esModule",{value:!0});});},{"worker-timers-broker":3}],3:[function(b,c,d){!function(e,f){"object"==typeof d&&"undefined"!=typeof c?f(d,b("fast-unique-numbers")):f(e.workerTimersBroker={},e.fastUniqueNumbers);}(this,function(a,b){var c=function(a){return void 0!==a.method&&"call"===a.method},d=function(a){return null===a.error&&"number"==typeof a.id},e=function(a){var e=new Map,f=new Map,g=new Map,h=new Worker(a);h.addEventListener("message",function(a){var b=a.data;if(c(b)){var h=b.params,i=h.timerId,j=h.timerType;if("interval"===j){var k=e.get(i);if("number"==typeof k){var l=g.get(k);if(void 0===l||l.timerId!==i||l.timerType!==j)throw new Error("The timer is in an undefined state.")}else{if("undefined"==typeof k)throw new Error("The timer is in an undefined state.");k();}}else if("timeout"===j){var m=f.get(i);if("number"==typeof m){var n=g.get(m);if(void 0===n||n.timerId!==i||n.timerType!==j)throw new Error("The timer is in an undefined state.")}else{if("undefined"==typeof m)throw new Error("The timer is in an undefined state.");m(),f["delete"](i);}}}else{if(!d(b)){var o=b.error.message;throw new Error(o)}var p=b.id,q=g.get(p);if(void 0===q)throw new Error("The timer is in an undefined state.");var r=q.timerId,s=q.timerType;g["delete"](p),"interval"===s?e["delete"](r):f["delete"](r);}});var i=function(a){var c=b.generateUniqueNumber(g);g.set(c,{timerId:a,timerType:"interval"}),e.set(a,c),h.postMessage({id:c,method:"clear",params:{timerId:a,timerType:"interval"}});},j=function(a){var c=b.generateUniqueNumber(g);g.set(c,{timerId:a,timerType:"timeout"}),f.set(a,c),h.postMessage({id:c,method:"clear",params:{timerId:a,timerType:"timeout"}});},k=function(a,c){var d=b.generateUniqueNumber(e);return e.set(d,function(){a(),"function"==typeof e.get(d)&&h.postMessage({id:null,method:"set",params:{delay:c,now:performance.now(),timerId:d,timerType:"interval"}});}),h.postMessage({id:null,method:"set",params:{delay:c,now:performance.now(),timerId:d,timerType:"interval"}}),d},l=function(a,c){var d=b.generateUniqueNumber(f);return f.set(d,a),h.postMessage({id:null,method:"set",params:{delay:c,now:performance.now(),timerId:d,timerType:"timeout"}}),d};return {clearInterval:i,clearTimeout:j,setInterval:k,setTimeout:l}};a.load=e,Object.defineProperty(a,"__esModule",{value:!0});});},{"fast-unique-numbers":4}],4:[function(b,c,d){!function(b,e){"object"==typeof d&&"undefined"!=typeof c?e(d):e(b.fastUniqueNumbers={});}(this,function(a){var b=new WeakMap,c=Number.MAX_SAFE_INTEGER||9007199254740991,d=function(a,c){return b.set(a,c),c},e=function(a){var e=b.get(a),f=void 0===e?a.size:e>2147483648?0:e+1;if(!a.has(f))return d(a,f);if(a.size<1073741824){for(;a.has(f);)f=Math.floor(2147483648*Math.random());return d(a,f)}if(a.size>c)throw new Error("Congratulations, you created a collection of unique numbers which uses all available integers!");for(;a.has(f);)f=Math.floor(Math.random()*c);return d(a,f)},f=function(a){var b=e(a);return a.add(b),b};a.addUniqueNumber=f,a.generateUniqueNumber=e,Object.defineProperty(a,"__esModule",{value:!0});});},{}],5:[function(a,b,c){function d(a){if(a&&a.__esModule)return a;var b={};if(null!=a)for(var c in a)Object.prototype.hasOwnProperty.call(a,c)&&(b[c]=a[c]);return b["default"]=a,b}function e(a){return a&&a.__esModule?a:{"default":a}}function f(a,b){if(!(a instanceof b))throw new TypeError("Cannot call a class as a function")}c.__esModule=!0;var g=function(){function a(a,b){for(var c=0;c<b.length;c++){var d=b[c];d.enumerable=d.enumerable||!1,d.configurable=!0,"value"in d&&(d.writable=!0),Object.defineProperty(a,d.key,d);}}return function(b,c,d){return c&&a(b.prototype,c),d&&a(b,d),b}}(),h=a("global/window"),i=e(h),j=a("./platform"),k=e(j),l=a("worker-timers"),m=d(l),n=function(){function a(b,c,d,e,g){var h=arguments.length<=5||void 0===arguments[5]?{}:arguments[5],i=arguments.length<=6||void 0===arguments[6]?{}:arguments[6];f(this,a),this.CYCLE_TIME=1e3,this.EVENT_PURGE_TIME_DEFAULT=3*this.CYCLE_TIME,this.TIME_WITHOUT_BEAT_DEFAULT=60*this.CYCLE_TIME,this.SERVER_URL_DEFAULT="",this.CUSTOMER_DEFAULT="",this.BUSINESS_UNIT_DEFAULT="",this.INCLUDE_DEVICE_METRICS_DEFAULT=!0,this.SESSION_TOKEN_DEFAULT="",this.SESSION_ID_DEFAULT="",this.DEBUG_DEFAULT=!1,this.MAX_RETRIES=20,this.DEVICE_CLOCK_CHECK_THRESHOLD=3e5,this.eventsSkeleton=this.initEventSkeleton(),this.customer_=c,this.businessUnit_=d,this.sessionToken_=e,this.serverURL_=b,this.includeDeviceMetrics_=!1,this.userId_=g,this.deviceInfoData_=h,this.props_=i||{},this.pendingRequest_=!1;}return a.prototype.init=function(){var a=this;this.cycleTimer&&("undefined"!=typeof Worker&&this.props_.disableWebWorkers!==!0?m.clearInterval(this.cycleTimer):clearInterval(this.cycleTimer)),"undefined"!=typeof Worker&&this.props_.disableWebWorkers!==!0?this.cycleTimer=m.setInterval(function(){return a.cycle()},this.CYCLE_TIME):this.cycleTimer=setInterval(function(){return a.cycle()},this.CYCLE_TIME),this.communicationCurrentTime=0,this.lastCommunicationTime=0,this.eventPool={};},a.prototype.clear=function(){this.eventPool={};},a.prototype.ok=function(a){var b=this.eventPool[a];return !!b&&(b.forbidden===!1&&b.retries<this.MAX_RETRIES)},a.prototype.created=function(a){var b=arguments.length<=1||void 0===arguments[1]?{}:arguments[1],c={type:"Created"};this.addEventToPool(a,c,b);},a.prototype.play=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"PlayerReady",currentTime:b};this.deviceAppInfo&&(c.deviceAppInfo=this.deviceAppInfo),this.addEventToPool(a,d,c);},a.prototype.playing=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"Started",currentTime:b};if(this.customAttributes){var e=Object.keys(this.customAttributes);e.length&&e.length>0&&(c.attributes=this.customAttributes);}this.addEventToPool(a,d,c),this.changeSessionState(a,"PLAYING");},a.prototype.paused=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"Paused",currentTime:b};this.addEventToPool(a,d,c,!0);},a.prototype.seek=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"ScrubbedTo",currentTime:b};this.addEventToPool(a,d,c,!0);},a.prototype.programChanged=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"ProgramChanged",currentTime:b};this.addEventToPool(a,d,c,!0);},a.prototype.startCasting=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"StartCasting",currentTime:b};this.addEventToPool(a,d,c,!0),this.changeSessionState(a,"FINISHED");},a.prototype.stopCasting=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"StopCasting",currentTime:b};this.addEventToPool(a,d,c,!0),this.changeSessionState(a,"FINISHED");},a.prototype.setCurrentTime=function(a,b){this.eventPool[a]&&(this.eventPool[a].currentTime=b);},a.prototype.handshake=function(a){var b=arguments.length<=1||void 0===arguments[1]?{}:arguments[1],c={type:"HandshakeStarted"};this.addEventToPool(a,c,b);},a.prototype.resume=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"Resumed",currentTime:b};this.addEventToPool(a,d,c,!0);},a.prototype.bitrateChanged=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"BitrateChanged",currentTime:b};this.addEventToPool(a,d,c,!0);},a.prototype.drmSessionUpdate=function(a){var b=arguments.length<=1||void 0===arguments[1]?{}:arguments[1],c={type:"DRM"};this.addEventToPool(a,c,b,!0);},a.prototype.endOfStream=function(a){var b=arguments.length<=1||void 0===arguments[1]?{}:arguments[1],c={type:"Completed"};this.addEventToPool(a,c,b,!0),this.changeSessionState(a,"FINISHED");},a.prototype.error=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"Error",currentTime:b};this.addEventToPool(a,d,c),this.changeSessionState(a,"FINISHED");},a.prototype.dispose=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d=this.eventPool[a];if(d&&"FINISHED"!==d.currentState){var e={type:"Aborted"};b&&(e.currentTime=b),this.addEventToPool(a,e,c,!0),this.changeSessionState(a,"FINISHED");}},a.prototype.waiting=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"BufferingStarted",currentTime:b};this.addEventToPool(a,d,c);},a.prototype.waitingEnded=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"BufferingEnded",currentTime:b};this.addEventToPool(a,d,c);},a.prototype.getSessionState=function(a){return this.eventPool[a]?this.eventPool[a].currentState||"IDLE":"IDLE"},a.prototype.dispatchNow=function(){var a=arguments.length<=0||void 0===arguments[0]||arguments[0];this.cycle(a,!0);},a.prototype.exitOngoingSession=function(a){var b=this,c=Object.keys(this.eventPool);c.map(function(c){b.eventPool[c]&&b.dispose(c,a);});},a.prototype.setCustomAttribute=function(a,b){this.customAttributes||this.resetAnalyticsCustomAttributes(),this.customAttributes[a]=b;},a.prototype.clearCustomAttributes=function(){this.customAttributes={};},a.prototype.removeSession=function(a){var b=!(arguments.length<=1||void 0===arguments[1])&&arguments[1];if(b===!0)delete this.eventPool[a];else{var c=this.eventPool[a];c&&(c.currentState="REMOVED");}},a.prototype.hasDataToSend=function(){for(var a=Object.keys(this.eventPool),b=0;b<a.length;++b)if(this.eventPool[a[b]].events.length>0)return !0;return !1},a.prototype.sendData=function(){var a=this,b=arguments.length<=0||void 0===arguments[0]||arguments[0],c=!(arguments.length<=1||void 0===arguments[1])&&arguments[1];if(!this.pendingRequest_){var d=!1;this.pendingRequest_=!0;var e=void 0;e="undefined"!=typeof Worker&&this.props_.disableWebWorkers!==!0?m.setTimeout(function(){a.pendingRequest_=!1,e=void 0;},2*this.EVENT_PURGE_TIME_DEFAULT):setTimeout(function(){a.pendingRequest_=!1,e=void 0;},2*this.EVENT_PURGE_TIME_DEFAULT);var f=Object.keys(this.eventPool);f.map(function(f){var g=a.eventPool[f];if(g){if(!f)return g.events=[],void a.removeSession(f,!0);if("PLAYING"===g.currentState&&0===g.events.length&&c&&g.events.push({EventType:"Playback.Heartbeat",Timestamp:(new Date).getTime(),OffsetTime:Math.floor(1e3*g.currentTime)}),"IDLE"!==g.currentState&&"REMOVED"!==g.currentState){if(0===g.events.length)return void("FINISHED"===g.currentState&&a.removeSession(f));var h={DispatchTime:(new Date).getTime(),Customer:a.customer_,BusinessUnit:a.businessUnit_,Payload:g.events,SessionId:f,ClockOffset:g.clockOffset};if(a.debugLog("Sending analytics - sessionId: "+f+" and params: ",h),g.retries>a.MAX_RETRIES||g.forbidden===!0)return void(g.events=[]);Math.abs(a.communicationCurrentDate-a.lastCommunicationDate)>a.DEVICE_CLOCK_CHECK_THRESHOLD&&a.initRequest(f).then(function(){}),d=!0,a.sendRequest(b,h,function(b,c){if(e)try{"undefined"!=typeof Worker&&a.props_.disableWebWorkers!==!0?(m.clearTimeout(e),e=void 0):(clearTimeout(e),e=void 0);}catch(d){}a.pendingRequest_=!1;var h=b&&b.httpCode?b.httpCode:200;if("undefined"!=typeof c||200!==h)401===h&&(g.forbidden=!0),a.debugLog("Error sending request to backend",c),c||g.retries++;else{g.events=[],g.retries=0;var i=new Date;a.afterSendData_&&a.afterSendData_(i,g.lastRequestDate),g.lastRequestDate=i,"FINISHED"===g.currentState&&a.removeSession(f);}});}}}),d||(this.pendingRequest_=!1);}},a.prototype.cycle=function(){var a=arguments.length<=0||void 0===arguments[0]||arguments[0],b=!(arguments.length<=1||void 0===arguments[1])&&arguments[1];this.communicationCurrentDate=new Date,this.communicationCurrentTime+=this.CYCLE_TIME,this.hasDataToSend()?(b||this.lastCommunicationTime+this.EVENT_PURGE_TIME_DEFAULT<this.communicationCurrentTime)&&(this.sendData(a),this.lastCommunicationTime=this.communicationCurrentTime,this.lastCommunicationDate=this.communicationCurrentDate):(b||this.lastCommunicationTime+this.TIME_WITHOUT_BEAT_DEFAULT<this.communicationCurrentTime)&&(this.sendData(a,!0),this.lastCommunicationTime=this.communicationCurrentTime,this.lastCommunicationDate=this.communicationCurrentDate);},a.prototype.sendRequest=function(a,b,c){var d=new XMLHttpRequest;d.open("POST",this.serverURL_+"/eventsink/send",!0),d.setRequestHeader("Content-type","application/json"),d.setRequestHeader("Authorization","Bearer "+this.sessionToken_),d.onload=function(){var a=JSON.parse(this.responseText);c(a);},d.onerror=function(a){c(null,a);},d.send(JSON.stringify(b));},a.prototype.initRequest=function(a){var b=this;return new Promise(function(c,d){var e=(new Date).getTime(),f=new XMLHttpRequest;f.open("POST",b.serverURL_+"/eventsink/init",!0),f.setRequestHeader("Content-type","application/json"),f.setRequestHeader("Authorization","Bearer "+b.sessionToken_),f.onload=function(){var d=(new Date).getTime(),g=JSON.parse(f.responseText);if(b.determineClockOffset(a,g,e,d),g&&g.settings){g.settings;g.settings.includeDeviceMetrics&&(b.includeDeviceMetrics_=!!g.settings.includeDeviceMetrics);}c();},f.onerror=function(a){b.debugLog("Unable to init. Aborting."),d(a);};var g={Customer:b.customer_,BusinessUnit:b.businessUnit_,SessionId:a};f.send(JSON.stringify(g));})},a.prototype.debugLog=function(a,b){b=b||"",this.debug_;},a.prototype.addDeviceInfoEvent=function(a){var b=this.eventPool[a];if(this.includeDeviceMetrics_&&b&&b.events&&b.events.length){var c={Timestamp:(new Date).getTime(),EventType:"Device.Info",DeviceModel:this.deviceInfoData_.deviceModel||"Desktop",UserAgent:this.deviceInfoData_.userAgent||i["default"].navigator.userAgent,Height:this.deviceInfoData_.screenHeight||i["default"].screen.height,Width:this.deviceInfoData_.screenWidth||i["default"].screen.width,Model:this.deviceInfoData_.model||i["default"].navigator.appName,Name:this.deviceInfoData_.deviceName||i["default"].navigator.product,OS:this.deviceInfoData_.deviceOS||k["default"].os.family,OSVersion:this.deviceInfoData_.deviceOSVersion||k["default"].os.version,Type:this.deviceInfoData_.type||"WEB"};(this.deviceInfoData_.deviceManufacturer||k["default"].manufacturer)&&(c.Manufacturer=this.deviceInfoData_.deviceManufacturer||k["default"].manufacturer),this.deviceInfoData_.deviceId&&(c.DeviceId=this.deviceInfoData_.deviceId),b.events.push(c);}},a.prototype.determineClockOffset=function(a,b,c,d){var e=this.eventPool[a];e&&(e.clockOffset=Math.floor((d-b.repliedTime+c-b.receivedTime)/2));},a.prototype.createPool=function(a){var b=this;return new Promise(function(c,d){b.eventPool[a]={currentState:"IDLE",currentTime:0,clockOffset:0,events:[],retries:0,forbidden:!1},b.initRequest(a).then(function(){b.addDeviceInfoEvent(a),c();})["catch"](function(a){d(a);});})},a.prototype.addEventToPool=function(a,b,c){var d=this,e=!(arguments.length<=3||void 0===arguments[3])&&arguments[3];if(!e||!this.eventPool[a]||"FINISHED"!==this.eventPool[a].currentState&&"REMOVED"!==this.eventPool[a].currentState){var f;this.eventPool[a]||(f=this.createPool(a)),f?f.then(function(){d.internalAddEventToPool(a,b,c);}):this.internalAddEventToPool(a,b,c);}},a.prototype.internalAddEventToPool=function(a,b,c){var d=this.eventsSkeleton[b.type];if(!d)return void this.debugLog("Unknown playback event: ",b);var e={Timestamp:(new Date).getTime(),EventType:"Playback."+d.event};d.includeOffset&&(e.OffsetTime=Math.floor(1e3*b.currentTime)),d.attributes&&"function"==typeof d.attributes&&(e=this.objectAssign(e,d.attributes(c))),this.eventPool[a].events.push(e),this.debugLog("added "+d.event+" to queue");},a.prototype.changeSessionState=function(a,b){var c,d=this;this.eventPool[a]||(c=this.createPool(a)),c?c.then(function(){d.eventPool[a].currentState=b;}):this.eventPool[a].currentState=b;},a.prototype.initEventSkeleton=function(){var b={};return b.Completed={event:"Completed",autoListener:!1},b.PlayerReady={event:"PlayerReady",autoListener:!1,attributes:function(b){var c={Technology:b.techName,PlayerVersion:b.version};return b.techVersion&&(c.TechVersion=b.techVersion),c.AnalyticsVersion=a.VERSION,b.deviceAppInfo&&(c.DeviceAppInfo=b.deviceAppInfo),b.playMode&&(c.PlayMode=b.playMode),c}},b.Resumed={event:"Resumed",autoListener:!1,includeOffset:!0},b.BufferingStarted={event:"BufferingStarted",includeOffset:!0},b.BufferingEnded={event:"BufferingEnded",includeOffset:!0},b.ScrubbedTo={event:"ScrubbedTo",includeOffset:!0},b.Created={event:"Created",attributes:function(a){var b={};return "undefined"!=typeof a.autoplay&&(b.AutoPlay=a.autoplay),a.techName&&(b.Technology=a.techName),a.player&&(b.Player=a.player),a.version&&(b.Version=a.version),a.requestId&&(b.RequestId=a.requestId),a.techVersion&&(b.TechVersion=a.techVersion),a.deviceAppInfo&&(b.DeviceAppInfo=a.deviceAppInfo),a.playMode&&(b.PlayMode=a.playMode),b}},b.StartCasting={event:"StartCasting",includeOffset:!0},b.StopCasting={event:"StopCasting",includeOffset:!0},b.Paused={event:"Paused",includeOffset:!0},b.BitrateChanged={event:"BitrateChanged",includeOffset:!0,attributes:function(a){return {Bitrate:a.bitrate}}},b.DRM={event:"DRM",includeOffset:!1,attributes:function c(a){var c={};return a.message&&(c.Message=a.message),a.code&&(c.Code=a.code),a.info&&(c.Info=a.info),c}},b.Error={event:"Error",includeOffset:!0,attributes:function d(a){var d={};return a.errorCode&&(d.Code=a.errorCode),a.errorMessage?d.Message=a.errorMessage:d.Message="Unknown Error",a.errorInfo&&(d.Info=a.errorInfo),a.errorDetails&&(d.Details=a.errorDetails),d}},b.HandshakeStarted={event:"HandshakeStarted",autoListener:!1,attributes:function e(a){if(!a.assetId)return {};var e={AssetId:a.assetId};return a.programId&&(e.ProgramId=a.programId),e}},b.ProgramChanged={event:"ProgramChanged",includeOffset:!0,autoListener:!1,attributes:function(a){return a.programId?{ProgramId:a.programId}:{}}},b.Aborted={event:"Aborted",autoListener:!1,includeOffset:!0},b.Started={event:"Started",autoListener:!1,includeOffset:!0,attributes:function f(a){var f={};return a.bitrate&&(f.Bitrate=a.bitrate),a.duration&&(f.VideoLength=1e3*a.duration),a.mediaLocator&&(f.MediaLocator=a.mediaLocator),a.attributes&&(f.Attributes=a.attributes),a.referenceTime&&(f.ReferenceTime=a.referenceTime),a.playMode&&(f.PlayMode=a.playMode),f}},b},a.prototype.objectAssign=function(a,b){for(var c,d,e=1;e<arguments.length;++e){d=arguments[e];for(c in d)Object.prototype.hasOwnProperty.call(d,c)&&(a[c]=d[c]);}return a},g(a,[{key:"debug",get:function(){return this.debug_},set:function(a){this.debug_=a;}},{key:"deviceAppInfo",get:function(){return this.deviceInfoData_?this.deviceInfoData_.deviceAppInfo:null}}]),a}();n.VERSION="2.1.103-9",c["default"]=n,b.exports=c["default"];},{"./platform":6,"global/window":1,"worker-timers":2}],6:[function(b,c,d){(function(b){(function(){function e(a){return a=String(a),a.charAt(0).toUpperCase()+a.slice(1)}function f(a,b,c){var d={"10.0":"10",6.4:"10 Technical Preview",6.3:"8.1",6.2:"8",6.1:"7 / Server 2008 R2","6.0":"Vista / Server 2008",5.2:"XP 64-bit / Server 2003",5.1:"XP",5.01:"2000 SP1","5.0":"2000","4.0":"NT","4.90":"ME"};return b&&c&&/^Win/i.test(a)&&!/^Windows Phone /i.test(a)&&(d=d[/[\d.]+$/.exec(a)])&&(a="Windows "+d),a=String(a),b&&c&&(a=a.replace(RegExp(b,"i"),c)),a=h(a.replace(/ ce$/i," CE").replace(/\bhpw/i,"web").replace(/\bMacintosh\b/,"Mac OS").replace(/_PowerPC\b/i," OS").replace(/\b(OS X) [^ \d]+/i,"$1").replace(/\bMac (OS X)\b/,"$1").replace(/\/(\d)/," $1").replace(/_/g,".").replace(/(?: BePC|[ .]*fc[ \d.]+)$/i,"").replace(/\bx86\.64\b/gi,"x86_64").replace(/\b(Windows Phone) OS\b/,"$1").replace(/\b(Chrome OS \w+) [\d.]+\b/,"$1").split(" on ")[0])}function g(a,b){var c=-1,d=a?a.length:0;if("number"==typeof d&&d>-1&&d<=v)for(;++c<d;)b(a[c],c,a);else i(a,b);}function h(a){return a=n(a),/^(?:webOS|i(?:OS|P))/.test(a)?a:e(a)}function i(a,b){for(var c in a)z.call(a,c)&&b(a[c],c,a);}function j(a){return null==a?e(a):A.call(a).slice(8,-1)}function k(a,b){var c=null!=a?typeof a[b]:"number";return !(/^(?:boolean|number|string|undefined)$/.test(c)||"object"==c&&!a[b])}function l(a){return String(a).replace(/([ -])(?!$)/g,"$1?")}function m(a,b){var c=null;return g(a,function(d,e){c=b(c,d,e,a);}),c}function n(a){return String(a).replace(/^ +| +$/g,"")}function o(a){function b(b){return m(b,function(b,c){return b||RegExp("\\b"+(c.pattern||l(c))+"\\b","i").exec(a)&&(c.label||c)})}function c(b){return m(b,function(b,c,d){return b||(c[X]||c[/^[a-z]+(?: +[a-z]+\b)*/i.exec(X)]||RegExp("\\b"+l(d)+"(?:\\b|\\w*\\d)","i").exec(a))&&d})}function d(b){return m(b,function(b,c){return b||RegExp("\\b"+(c.pattern||l(c))+"\\b","i").exec(a)&&(c.label||c)})}function e(b){return m(b,function(b,c){var d=c.pattern||l(c);return !b&&(b=RegExp("\\b"+d+"(?:/[\\d.]+|[ \\w.]*)","i").exec(a))&&(b=f(b,d,c.label||c)),b})}function g(b){return m(b,function(b,c){var d=c.pattern||l(c);return !b&&(b=RegExp("\\b"+d+" *\\d+[.\\w_]*","i").exec(a)||RegExp("\\b"+d+"(?:; *(?:[a-z]+[_-])?[a-z]+\\d+|[^ ();-]*)","i").exec(a))&&((b=String(c.label&&!RegExp(d,"i").test(c.label)?c.label:b).split("/"))[1]&&!/[\d.]+/.test(b[0])&&(b[0]+=" "+b[1]),c=c.label||c,b=h(b[0].replace(RegExp(d,"i"),c).replace(RegExp("; *(?:"+c+"[_-])?","i")," ").replace(RegExp("("+c+")[-_.]?(\\w)","i"),"$1 $2"))),b})}function p(b){return m(b,function(b,c){return b||(RegExp(c+"(?:-[\\d.]+/|(?: for [\\w-]+)?[ /-])([\\d.]+[^ ();/_-]*)","i").exec(a)||0)[1]||null})}function s(){return this.description||""}var t=q,u=a&&"object"==typeof a&&"String"!=j(a);u&&(t=a,a=null);var v=t.navigator||{},y=v.userAgent||"";a||(a=y);var z,B,C=u||x==r,D=u?!!v.likeChrome:/\bChrome\b/.test(a)&&!/internal|\n/i.test(A.toString()),E="Object",F=u?E:"ScriptBridgingProxyObject",G=u?E:"Environment",H=u&&t.java?"JavaPackage":j(t.java),I=u?E:"RuntimeObject",J=/\bJava/.test(H)&&t.java,K=J&&j(t.environment)==G,L=J?"a":"α",M=J?"b":"β",N=t.document||{},O=t.operamini||t.opera,P=w.test(P=u&&O?O["[[Class]]"]:j(O))?P:O=null,Q=a,R=[],S=null,T=a==y,U=T&&O&&"function"==typeof O.version&&O.version(),V=b([{label:"EdgeHTML",pattern:"Edge"},"Trident",{label:"WebKit",pattern:"AppleWebKit"},"iCab","Presto","NetFront","Tasman","KHTML","Gecko"]),W=d(["Adobe AIR","Arora","Avant Browser","Breach","Camino","Epiphany","Fennec","Flock","Galeon","GreenBrowser","iCab","Iceweasel","K-Meleon","Konqueror","Lunascape","Maxthon",{label:"Microsoft Edge",pattern:"Edge"},"Midori","Nook Browser","PaleMoon","PhantomJS","Raven","Rekonq","RockMelt","SeaMonkey",{label:"Silk",pattern:"(?:Cloud9|Silk-Accelerated)"},"Sleipnir","SlimBrowser",{label:"SRWare Iron",pattern:"Iron"},"Sunrise","Swiftfox","WebPositive","Opera Mini",{label:"Opera Mini",pattern:"OPiOS"},"Opera",{label:"Opera",pattern:"OPR"},"Chrome",{label:"Chrome Mobile",pattern:"(?:CriOS|CrMo)"},{label:"Firefox",pattern:"(?:Firefox|Minefield)"},{label:"Firefox Mobile",pattern:"FxiOS"},{label:"IE",pattern:"IEMobile"},{label:"IE",pattern:"MSIE"},"Safari"]),X=g([{label:"BlackBerry",pattern:"BB10"},"BlackBerry",{label:"Galaxy S",pattern:"GT-I9000"},{label:"Galaxy S2",pattern:"GT-I9100"},{label:"Galaxy S3",pattern:"GT-I9300"},{label:"Galaxy S4",pattern:"GT-I9500"},"Google TV","Lumia","iPad","iPod","iPhone","Kindle",{label:"Kindle Fire",pattern:"(?:Cloud9|Silk-Accelerated)"},"Nexus","Nook","PlayBook","PlayStation 3","PlayStation 4","PlayStation Vita","TouchPad","Transformer",{label:"Wii U",pattern:"WiiU"},"Wii","Xbox One",{label:"Xbox 360",pattern:"Xbox"},"Xoom"]),Y=c({Apple:{iPad:1,iPhone:1,iPod:1},Amazon:{Kindle:1,"Kindle Fire":1},Asus:{Transformer:1},"Barnes & Noble":{Nook:1},BlackBerry:{PlayBook:1},Google:{"Google TV":1,Nexus:1},HP:{TouchPad:1},HTC:{},LG:{},Microsoft:{Xbox:1,"Xbox One":1},Motorola:{Xoom:1},Nintendo:{"Wii U":1,Wii:1},Nokia:{Lumia:1},Samsung:{"Galaxy S":1,"Galaxy S2":1,"Galaxy S3":1,"Galaxy S4":1},Sony:{"PlayStation 4":1,"PlayStation 3":1,"PlayStation Vita":1}}),Z=e(["Windows Phone ","Android","CentOS",{label:"Chrome OS",pattern:"CrOS"},"Debian","Fedora","FreeBSD","Gentoo","Haiku","Kubuntu","Linux Mint","OpenBSD","Red Hat","SuSE","Ubuntu","Xubuntu","Cygwin","Symbian OS","hpwOS","webOS ","webOS","Tablet OS","Linux","Mac OS X","Macintosh","Mac","Windows 98;","Windows "]);if(V&&(V=[V]),Y&&!X&&(X=g([Y])),(z=/\bGoogle TV\b/.exec(X))&&(X=z[0]),/\bSimulator\b/i.test(a)&&(X=(X?X+" ":"")+"Simulator"),"Opera Mini"==W&&/\bOPiOS\b/.test(a)&&R.push("running in Turbo/Uncompressed mode"),/^iP/.test(X)?(W||(W="Safari"),Z="iOS"+((z=/ OS ([\d_]+)/i.exec(a))?" "+z[1].replace(/_/g,"."):"")):"Konqueror"!=W||/buntu/i.test(Z)?Y&&"Google"!=Y&&(/Chrome/.test(W)&&!/\bMobile Safari\b/i.test(a)||/\bVita\b/.test(X))?(W="Android Browser",Z=/\bAndroid\b/.test(Z)?Z:"Android"):"Silk"==W?(/\bMobi/i.test(a)||(Z="Android",R.unshift("desktop mode")),/Accelerated *= *true/i.test(a)&&R.unshift("accelerated")):"PaleMoon"==W&&(z=/\bFirefox\/([\d.]+)\b/.exec(a))?R.push("identifying as Firefox "+z[1]):"Firefox"==W&&(z=/\b(Mobile|Tablet|TV)\b/i.exec(a))?(Z||(Z="Firefox OS"),X||(X=z[1])):W&&!(z=!/\bMinefield\b/i.test(a)&&/\b(?:Firefox|Safari)\b/.exec(W))||(W&&!X&&/[\/,]|^[^(]+?\)/.test(a.slice(a.indexOf(z+"/")+8))&&(W=null),(z=X||Y||Z)&&(X||Y||/\b(?:Android|Symbian OS|Tablet OS|webOS)\b/.test(Z))&&(W=/[a-z]+(?: Hat)?/i.exec(/\bAndroid\b/.test(Z)?Z:z)+" Browser")):Z="Kubuntu",U||(U=p(["(?:Cloud9|CriOS|CrMo|Edge|FxiOS|IEMobile|Iron|Opera ?Mini|OPiOS|OPR|Raven|Silk(?!/[\\d.]+$))","Version",l(W),"(?:Firefox|Minefield|NetFront)"])),(z="iCab"==V&&parseFloat(U)>3&&"WebKit"||/\bOpera\b/.test(W)&&(/\bOPR\b/.test(a)?"Blink":"Presto")||/\b(?:Midori|Nook|Safari)\b/i.test(a)&&!/^(?:Trident|EdgeHTML)$/.test(V)&&"WebKit"||!V&&/\bMSIE\b/i.test(a)&&("Mac OS"==Z?"Tasman":"Trident")||"WebKit"==V&&/\bPlayStation\b(?! Vita\b)/i.test(W)&&"NetFront")&&(V=[z]),"IE"==W&&(z=(/; *(?:XBLWP|ZuneWP)(\d+)/i.exec(a)||0)[1])?(W+=" Mobile",Z="Windows Phone "+(/\+$/.test(z)?z:z+".x"),R.unshift("desktop mode")):/\bWPDesktop\b/i.test(a)?(W="IE Mobile",Z="Windows Phone 8.x",R.unshift("desktop mode"),U||(U=(/\brv:([\d.]+)/.exec(a)||0)[1])):"IE"!=W&&"Trident"==V&&(z=/\brv:([\d.]+)/.exec(a))&&(W&&R.push("identifying as "+W+(U?" "+U:"")),W="IE",U=z[1]),T){if(k(t,"global"))if(J&&(z=J.lang.System,Q=z.getProperty("os.arch"),Z=Z||z.getProperty("os.name")+" "+z.getProperty("os.version")),C&&k(t,"system")&&(z=[t.system])[0]){Z||(Z=z[0].os||null);try{z[1]=t.require("ringo/engine").version,U=z[1].join("."),W="RingoJS";}catch($){z[0].global.system==t.system&&(W="Narwhal");}}else"object"==typeof t.process&&(z=t.process)?(W="Node.js",Q=z.arch,Z=z.platform,U=/[\d.]+/.exec(z.version)[0]):K&&(W="Rhino");else j(z=t.runtime)==F?(W="Adobe AIR",Z=z.flash.system.Capabilities.os):j(z=t.phantom)==I?(W="PhantomJS",U=(z=z.version||null)&&z.major+"."+z.minor+"."+z.patch):"number"==typeof N.documentMode&&(z=/\bTrident\/(\d+)/i.exec(a))&&(U=[U,N.documentMode],(z=+z[1]+4)!=U[1]&&(R.push("IE "+U[1]+" mode"),V&&(V[1]=""),U[1]=z),U="IE"==W?String(U[1].toFixed(1)):U[0]);Z=Z&&h(Z);}U&&(z=/(?:[ab]|dp|pre|[ab]\d+pre)(?:\d+\+?)?$/i.exec(U)||/(?:alpha|beta)(?: ?\d)?/i.exec(a+";"+(T&&v.appMinorVersion))||/\bMinefield\b/i.test(a)&&"a")&&(S=/b/i.test(z)?"beta":"alpha",U=U.replace(RegExp(z+"\\+?$"),"")+("beta"==S?M:L)+(/\d+\+?/.exec(z)||"")),"Fennec"==W||"Firefox"==W&&/\b(?:Android|Firefox OS)\b/.test(Z)?W="Firefox Mobile":"Maxthon"==W&&U?U=U.replace(/\.[\d.]+/,".x"):/\bXbox\b/i.test(X)?(Z=null,"Xbox 360"==X&&/\bIEMobile\b/.test(a)&&R.unshift("mobile mode")):!/^(?:Chrome|IE|Opera)$/.test(W)&&(!W||X||/Browser|Mobi/.test(W))||"Windows CE"!=Z&&!/Mobi/i.test(a)?"IE"==W&&T&&null===t.external?R.unshift("platform preview"):(/\bBlackBerry\b/.test(X)||/\bBB10\b/.test(a))&&(z=(RegExp(X.replace(/ +/g," *")+"/([.\\d]+)","i").exec(a)||0)[1]||U)?(z=[z,/BB10/.test(a)],Z=(z[1]?(X=null,Y="BlackBerry"):"Device Software")+" "+z[0],U=null):this!=i&&"Wii"!=X&&(T&&O||/Opera/.test(W)&&/\b(?:MSIE|Firefox)\b/i.test(a)||"Firefox"==W&&/\bOS X (?:\d+\.){2,}/.test(Z)||"IE"==W&&(Z&&!/^Win/.test(Z)&&U>5.5||/\bWindows XP\b/.test(Z)&&U>8||8==U&&!/\bTrident\b/.test(a)))&&!w.test(z=o.call(i,a.replace(w,"")+";"))&&z.name&&(z="ing as "+z.name+((z=z.version)?" "+z:""),
-  w.test(W)?(/\bIE\b/.test(z)&&"Mac OS"==Z&&(Z=null),z="identify"+z):(z="mask"+z,W=P?h(P.replace(/([a-z])([A-Z])/g,"$1 $2")):"Opera",/\bIE\b/.test(z)&&(Z=null),T||(U=null)),V=["Presto"],R.push(z)):W+=" Mobile",(z=(/\bAppleWebKit\/([\d.]+\+?)/i.exec(a)||0)[1])&&(z=[parseFloat(z.replace(/\.(\d)$/,".0$1")),z],"Safari"==W&&"+"==z[1].slice(-1)?(W="WebKit Nightly",S="alpha",U=z[1].slice(0,-1)):U!=z[1]&&U!=(z[2]=(/\bSafari\/([\d.]+\+?)/i.exec(a)||0)[1])||(U=null),z[1]=(/\bChrome\/([\d.]+)/i.exec(a)||0)[1],537.36==z[0]&&537.36==z[2]&&parseFloat(z[1])>=28&&"WebKit"==V&&(V=["Blink"]),T&&(D||z[1])?(V&&(V[1]="like Chrome"),z=z[1]||(z=z[0],z<530?1:z<532?2:z<532.05?3:z<533?4:z<534.03?5:z<534.07?6:z<534.1?7:z<534.13?8:z<534.16?9:z<534.24?10:z<534.3?11:z<535.01?12:z<535.02?"13+":z<535.07?15:z<535.11?16:z<535.19?17:z<536.05?18:z<536.1?19:z<537.01?20:z<537.11?"21+":z<537.13?23:z<537.18?24:z<537.24?25:z<537.36?26:"Blink"!=V?"27":"28")):(V&&(V[1]="like Safari"),z=z[0],z=z<400?1:z<500?2:z<526?3:z<533?4:z<534?"4+":z<535?5:z<537?6:z<538?7:z<601?8:"8"),V&&(V[1]+=" "+(z+="number"==typeof z?".x":/[.+]/.test(z)?"":"+")),"Safari"==W&&(!U||parseInt(U)>45)&&(U=z)),"Opera"==W&&(z=/\bzbov|zvav$/.exec(Z))?(W+=" ",R.unshift("desktop mode"),"zvav"==z?(W+="Mini",U=null):W+="Mobile",Z=Z.replace(RegExp(" *"+z+"$"),"")):"Safari"==W&&/\bChrome\b/.exec(V&&V[1])&&(R.unshift("desktop mode"),W="Chrome Mobile",U=null,/\bOS X\b/.test(Z)?(Y="Apple",Z="iOS 4.3+"):Z=null),U&&0==U.indexOf(z=/[\d.]+$/.exec(Z))&&a.indexOf("/"+z+"-")>-1&&(Z=n(Z.replace(z,""))),V&&!/\b(?:Avant|Nook)\b/.test(W)&&(/Browser|Lunascape|Maxthon/.test(W)||"Safari"!=W&&/^iOS/.test(Z)&&/\bSafari\b/.test(V[1])||/^(?:Adobe|Arora|Breach|Midori|Opera|Phantom|Rekonq|Rock|Sleipnir|Web)/.test(W)&&V[1])&&(z=V[V.length-1])&&R.push(z),R.length&&(R=["("+R.join("; ")+")"]),Y&&X&&X.indexOf(Y)<0&&R.push("on "+Y),X&&R.push((/^on /.test(R[R.length-1])?"":"on ")+X),Z&&(z=/ ([\d.+]+)$/.exec(Z)||(B=/^[a-z]+ ([\d.+]+) \//i.exec(Z)),Z={architecture:32,family:z&&!B?Z.replace(z[0],""):Z,version:z?z[1]:null,toString:function(){var a=this.version;return this.family+(a&&!B?" "+a:"")+(64==this.architecture?" 64-bit":"")}}),(z=/\b(?:AMD|IA|Win|WOW|x86_|x)64\b/i.exec(Q))&&!/\bi686\b/i.test(Q)&&(Z&&(Z.architecture=64,Z.family=Z.family.replace(RegExp(" *"+z),"")),W&&(/\bWOW64\b/i.test(a)||T&&/\w(?:86|32)$/.test(v.cpuClass||v.platform)&&!/\bWin64; x64\b/i.test(a))&&R.unshift("32-bit")),a||(a=null);var _={};return _.description=a,_.layout=V&&V[0],_.manufacturer=Y,_.name=W,_.prerelease=S,_.product=X,_.ua=a,_.version=W&&U,_.os=Z||{architecture:null,family:null,version:null,toString:function(){return "null"}},_.parse=o,_.toString=s,_.version&&R.unshift(U),_.name&&R.unshift(W),Z&&W&&(Z!=String(Z).split(" ")[0]||Z!=W.split(" ")[0]&&!X)&&R.push(X?"("+Z+")":"on "+Z),R.length&&(_.description=R.join(" ")),_}var p={"function":!0,object:!0},q=p[typeof window]&&window||this,r=q,s=p[typeof d]&&d,t=p[typeof c]&&c&&!c.nodeType&&c,u=s&&t&&"object"==typeof b&&b;!u||u.global!==u&&u.window!==u&&u.self!==u||(q=u);var v=Math.pow(2,53)-1,w=/\bOpera/,x=this,y=Object.prototype,z=y.hasOwnProperty,A=y.toString;s&&t?i(o(),function(a,b){s[b]=a;}):q.platform=o();}).call(void 0);}).call(this,"undefined"!=typeof commonjsGlobal?commonjsGlobal:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{});},{}]},{},[5])(5)});
+  var empAnalytics_browser_cjs = createCommonjsModule(function (module) {
+  function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+
+  var window$1 = _interopDefault(window_1);
+
+  var commonjsGlobal$$1 = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof commonjsGlobal !== 'undefined' ? commonjsGlobal : typeof self !== 'undefined' ? self : {};
+
+  function createCommonjsModule$$1(fn, module) {
+  	return module = { exports: {} }, fn(module, module.exports), module.exports;
+  }
+
+  var platform = createCommonjsModule$$1(function (module, exports) {
+  (function() {
+
+    /** Used to determine if values are of the language type `Object`. */
+    var objectTypes = {
+      'function': true,
+      'object': true
+    };
+
+    /** Used as a reference to the global object. */
+    var root = (objectTypes[typeof window] && window) || this;
+
+    /** Detect free variable `exports`. */
+    var freeExports = exports;
+
+    /** Detect free variable `module`. */
+    var freeModule = module && !module.nodeType && module;
+
+    /** Detect free variable `global` from Node.js or Browserified code and use it as `root`. */
+    var freeGlobal = freeExports && freeModule && typeof commonjsGlobal$$1 == 'object' && commonjsGlobal$$1;
+    if (freeGlobal && (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal || freeGlobal.self === freeGlobal)) {
+      root = freeGlobal;
+    }
+
+    /**
+     * Used as the maximum length of an array-like object.
+     * See the [ES6 spec](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength)
+     * for more details.
+     */
+    var maxSafeInteger = Math.pow(2, 53) - 1;
+
+    /** Regular expression to detect Opera. */
+    var reOpera = /\bOpera/;
+
+    /** Used for native method references. */
+    var objectProto = Object.prototype;
+
+    /** Used to check for own properties of an object. */
+    var hasOwnProperty = objectProto.hasOwnProperty;
+
+    /** Used to resolve the internal `[[Class]]` of values. */
+    var toString = objectProto.toString;
+
+    /*--------------------------------------------------------------------------*/
+
+    /**
+     * Capitalizes a string value.
+     *
+     * @private
+     * @param {string} string The string to capitalize.
+     * @returns {string} The capitalized string.
+     */
+    function capitalize(string) {
+      string = String(string);
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    /**
+     * A utility function to clean up the OS name.
+     *
+     * @private
+     * @param {string} os The OS name to clean up.
+     * @param {string} [pattern] A `RegExp` pattern matching the OS name.
+     * @param {string} [label] A label for the OS.
+     */
+    function cleanupOS(os, pattern, label) {
+      // Platform tokens are defined at:
+      // http://msdn.microsoft.com/en-us/library/ms537503(VS.85).aspx
+      // http://web.archive.org/web/20081122053950/http://msdn.microsoft.com/en-us/library/ms537503(VS.85).aspx
+      var data = {
+        '10.0': '10',
+        '6.4':  '10 Technical Preview',
+        '6.3':  '8.1',
+        '6.2':  '8',
+        '6.1':  'Server 2008 R2 / 7',
+        '6.0':  'Server 2008 / Vista',
+        '5.2':  'Server 2003 / XP 64-bit',
+        '5.1':  'XP',
+        '5.01': '2000 SP1',
+        '5.0':  '2000',
+        '4.0':  'NT',
+        '4.90': 'ME'
+      };
+      // Detect Windows version from platform tokens.
+      if (pattern && label && /^Win/i.test(os) && !/^Windows Phone /i.test(os) &&
+          (data = data[/[\d.]+$/.exec(os)])) {
+        os = 'Windows ' + data;
+      }
+      // Correct character case and cleanup string.
+      os = String(os);
+
+      if (pattern && label) {
+        os = os.replace(RegExp(pattern, 'i'), label);
+      }
+
+      os = format(
+        os.replace(/ ce$/i, ' CE')
+          .replace(/\bhpw/i, 'web')
+          .replace(/\bMacintosh\b/, 'Mac OS')
+          .replace(/_PowerPC\b/i, ' OS')
+          .replace(/\b(OS X) [^ \d]+/i, '$1')
+          .replace(/\bMac (OS X)\b/, '$1')
+          .replace(/\/(\d)/, ' $1')
+          .replace(/_/g, '.')
+          .replace(/(?: BePC|[ .]*fc[ \d.]+)$/i, '')
+          .replace(/\bx86\.64\b/gi, 'x86_64')
+          .replace(/\b(Windows Phone) OS\b/, '$1')
+          .replace(/\b(Chrome OS \w+) [\d.]+\b/, '$1')
+          .split(' on ')[0]
+      );
+
+      return os;
+    }
+
+    /**
+     * An iteration utility for arrays and objects.
+     *
+     * @private
+     * @param {Array|Object} object The object to iterate over.
+     * @param {Function} callback The function called per iteration.
+     */
+    function each(object, callback) {
+      var index = -1,
+          length = object ? object.length : 0;
+
+      if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
+        while (++index < length) {
+          callback(object[index], index, object);
+        }
+      } else {
+        forOwn(object, callback);
+      }
+    }
+
+    /**
+     * Trim and conditionally capitalize string values.
+     *
+     * @private
+     * @param {string} string The string to format.
+     * @returns {string} The formatted string.
+     */
+    function format(string) {
+      string = trim(string);
+      return /^(?:webOS|i(?:OS|P))/.test(string)
+        ? string
+        : capitalize(string);
+    }
+
+    /**
+     * Iterates over an object's own properties, executing the `callback` for each.
+     *
+     * @private
+     * @param {Object} object The object to iterate over.
+     * @param {Function} callback The function executed per own property.
+     */
+    function forOwn(object, callback) {
+      for (var key in object) {
+        if (hasOwnProperty.call(object, key)) {
+          callback(object[key], key, object);
+        }
+      }
+    }
+
+    /**
+     * Gets the internal `[[Class]]` of a value.
+     *
+     * @private
+     * @param {*} value The value.
+     * @returns {string} The `[[Class]]`.
+     */
+    function getClassOf(value) {
+      return value == null
+        ? capitalize(value)
+        : toString.call(value).slice(8, -1);
+    }
+
+    /**
+     * Host objects can return type values that are different from their actual
+     * data type. The objects we are concerned with usually return non-primitive
+     * types of "object", "function", or "unknown".
+     *
+     * @private
+     * @param {*} object The owner of the property.
+     * @param {string} property The property to check.
+     * @returns {boolean} Returns `true` if the property value is a non-primitive, else `false`.
+     */
+    function isHostType(object, property) {
+      var type = object != null ? typeof object[property] : 'number';
+      return !/^(?:boolean|number|string|undefined)$/.test(type) &&
+        (type == 'object' ? !!object[property] : true);
+    }
+
+    /**
+     * Prepares a string for use in a `RegExp` by making hyphens and spaces optional.
+     *
+     * @private
+     * @param {string} string The string to qualify.
+     * @returns {string} The qualified string.
+     */
+    function qualify(string) {
+      return String(string).replace(/([ -])(?!$)/g, '$1?');
+    }
+
+    /**
+     * A bare-bones `Array#reduce` like utility function.
+     *
+     * @private
+     * @param {Array} array The array to iterate over.
+     * @param {Function} callback The function called per iteration.
+     * @returns {*} The accumulated result.
+     */
+    function reduce(array, callback) {
+      var accumulator = null;
+      each(array, function(value, index) {
+        accumulator = callback(accumulator, value, index, array);
+      });
+      return accumulator;
+    }
+
+    /**
+     * Removes leading and trailing whitespace from a string.
+     *
+     * @private
+     * @param {string} string The string to trim.
+     * @returns {string} The trimmed string.
+     */
+    function trim(string) {
+      return String(string).replace(/^ +| +$/g, '');
+    }
+
+    /*--------------------------------------------------------------------------*/
+
+    /**
+     * Creates a new platform object.
+     *
+     * @memberOf platform
+     * @param {Object|string} [ua=navigator.userAgent] The user agent string or
+     *  context object.
+     * @returns {Object} A platform object.
+     */
+    function parse(ua) {
+
+      /** The environment context object. */
+      var context = root;
+
+      /** Used to flag when a custom context is provided. */
+      var isCustomContext = ua && typeof ua == 'object' && getClassOf(ua) != 'String';
+
+      // Juggle arguments.
+      if (isCustomContext) {
+        context = ua;
+        ua = null;
+      }
+
+      /** Browser navigator object. */
+      var nav = context.navigator || {};
+
+      /** Browser user agent string. */
+      var userAgent = nav.userAgent || '';
+
+      ua || (ua = userAgent);
+
+      /** Used to detect if browser is like Chrome. */
+      var likeChrome = isCustomContext
+        ? !!nav.likeChrome
+        : /\bChrome\b/.test(ua) && !/internal|\n/i.test(toString.toString());
+
+      /** Internal `[[Class]]` value shortcuts. */
+      var objectClass = 'Object',
+          airRuntimeClass = isCustomContext ? objectClass : 'ScriptBridgingProxyObject',
+          enviroClass = isCustomContext ? objectClass : 'Environment',
+          javaClass = (isCustomContext && context.java) ? 'JavaPackage' : getClassOf(context.java),
+          phantomClass = isCustomContext ? objectClass : 'RuntimeObject';
+
+      /** Detect Java environments. */
+      var java = /\bJava/.test(javaClass) && context.java;
+
+      /** Detect Rhino. */
+      var rhino = java && getClassOf(context.environment) == enviroClass;
+
+      /** A character to represent alpha. */
+      var alpha = java ? 'a' : '\u03b1';
+
+      /** A character to represent beta. */
+      var beta = java ? 'b' : '\u03b2';
+
+      /** Browser document object. */
+      var doc = context.document || {};
+
+      /**
+       * Detect Opera browser (Presto-based).
+       * http://www.howtocreate.co.uk/operaStuff/operaObject.html
+       * http://dev.opera.com/articles/view/opera-mini-web-content-authoring-guidelines/#operamini
+       */
+      var opera = context.operamini || context.opera;
+
+      /** Opera `[[Class]]`. */
+      var operaClass = reOpera.test(operaClass = (isCustomContext && opera) ? opera['[[Class]]'] : getClassOf(opera))
+        ? operaClass
+        : (opera = null);
+
+      /*------------------------------------------------------------------------*/
+
+      /** Temporary variable used over the script's lifetime. */
+      var data;
+
+      /** The CPU architecture. */
+      var arch = ua;
+
+      /** Platform description array. */
+      var description = [];
+
+      /** Platform alpha/beta indicator. */
+      var prerelease = null;
+
+      /** A flag to indicate that environment features should be used to resolve the platform. */
+      var useFeatures = ua == userAgent;
+
+      /** The browser/environment version. */
+      var version = useFeatures && opera && typeof opera.version == 'function' && opera.version();
+
+      /** A flag to indicate if the OS ends with "/ Version" */
+      var isSpecialCasedOS;
+
+      /* Detectable layout engines (order is important). */
+      var layout = getLayout([
+        { 'label': 'EdgeHTML', 'pattern': 'Edge' },
+        'Trident',
+        { 'label': 'WebKit', 'pattern': 'AppleWebKit' },
+        'iCab',
+        'Presto',
+        'NetFront',
+        'Tasman',
+        'KHTML',
+        'Gecko'
+      ]);
+
+      /* Detectable browser names (order is important). */
+      var name = getName([
+        'Adobe AIR',
+        'Arora',
+        'Avant Browser',
+        'Breach',
+        'Camino',
+        'Electron',
+        'Epiphany',
+        'Fennec',
+        'Flock',
+        'Galeon',
+        'GreenBrowser',
+        'iCab',
+        'Iceweasel',
+        'K-Meleon',
+        'Konqueror',
+        'Lunascape',
+        'Maxthon',
+        { 'label': 'Microsoft Edge', 'pattern': 'Edge' },
+        'Midori',
+        'Nook Browser',
+        'PaleMoon',
+        'PhantomJS',
+        'Raven',
+        'Rekonq',
+        'RockMelt',
+        { 'label': 'Samsung Internet', 'pattern': 'SamsungBrowser' },
+        'SeaMonkey',
+        { 'label': 'Silk', 'pattern': '(?:Cloud9|Silk-Accelerated)' },
+        'Sleipnir',
+        'SlimBrowser',
+        { 'label': 'SRWare Iron', 'pattern': 'Iron' },
+        'Sunrise',
+        'Swiftfox',
+        'Waterfox',
+        'WebPositive',
+        'Opera Mini',
+        { 'label': 'Opera Mini', 'pattern': 'OPiOS' },
+        'Opera',
+        { 'label': 'Opera', 'pattern': 'OPR' },
+        'Chrome',
+        { 'label': 'Chrome Mobile', 'pattern': '(?:CriOS|CrMo)' },
+        { 'label': 'Firefox', 'pattern': '(?:Firefox|Minefield)' },
+        { 'label': 'Firefox for iOS', 'pattern': 'FxiOS' },
+        { 'label': 'IE', 'pattern': 'IEMobile' },
+        { 'label': 'IE', 'pattern': 'MSIE' },
+        'Safari'
+      ]);
+
+      /* Detectable products (order is important). */
+      var product = getProduct([
+        { 'label': 'BlackBerry', 'pattern': 'BB10' },
+        'BlackBerry',
+        { 'label': 'Galaxy S', 'pattern': 'GT-I9000' },
+        { 'label': 'Galaxy S2', 'pattern': 'GT-I9100' },
+        { 'label': 'Galaxy S3', 'pattern': 'GT-I9300' },
+        { 'label': 'Galaxy S4', 'pattern': 'GT-I9500' },
+        { 'label': 'Galaxy S5', 'pattern': 'SM-G900' },
+        { 'label': 'Galaxy S6', 'pattern': 'SM-G920' },
+        { 'label': 'Galaxy S6 Edge', 'pattern': 'SM-G925' },
+        { 'label': 'Galaxy S7', 'pattern': 'SM-G930' },
+        { 'label': 'Galaxy S7 Edge', 'pattern': 'SM-G935' },
+        'Google TV',
+        'Lumia',
+        'iPad',
+        'iPod',
+        'iPhone',
+        'Kindle',
+        { 'label': 'Kindle Fire', 'pattern': '(?:Cloud9|Silk-Accelerated)' },
+        'Nexus',
+        'Nook',
+        'PlayBook',
+        'PlayStation Vita',
+        'PlayStation',
+        'TouchPad',
+        'Transformer',
+        { 'label': 'Wii U', 'pattern': 'WiiU' },
+        'Wii',
+        'Xbox One',
+        { 'label': 'Xbox 360', 'pattern': 'Xbox' },
+        'Xoom'
+      ]);
+
+      /* Detectable manufacturers. */
+      var manufacturer = getManufacturer({
+        'Apple': { 'iPad': 1, 'iPhone': 1, 'iPod': 1 },
+        'Archos': {},
+        'Amazon': { 'Kindle': 1, 'Kindle Fire': 1 },
+        'Asus': { 'Transformer': 1 },
+        'Barnes & Noble': { 'Nook': 1 },
+        'BlackBerry': { 'PlayBook': 1 },
+        'Google': { 'Google TV': 1, 'Nexus': 1 },
+        'HP': { 'TouchPad': 1 },
+        'HTC': {},
+        'LG': {},
+        'Microsoft': { 'Xbox': 1, 'Xbox One': 1 },
+        'Motorola': { 'Xoom': 1 },
+        'Nintendo': { 'Wii U': 1,  'Wii': 1 },
+        'Nokia': { 'Lumia': 1 },
+        'Samsung': { 'Galaxy S': 1, 'Galaxy S2': 1, 'Galaxy S3': 1, 'Galaxy S4': 1 },
+        'Sony': { 'PlayStation': 1, 'PlayStation Vita': 1 }
+      });
+
+      /* Detectable operating systems (order is important). */
+      var os = getOS([
+        'Windows Phone',
+        'Android',
+        'CentOS',
+        { 'label': 'Chrome OS', 'pattern': 'CrOS' },
+        'Debian',
+        'Fedora',
+        'FreeBSD',
+        'Gentoo',
+        'Haiku',
+        'Kubuntu',
+        'Linux Mint',
+        'OpenBSD',
+        'Red Hat',
+        'SuSE',
+        'Ubuntu',
+        'Xubuntu',
+        'Cygwin',
+        'Symbian OS',
+        'hpwOS',
+        'webOS ',
+        'webOS',
+        'Tablet OS',
+        'Tizen',
+        'Linux',
+        'Mac OS X',
+        'Macintosh',
+        'Mac',
+        'Windows 98;',
+        'Windows '
+      ]);
+
+      /*------------------------------------------------------------------------*/
+
+      /**
+       * Picks the layout engine from an array of guesses.
+       *
+       * @private
+       * @param {Array} guesses An array of guesses.
+       * @returns {null|string} The detected layout engine.
+       */
+      function getLayout(guesses) {
+        return reduce(guesses, function(result, guess) {
+          return result || RegExp('\\b' + (
+            guess.pattern || qualify(guess)
+          ) + '\\b', 'i').exec(ua) && (guess.label || guess);
+        });
+      }
+
+      /**
+       * Picks the manufacturer from an array of guesses.
+       *
+       * @private
+       * @param {Array} guesses An object of guesses.
+       * @returns {null|string} The detected manufacturer.
+       */
+      function getManufacturer(guesses) {
+        return reduce(guesses, function(result, value, key) {
+          // Lookup the manufacturer by product or scan the UA for the manufacturer.
+          return result || (
+            value[product] ||
+            value[/^[a-z]+(?: +[a-z]+\b)*/i.exec(product)] ||
+            RegExp('\\b' + qualify(key) + '(?:\\b|\\w*\\d)', 'i').exec(ua)
+          ) && key;
+        });
+      }
+
+      /**
+       * Picks the browser name from an array of guesses.
+       *
+       * @private
+       * @param {Array} guesses An array of guesses.
+       * @returns {null|string} The detected browser name.
+       */
+      function getName(guesses) {
+        return reduce(guesses, function(result, guess) {
+          return result || RegExp('\\b' + (
+            guess.pattern || qualify(guess)
+          ) + '\\b', 'i').exec(ua) && (guess.label || guess);
+        });
+      }
+
+      /**
+       * Picks the OS name from an array of guesses.
+       *
+       * @private
+       * @param {Array} guesses An array of guesses.
+       * @returns {null|string} The detected OS name.
+       */
+      function getOS(guesses) {
+        return reduce(guesses, function(result, guess) {
+          var pattern = guess.pattern || qualify(guess);
+          if (!result && (result =
+                RegExp('\\b' + pattern + '(?:/[\\d.]+|[ \\w.]*)', 'i').exec(ua)
+              )) {
+            result = cleanupOS(result, pattern, guess.label || guess);
+          }
+          return result;
+        });
+      }
+
+      /**
+       * Picks the product name from an array of guesses.
+       *
+       * @private
+       * @param {Array} guesses An array of guesses.
+       * @returns {null|string} The detected product name.
+       */
+      function getProduct(guesses) {
+        return reduce(guesses, function(result, guess) {
+          var pattern = guess.pattern || qualify(guess);
+          if (!result && (result =
+                RegExp('\\b' + pattern + ' *\\d+[.\\w_]*', 'i').exec(ua) ||
+                RegExp('\\b' + pattern + ' *\\w+-[\\w]*', 'i').exec(ua) ||
+                RegExp('\\b' + pattern + '(?:; *(?:[a-z]+[_-])?[a-z]+\\d+|[^ ();-]*)', 'i').exec(ua)
+              )) {
+            // Split by forward slash and append product version if needed.
+            if ((result = String((guess.label && !RegExp(pattern, 'i').test(guess.label)) ? guess.label : result).split('/'))[1] && !/[\d.]+/.test(result[0])) {
+              result[0] += ' ' + result[1];
+            }
+            // Correct character case and cleanup string.
+            guess = guess.label || guess;
+            result = format(result[0]
+              .replace(RegExp(pattern, 'i'), guess)
+              .replace(RegExp('; *(?:' + guess + '[_-])?', 'i'), ' ')
+              .replace(RegExp('(' + guess + ')[-_.]?(\\w)', 'i'), '$1 $2'));
+          }
+          return result;
+        });
+      }
+
+      /**
+       * Resolves the version using an array of UA patterns.
+       *
+       * @private
+       * @param {Array} patterns An array of UA patterns.
+       * @returns {null|string} The detected version.
+       */
+      function getVersion(patterns) {
+        return reduce(patterns, function(result, pattern) {
+          return result || (RegExp(pattern +
+            '(?:-[\\d.]+/|(?: for [\\w-]+)?[ /-])([\\d.]+[^ ();/_-]*)', 'i').exec(ua) || 0)[1] || null;
+        });
+      }
+
+      /**
+       * Returns `platform.description` when the platform object is coerced to a string.
+       *
+       * @name toString
+       * @memberOf platform
+       * @returns {string} Returns `platform.description` if available, else an empty string.
+       */
+      function toStringPlatform() {
+        return this.description || '';
+      }
+
+      /*------------------------------------------------------------------------*/
+
+      // Convert layout to an array so we can add extra details.
+      layout && (layout = [layout]);
+
+      // Detect product names that contain their manufacturer's name.
+      if (manufacturer && !product) {
+        product = getProduct([manufacturer]);
+      }
+      // Clean up Google TV.
+      if ((data = /\bGoogle TV\b/.exec(product))) {
+        product = data[0];
+      }
+      // Detect simulators.
+      if (/\bSimulator\b/i.test(ua)) {
+        product = (product ? product + ' ' : '') + 'Simulator';
+      }
+      // Detect Opera Mini 8+ running in Turbo/Uncompressed mode on iOS.
+      if (name == 'Opera Mini' && /\bOPiOS\b/.test(ua)) {
+        description.push('running in Turbo/Uncompressed mode');
+      }
+      // Detect IE Mobile 11.
+      if (name == 'IE' && /\blike iPhone OS\b/.test(ua)) {
+        data = parse(ua.replace(/like iPhone OS/, ''));
+        manufacturer = data.manufacturer;
+        product = data.product;
+      }
+      // Detect iOS.
+      else if (/^iP/.test(product)) {
+        name || (name = 'Safari');
+        os = 'iOS' + ((data = / OS ([\d_]+)/i.exec(ua))
+          ? ' ' + data[1].replace(/_/g, '.')
+          : '');
+      }
+      // Detect Kubuntu.
+      else if (name == 'Konqueror' && !/buntu/i.test(os)) {
+        os = 'Kubuntu';
+      }
+      // Detect Android browsers.
+      else if ((manufacturer && manufacturer != 'Google' &&
+          ((/Chrome/.test(name) && !/\bMobile Safari\b/i.test(ua)) || /\bVita\b/.test(product))) ||
+          (/\bAndroid\b/.test(os) && /^Chrome/.test(name) && /\bVersion\//i.test(ua))) {
+        name = 'Android Browser';
+        os = /\bAndroid\b/.test(os) ? os : 'Android';
+      }
+      // Detect Silk desktop/accelerated modes.
+      else if (name == 'Silk') {
+        if (!/\bMobi/i.test(ua)) {
+          os = 'Android';
+          description.unshift('desktop mode');
+        }
+        if (/Accelerated *= *true/i.test(ua)) {
+          description.unshift('accelerated');
+        }
+      }
+      // Detect PaleMoon identifying as Firefox.
+      else if (name == 'PaleMoon' && (data = /\bFirefox\/([\d.]+)\b/.exec(ua))) {
+        description.push('identifying as Firefox ' + data[1]);
+      }
+      // Detect Firefox OS and products running Firefox.
+      else if (name == 'Firefox' && (data = /\b(Mobile|Tablet|TV)\b/i.exec(ua))) {
+        os || (os = 'Firefox OS');
+        product || (product = data[1]);
+      }
+      // Detect false positives for Firefox/Safari.
+      else if (!name || (data = !/\bMinefield\b/i.test(ua) && /\b(?:Firefox|Safari)\b/.exec(name))) {
+        // Escape the `/` for Firefox 1.
+        if (name && !product && /[\/,]|^[^(]+?\)/.test(ua.slice(ua.indexOf(data + '/') + 8))) {
+          // Clear name of false positives.
+          name = null;
+        }
+        // Reassign a generic name.
+        if ((data = product || manufacturer || os) &&
+            (product || manufacturer || /\b(?:Android|Symbian OS|Tablet OS|webOS)\b/.test(os))) {
+          name = /[a-z]+(?: Hat)?/i.exec(/\bAndroid\b/.test(os) ? os : data) + ' Browser';
+        }
+      }
+      // Add Chrome version to description for Electron.
+      else if (name == 'Electron' && (data = (/\bChrome\/([\d.]+)\b/.exec(ua) || 0)[1])) {
+        description.push('Chromium ' + data);
+      }
+      // Detect non-Opera (Presto-based) versions (order is important).
+      if (!version) {
+        version = getVersion([
+          '(?:Cloud9|CriOS|CrMo|Edge|FxiOS|IEMobile|Iron|Opera ?Mini|OPiOS|OPR|Raven|SamsungBrowser|Silk(?!/[\\d.]+$))',
+          'Version',
+          qualify(name),
+          '(?:Firefox|Minefield|NetFront)'
+        ]);
+      }
+      // Detect stubborn layout engines.
+      if ((data =
+            layout == 'iCab' && parseFloat(version) > 3 && 'WebKit' ||
+            /\bOpera\b/.test(name) && (/\bOPR\b/.test(ua) ? 'Blink' : 'Presto') ||
+            /\b(?:Midori|Nook|Safari)\b/i.test(ua) && !/^(?:Trident|EdgeHTML)$/.test(layout) && 'WebKit' ||
+            !layout && /\bMSIE\b/i.test(ua) && (os == 'Mac OS' ? 'Tasman' : 'Trident') ||
+            layout == 'WebKit' && /\bPlayStation\b(?! Vita\b)/i.test(name) && 'NetFront'
+          )) {
+        layout = [data];
+      }
+      // Detect Windows Phone 7 desktop mode.
+      if (name == 'IE' && (data = (/; *(?:XBLWP|ZuneWP)(\d+)/i.exec(ua) || 0)[1])) {
+        name += ' Mobile';
+        os = 'Windows Phone ' + (/\+$/.test(data) ? data : data + '.x');
+        description.unshift('desktop mode');
+      }
+      // Detect Windows Phone 8.x desktop mode.
+      else if (/\bWPDesktop\b/i.test(ua)) {
+        name = 'IE Mobile';
+        os = 'Windows Phone 8.x';
+        description.unshift('desktop mode');
+        version || (version = (/\brv:([\d.]+)/.exec(ua) || 0)[1]);
+      }
+      // Detect IE 11 identifying as other browsers.
+      else if (name != 'IE' && layout == 'Trident' && (data = /\brv:([\d.]+)/.exec(ua))) {
+        if (name) {
+          description.push('identifying as ' + name + (version ? ' ' + version : ''));
+        }
+        name = 'IE';
+        version = data[1];
+      }
+      // Leverage environment features.
+      if (useFeatures) {
+        // Detect server-side environments.
+        // Rhino has a global function while others have a global object.
+        if (isHostType(context, 'global')) {
+          if (java) {
+            data = java.lang.System;
+            arch = data.getProperty('os.arch');
+            os = os || data.getProperty('os.name') + ' ' + data.getProperty('os.version');
+          }
+          if (rhino) {
+            try {
+              version = context.require('ringo/engine').version.join('.');
+              name = 'RingoJS';
+            } catch(e) {
+              if ((data = context.system) && data.global.system == context.system) {
+                name = 'Narwhal';
+                os || (os = data[0].os || null);
+              }
+            }
+            if (!name) {
+              name = 'Rhino';
+            }
+          }
+          else if (
+            typeof context.process == 'object' && !context.true &&
+            (data = context.process)
+          ) {
+            if (typeof data.versions == 'object') {
+              if (typeof data.versions.electron == 'string') {
+                description.push('Node ' + data.versions.node);
+                name = 'Electron';
+                version = data.versions.electron;
+              } else if (typeof data.versions.nw == 'string') {
+                description.push('Chromium ' + version, 'Node ' + data.versions.node);
+                name = 'NW.js';
+                version = data.versions.nw;
+              }
+            }
+            if (!name) {
+              name = 'Node.js';
+              arch = data.arch;
+              os = data.platform;
+              version = /[\d.]+/.exec(data.version);
+              version = version ? version[0] : null;
+            }
+          }
+        }
+        // Detect Adobe AIR.
+        else if (getClassOf((data = context.runtime)) == airRuntimeClass) {
+          name = 'Adobe AIR';
+          os = data.flash.system.Capabilities.os;
+        }
+        // Detect PhantomJS.
+        else if (getClassOf((data = context.phantom)) == phantomClass) {
+          name = 'PhantomJS';
+          version = (data = data.version || null) && (data.major + '.' + data.minor + '.' + data.patch);
+        }
+        // Detect IE compatibility modes.
+        else if (typeof doc.documentMode == 'number' && (data = /\bTrident\/(\d+)/i.exec(ua))) {
+          // We're in compatibility mode when the Trident version + 4 doesn't
+          // equal the document mode.
+          version = [version, doc.documentMode];
+          if ((data = +data[1] + 4) != version[1]) {
+            description.push('IE ' + version[1] + ' mode');
+            layout && (layout[1] = '');
+            version[1] = data;
+          }
+          version = name == 'IE' ? String(version[1].toFixed(1)) : version[0];
+        }
+        // Detect IE 11 masking as other browsers.
+        else if (typeof doc.documentMode == 'number' && /^(?:Chrome|Firefox)\b/.test(name)) {
+          description.push('masking as ' + name + ' ' + version);
+          name = 'IE';
+          version = '11.0';
+          layout = ['Trident'];
+          os = 'Windows';
+        }
+        os = os && format(os);
+      }
+      // Detect prerelease phases.
+      if (version && (data =
+            /(?:[ab]|dp|pre|[ab]\d+pre)(?:\d+\+?)?$/i.exec(version) ||
+            /(?:alpha|beta)(?: ?\d)?/i.exec(ua + ';' + (useFeatures && nav.appMinorVersion)) ||
+            /\bMinefield\b/i.test(ua) && 'a'
+          )) {
+        prerelease = /b/i.test(data) ? 'beta' : 'alpha';
+        version = version.replace(RegExp(data + '\\+?$'), '') +
+          (prerelease == 'beta' ? beta : alpha) + (/\d+\+?/.exec(data) || '');
+      }
+      // Detect Firefox Mobile.
+      if (name == 'Fennec' || name == 'Firefox' && /\b(?:Android|Firefox OS)\b/.test(os)) {
+        name = 'Firefox Mobile';
+      }
+      // Obscure Maxthon's unreliable version.
+      else if (name == 'Maxthon' && version) {
+        version = version.replace(/\.[\d.]+/, '.x');
+      }
+      // Detect Xbox 360 and Xbox One.
+      else if (/\bXbox\b/i.test(product)) {
+        if (product == 'Xbox 360') {
+          os = null;
+        }
+        if (product == 'Xbox 360' && /\bIEMobile\b/.test(ua)) {
+          description.unshift('mobile mode');
+        }
+      }
+      // Add mobile postfix.
+      else if ((/^(?:Chrome|IE|Opera)$/.test(name) || name && !product && !/Browser|Mobi/.test(name)) &&
+          (os == 'Windows CE' || /Mobi/i.test(ua))) {
+        name += ' Mobile';
+      }
+      // Detect IE platform preview.
+      else if (name == 'IE' && useFeatures) {
+        try {
+          if (context.external === null) {
+            description.unshift('platform preview');
+          }
+        } catch(e) {
+          description.unshift('embedded');
+        }
+      }
+      // Detect BlackBerry OS version.
+      // http://docs.blackberry.com/en/developers/deliverables/18169/HTTP_headers_sent_by_BB_Browser_1234911_11.jsp
+      else if ((/\bBlackBerry\b/.test(product) || /\bBB10\b/.test(ua)) && (data =
+            (RegExp(product.replace(/ +/g, ' *') + '/([.\\d]+)', 'i').exec(ua) || 0)[1] ||
+            version
+          )) {
+        data = [data, /BB10/.test(ua)];
+        os = (data[1] ? (product = null, manufacturer = 'BlackBerry') : 'Device Software') + ' ' + data[0];
+        version = null;
+      }
+      // Detect Opera identifying/masking itself as another browser.
+      // http://www.opera.com/support/kb/view/843/
+      else if (this != forOwn && product != 'Wii' && (
+            (useFeatures && opera) ||
+            (/Opera/.test(name) && /\b(?:MSIE|Firefox)\b/i.test(ua)) ||
+            (name == 'Firefox' && /\bOS X (?:\d+\.){2,}/.test(os)) ||
+            (name == 'IE' && (
+              (os && !/^Win/.test(os) && version > 5.5) ||
+              /\bWindows XP\b/.test(os) && version > 8 ||
+              version == 8 && !/\bTrident\b/.test(ua)
+            ))
+          ) && !reOpera.test((data = parse.call(forOwn, ua.replace(reOpera, '') + ';'))) && data.name) {
+        // When "identifying", the UA contains both Opera and the other browser's name.
+        data = 'ing as ' + data.name + ((data = data.version) ? ' ' + data : '');
+        if (reOpera.test(name)) {
+          if (/\bIE\b/.test(data) && os == 'Mac OS') {
+            os = null;
+          }
+          data = 'identify' + data;
+        }
+        // When "masking", the UA contains only the other browser's name.
+        else {
+          data = 'mask' + data;
+          if (operaClass) {
+            name = format(operaClass.replace(/([a-z])([A-Z])/g, '$1 $2'));
+          } else {
+            name = 'Opera';
+          }
+          if (/\bIE\b/.test(data)) {
+            os = null;
+          }
+          if (!useFeatures) {
+            version = null;
+          }
+        }
+        layout = ['Presto'];
+        description.push(data);
+      }
+      // Detect WebKit Nightly and approximate Chrome/Safari versions.
+      if ((data = (/\bAppleWebKit\/([\d.]+\+?)/i.exec(ua) || 0)[1])) {
+        // Correct build number for numeric comparison.
+        // (e.g. "532.5" becomes "532.05")
+        data = [parseFloat(data.replace(/\.(\d)$/, '.0$1')), data];
+        // Nightly builds are postfixed with a "+".
+        if (name == 'Safari' && data[1].slice(-1) == '+') {
+          name = 'WebKit Nightly';
+          prerelease = 'alpha';
+          version = data[1].slice(0, -1);
+        }
+        // Clear incorrect browser versions.
+        else if (version == data[1] ||
+            version == (data[2] = (/\bSafari\/([\d.]+\+?)/i.exec(ua) || 0)[1])) {
+          version = null;
+        }
+        // Use the full Chrome version when available.
+        data[1] = (/\bChrome\/([\d.]+)/i.exec(ua) || 0)[1];
+        // Detect Blink layout engine.
+        if (data[0] == 537.36 && data[2] == 537.36 && parseFloat(data[1]) >= 28 && layout == 'WebKit') {
+          layout = ['Blink'];
+        }
+        // Detect JavaScriptCore.
+        // http://stackoverflow.com/questions/6768474/how-can-i-detect-which-javascript-engine-v8-or-jsc-is-used-at-runtime-in-androi
+        if (!useFeatures || (!likeChrome && !data[1])) {
+          layout && (layout[1] = 'like Safari');
+          data = (data = data[0], data < 400 ? 1 : data < 500 ? 2 : data < 526 ? 3 : data < 533 ? 4 : data < 534 ? '4+' : data < 535 ? 5 : data < 537 ? 6 : data < 538 ? 7 : data < 601 ? 8 : '8');
+        } else {
+          layout && (layout[1] = 'like Chrome');
+          data = data[1] || (data = data[0], data < 530 ? 1 : data < 532 ? 2 : data < 532.05 ? 3 : data < 533 ? 4 : data < 534.03 ? 5 : data < 534.07 ? 6 : data < 534.10 ? 7 : data < 534.13 ? 8 : data < 534.16 ? 9 : data < 534.24 ? 10 : data < 534.30 ? 11 : data < 535.01 ? 12 : data < 535.02 ? '13+' : data < 535.07 ? 15 : data < 535.11 ? 16 : data < 535.19 ? 17 : data < 536.05 ? 18 : data < 536.10 ? 19 : data < 537.01 ? 20 : data < 537.11 ? '21+' : data < 537.13 ? 23 : data < 537.18 ? 24 : data < 537.24 ? 25 : data < 537.36 ? 26 : layout != 'Blink' ? '27' : '28');
+        }
+        // Add the postfix of ".x" or "+" for approximate versions.
+        layout && (layout[1] += ' ' + (data += typeof data == 'number' ? '.x' : /[.+]/.test(data) ? '' : '+'));
+        // Obscure version for some Safari 1-2 releases.
+        if (name == 'Safari' && (!version || parseInt(version) > 45)) {
+          version = data;
+        }
+      }
+      // Detect Opera desktop modes.
+      if (name == 'Opera' &&  (data = /\bzbov|zvav$/.exec(os))) {
+        name += ' ';
+        description.unshift('desktop mode');
+        if (data == 'zvav') {
+          name += 'Mini';
+          version = null;
+        } else {
+          name += 'Mobile';
+        }
+        os = os.replace(RegExp(' *' + data + '$'), '');
+      }
+      // Detect Chrome desktop mode.
+      else if (name == 'Safari' && /\bChrome\b/.exec(layout && layout[1])) {
+        description.unshift('desktop mode');
+        name = 'Chrome Mobile';
+        version = null;
+
+        if (/\bOS X\b/.test(os)) {
+          manufacturer = 'Apple';
+          os = 'iOS 4.3+';
+        } else {
+          os = null;
+        }
+      }
+      // Strip incorrect OS versions.
+      if (version && version.indexOf((data = /[\d.]+$/.exec(os))) == 0 &&
+          ua.indexOf('/' + data + '-') > -1) {
+        os = trim(os.replace(data, ''));
+      }
+      // Add layout engine.
+      if (layout && !/\b(?:Avant|Nook)\b/.test(name) && (
+          /Browser|Lunascape|Maxthon/.test(name) ||
+          name != 'Safari' && /^iOS/.test(os) && /\bSafari\b/.test(layout[1]) ||
+          /^(?:Adobe|Arora|Breach|Midori|Opera|Phantom|Rekonq|Rock|Samsung Internet|Sleipnir|Web)/.test(name) && layout[1])) {
+        // Don't add layout details to description if they are falsey.
+        (data = layout[layout.length - 1]) && description.push(data);
+      }
+      // Combine contextual information.
+      if (description.length) {
+        description = ['(' + description.join('; ') + ')'];
+      }
+      // Append manufacturer to description.
+      if (manufacturer && product && product.indexOf(manufacturer) < 0) {
+        description.push('on ' + manufacturer);
+      }
+      // Append product to description.
+      if (product) {
+        description.push((/^on /.test(description[description.length - 1]) ? '' : 'on ') + product);
+      }
+      // Parse the OS into an object.
+      if (os) {
+        data = / ([\d.+]+)$/.exec(os);
+        isSpecialCasedOS = data && os.charAt(os.length - data[0].length - 1) == '/';
+        os = {
+          'architecture': 32,
+          'family': (data && !isSpecialCasedOS) ? os.replace(data[0], '') : os,
+          'version': data ? data[1] : null,
+          'toString': function() {
+            var version = this.version;
+            return this.family + ((version && !isSpecialCasedOS) ? ' ' + version : '') + (this.architecture == 64 ? ' 64-bit' : '');
+          }
+        };
+      }
+      // Add browser/OS architecture.
+      if ((data = /\b(?:AMD|IA|Win|WOW|x86_|x)64\b/i.exec(arch)) && !/\bi686\b/i.test(arch)) {
+        if (os) {
+          os.architecture = 64;
+          os.family = os.family.replace(RegExp(' *' + data), '');
+        }
+        if (
+            name && (/\bWOW64\b/i.test(ua) ||
+            (useFeatures && /\w(?:86|32)$/.test(nav.cpuClass || nav.platform) && !/\bWin64; x64\b/i.test(ua)))
+        ) {
+          description.unshift('32-bit');
+        }
+      }
+      // Chrome 39 and above on OS X is always 64-bit.
+      else if (
+          os && /^OS X/.test(os.family) &&
+          name == 'Chrome' && parseFloat(version) >= 39
+      ) {
+        os.architecture = 64;
+      }
+
+      ua || (ua = null);
+
+      /*------------------------------------------------------------------------*/
+
+      /**
+       * The platform object.
+       *
+       * @name platform
+       * @type Object
+       */
+      var platform = {};
+
+      /**
+       * The platform description.
+       *
+       * @memberOf platform
+       * @type string|null
+       */
+      platform.description = ua;
+
+      /**
+       * The name of the browser's layout engine.
+       *
+       * The list of common layout engines include:
+       * "Blink", "EdgeHTML", "Gecko", "Trident" and "WebKit"
+       *
+       * @memberOf platform
+       * @type string|null
+       */
+      platform.layout = layout && layout[0];
+
+      /**
+       * The name of the product's manufacturer.
+       *
+       * The list of manufacturers include:
+       * "Apple", "Archos", "Amazon", "Asus", "Barnes & Noble", "BlackBerry",
+       * "Google", "HP", "HTC", "LG", "Microsoft", "Motorola", "Nintendo",
+       * "Nokia", "Samsung" and "Sony"
+       *
+       * @memberOf platform
+       * @type string|null
+       */
+      platform.manufacturer = manufacturer;
+
+      /**
+       * The name of the browser/environment.
+       *
+       * The list of common browser names include:
+       * "Chrome", "Electron", "Firefox", "Firefox for iOS", "IE",
+       * "Microsoft Edge", "PhantomJS", "Safari", "SeaMonkey", "Silk",
+       * "Opera Mini" and "Opera"
+       *
+       * Mobile versions of some browsers have "Mobile" appended to their name:
+       * eg. "Chrome Mobile", "Firefox Mobile", "IE Mobile" and "Opera Mobile"
+       *
+       * @memberOf platform
+       * @type string|null
+       */
+      platform.name = name;
+
+      /**
+       * The alpha/beta release indicator.
+       *
+       * @memberOf platform
+       * @type string|null
+       */
+      platform.prerelease = prerelease;
+
+      /**
+       * The name of the product hosting the browser.
+       *
+       * The list of common products include:
+       *
+       * "BlackBerry", "Galaxy S4", "Lumia", "iPad", "iPod", "iPhone", "Kindle",
+       * "Kindle Fire", "Nexus", "Nook", "PlayBook", "TouchPad" and "Transformer"
+       *
+       * @memberOf platform
+       * @type string|null
+       */
+      platform.product = product;
+
+      /**
+       * The browser's user agent string.
+       *
+       * @memberOf platform
+       * @type string|null
+       */
+      platform.ua = ua;
+
+      /**
+       * The browser/environment version.
+       *
+       * @memberOf platform
+       * @type string|null
+       */
+      platform.version = name && version;
+
+      /**
+       * The name of the operating system.
+       *
+       * @memberOf platform
+       * @type Object
+       */
+      platform.os = os || {
+
+        /**
+         * The CPU architecture the OS is built for.
+         *
+         * @memberOf platform.os
+         * @type number|null
+         */
+        'architecture': null,
+
+        /**
+         * The family of the OS.
+         *
+         * Common values include:
+         * "Windows", "Windows Server 2008 R2 / 7", "Windows Server 2008 / Vista",
+         * "Windows XP", "OS X", "Ubuntu", "Debian", "Fedora", "Red Hat", "SuSE",
+         * "Android", "iOS" and "Windows Phone"
+         *
+         * @memberOf platform.os
+         * @type string|null
+         */
+        'family': null,
+
+        /**
+         * The version of the OS.
+         *
+         * @memberOf platform.os
+         * @type string|null
+         */
+        'version': null,
+
+        /**
+         * Returns the OS string.
+         *
+         * @memberOf platform.os
+         * @returns {string} The OS string.
+         */
+        'toString': function() { return 'null'; }
+      };
+
+      platform.parse = parse;
+      platform.toString = toStringPlatform;
+
+      if (platform.version) {
+        description.unshift(version);
+      }
+      if (platform.name) {
+        description.unshift(name);
+      }
+      if (os && name && !(os == String(os).split(' ')[0] && (os == name.split(' ')[0] || product))) {
+        description.push(product ? '(' + os + ')' : 'on ' + os);
+      }
+      if (description.length) {
+        platform.description = description.join(' ');
+      }
+      return platform;
+    }
+
+    /*--------------------------------------------------------------------------*/
+
+    // Export platform.
+    var platform = parse();
+
+    // Some AMD build optimizers, like r.js, check for condition patterns like the following:
+    if (freeExports && freeModule) {
+      // Export for CommonJS support.
+      forOwn(platform, function(value, key) {
+        freeExports[key] = value;
+      });
+    }
+    else {
+      // Export to the global object.
+      root.platform = platform;
+    }
+  }.call(commonjsGlobal$$1));
   });
 
-  var empAnalyticsTmp = unwrapExports(empAnalytics_min);
+  var LAST_NUMBER_WEAK_MAP = new WeakMap();
+  /*
+   * The value of the constant Number.MAX_SAFE_INTEGER equals (2 ** 53 - 1) but it
+   * is fairly new.
+   */
+  var MAX_SAFE_INTEGER = Number.MAX_SAFE_INTEGER || 9007199254740991;
+  var cache = function (collection, nextNumber) {
+      LAST_NUMBER_WEAK_MAP.set(collection, nextNumber);
+      return nextNumber;
+  };
+  var generateUniqueNumber = function (collection) {
+      var lastNumber = LAST_NUMBER_WEAK_MAP.get(collection);
+      /*
+       * Let's try the cheapest algorithm first. It might fail to produce a new
+       * number, but it is so cheap that it is okay to take the risk. Just
+       * increase the last number by one or reset it to 0 if we reached the upper
+       * bound of SMIs (which stands for small integers). When the last number is
+       * unknown it is assumed that the collection contains zero based consecutive
+       * numbers.
+       */
+      var nextNumber = (lastNumber === undefined) ?
+          collection.size :
+          (lastNumber > 2147483648) ?
+              0 :
+              lastNumber + 1;
+      if (!collection.has(nextNumber)) {
+          return cache(collection, nextNumber);
+      }
+      /*
+       * If there are less than half of 2 ** 31 numbers stored in the collection,
+       * the chance to generate a new random number in the range from 0 to 2 ** 31
+       * is at least 50%. It's benifitial to use only SMIs because they perform
+       * much better in any environment based on V8.
+       */
+      if (collection.size < 1073741824) {
+          while (collection.has(nextNumber)) {
+              nextNumber = Math.floor(Math.random() * 2147483648);
+          }
+          return cache(collection, nextNumber);
+      }
+      // Quickly check if there is a theoretical chance to generate a new number.
+      if (collection.size > MAX_SAFE_INTEGER) {
+          throw new Error('Congratulations, you created a collection of unique numbers which uses all available integers!');
+      }
+      // Otherwise use the full scale of safely usable integers.
+      while (collection.has(nextNumber)) {
+          nextNumber = Math.floor(Math.random() * MAX_SAFE_INTEGER);
+      }
+      return cache(collection, nextNumber);
+  };
+
+  var isCallNotification = function (message) {
+      return (message.method !== undefined && message.method === 'call');
+  };
+
+  var isClearResponse = function (message) {
+      return (message.error === null && typeof message.id === 'number');
+  };
+
+  var load = function (url) {
+      var scheduledIntervalFunctions = new Map();
+      var scheduledTimeoutFunctions = new Map();
+      var unrespondedRequests = new Map();
+      var worker = new Worker(url);
+      worker.addEventListener('message', function (_a) {
+          var data = _a.data;
+          if (isCallNotification(data)) {
+              var _b = data.params, timerId = _b.timerId, timerType = _b.timerType;
+              if (timerType === 'interval') {
+                  var idOrFunc = scheduledIntervalFunctions.get(timerId);
+                  if (typeof idOrFunc === 'number') {
+                      var timerIdAndTimerType = unrespondedRequests.get(idOrFunc);
+                      if (timerIdAndTimerType === undefined
+                          || timerIdAndTimerType.timerId !== timerId
+                          || timerIdAndTimerType.timerType !== timerType) {
+                          throw new Error('The timer is in an undefined state.');
+                      }
+                  }
+                  else if (typeof idOrFunc !== 'undefined') {
+                      idOrFunc();
+                  }
+                  else {
+                      throw new Error('The timer is in an undefined state.');
+                  }
+              }
+              else if (timerType === 'timeout') {
+                  var idOrFunc = scheduledTimeoutFunctions.get(timerId);
+                  if (typeof idOrFunc === 'number') {
+                      var timerIdAndTimerType = unrespondedRequests.get(idOrFunc);
+                      if (timerIdAndTimerType === undefined
+                          || timerIdAndTimerType.timerId !== timerId
+                          || timerIdAndTimerType.timerType !== timerType) {
+                          throw new Error('The timer is in an undefined state.');
+                      }
+                  }
+                  else if (typeof idOrFunc !== 'undefined') {
+                      idOrFunc();
+                      // A timeout can be savely deleted because it is only called once.
+                      scheduledTimeoutFunctions.delete(timerId);
+                  }
+                  else {
+                      throw new Error('The timer is in an undefined state.');
+                  }
+              }
+          }
+          else if (isClearResponse(data)) {
+              var id = data.id;
+              var timerIdAndTimerType = unrespondedRequests.get(id);
+              if (timerIdAndTimerType === undefined) {
+                  throw new Error('The timer is in an undefined state.');
+              }
+              else {
+                  var timerId = timerIdAndTimerType.timerId, timerType = timerIdAndTimerType.timerType;
+                  unrespondedRequests.delete(id);
+                  if (timerType === 'interval') {
+                      scheduledIntervalFunctions.delete(timerId);
+                  }
+                  else {
+                      scheduledTimeoutFunctions.delete(timerId);
+                  }
+              }
+          }
+          else {
+              var message = data.error.message;
+              throw new Error(message);
+          }
+      });
+      var clearInterval = function (timerId) {
+          var id = generateUniqueNumber(unrespondedRequests);
+          unrespondedRequests.set(id, { timerId: timerId, timerType: 'interval' });
+          scheduledIntervalFunctions.set(timerId, id);
+          worker.postMessage({
+              id: id,
+              method: 'clear',
+              params: { timerId: timerId, timerType: 'interval' }
+          });
+      };
+      var clearTimeout = function (timerId) {
+          var id = generateUniqueNumber(unrespondedRequests);
+          unrespondedRequests.set(id, { timerId: timerId, timerType: 'timeout' });
+          scheduledTimeoutFunctions.set(timerId, id);
+          worker.postMessage({
+              id: id,
+              method: 'clear',
+              params: { timerId: timerId, timerType: 'timeout' }
+          });
+      };
+      var setInterval = function (func, delay) {
+          var timerId = generateUniqueNumber(scheduledIntervalFunctions);
+          scheduledIntervalFunctions.set(timerId, function () {
+              func();
+              // Doublecheck if the interval should still be rescheduled because it could have been cleared inside of func().
+              if (typeof scheduledIntervalFunctions.get(timerId) === 'function') {
+                  worker.postMessage({
+                      id: null,
+                      method: 'set',
+                      params: {
+                          delay: delay,
+                          now: performance.now(),
+                          timerId: timerId,
+                          timerType: 'interval'
+                      }
+                  });
+              }
+          });
+          worker.postMessage({
+              id: null,
+              method: 'set',
+              params: {
+                  delay: delay,
+                  now: performance.now(),
+                  timerId: timerId,
+                  timerType: 'interval'
+              }
+          });
+          return timerId;
+      };
+      var setTimeout = function (func, delay) {
+          var timerId = generateUniqueNumber(scheduledTimeoutFunctions);
+          scheduledTimeoutFunctions.set(timerId, func);
+          worker.postMessage({
+              id: null,
+              method: 'set',
+              params: {
+                  delay: delay,
+                  now: performance.now(),
+                  timerId: timerId,
+                  timerType: 'timeout'
+              }
+          });
+          return timerId;
+      };
+      return {
+          clearInterval: clearInterval,
+          clearTimeout: clearTimeout,
+          setInterval: setInterval,
+          setTimeout: setTimeout
+      };
+  };
+
+  // tslint:disable-next-line:max-line-length
+  var worker = "!function(e){var t={};function r(n){if(t[n])return t[n].exports;var o=t[n]={i:n,l:!1,exports:{}};return e[n].call(o.exports,o,o.exports,r),o.l=!0,o.exports}r.m=e,r.c=t,r.d=function(e,t,n){r.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:n})},r.r=function(e){\"undefined\"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:\"Module\"}),Object.defineProperty(e,\"__esModule\",{value:!0})},r.t=function(e,t){if(1&t&&(e=r(e)),8&t)return e;if(4&t&&\"object\"==typeof e&&e&&e.__esModule)return e;var n=Object.create(null);if(r.r(n),Object.defineProperty(n,\"default\",{enumerable:!0,value:e}),2&t&&\"string\"!=typeof e)for(var o in e)r.d(n,o,function(t){return e[t]}.bind(null,o));return n},r.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return r.d(t,\"a\",t),t},r.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},r.p=\"\",r(r.s=0)}([function(e,t,r){\"use strict\";r.r(t);const n=new Map,o=new Map,i=(e,t)=>{let r,n;if(\"performance\"in self){const o=performance.now();r=o,n=e-Math.max(0,o-t)}else r=Date.now(),n=e;return{expected:r+n,remainingDelay:n}},s=(e,t,r,n)=>{const o=\"performance\"in self?performance.now():Date.now();o>r?postMessage({id:null,method:\"call\",params:{timerId:t,timerType:n}}):e.set(t,setTimeout(s,r-o,e,t,r,n))};addEventListener(\"message\",({data:e})=>{try{if(\"clear\"===e.method){const t=e.id,r=e.params,i=r.timerId,s=r.timerType;if(\"interval\"===s)(e=>{const t=n.get(e);if(void 0===t)throw new Error('There is no interval scheduled with the given id \"'.concat(e,'\".'));clearTimeout(t),n.delete(e)})(i),postMessage({error:null,id:t});else{if(\"timeout\"!==s)throw new Error('The given type \"'.concat(s,'\" is not supported'));(e=>{const t=o.get(e);if(void 0===t)throw new Error('There is no timeout scheduled with the given id \"'.concat(e,'\".'));clearTimeout(t),o.delete(e)})(i),postMessage({error:null,id:t})}}else{if(\"set\"!==e.method)throw new Error('The given method \"'.concat(e.method,'\" is not supported'));{const t=e.params,r=t.delay,a=t.now,c=t.timerId,l=t.timerType;if(\"interval\"===l)((e,t,r)=>{const o=i(e,r),a=o.expected,c=o.remainingDelay;n.set(t,setTimeout(s,c,n,t,a,\"interval\"))})(r,c,a);else{if(\"timeout\"!==l)throw new Error('The given type \"'.concat(l,'\" is not supported'));((e,t,r)=>{const n=i(e,r),a=n.expected,c=n.remainingDelay;o.set(t,setTimeout(s,c,o,t,a,\"timeout\"))})(r,c,a)}}}}catch(t){postMessage({error:{message:t.message},id:e.id,result:null})}})}]);";
+
+  var blob = new Blob([worker], { type: 'application/javascript; charset=utf-8' });
+  var url = URL.createObjectURL(blob);
+  var workerTimers = load(url);
+  var clearInterval$1 = workerTimers.clearInterval;
+  var clearTimeout$1 = workerTimers.clearTimeout;
+  var setInterval$1 = workerTimers.setInterval;
+  var setTimeout$1 = workerTimers.setTimeout;
+  URL.revokeObjectURL(url);
+
+  /* global XMLHttpRequest: true */
+  var EMPAnalytics = function EMPAnalytics (serverURL, customer, businessUnit, sessionToken, userId, deviceInfoData, props) {
+    if ( deviceInfoData === void 0 ) deviceInfoData = {};
+    if ( props === void 0 ) props = {};
+
+    this.CYCLE_TIME = 1000;
+    this.EVENT_PURGE_TIME_DEFAULT = 3 * this.CYCLE_TIME;
+    this.TIME_WITHOUT_BEAT_DEFAULT = 60 * this.CYCLE_TIME;
+    this.SERVER_URL_DEFAULT = '';
+    this.CUSTOMER_DEFAULT = '';
+    this.BUSINESS_UNIT_DEFAULT = '';
+    this.INCLUDE_DEVICE_METRICS_DEFAULT = true;
+    this.SESSION_TOKEN_DEFAULT = '';
+    this.SESSION_ID_DEFAULT = '';
+    this.DEBUG_DEFAULT = false;
+    this.MAX_RETRIES = 20;
+    this.DEVICE_CLOCK_CHECK_THRESHOLD = 5 * 60 * 1000; // 5 minutes
+    this.eventsSkeleton = this.initEventSkeleton();
+    this.customer_ = customer;
+    this.businessUnit_ = businessUnit;
+    this.sessionToken_ = sessionToken;
+    this.serverURL_ = serverURL;
+    this.includeDeviceMetrics_ = false;
+    this.userId_ = userId;
+    this.deviceInfoData_ = deviceInfoData;
+    this.props_ = props || {};
+    this.pendingRequest_ = false;
+  };
+
+  var prototypeAccessors = { debug: { configurable: true },deviceAppInfo: { configurable: true } };
+
+  // ----------------------------------------------------------------------- //
+  // ---------------------------Public Methods-------------------------- //
+  // ----------------------------------------------------------------------- //
+  /**
+   * Initializes analytics engine
+   *
+   */
+  EMPAnalytics.prototype.init = function init () {
+      var this$1 = this;
+
+    if (this.cycleTimer) {
+      if (typeof (Worker) !== 'undefined' && this.props_.disableWebWorkers !== true) {
+        clearInterval$1(this.cycleTimer);
+      } else {
+        clearInterval(this.cycleTimer);
+      }
+    }
+    if (typeof (Worker) !== 'undefined' && this.props_.disableWebWorkers !== true) {
+      this.cycleTimer = setInterval$1(function () { return this$1.cycle(); }, this.CYCLE_TIME);
+    } else {
+      this.cycleTimer = setInterval(function () { return this$1.cycle(); }, this.CYCLE_TIME);
+    }
+    this.communicationCurrentTime = 0;
+    this.lastCommunicationTime = 0;
+    this.eventPool = {};
+  };
+
+  /**
+   * Clears pending analytics events
+   *
+   */
+  EMPAnalytics.prototype.clear = function clear () {
+    this.eventPool = {};
+  };
+
+  /**
+   * Getter for current debug state
+   *
+   */
+  prototypeAccessors.debug.get = function () {
+    return this.debug_
+  };
+
+  /**
+   * Sets the debug state
+   *
+   */
+  prototypeAccessors.debug.set = function (debug) {
+    this.debug_ = debug;
+  };
+
+  /**
+   * Checks if analytics are being properly processed for a given session
+   *
+   */
+  EMPAnalytics.prototype.ok = function ok (sessionId) {
+    var sessionPool = this.eventPool[sessionId];
+    if (!sessionPool) {
+      return false
+    }
+    return sessionPool.forbidden === false && sessionPool.retries < this.MAX_RETRIES
+  };
+
+  /**
+   * Method for when a playback is created
+   *
+   */
+  EMPAnalytics.prototype.created = function created (sessionId, params) {
+      if ( params === void 0 ) params = {};
+
+    var evntReady = {
+      type: 'Created'
+    };
+    this.addEventToPool(sessionId, evntReady, params);
+  };
+
+  /**
+   * Method for when play command is triggered
+   *
+   */
+  EMPAnalytics.prototype.play = function play (sessionId, startTime, params) {
+      if ( params === void 0 ) params = {};
+
+    var evntReady = {
+      type: 'PlayerReady',
+      currentTime: startTime
+    };
+    if (this.deviceAppInfo) {
+      params.deviceAppInfo = this.deviceAppInfo;
+    }
+    this.addEventToPool(sessionId, evntReady, params);
+  };
+
+  /**
+   * Method for when player starts actually playing the media
+   *
+   */
+  EMPAnalytics.prototype.playing = function playing (sessionId, currentTime, params) {
+      if ( params === void 0 ) params = {};
+
+    var evntStarted = {
+      type: 'Started',
+      currentTime: currentTime
+    };
+    if (this.customAttributes) {
+      var customKeys = Object.keys(this.customAttributes);
+      if (customKeys.length && customKeys.length > 0) {
+        params.attributes = this.customAttributes;
+      }
+    }
+    this.addEventToPool(sessionId, evntStarted, params);
+    this.changeSessionState(sessionId, 'PLAYING');
+  };
+
+  /**
+   * Method for when player is paused
+   *
+   */
+  EMPAnalytics.prototype.paused = function paused (sessionId, currentTime, params) {
+      if ( params === void 0 ) params = {};
+
+    var evntPaused = {
+      type: 'Paused',
+      currentTime: currentTime
+    };
+    this.addEventToPool(sessionId, evntPaused, params, true);
+  };
+
+  /**
+   * Method for when player seeks
+   *
+   */
+  EMPAnalytics.prototype.seek = function seek (sessionId, seekTime, params) {
+      if ( params === void 0 ) params = {};
+
+    var evntSeek = {
+      type: 'ScrubbedTo',
+      currentTime: seekTime
+    };
+    this.addEventToPool(sessionId, evntSeek, params, true);
+  };
+
+  /**
+   * Method for when playback changes program
+   *
+   */
+  EMPAnalytics.prototype.programChanged = function programChanged (sessionId, playheadTime, params) {
+      if ( params === void 0 ) params = {};
+
+    var evnt = {
+      type: 'ProgramChanged',
+      currentTime: playheadTime
+    };
+    this.addEventToPool(sessionId, evnt, params, true);
+  };
+
+  /**
+   * Method for when player starts casting
+   *
+   */
+  EMPAnalytics.prototype.startCasting = function startCasting (sessionId, nowTime, params) {
+      if ( params === void 0 ) params = {};
+
+    var evntStartCast = {
+      type: 'StartCasting',
+      currentTime: nowTime
+    };
+    this.addEventToPool(sessionId, evntStartCast, params, true);
+    this.changeSessionState(sessionId, 'FINISHED');
+  };
+
+  /**
+   * Method for when player stops casting
+   *
+   */
+  EMPAnalytics.prototype.stopCasting = function stopCasting (sessionId, nowTime, params) {
+      if ( params === void 0 ) params = {};
+
+    var evntStopCast = {
+      type: 'StopCasting',
+      currentTime: nowTime
+    };
+    this.addEventToPool(sessionId, evntStopCast, params, true);
+    this.changeSessionState(sessionId, 'FINISHED');
+  };
+
+  /**
+   * Method to set current time
+   *
+   */
+  EMPAnalytics.prototype.setCurrentTime = function setCurrentTime (sessionId, nowTime) {
+    if (this.eventPool[sessionId]) {
+      this.eventPool[sessionId].currentTime = nowTime;
+    }
+  };
+
+  /**
+   * Method for when a new asset is loaded
+   *
+   */
+  EMPAnalytics.prototype.handshake = function handshake (sessionId, params) {
+      if ( params === void 0 ) params = {};
+
+    var evntHandshake = {
+      type: 'HandshakeStarted'
+    };
+    this.addEventToPool(sessionId, evntHandshake, params);
+  };
+
+  /**
+   * Method for when playback is resumed
+   *
+   */
+  EMPAnalytics.prototype.resume = function resume (sessionId, startTime, params) {
+      if ( params === void 0 ) params = {};
+
+    var evntResume = {
+      type: 'Resumed',
+      currentTime: startTime
+    };
+    this.addEventToPool(sessionId, evntResume, params, true);
+  };
+
+  /**
+   * Method for when bitrate changes
+   *
+   */
+  EMPAnalytics.prototype.bitrateChanged = function bitrateChanged (sessionId, nowTime, params) {
+      if ( params === void 0 ) params = {};
+
+    var evntBitrate = {
+      type: 'BitrateChanged',
+      currentTime: nowTime
+    };
+    this.addEventToPool(sessionId, evntBitrate, params, true);
+  };
+
+  /**
+  * Method for when DRM Session Update
+  *
+  */
+  EMPAnalytics.prototype.drmSessionUpdate = function drmSessionUpdate (sessionId, params) {
+      if ( params === void 0 ) params = {};
+
+    var evntBitrate = {
+      type: 'DRM'
+    };
+    this.addEventToPool(sessionId, evntBitrate, params, true);
+  };
+
+  /**
+   * Method used when playback reaches the end
+   *
+   */
+  EMPAnalytics.prototype.endOfStream = function endOfStream (sessionId, params) {
+      if ( params === void 0 ) params = {};
+
+    var evntReady = {
+      type: 'Completed'
+    };
+    this.addEventToPool(sessionId, evntReady, params, true);
+    this.changeSessionState(sessionId, 'FINISHED');
+  };
+
+  /**
+   * Method used an error occurs
+   *
+   */
+  EMPAnalytics.prototype.error = function error (sessionId, nowTime, params) {
+      if ( params === void 0 ) params = {};
+
+    var evntError = {
+      type: 'Error',
+      currentTime: nowTime
+    };
+    this.addEventToPool(sessionId, evntError, params);
+    this.changeSessionState(sessionId, 'FINISHED');
+  };
+
+  /**
+   * Method used when playback exits/stops
+   *
+   */
+  EMPAnalytics.prototype.dispose = function dispose (sessionId, nowTime, params) {
+      if ( params === void 0 ) params = {};
+
+    var sessionPool = this.eventPool[sessionId];
+    if (sessionPool && sessionPool.currentState !== 'FINISHED') {
+      var evntExit = {
+        type: 'Aborted'
+      };
+      if (nowTime) {
+        evntExit.currentTime = nowTime;
+      }
+      this.addEventToPool(sessionId, evntExit, params, true);
+      this.changeSessionState(sessionId, 'FINISHED');
+    }
+  };
+
+  /**
+   * Method used when playback enters a waiting state
+   *
+   */
+  EMPAnalytics.prototype.waiting = function waiting (sessionId, nowTime, params) {
+      if ( params === void 0 ) params = {};
+
+    var evntBuffering = {
+      type: 'BufferingStarted',
+      currentTime: nowTime
+    };
+    this.addEventToPool(sessionId, evntBuffering, params);
+  };
+
+  /**
+   * Method used when playback leaves a waiting state
+   *
+   */
+  EMPAnalytics.prototype.waitingEnded = function waitingEnded (sessionId, nowTime, params) {
+      if ( params === void 0 ) params = {};
+
+    var evntBuffering = {
+      type: 'BufferingEnded',
+      currentTime: nowTime
+    };
+    this.addEventToPool(sessionId, evntBuffering, params);
+  };
+
+  /**
+   * Get session current state
+   *
+   */
+  EMPAnalytics.prototype.getSessionState = function getSessionState (sessionId) {
+    if (!this.eventPool[sessionId]) {
+      return 'IDLE'
+    }
+    return this.eventPool[sessionId].currentState || 'IDLE'
+  };
+
+  /**
+   * Immediately dispatches pending events waiting in the analytics event pool
+   *
+   */
+  EMPAnalytics.prototype.dispatchNow = function dispatchNow (asyncCall) {
+      if ( asyncCall === void 0 ) asyncCall = true;
+
+    this.cycle(asyncCall, true);
+  };
+
+  /**
+   * Method used to dispose current ongoing session
+   *
+   */
+  EMPAnalytics.prototype.exitOngoingSession = function exitOngoingSession (nowTime) {
+      var this$1 = this;
+
+    var sessionIds = Object.keys(this.eventPool);
+    sessionIds.map(function (sessionId) {
+      if (this$1.eventPool[sessionId]) {
+        this$1.dispose(sessionId, nowTime);
+      }
+    });
+  };
+
+  /**
+   * Sets analytics custom attributes
+   *
+   * @param {String}    key Attribute name
+   * @param {String=}   value Attribute value
+  */
+  EMPAnalytics.prototype.setCustomAttribute = function setCustomAttribute (key, value) {
+    if (!this.customAttributes) {
+      this.resetAnalyticsCustomAttributes();
+    }
+    this.customAttributes[key] = value;
+  };
+
+  /**
+   * Resets analytics custom attributes
+   *
+  */
+  EMPAnalytics.prototype.clearCustomAttributes = function clearCustomAttributes () {
+    this.customAttributes = {};
+  };
+
+  // ----------------------------------------------------------------------- //
+  // --------------------------Private Methods-------------------------- //
+  // ----------------------------------------------------------------------- //
+  /**
+   * Removes session from the event pool
+   *
+   */
+  EMPAnalytics.prototype.removeSession = function removeSession (sessionId, removeFromMemory) {
+      if ( removeFromMemory === void 0 ) removeFromMemory = false;
+
+    if (removeFromMemory === true) {
+      delete this.eventPool[sessionId];
+    } else {
+      var sessionPool = this.eventPool[sessionId];
+      if (sessionPool) {
+        sessionPool.currentState = 'REMOVED';
+      }
+    }
+  };
+
+  /**
+   * Checks if there are pending events to send to the backend
+   *
+   */
+  EMPAnalytics.prototype.hasDataToSend = function hasDataToSend () {
+    var keys = Object.keys(this.eventPool);
+    for (var i = 0; i < keys.length; ++i) {
+      if (this.eventPool[keys[i]].events.length > 0) {
+        return true
+      }
+    }
+    return false
+  };
+
+  /**
+   * Sends events to the backend
+   *
+   */
+  EMPAnalytics.prototype.sendData = function sendData (asyncCall, canHeartBeat) {
+      var this$1 = this;
+      if ( asyncCall === void 0 ) asyncCall = true;
+      if ( canHeartBeat === void 0 ) canHeartBeat = false;
+
+    if (this.pendingRequest_) {
+      return
+    }
+    var wasRequestMade = false;
+    this.pendingRequest_ = true;
+    var timeoutRef;
+    if (typeof (Worker) !== 'undefined' && this.props_.disableWebWorkers !== true) {
+      timeoutRef = setTimeout$1(function () {
+        this$1.pendingRequest_ = false;
+        timeoutRef = undefined;
+      }, this.EVENT_PURGE_TIME_DEFAULT * 2);
+    } else {
+      timeoutRef = setTimeout(function () {
+        this$1.pendingRequest_ = false;
+        timeoutRef = undefined;
+      }, this.EVENT_PURGE_TIME_DEFAULT * 2);
+    }
+    var sessionIds = Object.keys(this.eventPool);
+    sessionIds.map(function (sessionId) {
+      var sessionPool = this$1.eventPool[sessionId];
+      if (!sessionPool) {
+        return
+      }
+      if (!sessionId) {
+        sessionPool.events = [];
+        this$1.removeSession(sessionId, true);
+        return
+      }
+      if (sessionPool.currentState === 'PLAYING' &&
+        sessionPool.events.length === 0 &&
+        canHeartBeat) {
+        sessionPool.events.push({
+          EventType: 'Playback.Heartbeat',
+          Timestamp: new Date().getTime(),
+          OffsetTime: Math.floor(sessionPool.currentTime * 1000)
+        });
+      }
+      if (sessionPool.currentState !== 'IDLE' && sessionPool.currentState !== 'REMOVED') {
+        if (sessionPool.events.length === 0) {
+          if (sessionPool.currentState === 'FINISHED') {
+            this$1.removeSession(sessionId);
+          }
+          return
+        }
+        var params = {
+          DispatchTime: new Date().getTime(),
+          Customer: this$1.customer_,
+          BusinessUnit: this$1.businessUnit_,
+          Payload: sessionPool.events,
+          SessionId: sessionId,
+          ClockOffset: sessionPool.clockOffset
+        };
+
+        this$1.debugLog('Sending analytics - sessionId: ' + sessionId + ' and params: ', params);
+
+        if (sessionPool.retries > this$1.MAX_RETRIES || sessionPool.forbidden === true) {
+          sessionPool.events = [];
+          return
+        }
+        if (Math.abs(this$1.communicationCurrentDate - this$1.lastCommunicationDate) > this$1.DEVICE_CLOCK_CHECK_THRESHOLD) {
+          this$1.initRequest(sessionId).then(function () { });
+        }
+
+        wasRequestMade = true;
+        this$1.sendRequest(asyncCall, params, function (response, error) {
+          if (timeoutRef) {
+            try {
+              if (typeof (Worker) !== 'undefined' && this$1.props_.disableWebWorkers !== true) {
+                clearTimeout$1(timeoutRef);
+                timeoutRef = undefined;
+              } else {
+                clearTimeout(timeoutRef);
+                timeoutRef = undefined;
+              }
+            } catch (exError) { }
+          }
+          this$1.pendingRequest_ = false;
+          var httpCode = response && response.httpCode ? response.httpCode : 200;
+          if (typeof error !== 'undefined' || httpCode !== 200) {
+            if (httpCode === 401) {
+              sessionPool.forbidden = true;
+            }
+            this$1.debugLog('Error sending request to backend', error);
+            if (!error) {
+              sessionPool.retries++;
+            }
+          } else {
+            sessionPool.events = [];
+            sessionPool.retries = 0;
+            var newRequestDate = new Date();
+
+            if (this$1.afterSendData_) {
+              this$1.afterSendData_(newRequestDate, sessionPool.lastRequestDate);
+            }
+            sessionPool.lastRequestDate = newRequestDate;
+            if (sessionPool.currentState === 'FINISHED') {
+              this$1.removeSession(sessionId);
+            }
+          }
+        });
+      }
+    });
+    if (!wasRequestMade) {
+      this.pendingRequest_ = false;
+    }
+  };
+
+  /**
+   * Cyclic method
+   * method called every second
+   */
+  EMPAnalytics.prototype.cycle = function cycle (asyncCall, ignoreTiming) {
+      if ( asyncCall === void 0 ) asyncCall = true;
+      if ( ignoreTiming === void 0 ) ignoreTiming = false;
+
+    this.communicationCurrentDate = new Date();
+    this.communicationCurrentTime += this.CYCLE_TIME;
+    if (this.hasDataToSend()) {
+      if (ignoreTiming || this.lastCommunicationTime + this.EVENT_PURGE_TIME_DEFAULT < this.communicationCurrentTime) {
+        this.sendData(asyncCall);
+        this.lastCommunicationTime = this.communicationCurrentTime;
+        this.lastCommunicationDate = this.communicationCurrentDate;
+      }
+    } else {
+      if (ignoreTiming || this.lastCommunicationTime + this.TIME_WITHOUT_BEAT_DEFAULT < this.communicationCurrentTime) {
+        this.sendData(asyncCall, true);
+        this.lastCommunicationTime = this.communicationCurrentTime;
+        this.lastCommunicationDate = this.communicationCurrentDate;
+      }
+    }
+  };
+
+  /**
+   * HTTP request
+   * sends actual request
+   */
+  EMPAnalytics.prototype.sendRequest = function sendRequest (asyncCall, params, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', this.serverURL_ + '/eventsink/send', true);
+    xhr.setRequestHeader('Content-type', 'application/json');
+    xhr.setRequestHeader('Authorization', 'Bearer ' + this.sessionToken_);
+
+    xhr.onload = function () {
+      var responseJSON = JSON.parse(this.responseText);
+      callback(responseJSON);
+    };
+
+    xhr.onerror = function (error) {
+      callback(null, error);
+    };
+    xhr.send(JSON.stringify(params));
+  };
+
+  /**
+   * Sends the init request to the backend
+   *
+   */
+  EMPAnalytics.prototype.initRequest = function initRequest (sessionId) {
+      var this$1 = this;
+
+    return new Promise(function (resolve, reject) {
+      var initTime = new Date().getTime();
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', this$1.serverURL_ + '/eventsink/init', true);
+      xhr.setRequestHeader('Content-type', 'application/json');
+      xhr.setRequestHeader('Authorization', 'Bearer ' + this$1.sessionToken_);
+
+      xhr.onload = function () {
+        var currentTime = new Date().getTime();
+        var response = JSON.parse(xhr.responseText);
+        this$1.determineClockOffset(sessionId, response, initTime, currentTime);
+        if (response && response.settings) {
+          if (response.settings.includeDeviceMetrics) {
+            this$1.includeDeviceMetrics_ = !!response.settings.includeDeviceMetrics;
+          }
+        }
+        resolve();
+      };
+
+      xhr.onerror = function (error) {
+        // Possibly retry up to three times before quitting
+        this$1.debugLog('Unable to init. Aborting.');
+        reject(error);
+      };
+
+      var params = {
+        Customer: this$1.customer_,
+        BusinessUnit: this$1.businessUnit_,
+        SessionId: sessionId
+      };
+
+      xhr.send(JSON.stringify(params));
+    })
+  };
+
+  /**
+   * Log messages to console if debug is enabled
+   * @param {String} message
+   * @param {Object} data
+   */
+  EMPAnalytics.prototype.debugLog = function debugLog (message, data) {
+    data = data || '';
+    if (this.debug_) {
+      console.log('Analytics: ' + message, data);
+    }
+  };
+
+  /**
+   * Appends deviceInfo event to the current session event pool
+   *
+   */
+  EMPAnalytics.prototype.addDeviceInfoEvent = function addDeviceInfoEvent (sessionId) {
+    var evnt = this.eventPool[sessionId];
+    if (this.includeDeviceMetrics_ && evnt && evnt.events && evnt.events.length) {
+      var deviceInfoEvent = {
+        Timestamp: new Date().getTime(),
+        EventType: 'Device.Info',
+        DeviceModel: this.deviceInfoData_.deviceModel || 'Desktop',
+        UserAgent: this.deviceInfoData_.userAgent || (window$1.navigator ? window$1.navigator.userAgent : ''),
+        Height: this.deviceInfoData_.screenHeight || (window$1.screen ? window$1.screen.height : 0),
+        Width: this.deviceInfoData_.screenWidth || (window$1.screen ? window$1.screen.width : 0),
+        Model: this.deviceInfoData_.model || (window$1.navigator ? window$1.navigator.appName : ''),
+        Name: this.deviceInfoData_.deviceName || (window$1.navigator ? window$1.navigator.product : ''),
+        OS: this.deviceInfoData_.deviceOS || platform.os.family,
+        OSVersion: this.deviceInfoData_.deviceOSVersion || platform.os.version,
+        Type: this.deviceInfoData_.type || 'WEB'
+      };
+      if (this.deviceInfoData_.deviceManufacturer || platform.manufacturer) {
+        deviceInfoEvent.Manufacturer = this.deviceInfoData_.deviceManufacturer || platform.manufacturer;
+      }
+      if (this.deviceInfoData_.deviceId) {
+        deviceInfoEvent.DeviceId = this.deviceInfoData_.deviceId;
+      }
+      evnt.events.push(deviceInfoEvent);
+    }
+  };
+
+  /**
+   * Determine clock offset from a HTTP response
+   *
+   * @param response
+   *
+   * @returns {number}
+   */
+  EMPAnalytics.prototype.determineClockOffset = function determineClockOffset (sessionId, response, initTime, completeTime) {
+    var evnt = this.eventPool[sessionId];
+    if (!evnt) {
+      return
+    }
+    evnt.clockOffset = Math.floor((completeTime - response.repliedTime + initTime - response.receivedTime) / 2);
+  };
+
+  /**
+   * Creates an event pool for a specific session
+   *
+   */
+  EMPAnalytics.prototype.createPool = function createPool (sessionId) {
+      var this$1 = this;
+
+    return new Promise(function (resolve, reject) {
+      this$1.eventPool[sessionId] = {
+        currentState: 'IDLE',
+        currentTime: 0,
+        clockOffset: 0,
+        events: [],
+        retries: 0,
+        forbidden: false
+      };
+      this$1.initRequest(sessionId).then(function () {
+        this$1.addDeviceInfoEvent(sessionId);
+        resolve();
+      }).catch(function (error) {
+        reject(error);
+      });
+    })
+  };
+
+  /**
+   * Appends generic event to session event pool
+   *
+   */
+  EMPAnalytics.prototype.addEventToPool = function addEventToPool (sessionId, playbackEvent, params, discardIfFinished) {
+      var this$1 = this;
+      if ( discardIfFinished === void 0 ) discardIfFinished = false;
+
+    if (discardIfFinished && this.eventPool[sessionId]) {
+      if (this.eventPool[sessionId].currentState === 'FINISHED' || this.eventPool[sessionId].currentState === 'REMOVED') {
+        return
+      }
+    }
+    var promise1;
+    if (!this.eventPool[sessionId]) {
+      promise1 = this.createPool(sessionId);
+    }
+    if (promise1) {
+      promise1.then(function () {
+        this$1.internalAddEventToPool(sessionId, playbackEvent, params);
+      });
+    } else {
+      this.internalAddEventToPool(sessionId, playbackEvent, params);
+    }
+  };
+
+  /**
+   * internalAddEventToPool
+   *
+   * @param sessionId
+   * @param playbackEvent
+   * @param params
+   *
+   * @private
+   */
+  EMPAnalytics.prototype.internalAddEventToPool = function internalAddEventToPool (sessionId, playbackEvent, params) {
+    var event = this.eventsSkeleton[playbackEvent.type];
+    if (!event) {
+      this.debugLog('Unknown playback event: ', playbackEvent);
+      return
+    }
+
+    var heartbeatEvent = {
+      Timestamp: new Date().getTime(),
+      EventType: 'Playback.' + event.event
+    };
+    if (event.includeOffset) {
+      heartbeatEvent.OffsetTime = Math.floor(playbackEvent.currentTime * 1000);
+    }
+
+    if (event.attributes && typeof event.attributes === 'function') {
+      heartbeatEvent = this.objectAssign(heartbeatEvent, event.attributes(params));
+    }
+
+    this.eventPool[sessionId].events.push(heartbeatEvent);
+
+    this.debugLog('added ' + event.event + ' to queue');
+  };
+
+  /**
+   * Changes current session state
+   *
+   */
+  EMPAnalytics.prototype.changeSessionState = function changeSessionState (sessionId, newState) {
+      var this$1 = this;
+
+    var promise1;
+    if (!this.eventPool[sessionId]) {
+      promise1 = this.createPool(sessionId);
+    }
+    if (promise1) {
+      promise1.then(function () {
+        this$1.eventPool[sessionId].currentState = newState;
+      });
+    } else {
+      this.eventPool[sessionId].currentState = newState;
+    }
+  };
+
+  /**
+   * getter that gets deviceAppInfo
+   *
+   */
+  prototypeAccessors.deviceAppInfo.get = function () {
+    if (!this.deviceInfoData_) {
+      return null
+    }
+    return this.deviceInfoData_.deviceAppInfo
+  };
+
+  /**
+   * Init event skeleton
+   *
+   */
+  EMPAnalytics.prototype.initEventSkeleton = function initEventSkeleton () {
+    var eventMap = {};
+    eventMap.Completed = {
+      event: 'Completed',
+      autoListener: false
+    };
+    eventMap.PlayerReady = {
+      event: 'PlayerReady',
+      autoListener: false,
+      attributes: function (params) {
+        var attrs = {
+          Technology: params.techName,
+          PlayerVersion: params.version
+        };
+        if (params.techVersion) {
+          attrs.TechVersion = params.techVersion;
+        }
+        attrs.AnalyticsVersion = EMPAnalytics.VERSION;
+        if (params.deviceAppInfo) {
+          attrs.DeviceAppInfo = params.deviceAppInfo;
+        }
+        if (params.playMode) {
+          attrs.PlayMode = params.playMode;
+        }
+        return attrs
+      }
+    };
+    eventMap.Resumed = {
+      event: 'Resumed',
+      autoListener: false,
+      includeOffset: true
+    };
+    eventMap.BufferingStarted = {
+      event: 'BufferingStarted',
+      includeOffset: true
+    };
+    eventMap.BufferingEnded = {
+      event: 'BufferingEnded',
+      includeOffset: true
+    };
+    eventMap.ScrubbedTo = {
+      event: 'ScrubbedTo',
+      includeOffset: true
+    };
+    eventMap.Created = {
+      event: 'Created',
+      attributes: function (params) {
+        var attrs = {};
+        if (typeof params.autoplay !== 'undefined') {
+          attrs.AutoPlay = params.autoplay;
+        }
+        if (params.techName) {
+          attrs.Technology = params.techName;
+        }
+        if (params.player) {
+          attrs.Player = params.player;
+        }
+        if (params.version) {
+          attrs.Version = params.version;
+        }
+        if (params.requestId) {
+          attrs.RequestId = params.requestId;
+        }
+        if (params.techVersion) {
+          attrs.TechVersion = params.techVersion;
+        }
+        if (params.deviceAppInfo) {
+          attrs.DeviceAppInfo = params.deviceAppInfo;
+        }
+        if (params.playMode) {
+          attrs.PlayMode = params.playMode;
+        }
+        return attrs
+      }
+    };
+    eventMap.StartCasting = {
+      event: 'StartCasting',
+      includeOffset: true
+    };
+    eventMap.StopCasting = {
+      event: 'StopCasting',
+      includeOffset: true
+    };
+    eventMap.Paused = {
+      event: 'Paused',
+      includeOffset: true
+    };
+    eventMap.BitrateChanged = {
+      event: 'BitrateChanged',
+      includeOffset: true,
+      attributes: function (params) {
+        return {
+          Bitrate: params.bitrate
+        }
+      }
+    };
+    eventMap.DRM = {
+      event: 'DRM',
+      includeOffset: false,
+      attributes: function (params) {
+        var attributes = {};
+        if (params.message) {
+          attributes.Message = params.message;
+        }
+        if (params.code) {
+          attributes.Code = params.code;
+        }
+        if (params.info) {
+          attributes.Info = params.info;
+        }
+        return attributes
+      }
+    };
+    eventMap.Error = {
+      event: 'Error',
+      includeOffset: true,
+      attributes: function (params) {
+        var attributes = {};
+        if (params.errorCode) {
+          attributes.Code = params.errorCode;
+        }
+        if (params.errorMessage) {
+          attributes.Message = params.errorMessage;
+        } else {
+          attributes.Message = 'Unknown Error';
+        }
+        if (params.errorInfo) {
+          attributes.Info = params.errorInfo;
+        }
+        if (params.errorDetails) {
+          attributes.Details = params.errorDetails;
+        }
+        return attributes
+      }
+    };
+    eventMap.HandshakeStarted = {
+      event: 'HandshakeStarted',
+      autoListener: false,
+      attributes: function (params) {
+        if (!params.assetId) {
+          return {}
+        }
+        var attributes = {
+          AssetId: params.assetId
+        };
+        if (params.programId) {
+          attributes.ProgramId = params.programId;
+        }
+        return attributes
+      }
+    };
+    eventMap.ProgramChanged = {
+      event: 'ProgramChanged',
+      includeOffset: true,
+      autoListener: false,
+      attributes: function (params) {
+        if (params.programId) {
+          return { ProgramId: params.programId }
+        }
+        return {}
+      }
+    };
+    eventMap.Aborted = {
+      event: 'Aborted',
+      autoListener: false,
+      includeOffset: true
+    };
+    eventMap.Started = {
+      event: 'Started',
+      autoListener: false,
+      includeOffset: true,
+      attributes: function (params) {
+        var attributes = {};
+        if (params.bitrate) {
+          attributes.Bitrate = params.bitrate;
+        }
+        if (params.duration) {
+          attributes.VideoLength = params.duration * 1000;
+        }
+        if (params.mediaLocator) {
+          attributes.MediaLocator = params.mediaLocator;
+        }
+        if (params.attributes) {
+          attributes.Attributes = params.attributes;
+        }
+        if (params.referenceTime) {
+          attributes.ReferenceTime = params.referenceTime;
+        }
+        if (params.playMode) {
+          attributes.PlayMode = params.playMode;
+        }
+        return attributes
+      }
+    };
+    return eventMap
+  };
+
+  EMPAnalytics.prototype.objectAssign = function objectAssign (target, source) {
+      var arguments$1 = arguments;
+
+    for (var index = 1, key, src; index < arguments.length; ++index) {
+      src = arguments$1[index];
+      for (key in src) {
+        if (Object.prototype.hasOwnProperty.call(src, key)) {
+          target[key] = src[key];
+        }
+      }
+    }
+    return target
+  };
+
+  Object.defineProperties( EMPAnalytics.prototype, prototypeAccessors );
+
+  EMPAnalytics.VERSION = '2.1.119-25';
+
+  // This is hacky but makes it work with both Rollup and Jest
+  var empAnalytics = EMPAnalytics.default || EMPAnalytics;
+
+  module.exports = empAnalytics;
+  });
+
+  var empAnalyticsTmp = unwrapExports(empAnalytics_browser_cjs);
 
   var EMPAnalytics = window_1.empAnalytics ? window_1.empAnalytics : empAnalyticsTmp;
   var Plugin$2 = videojs.getPlugin('plugin');
@@ -11894,7 +14350,7 @@
     return AnalyticsPlugin;
   }(Plugin$2);
 
-  AnalyticsPlugin.VERSION = '2.1.112-457';
+  AnalyticsPlugin.VERSION = '2.1.112-458';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -15617,7 +18073,7 @@
     return ProgramService;
   }(Plugin$3);
 
-  ProgramService.VERSION = '2.1.112-457';
+  ProgramService.VERSION = '2.1.112-458';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -15856,7 +18312,7 @@
     return EntitlementExpirationService;
   }(Plugin$4);
 
-  EntitlementExpirationService.VERSION = '2.1.112-457';
+  EntitlementExpirationService.VERSION = '2.1.112-458';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -16433,7 +18889,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.112-457';
+  EntitlementMiddleware.VERSION = '2.1.112-458';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -16562,7 +19018,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.1.112-457';
+  empPlayer.VERSION = '2.1.112-458';
   /*
    * Universal Module Definition (UMD)
    *
