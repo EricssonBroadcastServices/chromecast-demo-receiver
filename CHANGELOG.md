@@ -237,3 +237,8 @@ https://github.com/google/shaka-player/releases
 ### New features
 - **EMP-12825** HTML5 2.0 - Create WLA CC Receiver.
 
+## 2.1.119
+
+### New features
+**EMP-13616** Use the latest EMPAnalytics 2.1.119
+
