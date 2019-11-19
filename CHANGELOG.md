@@ -241,4 +241,5 @@ https://github.com/google/shaka-player/releases
 
 ### New features
 **EMP-13616** Use the latest EMPAnalytics 2.1.119
+**EMP-13724**  Player should support multiple languages for media info bar
 
