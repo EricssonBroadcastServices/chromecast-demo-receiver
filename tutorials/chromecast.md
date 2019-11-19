@@ -94,7 +94,8 @@ var loadRequest = new window.chrome.cast.media.LoadRequest(mediaInfo);
       },
       assetId: 'assetId', // identifier of media to cast - only for VOD, null or empty for channel play
       channelId: 'ChannelId', // identifier of channel to cast
-      programId: 'programId' // optional. The program to watch, otherwise the receiver will load the live program
+      programId: 'programId', // optional. The program to watch, otherwise the receiver will load the live program
+      language: 'en' // optional. The language that should be used for mediainfo in control bar. 
     }
 ```
 <br />
@@ -112,7 +113,8 @@ The recommended playback method for EMP streams.
 ```javascript
 loadRequest.customData = {
     channelId: [mandatory]
-    programId: [optional]
+    programId: [optional],
+    language: [optional],
     playbackProperties {
      playFrom: [mandatory]
      startTime: [optional] // starttime milliseconds since 1970/01/01, used if playFrom is 'startTime',
@@ -539,7 +541,7 @@ Jump to the beginning of the previous program
 
 ```javascript
 {
-  type: 'playnextprogram'
+  type: 'playpreviousprogram'
   data: {
    end : false [optional] //If true, it will start playback 30 second from the end of the previous program    
   }
