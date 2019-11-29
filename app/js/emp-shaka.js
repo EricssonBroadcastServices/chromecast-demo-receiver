@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.119-471 
+ * EMP-Player 2.1.119-472 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -4636,7 +4636,7 @@
     return DownloadService;
   }(Plugin);
 
-  DownloadService.VERSION = '2.1.119-471';
+  DownloadService.VERSION = '2.1.119-472';
 
   if (videojs.getPlugin('DownloadService')) {
     videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -6284,27 +6284,29 @@
     ;
 
     _proto.dispose = function dispose() {
-      log('dispose ' + TechName);
-      this.stopTrackingDuration();
-      this.textTracks().off('selectedlanguagechange', this.textTrackChangeBind);
-      this.audioTracks().off('change', this.audioTrackChangeBind);
-      this.el_.removeEventListener('ended', this.onEndedBind);
-      this.off(empPlayerEvents.LOAD_START, this.onLoadStartBind);
+      if (!this.isDispose_) {
+        log('dispose ' + TechName);
+        this.stopTrackingDuration();
+        this.textTracks().off('selectedlanguagechange', this.textTrackChangeBind);
+        this.audioTracks().off('change', this.audioTrackChangeBind);
+        this.el_.removeEventListener('ended', this.onEndedBind);
+        this.off(empPlayerEvents.LOAD_START, this.onLoadStartBind);
 
-      if (this.shakaPlayer_) {
-        try {
-          this.shakaPlayer_.destroy();
-        } catch (e) {// Do nothing
+        if (this.shakaPlayer_) {
+          try {
+            this.shakaPlayer_.destroy();
+          } catch (e) {// Do nothing
+          }
         }
+
+        this.shakaPlayer_ = null;
+        this.streamrootWrapper_ = null;
+        this.certificate_ = null;
+
+        _Html.prototype.dispose.call(this);
+
+        this.isDispose_ = true;
       }
-
-      this.shakaPlayer_ = null;
-      this.streamrootWrapper_ = null;
-      this.certificate_ = null;
-
-      _Html.prototype.dispose.call(this);
-
-      this.isDispose_ = true;
     }
     /**
      * Returns the TimeRanges of the media that are currently available
@@ -6467,7 +6469,7 @@
 
   EmpShaka.prototype.featuresNativeTextTracks = false;
   Tech$1.withSourceHandlers(EmpShaka);
-  EmpShaka.VERSION = '2.1.119-471'; // Unset source handlers set by Html5 super class.
+  EmpShaka.VERSION = '2.1.119-472'; // Unset source handlers set by Html5 super class.
   // We do not intent to support any sources other then sources allowed by nativeSourceHandler
 
   EmpShaka.sourceHandlers = [];
