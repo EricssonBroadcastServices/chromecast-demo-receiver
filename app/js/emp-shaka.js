@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.122-477 
+ * EMP-Player 2.1.122-478 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -1271,6 +1271,11 @@
     */
 
     this.PLAYLIST_CHANGE = 'playlistchange';
+    /**
+    * Fired when Chromecast Que change
+    */
+
+    this.CC_QUE_CHANGE = 'ccquechange';
   };
 
   var empPlayerEvents = new EmpPlayerEvents();
@@ -1833,7 +1838,7 @@
 
       if (this.preDuration_ !== duration) {
         // only trigger DURATION_CHANGE if change bigger than 1 sec.
-        if (duration - this.preDuration_ >= 1.0 || duration - this.preDuration_ <= -1.0 || duration === 0) {
+        if (!this.preDuration_ || duration === 0 || duration - this.preDuration_ >= 1.0 || duration - this.preDuration_ <= -1.0) {
           this.preDuration_ = this.duration();
           this.trigger(empPlayerEvents.DURATION_CHANGE);
         }
@@ -4636,7 +4641,7 @@
     return DownloadService;
   }(Plugin);
 
-  DownloadService.VERSION = '2.1.122-477';
+  DownloadService.VERSION = '2.1.122-478';
 
   if (videojs.getPlugin('DownloadService')) {
     videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -4752,10 +4757,7 @@
 
       if (this.stopped_) {
         event.stopImmediatePropagation();
-        this.trigger({
-          type: empPlayerEvents.ENDED,
-          bubbles: true
-        });
+        this.trigger(empPlayerEvents.ENDED);
       }
     }
     /**
@@ -6470,7 +6472,7 @@
   EmpShaka.prototype.featuresNativeTextTracks = false;
   EmpShaka.prototype.featuresNativeAudioTracks = false;
   Tech$1.withSourceHandlers(EmpShaka);
-  EmpShaka.VERSION = '2.1.122-477'; // Unset source handlers set by Html5 super class.
+  EmpShaka.VERSION = '2.1.122-478'; // Unset source handlers set by Html5 super class.
   // We do not intent to support any sources other then sources allowed by nativeSourceHandler
 
   EmpShaka.sourceHandlers = [];

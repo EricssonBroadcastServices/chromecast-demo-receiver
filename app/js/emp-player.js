@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.122-477 
+ * EMP-Player 2.1.122-478 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -690,6 +690,11 @@
     */
 
     this.PLAYLIST_CHANGE = 'playlistchange';
+    /**
+    * Fired when Chromecast Que change
+    */
+
+    this.CC_QUE_CHANGE = 'ccquechange';
   };
 
   var empPlayerEvents = new EmpPlayerEvents();
@@ -1938,9 +1943,7 @@
 
       if (player.techName_ === 'EmpCast') {
         player.cache_.sources = [player.cache_.source];
-      } // TODO: Maybe break something
-      //  player.cache_.sources = [player.cache_.source];
-
+      }
     },
     getAbsoluteTime: function getAbsoluteTime(player) {
       if (!player.tech_ || player.tech_.getAbsoluteTime === undefined) {
@@ -3496,7 +3499,40 @@
         _this.shouldRestart_ = true;
       });
 
+      player.on(empPlayerEvents.PROGRAM_CHANGED, function () {
+        return _this.updateEnabled();
+      });
+      player.on(empPlayerEvents.DURATION_CHANGE, function () {
+        return _this.updateEnabled();
+      });
+
+      _this.updateEnabled();
+
       return _this;
+    }
+    /**
+     * Get Entitlement
+     *
+     * @return {Entitlement} Entitlement
+     * @private
+     */
+
+
+    var _proto = EmpRestartButton.prototype;
+
+    /**
+     * updateEnabled
+     *
+     */
+    _proto.updateEnabled = function updateEnabled() {
+      if (this.entitlement && !this.entitlement.rwEnabled || !this.player().timeShiftEnabled()) {
+        this.disable();
+        this.controlText('Restart restricted');
+      } else {
+        this.enable();
+        this.show();
+        this.controlText('Restart');
+      }
     }
     /**
      * Builds the default DOM class name.
@@ -3505,9 +3541,7 @@
      *         The DOM class name for this object.
      * @private
      */
-
-
-    var _proto = EmpRestartButton.prototype;
+    ;
 
     _proto.buildCSSClass = function buildCSSClass() {
       return "emp-restart-control " + _Button.prototype.buildCSSClass.call(this);
@@ -3532,19 +3566,25 @@
     _proto.handleClick = function handleClick() {
       if (this.shouldRestart_ === true) {
         this.player_.restart();
-        return;
-      }
+      } else {
+        this.player_.scrubbing(true);
+        var videoWasPlaying = !this.player_.paused();
+        this.player_.pause();
+        this.player_.currentTime(0.1);
+        this.player_.scrubbing(false);
 
-      this.player_.scrubbing(true);
-      var videoWasPlaying = !this.player_.paused();
-      this.player_.pause();
-      this.player_.currentTime(0);
-      this.player_.scrubbing(false);
-
-      if (videoWasPlaying) {
-        silencePromise(this.player_.play());
+        if (videoWasPlaying) {
+          silencePromise(this.player_.play());
+        }
       }
     };
+
+    _createClass(EmpRestartButton, [{
+      key: "entitlement",
+      get: function get() {
+        return extplayer.getEntitlement(this.player());
+      }
+    }]);
 
     return EmpRestartButton;
   }(Button$1);
@@ -3583,10 +3623,10 @@
       _this.controlText("Forward " + options.seconds + "s");
 
       player.on(empPlayerEvents.TIMESHIFT_CHANGE, function () {
-        return _this.onTimeshift();
+        return _this.updateEnabled();
       });
-      player.on(empPlayerEvents.PROGRAM_CHANGED, function (event, data) {
-        return _this.updateEnabled(data && data.program);
+      player.on(empPlayerEvents.PROGRAM_CHANGED, function () {
+        return _this.updateEnabled();
       });
       player.on(empPlayerEvents.DURATION_CHANGE, function () {
         return _this.updateEnabled();
@@ -3609,9 +3649,8 @@
     /**
      * updateEnabled
      *
-     * @param {Object} program The program
      */
-    _proto.updateEnabled = function updateEnabled(program) {
+    _proto.updateEnabled = function updateEnabled() {
       if (this.entitlement && !this.entitlement.ffEnabled || !this.player().timeShiftEnabled()) {
         this.disable();
         this.controlText('Forward restricted');
@@ -3619,22 +3658,6 @@
         this.enable();
         this.show();
         this.controlText("Forward " + this.options_.seconds + "s");
-      }
-    }
-    /**
-     * Handle onTimeshift event
-     */
-    ;
-
-    _proto.onTimeshift = function onTimeshift() {
-      if (!this.player()) {
-        return;
-      }
-
-      if (!this.player().timeShiftEnabled()) {
-        this.hide();
-      } else {
-        this.show();
       }
     }
     /**
@@ -3713,10 +3736,10 @@
       _this.controlText("Rewind " + options.seconds + "s");
 
       player.on(empPlayerEvents.TIMESHIFT_CHANGE, function () {
-        return _this.onTimeshift();
+        return _this.updateEnabled();
       });
-      player.on(empPlayerEvents.PROGRAM_CHANGED, function (event, data) {
-        return _this.updateEnabled(data && data.program);
+      player.on(empPlayerEvents.PROGRAM_CHANGED, function () {
+        return _this.updateEnabled();
       });
       player.on(empPlayerEvents.DURATION_CHANGE, function () {
         return _this.updateEnabled();
@@ -3739,9 +3762,8 @@
     /**
      * updateEnabled
      *
-     * @param {Object} program
      */
-    _proto.updateEnabled = function updateEnabled(program) {
+    _proto.updateEnabled = function updateEnabled() {
       if (this.entitlement && !this.entitlement.rwEnabled || !this.player().timeShiftEnabled()) {
         this.disable();
         this.controlText('Rewind restricted');
@@ -3749,22 +3771,6 @@
         this.enable();
         this.show();
         this.controlText("Rewind " + this.options_.seconds + "s");
-      }
-    }
-    /**
-     * Handle onTimeshift event
-     */
-    ;
-
-    _proto.onTimeshift = function onTimeshift() {
-      if (!this.player()) {
-        return;
-      }
-
-      if (!this.player().timeShiftEnabled()) {
-        this.hide();
-      } else {
-        this.show();
       }
     }
     /**
@@ -7073,7 +7079,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.1.122-477';
+  vttThumbnailsPlugin.VERSION = '2.1.122-478';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -7424,6 +7430,10 @@
         _this.onEndedBind = _this.onEnded.bind(_assertThisInitialized(_this));
 
         _this.player.on(empPlayerEvents.ENDED, _this.onEndedBind);
+
+        _this.onChromecastQueChangeBind = _this.onChromecastQueChange.bind(_assertThisInitialized(_this));
+
+        _this.player.on(empPlayerEvents.CC_QUE_CHANGE, _this.onChromecastQueChangeBind);
       }
 
       return _this;
@@ -7438,10 +7448,35 @@
     var _proto = PlaylistPlugin.prototype;
 
     /**
+     * onChromecastQueChange
+     *
+     * @param {Object} event
+     * @param {Object} data
+     * @private
+     */
+    _proto.onChromecastQueChange = function onChromecastQueChange(event, data) {
+      log('PlaylistPlugin:onChromecastQueChange', data);
+
+      if (data && data.sources) {
+        this.sources_ = data.sources;
+        this.player.options_.playlist = true;
+        this.triggerChange_();
+      } else if (data && data.contentId) {
+        this.selectSource_({
+          assetId: data.contentId
+        });
+      } else {
+        this.clear();
+        this.player.options_.playlist = false;
+      }
+    }
+    /**
     * Handle Ended
     *
     * @private
     */
+    ;
+
     _proto.onEnded = function onEnded() {
       if (!this.autoSequence) {
         log('playlist: ended', this.autoSequence);
@@ -7503,10 +7538,18 @@
     ;
 
     _proto.clear = function clear() {
-      if (this.sources_ > 0) {
+      if (this.sources_ && this.sources_.length > 0) {
         this.sources_ = [];
         this.triggerChange_();
       }
+    }
+    /**
+     * replay current src
+     */
+    ;
+
+    _proto.replay = function replay() {
+      this.src(this.src());
     }
     /**
     * dispose PlaylistPlugin
@@ -7519,6 +7562,7 @@
       this.player.off(empPlayerEvents.ASSET_CHANGED, this.assetChangedBind);
       this.player.off(empPlayerEvents.PROGRAM_CHANGED, this.programChangedBind);
       this.player.off(empPlayerEvents.ENDED, this.onEndedBind);
+      this.player.off(empPlayerEvents.CC_QUE_CHANGE, this.onChromecastQueChangeBind);
       this.sources_ = [];
       this.component_ = null;
 
@@ -7620,18 +7664,35 @@
       });
       this.sources_ = sources;
 
-      for (var i = 0; i < this.sources_.length; i++) {
-        if (this.sources_[i].selected || this.sources_[i].selected === '') {
-          this.sources_[i].selected = true;
-          this.index = i;
-          this.triggerChange_();
-          return;
-        }
-      }
+      if (this.player.techName_ === 'EmpCast') {
+        for (var i = 0; i < this.sources_.length; i++) {
+          if (this.sources_[i].selected || this.sources_[i].selected === '') {
+            this.sources_[i].selected = true;
+            this.triggerChange_();
+            this.player.src(this.sources_);
+            return;
+          }
+        } // none selected, select first item.
 
-      this.sources_[this.sources_.length - 1].selected = true;
-      this.player.src(this.sources);
-      this.triggerChange_();
+
+        this.sources_[0].selected = true;
+        this.triggerChange_();
+        this.player.src(this.sources_);
+      } else {
+        for (var _i = 0; _i < this.sources_.length; _i++) {
+          if (this.sources_[_i].selected || this.sources_[_i].selected === '') {
+            this.sources_[_i].selected = true;
+            this.index = _i;
+            this.triggerChange_();
+            return;
+          }
+        } // none selected, select first item.
+
+
+        this.sources_[0].selected = true;
+        this.index = 0;
+        this.triggerChange_();
+      }
     }
     /**
      * Play next source
@@ -7731,13 +7792,13 @@
           }
         }
       } else {
-        for (var _i = 0; _i < this.sources_.length; _i++) {
-          var itemAsset = parseSrc(this.sources_[_i].src);
+        for (var _i2 = 0; _i2 < this.sources_.length; _i2++) {
+          var itemAsset = parseSrc(this.sources_[_i2].src);
           var asset = parseSrc(source.src);
 
           if (!itemAsset) {
             itemAsset = {
-              assetId: this.sources_[_i].src
+              assetId: this.sources_[_i2].src
             };
           }
 
@@ -7748,7 +7809,7 @@
           }
 
           if (asset && itemAsset && itemAsset.assetId === asset.assetId) {
-            this.index = _i;
+            this.index = _i2;
             return true;
           }
         }
@@ -7792,7 +7853,12 @@
 
         if (value > -1 && this.sources_.length > value) {
           this.setSelectedIndex_(value);
-          this.player.src(this.sources.slice(value));
+
+          if (this.player.techName_ !== 'EmpCast') {
+            this.player.src(this.sources.slice(value));
+          } else {
+            this.player.tech_.jumpToItem(value);
+          }
         } else {
           log.warn('playlist: index out of bounds', value);
         }
@@ -7818,7 +7884,7 @@
     return PlaylistPlugin;
   }(Plugin$1);
 
-  PlaylistPlugin.VERSION = '2.1.122-477';
+  PlaylistPlugin.VERSION = '2.1.122-478';
 
   if (videojs.getPlugin('playList')) {
     videojs.log.warn('A plugin named "PlaylistPlugin" already exists.');
@@ -8017,7 +8083,15 @@
         _this.ended_ = false;
 
         if (_this.paused() && _this.autoplay()) {
-          _this.trigger(empPlayerEvents.LOAD_START);
+          // this.trigger(EmpPlayerEvents.LOAD_START);
+          // Bug fix trigger play after player stopped
+          // Will call load_start
+          _this.handleTechLoadStart_();
+
+          if (_this.autoplay() === true && _this.paused()) {
+            // Fix for Chromecast and when autoplay is true
+            _this.manualAutoplay_('any');
+          }
         } // Don't set referenceTime
         // if (this.programService) {
         //  var entitlement = this.programService().entitlement();
@@ -8029,7 +8103,9 @@
       });
 
       _this.on(empPlayerEvents.REPLAY, function () {
-        if (_this.cache_ && _this.cache_.source && _this.cache_.source.yospaceUrl) {
+        if (_this.playList && _this.playList().length > 0) {
+          _this.playList().replay();
+        } else if (_this.cache_ && _this.cache_.source && _this.cache_.source.yospaceUrl) {
           _this.src({
             src: _this.cache_.source.yospaceUrl,
             type: 'application/yospace'
@@ -8037,15 +8113,10 @@
         } else if (_this.cache_ && _this.cache_.source && _this.cache_.source.streamInfo) {
           var asset = _this.currentAsset();
 
-          if (_this.playList && !_this.playList().currentSource({
+          _this.src({
             type: 'video/emp',
-            src: asset.assetId
-          })) {
-            _this.src({
-              type: 'video/emp',
-              src: JSON.stringify(asset)
-            });
-          }
+            src: JSON.stringify(asset)
+          });
         } else if (_this.cache_ && _this.cache_.source) {
           _this.src(_this.cache_.source);
         }
@@ -8952,6 +9023,10 @@
       } else {
         this.options_.playlist = this.options_.noPlaylist ? undefined : true;
         this.options_.noPlaylist = undefined;
+      }
+
+      if (IS_CHROMECAST && this.options_.hasMediaQueue) {
+        this.options_.playlist = true;
       } // filter out invalid sources and turn our source into
       // an array of source objects
 
@@ -10523,7 +10598,7 @@
     }, {
       key: "version",
       get: function get() {
-        return '2.1.122-477';
+        return '2.1.122-478';
       }
       /**
        * Get entitlement
@@ -14363,7 +14438,7 @@
     return AnalyticsPlugin;
   }(Plugin$2);
 
-  AnalyticsPlugin.VERSION = '2.1.122-477';
+  AnalyticsPlugin.VERSION = '2.1.122-478';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -18120,7 +18195,7 @@
     return ProgramService;
   }(Plugin$3);
 
-  ProgramService.VERSION = '2.1.122-477';
+  ProgramService.VERSION = '2.1.122-478';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -18359,7 +18434,7 @@
     return EntitlementExpirationService;
   }(Plugin$4);
 
-  EntitlementExpirationService.VERSION = '2.1.122-477';
+  EntitlementExpirationService.VERSION = '2.1.122-478';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -18936,7 +19011,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.122-477';
+  EntitlementMiddleware.VERSION = '2.1.122-478';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -19065,7 +19140,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.1.122-477';
+  empPlayer.VERSION = '2.1.122-478';
   /*
    * Universal Module Definition (UMD)
    *
