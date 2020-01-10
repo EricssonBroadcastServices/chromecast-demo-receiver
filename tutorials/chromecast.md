@@ -129,7 +129,7 @@ loadRequest.customData = {
 ### Playback method 2 ###
 This  playback method is for external streams (MPEG-DASH or mp4) and for lists of EMP streams.
 
-[It's preferable to use the Playback PlayList when casting a list of assets/streams.][Playback PlayList (Media Que)]
+[It's preferable to use the Playback PlayList when casting a list of assets/streams.](chromecast.md#Playback-PlayList)
 <br />
 
 **mediaInformation.contentID**
@@ -196,7 +196,7 @@ loadRequest.currentTime = startTime;
 
 <br />
 
-### Playback PlayList (Media Que) ###
+### Playback PlayList ###
 
 Loading playlist media is done using the following methods
 
@@ -655,7 +655,7 @@ Update the subtile style
 Update lineup programs, assets and external streams to be played in sequence.
 Can also be  accomplished with [Playback method 2](chromecast.md#playback-method-2), See it for source description.
 
-[It's preferable to use the Playback PlayList when casting a list of assets/streams.][Playback PlayList (Media Que)]
+[It's preferable to use the Playback PlayList when casting a list of assets/streams.](chromecast.md#Playback-PlayList)
 
 ```javascript
 {
