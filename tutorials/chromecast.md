@@ -53,6 +53,10 @@ The receiver is compliant with the default Chromecast Receiver API unless otherw
 
 
 ## LoadRequest ##
+* [iOS sender](https://developers.google.com/cast/docs/ios_sender)
+* [Android sender](https://developers.google.com/cast/docs/android_sender)
+* [Chrome sender](https://developers.google.com/cast/docs/chrome_sender)
+
 
 **Loading Media**  
 To load media on the receiver, add data to the customData parameter of the load method. Use [Playback method 1](chromecast.md#playback-method-1) for EMP streams. In order to cast EMP media, the EMP media has to be available in the DASH/CENC format.
@@ -71,6 +75,9 @@ GCKRemoteMediaClient:loadMediaWithLoadRequestData, add mediaInformation to GCKMe
 
 RemoteMediaClient.load(MediaInfo)
 
+**Chrome Sender API v4**
+
+castSession.loadMedia(loadRequest) add mediaInformation to loadRequest
 
 **mediaInformation.contentID**
 -  *contentID* should be set to assetId.
@@ -198,11 +205,16 @@ loadRequest.currentTime = startTime;
 
 ### Playback PlayList ###
 
+* [iOS sender queueing](https://developers.google.com/cast/docs/ios_sender/queueing)
+* [Android sender queueing](https://developers.google.com/cast/docs/android_sender/queueing)
+
 Loading playlist media is done using the following methods
 
-GCKRemoteMediaClient:loadMediaWithLoadRequestData, add queueData to GCKMediaLoadRequestData (iOS)
+(iOS) GCKRemoteMediaClient:loadMediaWithLoadRequestData, add queueData to GCKMediaLoadRequestData
 
-RemoteMediaClient.queueLoad(MediaQueueItem[], int, int, long, JSONObject) (android)
+(android) RemoteMediaClient.queueLoad(MediaQueueItem[], int, int, long, JSONObject) 
+
+(chrome) castSession.queueLoad(queueLoadRequest) add queueData to queueLoadRequest
 
 queueData should contain a list of MediaInformation objects and startIndex (which item the receiver should start play)
 
