@@ -2,7 +2,7 @@
 
 **Custom message namespace:** urn:x-cast:com.ericsson.cast.receiver
 
-**Breaking changes for version 2.2**
+**Changes for version 2.2 (It's backward compatible with 2.1)**
 * MediaInformation.ContentId  should be set to assetId or if you cast a external stream it should be set to stream url.
 * MediaInformation.contentType should be set to **"video/emp"** or the content type for the external stream "application/dash+xml".
 * MediaInformation.empPayload and MediaInformation.customData.assetId don't need to be set by the sender, they are set by the receiver.
