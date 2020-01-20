@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.2.122-487 
+ * EMP-Player 2.2.122-488 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -1677,7 +1677,8 @@
   var IS_OLD_ANDROID = IS_ANDROID && /webkit/i.test(USER_AGENT) && ANDROID_VERSION < 2.3;
   var IS_FIREFOX = /Firefox/i.test(USER_AGENT);
   var IS_EDGE = /Edge/i.test(USER_AGENT);
-  var IS_CHROME = !IS_EDGE && /Chrome/i.test(USER_AGENT);
+  var IS_CHROMIUM_EDGE = /Edg/i.test(USER_AGENT) && !IS_EDGE;
+  var IS_CHROME = !IS_CHROMIUM_EDGE && !IS_EDGE && /Chrome/i.test(USER_AGENT);
   var CHROME_VERSION = function () {
     var match = USER_AGENT.match(/Chrome\/(\d+)/);
 
@@ -1702,7 +1703,7 @@
   var IS_TIZEN = /Tizen/i.test(USER_AGENT);
   var IS_WEBOS = /webOS/i.test(USER_AGENT) || /Web0S/i.test(USER_AGENT) || /WebOS/i.test(USER_AGENT) || /NetCast/i.test(USER_AGENT);
   var IS_SMARTTV = /SmartTV/i.test(USER_AGENT) || IS_WEBOS || IS_TIZEN;
-  var IS_SAFARI = /Safari/i.test(USER_AGENT) && !IS_CHROME && !IS_ANDROID && !IS_EDGE;
+  var IS_SAFARI = /Safari/i.test(USER_AGENT) && !IS_CHROME && !IS_ANDROID && !IS_EDGE && !IS_CHROMIUM_EDGE;
   var TOUCH_ENABLED = isReal() && ('ontouchstart' in window_1 || window_1.DocumentTouch && window_1.document instanceof window_1.DocumentTouch);
   var BACKGROUND_SIZE_SUPPORTED = isReal() && 'backgroundSize' in window_1.document.createElement('video').style;
 
@@ -4641,7 +4642,7 @@
     return DownloadService;
   }(Plugin);
 
-  DownloadService.VERSION = '2.2.122-487';
+  DownloadService.VERSION = '2.2.122-488';
 
   if (videojs.getPlugin('DownloadService')) {
     videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -4940,10 +4941,10 @@
         };
       } else if (keySystems) {
         config.drm.servers = keySystems;
-      } // Remove playready from smartTV, we only use widevine for smartTV
+      } // Remove playready from smartTV, Chromecast and Chromium Edge, we only use widevine
 
 
-      if ((IS_SMARTTV || IS_CHROMECAST) && config.drm.servers && config.drm.servers['com.microsoft.playready']) {
+      if ((IS_SMARTTV || IS_CHROMECAST || IS_CHROMIUM_EDGE) && config.drm.servers && config.drm.servers['com.microsoft.playready'] && config.drm.servers['com.widevine.alpha']) {
         delete config.drm.servers['com.microsoft.playready']; // config.drm.servers['com.microsoft.playready'] = undefined;
       }
 
@@ -6472,7 +6473,7 @@
   EmpShaka.prototype.featuresNativeTextTracks = false;
   EmpShaka.prototype.featuresNativeAudioTracks = false;
   Tech$1.withSourceHandlers(EmpShaka);
-  EmpShaka.VERSION = '2.2.122-487'; // Unset source handlers set by Html5 super class.
+  EmpShaka.VERSION = '2.2.122-488'; // Unset source handlers set by Html5 super class.
   // We do not intent to support any sources other then sources allowed by nativeSourceHandler
 
   EmpShaka.sourceHandlers = [];
