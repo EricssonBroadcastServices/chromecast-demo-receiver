@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.2.122-492 
+ * EMP-Player 2.2.122-493 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -1675,6 +1675,7 @@
   }(); // Old Android is defined as Version older than 2.3, and requiring a webkit version of the android browser
 
   var IS_OLD_ANDROID = IS_ANDROID && /webkit/i.test(USER_AGENT) && ANDROID_VERSION < 2.3;
+  var IS_WINDOWS = /Win/i.test(window_1.navigator.platform);
   var IS_FIREFOX = /Firefox/i.test(USER_AGENT);
   var IS_EDGE = /Edge/i.test(USER_AGENT);
   var IS_CHROMIUM_EDGE = /Edg/i.test(USER_AGENT) && !IS_EDGE;
@@ -1943,7 +1944,7 @@
       var licenseServer = source.licenseServer || source.licenseserver;
       var keySystems = source.keySystems || source.keysystems; // Don't fetch certificate if IE or Edge or CC or smartTV
 
-      if (window_1.document.documentMode || IE_VERSION || IS_EDGE || IS_CHROMIUM_EDGE || IS_CHROMECAST || IS_ANDROID || IS_SMARTTV) {
+      if (window_1.document.documentMode || IE_VERSION || IS_EDGE || IS_CHROMIUM_EDGE && IS_WINDOWS || IS_CHROMECAST || IS_ANDROID || IS_SMARTTV) {
         this.certificate_ = null;
       } else if (source.certificateServer && !this.certificate_ && (licenseServer || keySystems && !isEmpty(keySystems))) {
         this.fetchWidevineCertificate(source.certificateServer, function (cert, error) {
@@ -4642,7 +4643,7 @@
     return DownloadService;
   }(Plugin);
 
-  DownloadService.VERSION = '2.2.122-492';
+  DownloadService.VERSION = '2.2.122-493';
 
   if (videojs.getPlugin('DownloadService')) {
     videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -6473,7 +6474,7 @@
   EmpShaka.prototype.featuresNativeTextTracks = false;
   EmpShaka.prototype.featuresNativeAudioTracks = false;
   Tech$1.withSourceHandlers(EmpShaka);
-  EmpShaka.VERSION = '2.2.122-492'; // Unset source handlers set by Html5 super class.
+  EmpShaka.VERSION = '2.2.122-493'; // Unset source handlers set by Html5 super class.
   // We do not intent to support any sources other then sources allowed by nativeSourceHandler
 
   EmpShaka.sourceHandlers = [];
