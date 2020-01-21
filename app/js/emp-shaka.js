@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.2.122-490 
+ * EMP-Player 2.2.122-491 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -1943,7 +1943,7 @@
       var licenseServer = source.licenseServer || source.licenseserver;
       var keySystems = source.keySystems || source.keysystems; // Don't fetch certificate if IE or Edge or CC or smartTV
 
-      if (window_1.document.documentMode || /Edge/.test(window_1.navigator.userAgent) || IS_CHROMECAST || IS_ANDROID || IS_SMARTTV) {
+      if (window_1.document.documentMode || IE_VERSION || IS_EDGE || IS_CHROMIUM_EDGE || IS_CHROMECAST || IS_ANDROID || IS_SMARTTV) {
         this.certificate_ = null;
       } else if (source.certificateServer && !this.certificate_ && (licenseServer || keySystems && !isEmpty(keySystems))) {
         this.fetchWidevineCertificate(source.certificateServer, function (cert, error) {
@@ -4642,7 +4642,7 @@
     return DownloadService;
   }(Plugin);
 
-  DownloadService.VERSION = '2.2.122-490';
+  DownloadService.VERSION = '2.2.122-491';
 
   if (videojs.getPlugin('DownloadService')) {
     videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -4944,7 +4944,7 @@
       } // Remove playready from smartTV, Chromecast and Chromium Edge, we only use widevine
 
 
-      if ((IS_SMARTTV || IS_CHROMECAST || IS_CHROMIUM_EDGE) && config.drm.servers && config.drm.servers['com.microsoft.playready'] && config.drm.servers['com.widevine.alpha']) {
+      if ((IS_SMARTTV || IS_CHROMECAST) && config.drm.servers && config.drm.servers['com.microsoft.playready'] && config.drm.servers['com.widevine.alpha']) {
         delete config.drm.servers['com.microsoft.playready']; // config.drm.servers['com.microsoft.playready'] = undefined;
       }
 
@@ -6473,7 +6473,7 @@
   EmpShaka.prototype.featuresNativeTextTracks = false;
   EmpShaka.prototype.featuresNativeAudioTracks = false;
   Tech$1.withSourceHandlers(EmpShaka);
-  EmpShaka.VERSION = '2.2.122-490'; // Unset source handlers set by Html5 super class.
+  EmpShaka.VERSION = '2.2.122-491'; // Unset source handlers set by Html5 super class.
   // We do not intent to support any sources other then sources allowed by nativeSourceHandler
 
   EmpShaka.sourceHandlers = [];
