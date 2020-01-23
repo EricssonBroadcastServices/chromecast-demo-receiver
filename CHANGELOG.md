@@ -248,3 +248,8 @@ https://github.com/google/shaka-player/releases
 ### New features
 **EMP-13821** Playlist for Chromecast
 
+## 2.2.123
+
+### New features
+- **EMP-13963** Update Shaka to v2.5.8 Fix problems with Ad's and Multi-period DASH
+
