@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.2.123-496 
+ * EMP-Player 2.2.124-497 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -4683,7 +4683,7 @@
     return DownloadService;
   }(Plugin);
 
-  DownloadService.VERSION = '2.2.123-496';
+  DownloadService.VERSION = '2.2.124-497';
 
   if (videojs.getPlugin('DownloadService')) {
     videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -5032,7 +5032,13 @@
       }
 
       this.shakaPlayer_.load(source.src, startTime).then(function () {
-        log('after load stream');
+        log('after load stream', _this2.options_.startTime); // fix bug with wrong endtime for event programs
+        // Don't use lastViewedOffset and liveTime 30 sec from end
+
+        if (_this2.options_.startTime > 0 && !_this2.shakaPlayer_.isLive() && _Html.prototype.duration.call(_this2) > 0 && _Html.prototype.duration.call(_this2) < Infinity && _this2.options_.startTime + 30 > _Html.prototype.duration.call(_this2)) {
+          _Html.prototype.setCurrentTime.call(_this2, 0.1);
+        }
+
         _this2.loading_ = false;
         _this2.hasMetadata_ = true;
 
@@ -6514,7 +6520,7 @@
   EmpShaka.prototype.featuresNativeTextTracks = false;
   EmpShaka.prototype.featuresNativeAudioTracks = false;
   Tech$1.withSourceHandlers(EmpShaka);
-  EmpShaka.VERSION = '2.2.123-496'; // Unset source handlers set by Html5 super class.
+  EmpShaka.VERSION = '2.2.124-497'; // Unset source handlers set by Html5 super class.
   // We do not intent to support any sources other then sources allowed by nativeSourceHandler
 
   EmpShaka.sourceHandlers = [];

@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.2.123-496 
+ * EMP-Player 2.2.124-497 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -7086,7 +7086,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.2.123-496';
+  vttThumbnailsPlugin.VERSION = '2.2.124-497';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -7891,7 +7891,7 @@
     return PlaylistPlugin;
   }(Plugin$1);
 
-  PlaylistPlugin.VERSION = '2.2.123-496';
+  PlaylistPlugin.VERSION = '2.2.124-497';
 
   if (videojs.getPlugin('playList')) {
     videojs.log.warn('A plugin named "PlaylistPlugin" already exists.');
@@ -9230,12 +9230,29 @@
     _proto.initialSeekToAbsoluteStartTime_ = function initialSeekToAbsoluteStartTime_() {
       var entitlement = extplayer.getEntitlement(this); // dash and hls live streams have different stream startTime and different currentTime
       // absoluteStartTime is slower, use startTime in the most cases
+      // fix bug with ended live events
+
+      if (entitlement && entitlement.streamInfo.event && entitlement.streamInfo.live && !this.isLive()) {
+        entitlement.live = false;
+        entitlement.streamInfo.live = false;
+        entitlement.streamInfo["static"] = true;
+        entitlement.isDynamicCachupAsLive = false;
+        entitlement.isStaticCachupAsLive = true;
+      } // fix bug with wrong endtime for events
+
+
+      if (entitlement && entitlement.streamInfo.event && entitlement.streamInfo["static"] && this.baseDuration() !== Infinity && this.baseDuration() > 0 && this.baseDuration() * 1000 + entitlement.streamInfo.startTime < entitlement.streamInfo.endTime) {
+        entitlement.streamInfo.endTime = this.baseDuration() * 1000 + entitlement.streamInfo.startTime;
+        entitlement.streamInfo.end = new Date(entitlement.streamInfo.endTime);
+        entitlement.lastViewedOffset = 0;
+      }
 
       if (this.options_.absoluteStartTime && this.timeShiftEnabled()) {
         this.setAbsoluteTime(new Date(this.options_.absoluteStartTime));
         this.previousAbsoluteStartTime_ = this.options_.absoluteStartTime;
         this.options_.absoluteStartTime = undefined;
-      } else if (this.options_.useLastViewedOffset && entitlement && !this.isLive() && this.streamType === 'DASH' && entitlement.lastViewedOffset) {
+      } else if (this.options_.useLastViewedOffset && entitlement && !this.isLive() && this.streamType === 'DASH' && entitlement.lastViewedOffset && entitlement.lastViewedOffset / 1000 < this.baseDuration() - 30) {
+        // Don't use lastViewedOffset 30 sec from end
         // Seek to lastViewedOffset, can't use startTime with Shaka if stream not dashed
         this.currentTime(entitlement.lastViewedOffset / 1000);
       }
@@ -10025,7 +10042,9 @@
         var program = this.getProgramDetails();
 
         if (program && duration !== Infinity) {
-          duration = program.duration / 1000;
+          if (this.isProgramEvent && program.duration / 1000 > duration) ; else {
+            duration = program.duration / 1000;
+          }
         }
 
         if (this.noEPG()) {
@@ -10605,7 +10624,7 @@
     }, {
       key: "version",
       get: function get() {
-        return '2.2.123-496';
+        return '2.2.124-497';
       }
       /**
        * Get entitlement
@@ -14445,7 +14464,7 @@
     return AnalyticsPlugin;
   }(Plugin$2);
 
-  AnalyticsPlugin.VERSION = '2.2.123-496';
+  AnalyticsPlugin.VERSION = '2.2.124-497';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -15132,6 +15151,8 @@
         this.lastViewedTime = bookmarks.lastViewedTime || null;
         this.liveTime = bookmarks.liveTime || null;
       }
+
+      this.durationInMs = options.durationInMs || 0;
 
       if (options.streamInfo) {
         var streamInfo = options.streamInfo; // Use streamInfo in code
@@ -17340,7 +17361,7 @@
 
       log('checkForProgramChange', event.type); // Not need update a program or real VOD
 
-      if (!this.entitlement().live && !this.entitlement().isStaticCachupAsLive && !this.entitlement().isDynamicCachupAsLive && event.type === empPlayerEvents.SEEKED) {
+      if (!this.entitlement() || !this.entitlement().live && !this.entitlement().isStaticCachupAsLive && !this.entitlement().isDynamicCachupAsLive && event.type === empPlayerEvents.SEEKED) {
         return;
       }
 
@@ -17404,7 +17425,7 @@
 
         if (this.currentProgram) {
           // Load next stream
-          if (this.entitlement().isStaticCachupAsLive && dateTime.getTime() + 2000 >= this.entitlement().streamInfo.end.getTime()) {
+          if (!this.isProgramEvent && this.entitlement().isStaticCachupAsLive && dateTime.getTime() + 2000 >= this.entitlement().streamInfo.end.getTime()) {
             if (this.player.lineUpAsset && dateTime.getTime() + 2000 < this.currentProgram.end.getTime()) {
               log('checkForProgramChange', 'Load next stream', dateTime);
               this.player.lineUpAsset(this.currentProgram.assetId, null, null, dateTime.getTime(), true);
@@ -18202,7 +18223,7 @@
     return ProgramService;
   }(Plugin$3);
 
-  ProgramService.VERSION = '2.2.123-496';
+  ProgramService.VERSION = '2.2.124-497';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -18441,7 +18462,7 @@
     return EntitlementExpirationService;
   }(Plugin$4);
 
-  EntitlementExpirationService.VERSION = '2.2.123-496';
+  EntitlementExpirationService.VERSION = '2.2.124-497';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -18692,9 +18713,9 @@
           // }
 
         } else if (entitlement.lastViewedOffset) {
-          log('lastViewedOffset', entitlement.lastViewedOffset / 1000);
+          log('lastViewedOffset', entitlement.lastViewedOffset / 1000); // Don't use lastViewedOffset 30 sec from end
 
-          if (player.streamType !== 'DASH') {
+          if (player.streamType !== 'DASH' && (!entitlement.durationInMs || entitlement.lastViewedOffset < entitlement.durationInMs - 30000)) {
             // Is HLS
             player.options({
               startTime: entitlement.lastViewedOffset / 1000
@@ -19018,7 +19039,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.2.123-496';
+  EntitlementMiddleware.VERSION = '2.2.124-497';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -19147,7 +19168,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.2.123-496';
+  empPlayer.VERSION = '2.2.124-497';
   /*
    * Universal Module Definition (UMD)
    *
