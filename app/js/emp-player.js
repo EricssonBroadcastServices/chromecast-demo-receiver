@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.2.124-497 
+ * EMP-Player 2.2.124-498 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -7086,7 +7086,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.2.124-497';
+  vttThumbnailsPlugin.VERSION = '2.2.124-498';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -7891,7 +7891,7 @@
     return PlaylistPlugin;
   }(Plugin$1);
 
-  PlaylistPlugin.VERSION = '2.2.124-497';
+  PlaylistPlugin.VERSION = '2.2.124-498';
 
   if (videojs.getPlugin('playList')) {
     videojs.log.warn('A plugin named "PlaylistPlugin" already exists.');
@@ -9230,7 +9230,7 @@
     _proto.initialSeekToAbsoluteStartTime_ = function initialSeekToAbsoluteStartTime_() {
       var entitlement = extplayer.getEntitlement(this); // dash and hls live streams have different stream startTime and different currentTime
       // absoluteStartTime is slower, use startTime in the most cases
-      // fix bug with ended live events
+      // fix bug with ended live events, static stream with streamInfo.live
 
       if (entitlement && entitlement.streamInfo.event && entitlement.streamInfo.live && !this.isLive()) {
         entitlement.live = false;
@@ -9238,24 +9238,31 @@
         entitlement.streamInfo["static"] = true;
         entitlement.isDynamicCachupAsLive = false;
         entitlement.isStaticCachupAsLive = true;
-      } // fix bug with wrong endtime for events
+      } // fix bug with wrong endtime for events baseDuration less than streamInfo.endTime
 
 
       if (entitlement && entitlement.streamInfo.event && entitlement.streamInfo["static"] && this.baseDuration() !== Infinity && this.baseDuration() > 0 && this.baseDuration() * 1000 + entitlement.streamInfo.startTime < entitlement.streamInfo.endTime) {
         entitlement.streamInfo.endTime = this.baseDuration() * 1000 + entitlement.streamInfo.startTime;
         entitlement.streamInfo.end = new Date(entitlement.streamInfo.endTime);
         entitlement.lastViewedOffset = 0;
+        entitlement.lastViewedTime = 0;
+        entitlement.liveTime = 0;
       }
 
       if (this.options_.absoluteStartTime && this.timeShiftEnabled()) {
         this.setAbsoluteTime(new Date(this.options_.absoluteStartTime));
         this.previousAbsoluteStartTime_ = this.options_.absoluteStartTime;
         this.options_.absoluteStartTime = undefined;
-      } else if (this.options_.useLastViewedOffset && entitlement && !this.isLive() && this.streamType === 'DASH' && entitlement.lastViewedOffset && entitlement.lastViewedOffset / 1000 < this.baseDuration() - 30) {
-        // Don't use lastViewedOffset 30 sec from end
-        // Seek to lastViewedOffset, can't use startTime with Shaka if stream not dashed
-        this.currentTime(entitlement.lastViewedOffset / 1000);
-      }
+      } // Old code stream is always dashed in new pip
+      //  else
+      //  if (this.options_.useLastViewedOffset && entitlement &&
+      //  !this.isLive() && this.streamType === 'DASH' &&
+      //  entitlement.lastViewedOffset && (entitlement.lastViewedOffset / 1000) < (this.baseDuration() - 30)) {
+      //  // Don't use lastViewedOffset 30 sec from end
+      //  // Seek to lastViewedOffset, can't use startTime with Shaka if stream not dashed
+      //  this.currentTime(entitlement.lastViewedOffset / 1000);
+      // }
+
     }
     /**
      * Set Max Bitrate
@@ -10624,7 +10631,7 @@
     }, {
       key: "version",
       get: function get() {
-        return '2.2.124-497';
+        return '2.2.124-498';
       }
       /**
        * Get entitlement
@@ -14464,7 +14471,7 @@
     return AnalyticsPlugin;
   }(Plugin$2);
 
-  AnalyticsPlugin.VERSION = '2.2.124-497';
+  AnalyticsPlugin.VERSION = '2.2.124-498';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -18223,7 +18230,7 @@
     return ProgramService;
   }(Plugin$3);
 
-  ProgramService.VERSION = '2.2.124-497';
+  ProgramService.VERSION = '2.2.124-498';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -18462,7 +18469,7 @@
     return EntitlementExpirationService;
   }(Plugin$4);
 
-  EntitlementExpirationService.VERSION = '2.2.124-497';
+  EntitlementExpirationService.VERSION = '2.2.124-498';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -18706,17 +18713,16 @@
             player.options({
               absoluteStartTime: entitlement.liveTime
             });
-          } // old code
+          } // old code don't use lastViewedTime
           // else {
           //  log('lastViewedTime', new Date(entitlement.lastViewedTime), entitlement.lastViewedTime);
           //  player.options({ 'absoluteStartTime': entitlement.lastViewedTime });
           // }
 
         } else if (entitlement.lastViewedOffset) {
-          log('lastViewedOffset', entitlement.lastViewedOffset / 1000); // Don't use lastViewedOffset 30 sec from end
-
-          if (player.streamType !== 'DASH' && (!entitlement.durationInMs || entitlement.lastViewedOffset < entitlement.durationInMs - 30000)) {
-            // Is HLS
+          // Don't use lastViewedOffset 30 sec from end
+          if (!entitlement.durationInMs || entitlement.lastViewedOffset < entitlement.durationInMs - 30000) {
+            log('lastViewedOffset', entitlement.lastViewedOffset / 1000);
             player.options({
               startTime: entitlement.lastViewedOffset / 1000
             });
@@ -19039,7 +19045,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.2.124-497';
+  EntitlementMiddleware.VERSION = '2.2.124-498';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -19168,7 +19174,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.2.124-497';
+  empPlayer.VERSION = '2.2.124-498';
   /*
    * Universal Module Definition (UMD)
    *
