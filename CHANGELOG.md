@@ -253,3 +253,13 @@ https://github.com/google/shaka-player/releases
 ### New features
 - **EMP-13963** Update Shaka to v2.5.8 Fix problems with Ad's and Multi-period DASH
 
+## 2.2.125
+
+### Bug fixes
+EMP-14057 Problem with ended live events.
+EMP-14060 Start from bookmark with VOD used old technology.
+
+### New features
+- Use imagescaler for media info images.
+- Add getMediaInfo method to player.
+- Update to HTML5 Player 2.2.125
