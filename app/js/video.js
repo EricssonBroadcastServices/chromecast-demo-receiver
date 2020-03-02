@@ -1,6 +1,6 @@
 /**
  * @license
- * Video.js 7.4.1 <http://videojs.com/>
+ * Video.js 7.4.1x <http://videojs.com/>
  * Copyright Brightcove, Inc. <https://www.brightcove.com/>
  * Available under Apache License Version 2.0
  * <https://github.com/videojs/video.js/blob/master/LICENSE>
@@ -18,7 +18,7 @@
   window$1 = window$1 && window$1.hasOwnProperty('default') ? window$1['default'] : window$1;
   document = document && document.hasOwnProperty('default') ? document['default'] : document;
 
-  var version = "7.4.1";
+  var version = "7.4.1x";
 
   function _inheritsLoose(subClass, superClass) {
     subClass.prototype = Object.create(superClass.prototype);
@@ -2185,7 +2185,7 @@
    * @param    {Function} fn
    *           The function to be throttled.
    *
-   * @param    {Number}   wait
+   * @param    {number}   wait
    *           The number of milliseconds by which to throttle.
    *
    * @return   {Function}
@@ -3156,8 +3156,10 @@
         this.player_ = player = this; // eslint-disable-line
       } else {
         this.player_ = player;
-      } // Make a copy of prototype.options_ to protect against overriding defaults
+      } // Hold the reference to the parent component via `addChild` method
 
+
+      this.parentComponent_ = null; // Make a copy of prototype.options_ to protect against overriding defaults
 
       this.options_ = mergeOptions({}, this.options_); // Updated options with supplied options
 
@@ -3240,6 +3242,7 @@
       this.children_ = null;
       this.childIndex_ = null;
       this.childNameIndex_ = null;
+      this.parentComponent_ = null;
 
       if (this.el_) {
         // Remove element from DOM
@@ -3531,7 +3534,12 @@
         component = child;
       }
 
+      if (component.parentComponent_) {
+        component.parentComponent_.removeChild(component);
+      }
+
       this.children_.splice(index, 0, component);
+      component.parentComponent_ = this;
 
       if (typeof component.id === 'function') {
         this.childIndex_[component.id()] = component;
@@ -3588,6 +3596,7 @@
         return;
       }
 
+      component.parentComponent_ = null;
       this.childIndex_[component.id()] = null;
       this.childNameIndex_[component.name()] = null;
       var compEl = component.el();
@@ -5115,7 +5124,8 @@
   ['mozRequestFullScreen', 'mozCancelFullScreen', 'mozFullScreenElement', 'mozFullScreenEnabled', 'mozfullscreenchange', 'mozfullscreenerror'], // Microsoft
   ['msRequestFullscreen', 'msExitFullscreen', 'msFullscreenElement', 'msFullscreenEnabled', 'MSFullscreenChange', 'MSFullscreenError']];
   var specApi = apiMap[0];
-  var browserApi; // determine the supported set of functions
+  var browserApi;
+  var prefixedAPI = true; // determine the supported set of functions
 
   for (var i = 0; i < apiMap.length; i++) {
     // check for exitFullscreen function
@@ -5130,6 +5140,8 @@
     for (var _i = 0; _i < browserApi.length; _i++) {
       FullscreenApi[specApi[_i]] = browserApi[_i];
     }
+
+    prefixedAPI = browserApi[0] !== specApi[0];
   }
 
   /**
@@ -5387,6 +5399,48 @@
     trackToJson_: trackToJson_
   };
 
+  var USER_AGENT$1 = window$1.navigator && window$1.navigator.userAgent || '';
+  /**
+   * It it running on Universal Windows Platform (UWP) Windows Store App or xBox
+   */
+
+  var IS_UWP = /MSAppHost/i.test(USER_AGENT$1) || /Xbox/i.test(USER_AGENT$1) || /XboxOne/i.test(USER_AGENT$1) || window$1.DEBUG_UWP;
+  /**
+   * Key Code Mapping for GamePad
+   */
+
+  var KeyCodeMapGamePad = {
+    left: [// LeftArrow
+    37, // GamepadLeftThumbstickLeft
+    214, // GamepadDPadLeft
+    205, // NavigationLeft
+    140],
+    right: [// RightArrow
+    39, // GamepadLeftThumbstickRight
+    213, // GamepadDPadRight
+    206, // NavigationRight
+    141],
+    up: [// UpArrow
+    38, // GamepadLeftThumbstickUp
+    211, // GamepadDPadUp
+    203, // NavigationUp
+    138],
+    down: [// UpArrow
+    40, // GamepadLeftThumbstickDown
+    212, // GamepadDPadDown
+    204, // NavigationDown
+    139],
+    accept: [// Space
+    32, // Enter
+    13, // NavigationAccept
+    142, // GamepadA
+    195],
+    return: [// Backspace
+    8, // NavigationCancel
+    143, // GamepadB
+    196]
+  };
+
   var MODAL_CLASS_NAME = 'vjs-modal-dialog';
   var ESC = 27;
   /**
@@ -5518,6 +5572,11 @@
 
 
     _proto.handleKeyPress = function handleKeyPress(e) {
+      // Handle UMP Apps KeyPress
+      if (IS_UWP && KeyCodeMapGamePad.return.indexOf(e.which) !== -1 && this.closeable()) {
+        this.close();
+      }
+
       if (e.which === ESC && this.closeable()) {
         this.close();
       }
@@ -6920,7 +6979,7 @@
    * @param    {string} path
    *           The fileName path like '/path/to/file.mp4'
    *
-   * @returns  {string}
+   * @return  {string}
    *           The extension in lower case or an empty string if no
    *           extension could be found.
    */
@@ -11705,7 +11764,13 @@
     mp3: 'audio/mpeg',
     aac: 'audio/aac',
     oga: 'audio/ogg',
-    m3u8: 'application/x-mpegURL'
+    m3u8: 'application/x-mpegURL',
+    jpg: 'image/jpeg',
+    jpeg: 'image/jpeg',
+    gif: 'image/gif',
+    png: 'image/png',
+    svg: 'image/svg+xml',
+    webp: 'image/webp'
   };
   /**
    * Get the mimetype of a given src url if possible
@@ -12157,7 +12222,14 @@
 
 
     _proto.handleKeyPress = function handleKeyPress(event) {
-      // Support Space (32) or Enter (13) key operation to fire a click event
+      // Handle UMP Apps KeyPress
+      if (IS_UWP && KeyCodeMapGamePad.accept.indexOf(event.which) !== -1) {
+        event.preventDefault();
+        this.trigger('click');
+        return;
+      } // Support Space (32) or Enter (13) key operation to fire a click event
+
+
       if (event.which === 32 || event.which === 13) {
         event.preventDefault();
         this.trigger('click');
@@ -12845,7 +12917,14 @@
 
 
     _proto.handleKeyPress = function handleKeyPress(event) {
-      // Ignore Space (32) or Enter (13) key operation, which is handled by the browser for a button.
+      // Handle UMP Apps KeyPress
+      if (IS_UWP && KeyCodeMapGamePad.accept.indexOf(event.which) !== -1) {
+        _ClickableComponent.prototype.handleKeyPress.call(this, event);
+
+        return;
+      } // Ignore Space (32) or Enter (13) key operation, which is handled by the browser for a button.
+
+
       if (event.which === 32 || event.which === 13) {
         return;
       } // Pass keypress handling up for unsupported keys
@@ -13329,7 +13408,7 @@
 
     var _proto = TimeDisplay.prototype;
 
-    _proto.createEl = function createEl$$1(plainName) {
+    _proto.createEl = function createEl$$1() {
       var className = this.buildCSSClass();
 
       var el = _Component.prototype.createEl.call(this, 'div', {
@@ -13737,21 +13816,20 @@
       return 'vjs-remaining-time';
     };
     /**
-     * The remaining time display prefixes numbers with a "minus" character.
+     * Create the `Component`'s DOM element with the "minus" characted prepend to the time
      *
-     * @param  {number} time
-     *         A numeric time, in seconds.
-     *
-     * @return {string}
-     *         A formatted time
-     *
-     * @private
+     * @return {Element}
+     *         The element that was created.
      */
 
 
-    _proto.formatTime_ = function formatTime_(time) {
-      // TODO: The "-" should be decorative, and not announced by a screen reader
-      return '-' + _TimeDisplay.prototype.formatTime_.call(this, time);
+    _proto.createEl = function createEl$$1() {
+      var el = _TimeDisplay.prototype.createEl.call(this);
+
+      el.insertBefore(createEl('span', {}, {
+        'aria-hidden': true
+      }, '-'), this.contentEl_);
+      return el;
     };
     /**
      * Update remaining time display.
@@ -13765,7 +13843,7 @@
 
 
     _proto.updateContent = function updateContent(event) {
-      if (!this.player_.duration()) {
+      if (typeof this.player_.duration() !== 'number') {
         return;
       } // @deprecated We should only use remainingTimeDisplay
       // as of video.js 7
@@ -14335,7 +14413,18 @@
 
 
     _proto.handleKeyPress = function handleKeyPress(event) {
-      // Left and Down Arrows
+      // Handle UMP Apps KeyPress Left and Down Arrows
+      if (IS_UWP && (KeyCodeMapGamePad.left.indexOf(event.which) !== -1 || KeyCodeMapGamePad.down.indexOf(event.which) !== -1)) {
+        event.preventDefault();
+        this.stepBack();
+        return; // Up and Right Arrows
+      } else if (IS_UWP && (KeyCodeMapGamePad.right.indexOf(event.which) !== -1 || KeyCodeMapGamePad.up.indexOf(event.which) !== -1)) {
+        event.preventDefault();
+        this.stepForward();
+        return;
+      } // Left and Down Arrows
+
+
       if (event.which === 37 || event.which === 40) {
         event.preventDefault();
         this.stepBack(); // Up and Right Arrows
@@ -14923,12 +15012,6 @@
 
       if (liveTracker && liveTracker.isLive()) {
         duration = this.player_.liveTracker.liveCurrentTime();
-      }
-
-      if (liveTracker && liveTracker.seekableEnd() === Infinity) {
-        this.disable();
-      } else {
-        this.enable();
       } // machine readable value of progress bar (percentage complete)
 
 
@@ -15190,7 +15273,14 @@
 
 
     _proto.handleKeyPress = function handleKeyPress(event) {
-      // Support Space (32) or Enter (13) key operation to fire a click event
+      // Handle UMP Apps KeyPress
+      if (IS_UWP && KeyCodeMapGamePad.accept.indexOf(event.which) !== -1) {
+        event.preventDefault();
+        this.handleAction(event);
+        return;
+      } // Support Space (32) or Enter (13) key operation to fire a click event
+
+
       if (event.which === 32 || event.which === 13) {
         event.preventDefault();
         this.handleAction(event);
@@ -16409,7 +16499,18 @@
 
 
     _proto.handleKeyPress = function handleKeyPress(event) {
-      // Left and Down Arrows
+      // Handle UMP Apps Down Arrows
+      if (IS_UWP && KeyCodeMapGamePad.down.indexOf(event.which) !== -1) {
+        event.preventDefault();
+        this.stepForward();
+        return; // Up Arrows
+      } else if (IS_UWP && KeyCodeMapGamePad.up.indexOf(event.which) !== -1) {
+        event.preventDefault();
+        this.stepBack();
+        return;
+      } // Left and Down Arrows
+
+
       if (event.which === 37 || event.which === 40) {
         event.preventDefault();
         this.stepForward(); // Up and Right Arrows
@@ -16784,7 +16885,29 @@
 
 
     _proto.handleKeyPress = function handleKeyPress(event) {
-      // Escape (27) key or Tab (9) key unpress the 'button'
+      // Handle UMP Apps KeyPress, Enter (13) or Up (38) key or Down (40) key press the 'button'
+      if (IS_UWP && (KeyCodeMapGamePad.accept.indexOf(event.which) !== -1 || KeyCodeMapGamePad.down.indexOf(event.which) !== -1 || KeyCodeMapGamePad.up.indexOf(event.which) !== -1)) {
+        if (!this.buttonPressed_) {
+          this.pressButton();
+          event.preventDefault();
+        }
+
+        return;
+      } // return, key unpress the 'button'
+
+
+      if (IS_UWP && KeyCodeMapGamePad.return.indexOf(event.which) !== -1) {
+        if (this.buttonPressed_) {
+          this.unpressButton();
+        }
+
+        event.preventDefault(); // Set focus back to the menu button's button
+
+        this.menuButton_.el_.focus();
+        return;
+      } // Escape (27) key or Tab (9) key unpress the 'button'
+
+
       if (event.which === 27 || event.which === 9) {
         if (this.buttonPressed_) {
           this.unpressButton();
@@ -16816,7 +16939,19 @@
 
 
     _proto.handleSubmenuKeyPress = function handleSubmenuKeyPress(event) {
-      // Escape (27) key or Tab (9) key unpress the 'button'
+      // // Handle UMP Apps KeyPress, return, key unpress the 'button'
+      if (IS_UWP && KeyCodeMapGamePad.return.indexOf(event.which) !== -1) {
+        if (this.buttonPressed_) {
+          this.unpressButton();
+        }
+
+        event.preventDefault(); // Set focus back to the menu button's button
+
+        this.menuButton_.el_.focus();
+        return;
+      } // Escape (27) key or Tab (9) key unpress the 'button'
+
+
       if (event.which === 27 || event.which === 9) {
         if (this.buttonPressed_) {
           this.unpressButton();
@@ -17168,27 +17303,35 @@
     var _proto = TextTrackMenuItem.prototype;
 
     _proto.handleClick = function handleClick(event) {
-      var kind = this.track.kind;
-      var kinds = this.track.kinds;
+      var referenceTrack = this.track;
       var tracks = this.player_.textTracks();
-
-      if (!kinds) {
-        kinds = [kind];
-      }
 
       _MenuItem.prototype.handleClick.call(this, event);
 
       if (!tracks) {
         return;
-      }
+      } // Determine the relevant kind(s) of tracks for this component and filter
+      // out empty kinds.
+
+
+      var kinds = (referenceTrack.kinds || [referenceTrack.kind]).filter(Boolean);
 
       for (var i = 0; i < tracks.length; i++) {
-        var track = tracks[i];
+        var track = tracks[i]; // If the track from the text tracks list is not of the right kind,
+        // skip it. We do not want to affect tracks of incompatible kind(s).
 
-        if (track === this.track && kinds.indexOf(track.kind) > -1) {
+        if (kinds.indexOf(track.kind) === -1) {
+          continue;
+        } // If this text track is the component's track and it is not showing,
+        // set it to showing.
+
+
+        if (track === referenceTrack) {
           if (track.mode !== 'showing') {
             track.mode = 'showing';
-          }
+          } // If this text track is not the component's track and it is not
+          // disabled, set it to disabled.
+
         } else if (track.mode !== 'disabled') {
           track.mode = 'disabled';
         }
@@ -22353,16 +22496,14 @@
         _this.languages_ = languagesToLower;
       } else {
         _this.languages_ = Player.prototype.options_.languages;
-      } // Cache for video property values.
+      }
 
+      _this.resetCache_(); // Set poster
 
-      _this.cache_ = {}; // Set poster
 
       _this.poster_ = options.poster || ''; // Set controls
 
-      _this.controls_ = !!options.controls; // Set default values for lastVolume
-
-      _this.cache_.lastVolume = 1; // Original tag settings stored in options
+      _this.controls_ = !!options.controls; // Original tag settings stored in options
       // now remove immediately so native controls don't flash.
       // May be turned back on by HTML5 tech if nativeControlsForTouch is true
 
@@ -22385,9 +22526,7 @@
 
 
       _this.scrubbing_ = false;
-      _this.el_ = _this.createEl(); // Set default value for lastPlaybackRate
-
-      _this.cache_.lastPlaybackRate = _this.defaultPlaybackRate(); // Make this an evented object and use `el_` as its event bus.
+      _this.el_ = _this.createEl(); // Make this an evented object and use `el_` as its event bus.
 
       evented(_assertThisInitialized(_assertThisInitialized(_this)), {
         eventBusKey: 'el_'
@@ -22447,10 +22586,13 @@
         _this.addClass('vjs-no-flex');
       } // TODO: Make this smarter. Toggle user state between touching/mousing
       // using events, since devices can have both touch and mouse events.
-      // if (browser.TOUCH_ENABLED) {
-      //   this.addClass('vjs-touch-enabled');
-      // }
-      // iOS Safari has broken hover handling
+      // TODO: Make this check be performed again when the window switches between monitors
+      // (See https://github.com/videojs/video.js/issues/5683)
+
+
+      if (TOUCH_ENABLED) {
+        _this.addClass('vjs-touch-enabled');
+      } // iOS Safari has broken hover handling
 
 
       if (!IS_IOS) {
@@ -22472,7 +22614,13 @@
 
       _this.one('play', _this.listenForUserActivity_);
 
-      _this.on('fullscreenchange', _this.handleFullscreenChange_);
+      if (FullscreenApi.fullscreenchange) {
+        _this.on(FullscreenApi.fullscreenchange, _this.handleFullscreenChange_);
+
+        if (IE_VERSION || IS_FIREFOX && prefixedAPI) {
+          _this.on(document, FullscreenApi.fullscreenchange, _this.handleFullscreenChange_);
+        }
+      }
 
       _this.on('stageclick', _this.handleStageClick_);
 
@@ -22506,7 +22654,11 @@
        */
       this.trigger('dispose'); // prevent dispose from being called twice
 
-      this.off('dispose');
+      this.off('dispose'); // make sure to remove fs handler on IE from the document
+
+      if (IE_VERSION || IS_FIREFOX && prefixedAPI) {
+        this.off(document, FullscreenApi.fullscreenchange, this.handleFullscreenChange_);
+      }
 
       if (this.styleEl_ && this.styleEl_.parentNode) {
         this.styleEl_.parentNode.removeChild(this.styleEl_);
@@ -23683,6 +23835,7 @@
 
     _proto.handleTechSeeked_ = function handleTechSeeked_() {
       this.removeClass('vjs-seeking');
+      this.removeClass('vjs-ended');
       /**
        * Fired when the player has finished jumping to a new time
        *
@@ -23895,21 +24048,6 @@
       event.preventDefault();
     };
     /**
-     * Fired when the player switches in or out of fullscreen mode
-     *
-     * @private
-     * @listens Player#fullscreenchange
-     */
-
-
-    _proto.handleFullscreenChange_ = function handleFullscreenChange_() {
-      if (this.isFullscreen()) {
-        this.addClass('vjs-fullscreen');
-      } else {
-        this.removeClass('vjs-fullscreen');
-      }
-    };
-    /**
      * native click events on the SWF aren't triggered on IE11, Win8.1RT
      * use stageclick events triggered from inside the SWF instead
      *
@@ -23920,6 +24058,60 @@
 
     _proto.handleStageClick_ = function handleStageClick_() {
       this.reportUserActivity();
+    };
+    /**
+     * Fired when the player switches in or out of fullscreen mode
+     *
+     * @private
+     * @listens Player#fullscreenchange
+     * @listens Player#webkitfullscreenchange
+     * @listens Player#mozfullscreenchange
+     * @listens Player#MSFullscreenChange
+     * @fires Player#fullscreenchange
+     */
+
+
+    _proto.handleFullscreenChange_ = function handleFullscreenChange_(event, retriggerEvent) {
+      if (event === void 0) {
+        event = {};
+      }
+
+      if (retriggerEvent === void 0) {
+        retriggerEvent = true;
+      }
+
+      if (this.isFullscreen()) {
+        this.addClass('vjs-fullscreen');
+      } else {
+        this.removeClass('vjs-fullscreen');
+      }
+
+      if (prefixedAPI && retriggerEvent) {
+        /**
+         * @event Player#fullscreenchange
+         * @type {EventTarget~Event}
+         */
+        this.trigger('fullscreenchange');
+      }
+    };
+    /**
+     * when the document fschange event triggers it calls this
+     */
+
+
+    _proto.documentFullscreenChange_ = function documentFullscreenChange_(e) {
+      var fsApi = FullscreenApi;
+      this.isFullscreen(document[fsApi.fullscreenElement]); // If cancelling fullscreen, remove event listener.
+
+      if (this.isFullscreen() === false) {
+        off(document, fsApi.fullscreenchange, bind(this, this.documentFullscreenChange_));
+
+        if (prefixedAPI) {
+          this.handleFullscreenChange_({}, false);
+        } else {
+          this.on(FullscreenApi.fullscreenchange, this.handleFullscreenChange_);
+        }
+      }
     };
     /**
      * Handle Tech Fullscreen Change
@@ -23997,6 +24189,33 @@
 
     _proto.getCache = function getCache() {
       return this.cache_;
+    };
+    /**
+     * Resets the internal cache object.
+     *
+     * Using this function outside the player constructor or reset method may
+     * have unintended side-effects.
+     *
+     * @private
+     */
+
+
+    _proto.resetCache_ = function resetCache_() {
+      this.cache_ = {
+        // Right now, the currentTime is not _really_ cached because it is always
+        // retrieved from the tech (see: currentTime). However, for completeness,
+        // we set it to zero here to ensure that if we do start actually caching
+        // it, we reset it along with everything else.
+        currentTime: 0,
+        duration: NaN,
+        lastVolume: 1,
+        lastPlaybackRate: this.defaultPlaybackRate(),
+        media: null,
+        src: '',
+        source: {},
+        sources: [],
+        volume: 1
+      };
     };
     /**
      * Pass values to the playback tech
@@ -24559,25 +24778,16 @@
       if (fsApi.requestFullscreen) {
         // the browser supports going fullscreen at the element level so we can
         // take the controls fullscreen as well as the video
-        // Trigger fullscreenchange event after change
+        if (!prefixedAPI) {
+          this.off(FullscreenApi.fullscreenchange, this.handleFullscreenChange_);
+        } // Trigger fullscreenchange event after change
         // We have to specifically add this each time, and remove
         // when canceling fullscreen. Otherwise if there's multiple
         // players on a page, they would all be reacting to the same fullscreen
         // events
-        on(document, fsApi.fullscreenchange, bind(this, function documentFullscreenChange(e) {
-          this.isFullscreen(document[fsApi.fullscreenElement]); // If cancelling fullscreen, remove event listener.
-
-          if (this.isFullscreen() === false) {
-            off(document, fsApi.fullscreenchange, documentFullscreenChange);
-          }
-          /**
-           * @event Player#fullscreenchange
-           * @type {EventTarget~Event}
-           */
 
 
-          this.trigger('fullscreenchange');
-        }));
+        on(document, fsApi.fullscreenchange, bind(this, this.documentFullscreenChange_));
         this.el_[fsApi.requestFullscreen]();
       } else if (this.tech_.supportsFullScreen()) {
         // we can't take the video.js controls fullscreen but we can go fullscreen
@@ -24607,6 +24817,8 @@
       this.isFullscreen(false); // Check for browser element fullscreen support
 
       if (fsApi.requestFullscreen) {
+        // remove the document level handler if we're getting called directly.
+        off(document, fsApi.fullscreenchange, bind(this, this.documentFullscreenChange_));
         document[fsApi.exitFullscreen]();
       } else if (this.tech_.supportsFullScreen()) {
         this.techCall_('exitFullScreen');
@@ -24962,12 +25174,54 @@
         this.tech_.clearTracks('text');
       }
 
+      this.resetCache_();
+      this.poster('');
       this.loadTech_(this.options_.techOrder[0], null);
       this.techCall_('reset');
+      this.resetControlBarUI_();
 
       if (isEvented(this)) {
         this.trigger('playerreset');
       }
+    };
+    /**
+     * Reset Control Bar's UI by calling sub-methods that reset
+     * all of Control Bar's components
+     */
+
+
+    _proto.resetControlBarUI_ = function resetControlBarUI_() {
+      this.resetProgressBar_();
+      this.resetPlaybackRate_();
+      this.resetVolumeBar_();
+    };
+    /**
+     * Reset tech's progress so progress bar is reset in the UI
+     */
+
+
+    _proto.resetProgressBar_ = function resetProgressBar_() {
+      this.currentTime(0);
+      this.controlBar.durationDisplay.updateContent();
+      this.controlBar.remainingTimeDisplay.updateContent();
+    };
+    /**
+     * Reset Playback ratio
+     */
+
+
+    _proto.resetPlaybackRate_ = function resetPlaybackRate_() {
+      this.playbackRate(this.defaultPlaybackRate());
+      this.handleTechRateChange_();
+    };
+    /**
+     * Reset Volume bar
+     */
+
+
+    _proto.resetVolumeBar_ = function resetVolumeBar_() {
+      this.volume(1.0);
+      this.trigger('volumechange');
     };
     /**
      * Returns all of the current source objects.
@@ -25486,8 +25740,20 @@
 
       this.on('mousedown', handleMouseDown);
       this.on('mousemove', handleMouseMove);
-      this.on('mouseup', handleMouseUp); // Listen for keyboard navigation
+      this.on('mouseup', handleMouseUp);
+      var controlBar = this.getChild('controlBar');
+
+      if (controlBar) {
+        controlBar.on('mouseenter', function (event) {
+          this.player().cache_.inactivityTimeout = this.player().options_.inactivityTimeout;
+          this.player().options_.inactivityTimeout = 0;
+        });
+        controlBar.on('mouseleave', function (event) {
+          this.player().options_.inactivityTimeout = this.player().cache_.inactivityTimeout;
+        });
+      } // Listen for keyboard navigation
       // Shouldn't need to use inProgress interval because of key repeat
+
 
       this.on('keydown', handleActivity);
       this.on('keyup', handleActivity); // Run an interval every 250 milliseconds instead of stuffing everything into
@@ -25982,6 +26248,141 @@
 
     _proto.currentBreakpointClass = function currentBreakpointClass() {
       return BREAKPOINT_CLASSES[this.breakpoint_] || '';
+    };
+    /**
+     * An object that describes a single piece of media.
+     *
+     * Properties that are not part of this type description will be retained; so,
+     * this can be viewed as a generic metadata storage mechanism as well.
+     *
+     * @see      {@link https://wicg.github.io/mediasession/#the-mediametadata-interface}
+     * @typedef  {Object} Player~MediaObject
+     *
+     * @property {string} [album]
+     *           Unused, except if this object is passed to the `MediaSession`
+     *           API.
+     *
+     * @property {string} [artist]
+     *           Unused, except if this object is passed to the `MediaSession`
+     *           API.
+     *
+     * @property {Object[]} [artwork]
+     *           Unused, except if this object is passed to the `MediaSession`
+     *           API. If not specified, will be populated via the `poster`, if
+     *           available.
+     *
+     * @property {string} [poster]
+     *           URL to an image that will display before playback.
+     *
+     * @property {Tech~SourceObject|Tech~SourceObject[]|string} [src]
+     *           A single source object, an array of source objects, or a string
+     *           referencing a URL to a media source. It is _highly recommended_
+     *           that an object or array of objects is used here, so that source
+     *           selection algorithms can take the `type` into account.
+     *
+     * @property {string} [title]
+     *           Unused, except if this object is passed to the `MediaSession`
+     *           API.
+     *
+     * @property {Object[]} [textTracks]
+     *           An array of objects to be used to create text tracks, following
+     *           the {@link https://www.w3.org/TR/html50/embedded-content-0.html#the-track-element|native track element format}.
+     *           For ease of removal, these will be created as "remote" text
+     *           tracks and set to automatically clean up on source changes.
+     *
+     *           These objects may have properties like `src`, `kind`, `label`,
+     *           and `language`, see {@link Tech#createRemoteTextTrack}.
+     */
+
+    /**
+     * Populate the player using a {@link Player~MediaObject|MediaObject}.
+     *
+     * @param  {Player~MediaObject} media
+     *         A media object.
+     *
+     * @param  {Function} ready
+     *         A callback to be called when the player is ready.
+     */
+
+
+    _proto.loadMedia = function loadMedia(media, ready) {
+      var _this13 = this;
+
+      if (!media || typeof media !== 'object') {
+        return;
+      }
+
+      this.reset(); // Clone the media object so it cannot be mutated from outside.
+
+      this.cache_.media = mergeOptions(media);
+      var _this$cache_$media = this.cache_.media,
+          artwork = _this$cache_$media.artwork,
+          poster = _this$cache_$media.poster,
+          src = _this$cache_$media.src,
+          textTracks = _this$cache_$media.textTracks; // If `artwork` is not given, create it using `poster`.
+
+      if (!artwork && poster) {
+        this.cache_.media.artwork = [{
+          src: poster,
+          type: getMimetype(poster)
+        }];
+      }
+
+      if (src) {
+        this.src(src);
+      }
+
+      if (poster) {
+        this.poster(poster);
+      }
+
+      if (Array.isArray(textTracks)) {
+        textTracks.forEach(function (tt) {
+          return _this13.addRemoteTextTrack(tt, false);
+        });
+      }
+
+      this.ready(ready);
+    };
+    /**
+     * Get a clone of the current {@link Player~MediaObject} for this player.
+     *
+     * If the `loadMedia` method has not been used, will attempt to return a
+     * {@link Player~MediaObject} based on the current state of the player.
+     *
+     * @return {Player~MediaObject}
+     */
+
+
+    _proto.getMedia = function getMedia() {
+      if (!this.cache_.media) {
+        var poster = this.poster();
+        var src = this.currentSources();
+        var textTracks = Array.prototype.map.call(this.remoteTextTracks(), function (tt) {
+          return {
+            kind: tt.kind,
+            label: tt.label,
+            language: tt.language,
+            src: tt.src
+          };
+        });
+        var media = {
+          src: src,
+          textTracks: textTracks
+        };
+
+        if (poster) {
+          media.poster = poster;
+          media.artwork = [{
+            src: media.poster,
+            type: getMimetype(media.poster)
+          }];
+        }
+
+        return media;
+      }
+
+      return mergeOptions(this.cache_.media);
     };
     /**
      * Gets tag settings

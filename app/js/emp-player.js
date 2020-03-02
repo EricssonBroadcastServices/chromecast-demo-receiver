@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.2.124-499 
+ * EMP-Player 2.2.125-500 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -998,6 +998,64 @@
     var re = new RegExp(/^.*\//);
     return re.exec(url)[0];
   }
+  /**
+   * Select the image to display for the asset
+   *
+   * @param {Array} images image objects
+   * @param {string} imageType image type in backend
+   * @return {image} image object
+   */
+
+  function imageSelector(images, imageType) {
+    var image; // select image 0 as default the select LANDSCAPE image
+
+    if (images && images.length > 0) {
+      image = images[0];
+
+      for (var i = 0; i < images.length; i++) {
+        if (images[i].url && images[i].orientation === 'LANDSCAPE') {
+          image = images[i];
+          break;
+        }
+      }
+    } else {
+      return;
+    } // select image with imageType
+
+
+    for (var _i = 0; _i < images.length; _i++) {
+      if (images[_i].url && images[_i].type === imageType) {
+        return images[_i];
+      }
+    } // scale bad image
+
+
+    if (image) {
+      switch (imageType) {
+        case 'chromecast':
+          if (image.width !== 155 && image.url.indexOf('?') === -1) {
+            image = assign({}, image);
+            image.width = 155;
+            image.height = 100;
+            image.url = image.url + '?w=155';
+          }
+
+          break;
+
+        case 'thumbnail':
+          if (image.width !== 50 && image.url.indexOf('?') === -1) {
+            image = assign({}, image);
+            image.width = 50;
+            image.height = 50;
+            image.url = image.url + '?w=50';
+          }
+
+          break;
+      }
+    }
+
+    return image;
+  }
 
   /**
   * EmpPlayerErrorCodes - Holds all available error codes
@@ -1022,9 +1080,7 @@
    * @extends Error
   */
 
-  var EmpPlayerError =
-  /*#__PURE__*/
-  function (_Error) {
+  var EmpPlayerError = /*#__PURE__*/function (_Error) {
     _inheritsLoose(EmpPlayerError, _Error);
 
     /**
@@ -1077,7 +1133,7 @@
     }]);
 
     return EmpPlayerError;
-  }(_wrapNativeSuper(Error));
+  }( /*#__PURE__*/_wrapNativeSuper(Error));
 
   var logToBrowserConsole = false;
 
@@ -1292,9 +1348,7 @@
    * @class BitrateMenuItem
    */
 
-  var BitrateMenuItem =
-  /*#__PURE__*/
-  function (_MenuItem) {
+  var BitrateMenuItem = /*#__PURE__*/function (_MenuItem) {
     _inheritsLoose(BitrateMenuItem, _MenuItem);
 
     /**
@@ -1372,9 +1426,7 @@
    * @class BitrateButton
    */
 
-  var BitrateButton =
-  /*#__PURE__*/
-  function (_MenuButton) {
+  var BitrateButton = /*#__PURE__*/function (_MenuButton) {
     _inheritsLoose(BitrateButton, _MenuButton);
 
     /**
@@ -2448,9 +2500,7 @@
    * @extends Button
    */
 
-  var EmpLiveDisplay =
-  /*#__PURE__*/
-  function (_Button) {
+  var EmpLiveDisplay = /*#__PURE__*/function (_Button) {
     _inheritsLoose(EmpLiveDisplay, _Button);
 
     /**
@@ -2635,9 +2685,7 @@
    * @class EmpMarker
    */
 
-  var EmpMarker =
-  /*#__PURE__*/
-  function (_Component) {
+  var EmpMarker = /*#__PURE__*/function (_Component) {
     _inheritsLoose(EmpMarker, _Component);
 
     /**
@@ -2753,9 +2801,7 @@
    * @extends MouseTimeDisplay
    */
 
-  var EmpMouseTimeDisplay =
-  /*#__PURE__*/
-  function (_MouseTimeDisplay) {
+  var EmpMouseTimeDisplay = /*#__PURE__*/function (_MouseTimeDisplay) {
     _inheritsLoose(EmpMouseTimeDisplay, _MouseTimeDisplay);
 
     /**
@@ -2960,6 +3006,47 @@
     return 0;
   }
 
+  var USER_AGENT$1 = window_1.navigator && window_1.navigator.userAgent || '';
+  /**
+   * It it running on Universal Windows Platform (UWP) Windows Store App or xBox
+   */
+
+  var IS_UWP = /MSAppHost/i.test(USER_AGENT$1) || /Xbox/i.test(USER_AGENT$1) || /XboxOne/i.test(USER_AGENT$1) || window_1.DEBUG_UWP;
+  /**
+   * Key Code Mapping for GamePad
+   */
+
+  var KeyCodeMapGamePad = {
+    left: [// LeftArrow
+    37, // GamepadLeftThumbstickLeft
+    214, // GamepadDPadLeft
+    205, // NavigationLeft
+    140],
+    right: [// RightArrow
+    39, // GamepadLeftThumbstickRight
+    213, // GamepadDPadRight
+    206, // NavigationRight
+    141],
+    up: [// UpArrow
+    38, // GamepadLeftThumbstickUp
+    211, // GamepadDPadUp
+    203, // NavigationUp
+    138],
+    down: [// UpArrow
+    40, // GamepadLeftThumbstickDown
+    212, // GamepadDPadDown
+    204, // NavigationDown
+    139],
+    accept: [// Enter
+    13, // NavigationAccept
+    142, // GamepadA
+    195],
+    "return": [// Backspace
+    8, // NavigationCancel
+    143, // GamepadB
+    196]
+  };
+
   var Component$5 = videojs.getComponent('Component');
   var Slider = videojs.getComponent('Slider'); // The number of seconds the `step*` functions move the timeline.
 
@@ -2973,9 +3060,7 @@
    * @extends Slider
    */
 
-  var SeekBar =
-  /*#__PURE__*/
-  function (_Slider) {
+  var SeekBar = /*#__PURE__*/function (_Slider) {
     _inheritsLoose(SeekBar, _Slider);
 
     /**
@@ -3401,7 +3486,14 @@
     ;
 
     _proto.handleKeyPress = function handleKeyPress(event) {
-      // Support Space (32) or Enter (13) key operation to fire a click event
+      // Handle UMP Apps KeyPress
+      if (IS_UWP && KeyCodeMapGamePad.accept.indexOf(event.which) !== -1) {
+        event.preventDefault();
+        this.handleAction(event);
+        return;
+      } // Support Space (32) or Enter (13) key operation to fire a click event
+
+
       if (event.which === 32 || event.which === 13) {
         event.preventDefault();
         this.handleAction(event);
@@ -3475,9 +3567,7 @@
    * @extends Button
    */
 
-  var EmpRestartButton =
-  /*#__PURE__*/
-  function (_Button) {
+  var EmpRestartButton = /*#__PURE__*/function (_Button) {
     _inheritsLoose(EmpRestartButton, _Button);
 
     /**
@@ -3607,9 +3697,7 @@
    * @extends Button
    */
 
-  var EmpForwardButton =
-  /*#__PURE__*/
-  function (_Button) {
+  var EmpForwardButton = /*#__PURE__*/function (_Button) {
     _inheritsLoose(EmpForwardButton, _Button);
 
     /**
@@ -3720,9 +3808,7 @@
    * @extends Button
    */
 
-  var EmpRewindButton =
-  /*#__PURE__*/
-  function (_Button) {
+  var EmpRewindButton = /*#__PURE__*/function (_Button) {
     _inheritsLoose(EmpRewindButton, _Button);
 
     /**
@@ -3833,9 +3919,7 @@
    * @extends Button
    */
 
-  var EmpReloadButton =
-  /*#__PURE__*/
-  function (_Button) {
+  var EmpReloadButton = /*#__PURE__*/function (_Button) {
     _inheritsLoose(EmpReloadButton, _Button);
 
     /**
@@ -3884,9 +3968,7 @@
    * @extends Component
    */
 
-  var EmpTimeDisplay =
-  /*#__PURE__*/
-  function (_Component) {
+  var EmpTimeDisplay = /*#__PURE__*/function (_Component) {
     _inheritsLoose(EmpTimeDisplay, _Component);
 
     /**
@@ -4014,9 +4096,7 @@
    * @extends EmpStopButton
    */
 
-  var EmpStopButton =
-  /*#__PURE__*/
-  function (_Button) {
+  var EmpStopButton = /*#__PURE__*/function (_Button) {
     _inheritsLoose(EmpStopButton, _Button);
 
     /**
@@ -4103,9 +4183,7 @@
    * @extends EmpPlayToggle
    */
 
-  var EmpPlayToggle =
-  /*#__PURE__*/
-  function (_PlayToggle) {
+  var EmpPlayToggle = /*#__PURE__*/function (_PlayToggle) {
     _inheritsLoose(EmpPlayToggle, _PlayToggle);
 
     /**
@@ -4186,9 +4264,7 @@
    * @extends Button
   */
 
-  var AirplayToggle =
-  /*#__PURE__*/
-  function (_Button) {
+  var AirplayToggle = /*#__PURE__*/function (_Button) {
     _inheritsLoose(AirplayToggle, _Button);
 
     /**
@@ -4298,9 +4374,7 @@
    * @extends Button
    */
 
-  var EmpNextButton =
-  /*#__PURE__*/
-  function (_Button) {
+  var EmpNextButton = /*#__PURE__*/function (_Button) {
     _inheritsLoose(EmpNextButton, _Button);
 
     /**
@@ -4413,9 +4487,7 @@
    * @extends Button
    */
 
-  var EmpPreviousButton =
-  /*#__PURE__*/
-  function (_Button) {
+  var EmpPreviousButton = /*#__PURE__*/function (_Button) {
     _inheritsLoose(EmpPreviousButton, _Button);
 
     /**
@@ -4519,9 +4591,7 @@
    * @extends Button
   */
 
-  var PipToggle =
-  /*#__PURE__*/
-  function (_Button) {
+  var PipToggle = /*#__PURE__*/function (_Button) {
     _inheritsLoose(PipToggle, _Button);
 
     /**
@@ -4715,9 +4785,7 @@
    * @class PlaylistMenuItem
    */
 
-  var PlaylistMenuItem =
-  /*#__PURE__*/
-  function (_MenuItem) {
+  var PlaylistMenuItem = /*#__PURE__*/function (_MenuItem) {
     _inheritsLoose(PlaylistMenuItem, _MenuItem);
 
     /**
@@ -4778,9 +4846,7 @@
    * @class PlaylistButton
    */
 
-  var PlaylistButton =
-  /*#__PURE__*/
-  function (_MenuButton) {
+  var PlaylistButton = /*#__PURE__*/function (_MenuButton) {
     _inheritsLoose(PlaylistButton, _MenuButton);
 
     /**
@@ -4899,9 +4965,7 @@
    * @class ControlBar
    */
 
-  var EmpControlBar =
-  /*#__PURE__*/
-  function (_ControlBar) {
+  var EmpControlBar = /*#__PURE__*/function (_ControlBar) {
     _inheritsLoose(EmpControlBar, _ControlBar);
 
     function EmpControlBar() {
@@ -5131,9 +5195,7 @@
    */
 
 
-  var TextTrackDisplay =
-  /*#__PURE__*/
-  function (_Component) {
+  var TextTrackDisplay = /*#__PURE__*/function (_Component) {
     _inheritsLoose(TextTrackDisplay, _Component);
 
     /**
@@ -5774,9 +5836,7 @@
    */
 
 
-  var TextTrackSettings =
-  /*#__PURE__*/
-  function (_ModalDialog) {
+  var TextTrackSettings = /*#__PURE__*/function (_ModalDialog) {
     _inheritsLoose(TextTrackSettings, _ModalDialog);
 
     /**
@@ -6157,9 +6217,7 @@
    * @class EmpMediaInfoBar
    */
 
-  var EmpMediaInfoBar =
-  /*#__PURE__*/
-  function (_Component) {
+  var EmpMediaInfoBar = /*#__PURE__*/function (_Component) {
     _inheritsLoose(EmpMediaInfoBar, _Component);
 
     /**
@@ -6301,30 +6359,6 @@
       return el;
     }
     /**
-     * Select the image to display for the asset
-     *
-     * @param {Array} images image objects
-     * @param {string} imageType image type in backend
-     * @return {image} image object
-     */
-    ;
-
-    _proto.imageSelector = function imageSelector(images, imageType) {
-      var image;
-
-      if (images.length > 0) {
-        image = images[0];
-      }
-
-      for (var i = 0; i < images.length; i++) {
-        if (images[i].url && images[i].type === imageType) {
-          return images[i];
-        }
-      }
-
-      return image;
-    }
-    /**
      * updateMediaInformation
      *
      * @param {Object} assetMetadata
@@ -6373,7 +6407,7 @@
       }
 
       if (mediaArtworkEl && assetMetadata.images && assetMetadata.images.length > 0) {
-        var image = this.imageSelector(assetMetadata.images, 'chromecast');
+        var image = imageSelector(assetMetadata.images, 'chromecast');
         mediaArtworkEl.style.backgroundImage = 'url("' + image.url + '")';
         mediaArtworkEl.style.display = 'block';
       } else if (mediaArtworkEl) {
@@ -6381,16 +6415,13 @@
         mediaArtworkEl.style.backgroundImage = 'none';
       }
 
-      if (mediaLogoEl && assetMetadata.channelInfo) {
-        var channelLogo = this.imageSelector(assetMetadata.channelInfo.images, 'thumbnail');
-
-        if (channelLogo && channelLogo.url) {
-          mediaLogoEl.style.backgroundImage = 'url("' + channelLogo.url + '")';
-          mediaLogoEl.style.display = 'block';
-        } else {
-          mediaLogoEl.style.display = 'none';
-          mediaLogoEl.style.backgroundImage = 'none';
-        }
+      if (mediaLogoEl && assetMetadata.channelInfo && assetMetadata.channelInfo.images.length > 0) {
+        var channelLogo = imageSelector(assetMetadata.channelInfo.images, 'thumbnail');
+        mediaLogoEl.style.backgroundImage = 'url("' + channelLogo.url + '")';
+        mediaLogoEl.style.display = 'block';
+      } else if (mediaLogoEl) {
+        mediaLogoEl.style.display = 'none';
+        mediaLogoEl.style.backgroundImage = 'none';
       } // Show the control and mediainfo bar
 
 
@@ -6475,9 +6506,7 @@
    * @class CastPlugin
    */
 
-  var vttThumbnailsPlugin =
-  /*#__PURE__*/
-  function (_Plugin) {
+  var vttThumbnailsPlugin = /*#__PURE__*/function (_Plugin) {
     _inheritsLoose(vttThumbnailsPlugin, _Plugin);
 
     /**
@@ -7086,7 +7115,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.2.124-499';
+  vttThumbnailsPlugin.VERSION = '2.2.125-500';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -7402,9 +7431,7 @@
    * @class PlaylistPlugin
    */
 
-  var PlaylistPlugin =
-  /*#__PURE__*/
-  function (_Plugin) {
+  var PlaylistPlugin = /*#__PURE__*/function (_Plugin) {
     _inheritsLoose(PlaylistPlugin, _Plugin);
 
     /**
@@ -7891,7 +7918,7 @@
     return PlaylistPlugin;
   }(Plugin$1);
 
-  PlaylistPlugin.VERSION = '2.2.124-499';
+  PlaylistPlugin.VERSION = '2.2.125-500';
 
   if (videojs.getPlugin('playList')) {
     videojs.log.warn('A plugin named "PlaylistPlugin" already exists.');
@@ -7917,9 +7944,7 @@
    */
 
 
-  var Player =
-  /*#__PURE__*/
-  function (_VjsPlayer) {
+  var Player = /*#__PURE__*/function (_VjsPlayer) {
     _inheritsLoose(Player, _VjsPlayer);
 
     /**
@@ -9874,6 +9899,49 @@
       return null;
     }
     /**
+     * Get MediaInfo
+     *
+     * @return {Object} MediaInfo (title, subtitle, images, channel-title,  channel-images)
+     */
+    ;
+
+    _proto.getMediaInfo = function getMediaInfo() {
+      var assetMetadata;
+      var program = this.getProgramDetails();
+
+      if (program && program.programId) {
+        assetMetadata = this.programService().extractAssetMetadata(program.asset);
+        assetMetadata.thumbnailsImage = imageSelector(assetMetadata.images, 'chromecast');
+        assetMetadata.channelInfo = program.channelInfo;
+
+        if (program.channelInfo) {
+          assetMetadata.channelInfo.thumbnailImage = imageSelector(program.channelInfo.images, 'thumbnail');
+        }
+      } else {
+        var asset = this.getAssetDetails();
+        assetMetadata = this.programService().extractAssetMetadata(asset);
+        assetMetadata.thumbnailImage = imageSelector(assetMetadata.images, 'chromecast');
+      }
+
+      if ((!assetMetadata || !assetMetadata.title) && this.options().mediaInfo && this.options().mediaInfo.title) {
+        var mediaInfo = this.options().mediaInfo;
+        assetMetadata = {
+          title: mediaInfo.title,
+          subtitle: mediaInfo.subtitle,
+          images: mediaInfo.artworkUrl ? [{
+            url: mediaInfo.artworkUrl
+          }] : [],
+          channelInfo: {
+            images: mediaInfo.logoUrl ? [{
+              url: mediaInfo.logoUrl
+            }] : []
+          }
+        };
+      }
+
+      return assetMetadata;
+    }
+    /**
     * Get a unix time (ms) `TimeRange` object for seekable range.
     *
     * @return {TimeRange} The time range object.
@@ -10631,7 +10699,7 @@
     }, {
       key: "version",
       get: function get() {
-        return '2.2.124-499';
+        return '2.2.125-500';
       }
       /**
        * Get entitlement
@@ -10856,9 +10924,7 @@
    * @class EMPAnalyticsConnector
    */
 
-  var EMPAnalyticsConnector =
-  /*#__PURE__*/
-  function () {
+  var EMPAnalyticsConnector = /*#__PURE__*/function () {
     /**
      * constructor
      *
@@ -14298,9 +14364,7 @@
    * @class AnalyticsPlugin
    */
 
-  var AnalyticsPlugin =
-  /*#__PURE__*/
-  function (_Plugin) {
+  var AnalyticsPlugin = /*#__PURE__*/function (_Plugin) {
     _inheritsLoose(AnalyticsPlugin, _Plugin);
 
     /**
@@ -14471,7 +14535,7 @@
     return AnalyticsPlugin;
   }(Plugin$2);
 
-  AnalyticsPlugin.VERSION = '2.2.124-499';
+  AnalyticsPlugin.VERSION = '2.2.125-500';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -14543,9 +14607,7 @@
     * @param {Object=} error Object or string describing error
     */
 
-  var EntitlementError =
-  /*#__PURE__*/
-  function (_ExtendableError) {
+  var EntitlementError = /*#__PURE__*/function (_ExtendableError) {
     _inheritsLoose(EntitlementError, _ExtendableError);
 
     /**
@@ -14623,9 +14685,7 @@
    * @class EntitlementEngine
    */
 
-  var EntitlementEngine =
-  /*#__PURE__*/
-  function () {
+  var EntitlementEngine = /*#__PURE__*/function () {
     /**
      * Create EntitlementEngine
      *
@@ -14983,9 +15043,7 @@
    * @param {Object}  [options] - Object of option names and values
    */
 
-  var Entitlement =
-  /*#__PURE__*/
-  function () {
+  var Entitlement = /*#__PURE__*/function () {
     /**
      * Creat Entitlement
      */
@@ -15711,9 +15769,7 @@
    * @class EricssonMDN
    */
 
-  var EricssonMDN =
-  /*#__PURE__*/
-  function () {
+  var EricssonMDN = /*#__PURE__*/function () {
     function EricssonMDN() {}
 
     /**
@@ -15768,9 +15824,7 @@
    * @class EricssonExposure
    */
 
-  var EricssonExposure =
-  /*#__PURE__*/
-  function (_EntitlementEngine) {
+  var EricssonExposure = /*#__PURE__*/function (_EntitlementEngine) {
     _inheritsLoose(EricssonExposure, _EntitlementEngine);
 
     /**
@@ -17066,9 +17120,7 @@
    * @param {Object} options Object of option names and values
    * @class EntitlementRequest
    */
-  var EntitlementRequest =
-  /*#__PURE__*/
-  function () {
+  var EntitlementRequest = /*#__PURE__*/function () {
     /**
      * Create EntitlementRequest
      *
@@ -17154,9 +17206,7 @@
    * @class ProgramService
    */
 
-  var ProgramService =
-  /*#__PURE__*/
-  function (_Plugin) {
+  var ProgramService = /*#__PURE__*/function (_Plugin) {
     _inheritsLoose(ProgramService, _Plugin);
 
     /**
@@ -18230,7 +18280,7 @@
     return ProgramService;
   }(Plugin$3);
 
-  ProgramService.VERSION = '2.2.124-499';
+  ProgramService.VERSION = '2.2.125-500';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -18250,9 +18300,7 @@
    *
    */
 
-  var EntitlementExpirationService =
-  /*#__PURE__*/
-  function (_Plugin) {
+  var EntitlementExpirationService = /*#__PURE__*/function (_Plugin) {
     _inheritsLoose(EntitlementExpirationService, _Plugin);
 
     /**
@@ -18469,7 +18517,7 @@
     return EntitlementExpirationService;
   }(Plugin$4);
 
-  EntitlementExpirationService.VERSION = '2.2.124-499';
+  EntitlementExpirationService.VERSION = '2.2.125-500';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -19045,7 +19093,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.2.124-499';
+  EntitlementMiddleware.VERSION = '2.2.125-500';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -19174,7 +19222,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.2.124-499';
+  empPlayer.VERSION = '2.2.125-500';
   /*
    * Universal Module Definition (UMD)
    *
