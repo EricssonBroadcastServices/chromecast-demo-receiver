@@ -804,6 +804,10 @@
    */
 
   function hasClass(element, classToCheck) {
+    if (!element) {
+      return false;
+    }
+
     throwIfWhitespace(classToCheck);
 
     if (element.classList) {
@@ -826,6 +830,10 @@
    */
 
   function addClass(element, classToAdd) {
+    if (!element) {
+      return;
+    }
+
     if (element.classList) {
       element.classList.add(classToAdd); // Don't need to `throwIfWhitespace` here because `hasElClass` will do it
       // in the case of classList not being supported.
@@ -849,6 +857,10 @@
    */
 
   function removeClass(element, classToRemove) {
+    if (!element) {
+      return;
+    }
+
     if (element.classList) {
       element.classList.remove(classToRemove);
     } else {
@@ -3156,8 +3168,9 @@
         this.player_ = player = this; // eslint-disable-line
       } else {
         this.player_ = player;
-      } // Hold the reference to the parent component via `addChild` method
+      }
 
+      this.isDisposed_ = false; // Hold the reference to the parent component via `addChild` method
 
       this.parentComponent_ = null; // Make a copy of prototype.options_ to protect against overriding defaults
 
@@ -3215,6 +3228,10 @@
     var _proto = Component.prototype;
 
     _proto.dispose = function dispose() {
+      // Bail out if the component has already been disposed.
+      if (this.isDisposed_) {
+        return;
+      }
       /**
        * Triggered when a `Component` is disposed.
        *
@@ -3225,10 +3242,13 @@
        *           set to false so that the close event does not
        *           bubble up
        */
+
+
       this.trigger({
         type: 'dispose',
         bubbles: false
-      }); // Dispose all children.
+      });
+      this.isDisposed_ = true; // Dispose all children.
 
       if (this.children_) {
         for (var i = this.children_.length - 1; i >= 0; i--) {
@@ -3256,6 +3276,17 @@
 
 
       this.player_ = null;
+    };
+    /**
+     * Determine whether or not this component has been disposed.
+     *
+     * @return {boolean}
+     *         If the component has been disposed, will be `true`. Otherwise, `false`.
+     */
+
+
+    _proto.isDisposed = function isDisposed() {
+      return Boolean(this.isDisposed_);
     };
     /**
      * Return the {@link Player} that the `Component` has attached to.
@@ -11996,6 +12027,7 @@
       var _this;
 
       _this = _Component.call(this, player, options) || this;
+      _this.boundHandleKeyPress_ = bind(_assertThisInitialized(_assertThisInitialized(_this)), _this.handleKeyPress);
 
       _this.emitTapEvents();
 
@@ -12058,7 +12090,13 @@
     };
 
     _proto.dispose = function dispose() {
-      // remove controlTextEl_ on dispose
+      // Bail out if the component has already been disposed.
+      if (this.isDisposed_) {
+        return;
+      }
+
+      off(document, 'keydown', this.boundHandleKeyPress_); // remove controlTextEl_ on dispose
+
       this.controlTextEl_ = null;
 
       _Component.prototype.dispose.call(this);
@@ -12208,7 +12246,7 @@
 
 
     _proto.handleFocus = function handleFocus(event) {
-      on(document, 'keydown', bind(this, this.handleKeyPress));
+      on(document, 'keydown', this.boundHandleKeyPress_);
     };
     /**
      * Called when this ClickableComponent has focus and a key gets pressed down. By
@@ -12250,7 +12288,7 @@
 
 
     _proto.handleBlur = function handleBlur(event) {
-      off(document, 'keydown', bind(this, this.handleKeyPress));
+      off(document, 'keydown', this.boundHandleKeyPress_);
     };
 
     return ClickableComponent;
@@ -16612,6 +16650,7 @@
       }
 
       _this = _Component.call(this, player, options) || this;
+      _this.boundHandleKeyPress_ = bind(_assertThisInitialized(_assertThisInitialized(_this)), _this.handleKeyPress);
       _this.menuButton_ = new Button(player, options);
 
       _this.menuButton_.controlText(_this.controlText_);
@@ -16678,6 +16717,17 @@
       } else {
         this.show();
       }
+    };
+
+    _proto.dispose = function dispose() {
+      // Bail out if the component has already been disposed.
+      if (this.isDisposed_) {
+        return;
+      }
+
+      off(document, 'keydown', this.boundHandleKeyPress_);
+
+      _Component.prototype.dispose.call(this);
     };
     /**
      * Create the menu and add all items to it.
@@ -16857,7 +16907,7 @@
 
 
     _proto.handleFocus = function handleFocus() {
-      on(document, 'keydown', bind(this, this.handleKeyPress));
+      on(document, 'keydown', this.boundHandleKeyPress_);
     };
     /**
      * Called when a `MenuButton` loses focus. Turns off the listener for
@@ -16871,7 +16921,7 @@
 
 
     _proto.handleBlur = function handleBlur() {
-      off(document, 'keydown', bind(this, this.handleKeyPress));
+      off(document, 'keydown', this.boundHandleKeyPress_);
     };
     /**
      * Handle tab, escape, down arrow, and up arrow keys for `MenuButton`. See
@@ -22459,7 +22509,10 @@
       } // Run base component initializing with new options
 
 
-      _this = _Component.call(this, null, options, ready) || this; // create logger
+      _this = _Component.call(this, null, options, ready) || this; // Create bound methods for document listeners.
+
+      _this.boundDocumentFullscreenChange_ = bind(_assertThisInitialized(_assertThisInitialized(_this)), _this.documentFullscreenChange_);
+      _this.boundFullWindowOnEscKey_ = bind(_assertThisInitialized(_assertThisInitialized(_this)), _this.fullWindowOnEscKey); // create logger
 
       _this.log = createLogger$1(_this.id_); // Tracks when a tech changes the poster
 
@@ -22658,7 +22711,12 @@
 
       if (IE_VERSION || IS_FIREFOX && prefixedAPI) {
         this.off(document, FullscreenApi.fullscreenchange, this.handleFullscreenChange_);
-      }
+      } // Make sure all player-specific document listeners are unbound. This is
+
+
+      var fsApi = FullscreenApi;
+      off(document, fsApi.fullscreenchange, this.boundDocumentFullscreenChange_);
+      off(document, 'keydown', this.boundFullWindowOnEscKey_);
 
       if (this.styleEl_ && this.styleEl_.parentNode) {
         this.styleEl_.parentNode.removeChild(this.styleEl_);
@@ -24104,7 +24162,7 @@
       this.isFullscreen(document[fsApi.fullscreenElement]); // If cancelling fullscreen, remove event listener.
 
       if (this.isFullscreen() === false) {
-        off(document, fsApi.fullscreenchange, bind(this, this.documentFullscreenChange_));
+        off(document, fsApi.fullscreenchange, this.boundDocumentFullscreenChange_);
 
         if (prefixedAPI) {
           this.handleFullscreenChange_({}, false);
@@ -24787,7 +24845,7 @@
         // events
 
 
-        on(document, fsApi.fullscreenchange, bind(this, this.documentFullscreenChange_));
+        on(document, fsApi.fullscreenchange, this.boundDocumentFullscreenChange_);
         this.el_[fsApi.requestFullscreen]();
       } else if (this.tech_.supportsFullScreen()) {
         // we can't take the video.js controls fullscreen but we can go fullscreen
@@ -24818,7 +24876,7 @@
 
       if (fsApi.requestFullscreen) {
         // remove the document level handler if we're getting called directly.
-        off(document, fsApi.fullscreenchange, bind(this, this.documentFullscreenChange_));
+        off(document, fsApi.fullscreenchange, this.boundDocumentFullscreenChange_);
         document[fsApi.exitFullscreen]();
       } else if (this.tech_.supportsFullScreen()) {
         this.techCall_('exitFullScreen');
@@ -24845,7 +24903,7 @@
 
       this.docOrigOverflow = document.documentElement.style.overflow; // Add listener for esc key to exit fullscreen
 
-      on(document, 'keydown', bind(this, this.fullWindowOnEscKey)); // Hide any scroll bars
+      on(document, 'keydown', this.boundFullWindowOnEscKey_); // Hide any scroll bars
 
       document.documentElement.style.overflow = 'hidden'; // Apply fullscreen styles
 
@@ -24884,7 +24942,7 @@
 
     _proto.exitFullWindow = function exitFullWindow() {
       this.isFullWindow = false;
-      off(document, 'keydown', this.fullWindowOnEscKey); // Unhide scroll bars.
+      off(document, 'keydown', this.boundFullWindowOnEscKey_); // Unhide scroll bars.
 
       document.documentElement.style.overflow = this.docOrigOverflow; // Remove fullscreen styles
 

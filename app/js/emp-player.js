@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.2.125-502 
+ * EMP-Player 2.2.126-503 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -1606,6 +1606,39 @@
     return data;
   }
   /**
+   * Throws an error if the passed string has whitespace. This is used by
+   * class methods to be relatively consistent with the classList API.
+   *
+   * @param {string} str
+   *         The string to check for whitespace.
+   *
+   * @throws {Error}
+   *         Throws an error if there is whitespace in the string.
+   *
+   */
+
+
+  function throwIfWhitespace(str) {
+    if (/\s/.test(str)) {
+      throw new Error('class has illegal whitespace characters');
+    }
+  }
+  /**
+   * Produce a regular expression for matching a className within an elements className.
+   *
+   * @param {string} className
+   *         The className to generate the RegExp for.
+   *
+   * @return {RegExp}
+   *         The RegExp that will check for a specific `className` in an elements
+   *         className.
+   */
+
+
+  function classRegExp(className) {
+    return new RegExp('(^|\\s)' + className + '($|\\s)');
+  }
+  /**
    * Whether the current DOM interface appears to be real.
    *
    * @return {boolean} DOM interface appears to be real.
@@ -1713,6 +1746,63 @@
     }
 
     return el;
+  }
+  /**
+   * Check if an element has a CSS class
+   *
+   * @param {Element} element
+   *        Element to check
+   *
+   * @param {string} classToCheck
+   *        Class name to check for
+   *
+   * @return {boolean}
+   *         - True if the element had the class
+   *         - False otherwise.
+   *
+   * @throws {Error}
+   *         Throws an error if `classToCheck` has white space.
+   */
+
+  function hasClass(element, classToCheck) {
+    if (!element) {
+      return false;
+    }
+
+    throwIfWhitespace(classToCheck);
+
+    if (element.classList) {
+      return element.classList.contains(classToCheck);
+    }
+
+    return classRegExp(classToCheck).test(element.className);
+  }
+  /**
+   * Add a CSS class name to an element
+   *
+   * @param {Element} element
+   *        Element to add class name to.
+   *
+   * @param {string} classToAdd
+   *        Class name to add.
+   *
+   * @return {Element}
+   *         The dom element with the added class name.
+   */
+
+  function addClass(element, classToAdd) {
+    if (!element) {
+      return;
+    }
+
+    if (element.classList) {
+      element.classList.add(classToAdd); // Don't need to `throwIfWhitespace` here because `hasElClass` will do it
+      // in the case of classList not being supported.
+    } else if (!hasClass(element, classToAdd)) {
+      element.className = (element.className + ' ' + classToAdd).trim();
+    }
+
+    return element;
   }
   /**
    * Identical to the native `getBoundingClientRect` function, but ensures that
@@ -6706,7 +6796,7 @@
       this.thumbnailHolder = thumbHolder;
 
       if (mouseDisplay) {
-        mouseDisplay.classList.add('vjs-hidden');
+        addClass(mouseDisplay, 'vjs-hidden');
       }
 
       this.registeredEvents.progressBarMouseEnter = function () {
@@ -7115,7 +7205,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.2.125-502';
+  vttThumbnailsPlugin.VERSION = '2.2.126-503';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -7918,7 +8008,7 @@
     return PlaylistPlugin;
   }(Plugin$1);
 
-  PlaylistPlugin.VERSION = '2.2.125-502';
+  PlaylistPlugin.VERSION = '2.2.126-503';
 
   if (videojs.getPlugin('playList')) {
     videojs.log.warn('A plugin named "PlaylistPlugin" already exists.');
@@ -10465,8 +10555,7 @@
           // log('playheadMoving off', true);
           _this10.prePlayheadTime_ = 0;
 
-          _this10.removeClass('vjs-waiting'); // edgeIELoadingBugWorkaround_(); Add if need
-
+          _this10.removeClass('vjs-waiting');
 
           if (_this10.paused()) {
             _this10.trigger(empPlayerEvents.PAUSE);
@@ -10478,20 +10567,6 @@
         }
       });
     }
-    /*
-    //Temporary bug fix to overcome shaka bug in IE/Edge where the loading spinner never disapears after seek occurs.
-    edgeIELoadingBugWorkaround_() {
-      this.on(EmpPlayerEvents.SEEKED, () => {
-        var loadings = document.getElementsByClassName('vjs-waiting');
-        [].forEach.call(loadings, function (loadingEl) {
-          if (loadingEl && loadingEl.classList) {
-            loadingEl.classList.remove('vjs-waiting');
-          }
-        });
-      });
-    }
-    */
-
     /**
     * Check if playhead is moving
      *
@@ -10711,7 +10786,7 @@
     }, {
       key: "version",
       get: function get() {
-        return '2.2.125-502';
+        return '2.2.126-503';
       }
       /**
        * Get entitlement
@@ -14547,7 +14622,7 @@
     return AnalyticsPlugin;
   }(Plugin$2);
 
-  AnalyticsPlugin.VERSION = '2.2.125-502';
+  AnalyticsPlugin.VERSION = '2.2.126-503';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -18292,7 +18367,7 @@
     return ProgramService;
   }(Plugin$3);
 
-  ProgramService.VERSION = '2.2.125-502';
+  ProgramService.VERSION = '2.2.126-503';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -18529,7 +18604,7 @@
     return EntitlementExpirationService;
   }(Plugin$4);
 
-  EntitlementExpirationService.VERSION = '2.2.125-502';
+  EntitlementExpirationService.VERSION = '2.2.126-503';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -19105,7 +19180,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.2.125-502';
+  EntitlementMiddleware.VERSION = '2.2.126-503';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -19234,7 +19309,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.2.125-502';
+  empPlayer.VERSION = '2.2.126-503';
   /*
    * Universal Module Definition (UMD)
    *
