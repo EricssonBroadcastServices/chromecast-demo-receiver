@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.2.126-503 
+ * EMP-Player 2.2.126-504 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -6733,7 +6733,13 @@
       this.getVttFile(url).then(function (data) {
         _this2.vttData = _this2.processVtt(data);
 
-        _this2.setupThumbnailElement();
+        if (_this2.vttData.length > 0) {
+          _this2.setupThumbnailElement();
+        } else {
+          log('Empty vttThumbnail file.');
+        }
+      })["catch"](function () {
+        log('No vttThumbnail file.');
       });
     }
     /**
@@ -6763,7 +6769,8 @@
       return new Promise(function (resolve, reject) {
         var req = new XMLHttpRequest();
         req.data = {
-          resolve: resolve
+          resolve: resolve,
+          reject: reject
         };
         req.addEventListener('load', _this3.vttFileLoaded);
         req.open('GET', url);
@@ -6776,7 +6783,11 @@
     ;
 
     _proto.vttFileLoaded = function vttFileLoaded() {
-      this.data.resolve(this.responseText);
+      if (this.status >= 200 && this.status < 300) {
+        this.data.resolve(this.responseText);
+      } else {
+        this.data.reject();
+      }
     }
     /**
      * setupThumbnailElement
@@ -6787,6 +6798,10 @@
 
     _proto.setupThumbnailElement = function setupThumbnailElement(data) {
       var _this4 = this;
+
+      if (!this.player || this.player.isDisposed()) {
+        return;
+      }
 
       var mouseDisplay = this.player.$('.vjs-mouse-display');
       this.progressBar = this.player.$('.vjs-progress-control');
@@ -7205,7 +7220,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.2.126-503';
+  vttThumbnailsPlugin.VERSION = '2.2.126-504';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -8008,7 +8023,7 @@
     return PlaylistPlugin;
   }(Plugin$1);
 
-  PlaylistPlugin.VERSION = '2.2.126-503';
+  PlaylistPlugin.VERSION = '2.2.126-504';
 
   if (videojs.getPlugin('playList')) {
     videojs.log.warn('A plugin named "PlaylistPlugin" already exists.');
@@ -10786,7 +10801,7 @@
     }, {
       key: "version",
       get: function get() {
-        return '2.2.126-503';
+        return '2.2.126-504';
       }
       /**
        * Get entitlement
@@ -14622,7 +14637,7 @@
     return AnalyticsPlugin;
   }(Plugin$2);
 
-  AnalyticsPlugin.VERSION = '2.2.126-503';
+  AnalyticsPlugin.VERSION = '2.2.126-504';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -18367,7 +18382,7 @@
     return ProgramService;
   }(Plugin$3);
 
-  ProgramService.VERSION = '2.2.126-503';
+  ProgramService.VERSION = '2.2.126-504';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -18604,7 +18619,7 @@
     return EntitlementExpirationService;
   }(Plugin$4);
 
-  EntitlementExpirationService.VERSION = '2.2.126-503';
+  EntitlementExpirationService.VERSION = '2.2.126-504';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -19180,7 +19195,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.2.126-503';
+  EntitlementMiddleware.VERSION = '2.2.126-504';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -19309,7 +19324,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.2.126-503';
+  empPlayer.VERSION = '2.2.126-504';
   /*
    * Universal Module Definition (UMD)
    *
