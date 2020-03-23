@@ -263,3 +263,18 @@ EMP-14060 Start from bookmark with VOD used old technology.
 - Use imagescaler for media info images.
 - Add getMediaInfo method to player.
 - Update to HTML5 Player 2.2.125
+
+## 2.2.126
+
+### Bug fixes
+- fix problem with VTT Thumbnails class
+- fix events leaks on dispose
+- EMP-14147 Double call to src method when not setting sessionToken with anonymous login
+
+### New features
+- update hls.js to 0.13.2, EmpHLS-MSE
+
+## 2.2.127
+
+### Bug fixes
+EMP-14065 Poster is not showing with more than one tech.
