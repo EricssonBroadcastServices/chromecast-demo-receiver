@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.2.127-515 
+ * EMP-Player 2.2.127-516 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -48,7 +48,7 @@
     return _setPrototypeOf(o, p);
   }
 
-  function isNativeReflectConstruct() {
+  function _isNativeReflectConstruct() {
     if (typeof Reflect === "undefined" || !Reflect.construct) return false;
     if (Reflect.construct.sham) return false;
     if (typeof Proxy === "function") return true;
@@ -62,7 +62,7 @@
   }
 
   function _construct(Parent, args, Class) {
-    if (isNativeReflectConstruct()) {
+    if (_isNativeReflectConstruct()) {
       _construct = Reflect.construct;
     } else {
       _construct = function _construct(Parent, args, Class) {
@@ -4677,7 +4677,7 @@
     return DownloadService;
   }(Plugin);
 
-  DownloadService.VERSION = '2.2.127-515';
+  DownloadService.VERSION = '2.2.127-516';
 
   if (videojs.getPlugin('DownloadService')) {
     videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -5881,8 +5881,8 @@
         return false;
       }
 
-      var hasWebKit = 'WebKitMediaSource' in window_1;
-      var hasMediaSource = 'MediaSource' in window_1;
+      var hasWebKit = ('WebKitMediaSource' in window_1);
+      var hasMediaSource = ('MediaSource' in window_1);
       return hasWebKit || hasMediaSource;
     }
     /**
@@ -6516,7 +6516,7 @@
   EmpShaka.prototype.featuresNativeTextTracks = false;
   EmpShaka.prototype.featuresNativeAudioTracks = false;
   Tech$1.withSourceHandlers(EmpShaka);
-  EmpShaka.VERSION = '2.2.127-515'; // Unset source handlers set by Html5 super class.
+  EmpShaka.VERSION = '2.2.127-516'; // Unset source handlers set by Html5 super class.
   // We do not intent to support any sources other then sources allowed by nativeSourceHandler
 
   EmpShaka.sourceHandlers = [];

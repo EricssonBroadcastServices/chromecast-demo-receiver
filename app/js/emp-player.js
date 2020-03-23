@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.2.127-515 
+ * EMP-Player 2.2.127-516 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -48,7 +48,7 @@
     return _setPrototypeOf(o, p);
   }
 
-  function isNativeReflectConstruct() {
+  function _isNativeReflectConstruct() {
     if (typeof Reflect === "undefined" || !Reflect.construct) return false;
     if (Reflect.construct.sham) return false;
     if (typeof Proxy === "function") return true;
@@ -62,7 +62,7 @@
   }
 
   function _construct(Parent, args, Class) {
-    if (isNativeReflectConstruct()) {
+    if (_isNativeReflectConstruct()) {
       _construct = Reflect.construct;
     } else {
       _construct = function _construct(Parent, args, Class) {
@@ -131,6 +131,43 @@
 
     strings.raw = raw;
     return strings;
+  }
+
+  function _unsupportedIterableToArray(o, minLen) {
+    if (!o) return;
+    if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+    var n = Object.prototype.toString.call(o).slice(8, -1);
+    if (n === "Object" && o.constructor) n = o.constructor.name;
+    if (n === "Map" || n === "Set") return Array.from(n);
+    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+  }
+
+  function _arrayLikeToArray(arr, len) {
+    if (len == null || len > arr.length) len = arr.length;
+
+    for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+
+    return arr2;
+  }
+
+  function _createForOfIteratorHelperLoose(o) {
+    var i = 0;
+
+    if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {
+      if (Array.isArray(o) || (o = _unsupportedIterableToArray(o))) return function () {
+        if (i >= o.length) return {
+          done: true
+        };
+        return {
+          done: false,
+          value: o[i++]
+        };
+      };
+      throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+    }
+
+    i = o[Symbol.iterator]();
+    return i.next.bind(i);
   }
 
   var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
@@ -3218,36 +3255,14 @@
     var _proto = SeekBar.prototype;
 
     _proto.updateMarkers = function updateMarkers(event, data) {
-      for (var _iterator = this.markers, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-        var _ref;
-
-        if (_isArray) {
-          if (_i >= _iterator.length) break;
-          _ref = _iterator[_i++];
-        } else {
-          _i = _iterator.next();
-          if (_i.done) break;
-          _ref = _i.value;
-        }
-
-        var _marker = _ref;
+      for (var _iterator = _createForOfIteratorHelperLoose(this.markers), _step; !(_step = _iterator()).done;) {
+        var _marker = _step.value;
         this.removeChild(_marker);
       }
 
       if (data && data.timeline) {
-        for (var _iterator2 = data.timeline.getAllElements(), _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
-          var _ref2;
-
-          if (_isArray2) {
-            if (_i2 >= _iterator2.length) break;
-            _ref2 = _iterator2[_i2++];
-          } else {
-            _i2 = _iterator2.next();
-            if (_i2.done) break;
-            _ref2 = _i2.value;
-          }
-
-          var element = _ref2;
+        for (var _iterator2 = _createForOfIteratorHelperLoose(data.timeline.getAllElements()), _step2; !(_step2 = _iterator2()).done;) {
+          var element = _step2.value;
 
           if (element.type === 'advert') {
             var marker = new EmpMarker(this.player_, {
@@ -3357,19 +3372,8 @@
     _proto.handleEnded = function handleEnded(event) {
       this.update_(this.player_.duration(), 1);
 
-      for (var _iterator3 = this.markers, _isArray3 = Array.isArray(_iterator3), _i3 = 0, _iterator3 = _isArray3 ? _iterator3 : _iterator3[Symbol.iterator]();;) {
-        var _ref3;
-
-        if (_isArray3) {
-          if (_i3 >= _iterator3.length) break;
-          _ref3 = _iterator3[_i3++];
-        } else {
-          _i3 = _iterator3.next();
-          if (_i3.done) break;
-          _ref3 = _i3.value;
-        }
-
-        var marker = _ref3;
+      for (var _iterator3 = _createForOfIteratorHelperLoose(this.markers), _step3; !(_step3 = _iterator3()).done;) {
+        var marker = _step3.value;
         this.removeChild(marker);
       }
     }
@@ -7220,7 +7224,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.2.127-515';
+  vttThumbnailsPlugin.VERSION = '2.2.127-516';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -8023,7 +8027,7 @@
     return PlaylistPlugin;
   }(Plugin$1);
 
-  PlaylistPlugin.VERSION = '2.2.127-515';
+  PlaylistPlugin.VERSION = '2.2.127-516';
 
   if (videojs.getPlugin('playList')) {
     videojs.log.warn('A plugin named "PlaylistPlugin" already exists.');
@@ -10824,7 +10828,7 @@
     }, {
       key: "version",
       get: function get() {
-        return '2.2.127-515';
+        return '2.2.127-516';
       }
       /**
        * Get entitlement
@@ -14660,7 +14664,7 @@
     return AnalyticsPlugin;
   }(Plugin$2);
 
-  AnalyticsPlugin.VERSION = '2.2.127-515';
+  AnalyticsPlugin.VERSION = '2.2.127-516';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -18405,7 +18409,7 @@
     return ProgramService;
   }(Plugin$3);
 
-  ProgramService.VERSION = '2.2.127-515';
+  ProgramService.VERSION = '2.2.127-516';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -18642,7 +18646,7 @@
     return EntitlementExpirationService;
   }(Plugin$4);
 
-  EntitlementExpirationService.VERSION = '2.2.127-515';
+  EntitlementExpirationService.VERSION = '2.2.127-516';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -19221,7 +19225,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.2.127-515';
+  EntitlementMiddleware.VERSION = '2.2.127-516';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -19350,7 +19354,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.2.127-515';
+  empPlayer.VERSION = '2.2.127-516';
   /*
    * Universal Module Definition (UMD)
    *
