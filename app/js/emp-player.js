@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.2.127-518 
+ * EMP-Player 2.2.127-519 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -2181,7 +2181,11 @@
         if (player.tech_ && player.tech_.liveDelay !== undefined) {
           liveDelay = player.tech_.liveDelay();
         } else {
-          liveDelay = (this.getServerTime(player) - this.getSeekTimerange(player).end) / 1000;
+          var entitlement = this.getEntitlement(player); // We can't calculate liveDelay without a referenceTime for HLS
+
+          if (entitlement || player.streamType !== 'HLS') {
+            liveDelay = (this.getServerTime(player) - this.getSeekTimerange(player).end) / 1000;
+          }
         }
       }
 
@@ -2317,13 +2321,19 @@
     },
     remainingTime: function remainingTime(player) {
       if (!player.tech_ || player.tech_.remainingTime === undefined) {
-        var duration = player.duration();
+        if (!player.tech_ || player.tech_.seekable === undefined || player.seeking()) {
+          log.warn('No tech_.seekable');
+          return 0;
+        }
 
-        if (duration === Infinity || duration === 0) {
+        var seekable = player.techGet_('seekable');
+        var end = seekable.end(0);
+
+        if (end === Infinity || end === 0) {
           return Infinity;
         }
 
-        return duration - player.currentTime();
+        return end - player.currentTime();
       }
 
       return player.techGet_('remainingTime');
@@ -2415,17 +2425,24 @@
 
       if (player.tech_.gotoLive) {
         player.techCall_('gotoLive');
-      } else if (entitlement && entitlement.isDynamicCachupAsLive) {
-        this.setAbsoluteTime(player, new Date(player.getServerTime()));
-      } else if (entitlement && entitlement.isStaticCachupAsLive) {
+      } else if (entitlement && !entitlement.timeshiftEnabled) {
         var asset = this.currentAsset(player);
 
         if (asset && asset.channelId) {
           player.startPlayback(null, asset.channelId, null);
         }
+      } else if (entitlement && entitlement.isDynamicCachupAsLive) {
+        this.setAbsoluteTime(player, new Date(player.getServerTime()));
+      } else if (entitlement && entitlement.isStaticCachupAsLive) {
+        var _asset = this.currentAsset(player);
+
+        if (_asset && _asset.channelId) {
+          player.startPlayback(null, _asset.channelId, null);
+        }
       } else if (this.isLive(player)) {
-        var duration = player.duration();
-        player.currentTime(duration);
+        var seekrange = player.seekable();
+        var end = seekrange.end(0);
+        player.currentTime(end);
       } else {
         log.warn('Not suppoted for VOD');
       }
@@ -2790,6 +2807,12 @@
       // '-' is false for all relational operators (e.g. <, >=) so this setting
       // will add the minimum number of fields specified by the guide
       h = m = s = '-';
+    } // only show 24 hours time if unixtime
+
+
+    if (h > 1000) {
+      var d = new Date(h * 3600 * 1000);
+      h = d.getHours();
     } // Check if we need to show hours
 
 
@@ -2969,7 +2992,18 @@
         var content = formatTime(seekBarPoint * duration, duration);
         _this.el_.style.left = seekBarRect.width * seekBarPoint + "px";
 
-        _this.getChild('timeTooltip').update(seekBarRect, seekBarPoint, content);
+        var timeTooltip = _this.getChild('timeTooltip');
+
+        if (!timeTooltip) {
+          return;
+        }
+
+        if (_this.player_.noEPG() && _this.player_.isLive()) {
+          var startTimeLive = _this.player_.startTimeLive() / 1000;
+          content = formatTime(startTimeLive + seekBarPoint * duration, duration);
+        }
+
+        timeTooltip.update(seekBarRect, seekBarPoint, content);
       });
     };
 
@@ -3175,6 +3209,85 @@
   };
 
   var Component$5 = videojs.getComponent('Component');
+  /**
+   * Used by {@link SeekBar} to display media playback progress as part of the
+   * {@link ProgressControl}.
+   *
+   * @extends Component
+   */
+
+  var PlayProgressBar = /*#__PURE__*/function (_Component) {
+    _inheritsLoose(PlayProgressBar, _Component);
+
+    function PlayProgressBar() {
+      return _Component.apply(this, arguments) || this;
+    }
+
+    var _proto = PlayProgressBar.prototype;
+
+    /**
+     * Create the the DOM element for this class.
+     *
+     * @return {Element}
+     *         The element that was created.
+     */
+    _proto.createEl = function createEl() {
+      return _Component.prototype.createEl.call(this, 'div', {
+        className: 'vjs-play-progress vjs-slider-bar'
+      }, {
+        'aria-hidden': 'true'
+      });
+    }
+    /**
+     * Enqueues updates to its own DOM as well as the DOM of its
+     * {@link TimeTooltip} child.
+     *
+     * @param {Object} seekBarRect
+     *        The `ClientRect` for the {@link SeekBar} element.
+     *
+     * @param {number} seekBarPoint
+     *        A number from 0 to 1, representing a horizontal reference point
+     *        from the left edge of the {@link SeekBar}
+     */
+    ;
+
+    _proto.update = function update(seekBarRect, seekBarPoint) {
+      var timeTooltip = this.getChild('timeTooltip');
+
+      if (!timeTooltip) {
+        return;
+      }
+
+      var time = this.player_.scrubbing() ? this.player_.getCache().currentTime : this.player_.currentTime();
+
+      if (this.player_.noEPG() && this.player_.isLive()) {
+        time = time + this.player_.startTimeLive() / 1000;
+      }
+
+      timeTooltip.updateTime(seekBarRect, seekBarPoint, time);
+    };
+
+    return PlayProgressBar;
+  }(Component$5);
+  /**
+   * Default options for {@link PlayProgressBar}.
+   *
+   * @type {Object}
+   * @private
+   */
+
+
+  PlayProgressBar.prototype.options_ = {
+    children: []
+  }; // Time tooltips should not be added to a player on mobile devices
+
+  if (!IS_IOS && !IS_ANDROID) {
+    PlayProgressBar.prototype.options_.children.push('timeTooltip');
+  }
+
+  Component$5.registerComponent('PlayProgressBar', PlayProgressBar);
+
+  var Component$6 = videojs.getComponent('Component');
   var Slider = videojs.getComponent('Slider'); // The number of seconds the `step*` functions move the timeline.
 
   var STEP_SECONDS = 5; // The interval at which the bar should update as it progresses.
@@ -3386,7 +3499,14 @@
     ;
 
     _proto.getPercent = function getPercent() {
-      var percent = this.getCurrentTime_() / this.player_.duration();
+      var seekrange = this.player_.seekable();
+      var start = 0;
+
+      if (seekrange.length > 0) {
+        start = seekrange.start(0);
+      }
+
+      var percent = (this.getCurrentTime_() - start) / this.player_.duration();
       return percent >= 1 ? 1 : percent;
     }
     /**
@@ -3421,7 +3541,14 @@
         newTime = newTime - 0.1;
       }
 
-      this.setCurrentTime(newTime);
+      var seekrange = this.player_.seekable();
+      var start = 0;
+
+      if (seekrange.length > 0) {
+        start = seekrange.start(0);
+      }
+
+      this.setCurrentTime(newTime + start);
     }
     /**
      * setCurrentTime
@@ -3623,7 +3750,7 @@
 
 
   SeekBar.prototype.playerEvent = 'timeupdate';
-  Component$5.registerComponent('SeekBar', SeekBar);
+  Component$6.registerComponent('SeekBar', SeekBar);
 
   /**
    * Returns whether an object is `Promise`-like (i.e. has a `then` method).
@@ -3654,7 +3781,7 @@
   }
 
   var Button$1 = videojs.getComponent('Button');
-  var Component$6 = videojs.getComponent('Component');
+  var Component$7 = videojs.getComponent('Component');
   /**
    * Displays a button to jump back to the beginning of the current asset / program
    *
@@ -3781,10 +3908,10 @@
   }(Button$1);
 
   EmpRestartButton.prototype.controlText_ = 'Restart';
-  Component$6.registerComponent('EmpRestartButton', EmpRestartButton);
+  Component$7.registerComponent('EmpRestartButton', EmpRestartButton);
 
   var Button$2 = videojs.getComponent('Button');
-  var Component$7 = videojs.getComponent('Component');
+  var Component$8 = videojs.getComponent('Component');
   /**
    * Displays a button to jump forward a few seconds
    *
@@ -3892,10 +4019,10 @@
   }(Button$2);
 
   EmpForwardButton.prototype.controlText_ = 'Forward';
-  Component$7.registerComponent('EmpForwardButton', EmpForwardButton);
+  Component$8.registerComponent('EmpForwardButton', EmpForwardButton);
 
   var Button$3 = videojs.getComponent('Button');
-  var Component$8 = videojs.getComponent('Component');
+  var Component$9 = videojs.getComponent('Component');
   /**
    * Displays a button to jump back a few seconds
    *
@@ -4003,10 +4130,10 @@
   }(Button$3);
 
   EmpRewindButton.prototype.controlText_ = 'Rewind';
-  Component$8.registerComponent('EmpRewindButton', EmpRewindButton);
+  Component$9.registerComponent('EmpRewindButton', EmpRewindButton);
 
   var Button$4 = videojs.getComponent('Button');
-  var Component$9 = videojs.getComponent('Component');
+  var Component$a = videojs.getComponent('Component');
   /**
    * Displays a button to jump back to the beginning of the current asset / program and request a new entitlement
    *
@@ -4052,9 +4179,9 @@
   }(Button$4);
 
   EmpReloadButton.prototype.controlText_ = 'Reload';
-  Component$9.registerComponent('EmpReloadButton', EmpReloadButton);
+  Component$a.registerComponent('EmpReloadButton', EmpReloadButton);
 
-  var Component$a = videojs.getComponent('Component');
+  var Component$b = videojs.getComponent('Component');
   var UPDATE_REFRESH_INTERVAL$1 = !IS_CHROMECAST && !window_1.EMP_DEBUG_CHROMECAST ? 30 : 1000;
   /**
    * Displays the time left or the current time in the video
@@ -4136,6 +4263,11 @@
       if (this.mode_ === 'currentTime') {
         var time = this.player_.scrubbing() ? this.player_.getCache().currentTime : this.player_.currentTime();
         var localizedText = this.localize('Current Time');
+
+        if (this.player_.noEPG() && this.player_.isLive()) {
+          time = time + this.player_.startTimeLive() / 1000;
+        }
+
         var formattedTime = formatTime(time, this.player_.duration());
 
         if (formattedTime !== this.formattedTime_) {
@@ -4177,13 +4309,13 @@
     };
 
     return EmpTimeDisplay;
-  }(Component$a);
+  }(Component$b);
 
-  Component$a.registerComponent('EmpTimeDisplay', EmpTimeDisplay);
-  Component$a.registerComponent('EmpTimeDisplay2', EmpTimeDisplay);
+  Component$b.registerComponent('EmpTimeDisplay', EmpTimeDisplay);
+  Component$b.registerComponent('EmpTimeDisplay2', EmpTimeDisplay);
 
   var Button$5 = videojs.getComponent('Button');
-  var Component$b = videojs.getComponent('Component');
+  var Component$c = videojs.getComponent('Component');
   /**
    * The button component for stopping playback
    *
@@ -4267,10 +4399,10 @@
 
   EmpStopButton.prototype.kind_ = 'stop';
   EmpStopButton.prototype.controlText_ = 'Stop';
-  Component$b.registerComponent('EmpStopButton', EmpStopButton);
+  Component$c.registerComponent('EmpStopButton', EmpStopButton);
 
   var PlayToggle = videojs.getComponent('PlayToggle');
-  var Component$c = videojs.getComponent('Component');
+  var Component$d = videojs.getComponent('Component');
   /**
    * The button component for the play toggle
    *
@@ -4348,7 +4480,7 @@
 
   EmpPlayToggle.prototype.kind_ = 'playToggle';
   EmpPlayToggle.prototype.controlText_ = 'playToggle';
-  Component$c.registerComponent('EmpPlayToggle', EmpPlayToggle);
+  Component$d.registerComponent('EmpPlayToggle', EmpPlayToggle);
 
   var Button$6 = videojs.getComponent('Button');
   /**
@@ -4461,7 +4593,7 @@
   videojs.registerComponent('AirplayToggle', AirplayToggle);
 
   var Button$7 = videojs.getComponent('Button');
-  var Component$d = videojs.getComponent('Component');
+  var Component$e = videojs.getComponent('Component');
   /**
    * Displays a button to jump forward a few seconds
    *
@@ -4571,10 +4703,10 @@
   }(Button$7);
 
   EmpNextButton.prototype.controlText_ = 'Next';
-  Component$d.registerComponent('EmpNextButton', EmpNextButton);
+  Component$e.registerComponent('EmpNextButton', EmpNextButton);
 
   var Button$8 = videojs.getComponent('Button');
-  var Component$e = videojs.getComponent('Component');
+  var Component$f = videojs.getComponent('Component');
   /**
    * Displays a button to jump back a few seconds
    *
@@ -4675,7 +4807,7 @@
   }(Button$8);
 
   EmpPreviousButton.prototype.controlText_ = 'Previous';
-  Component$e.registerComponent('EmpPreviousButton', EmpPreviousButton);
+  Component$f.registerComponent('EmpPreviousButton', EmpPreviousButton);
 
   var Button$9 = videojs.getComponent('Button');
   /**
@@ -4869,7 +5001,7 @@
   videojs.registerComponent('PipToggle', PipToggle);
 
   var MenuItem$1 = videojs.getComponent('MenuItem');
-  var Component$f = videojs.getComponent('Component');
+  var Component$g = videojs.getComponent('Component');
   /**
    * The specific menu item type for selecting a bitrate
    *
@@ -4929,10 +5061,10 @@
     return PlaylistMenuItem;
   }(MenuItem$1);
 
-  Component$f.registerComponent('PlaylistMenuItem', PlaylistMenuItem);
+  Component$g.registerComponent('PlaylistMenuItem', PlaylistMenuItem);
 
   var MenuButton$1 = videojs.getComponent('MenuButton');
-  var Component$g = videojs.getComponent('Component');
+  var Component$h = videojs.getComponent('Component');
   /**
    * The class for PlaylistButton
    *
@@ -5048,10 +5180,10 @@
   }(MenuButton$1);
 
   PlaylistButton.prototype.controlText_ = 'Playlist';
-  Component$g.registerComponent('PlaylistButton', PlaylistButton);
+  Component$h.registerComponent('PlaylistButton', PlaylistButton);
 
   var ControlBar = videojs.getComponent('ControlBar');
-  var Component$h = videojs.getComponent('Component');
+  var Component$i = videojs.getComponent('Component');
   /**
    * Container of main controls
    *
@@ -5106,7 +5238,7 @@
     }
   }; // loadProgressBar > seekBar > mouseTimeDisplay uses a reference to 'controlbar' so we need to override the name for compatibility with our own controlbar
 
-  Component$h.registerComponent('ControlBar', EmpControlBar);
+  Component$i.registerComponent('ControlBar', EmpControlBar);
 
   /**
    * @file time-ranges.js
@@ -5220,7 +5352,7 @@
     }
   }
 
-  var Component$i = videojs.getComponent('Component');
+  var Component$j = videojs.getComponent('Component');
   var darkGray = '#222';
   var lightGray = '#ccc';
   var fontMap = {
@@ -5754,11 +5886,11 @@
     };
 
     return TextTrackDisplay;
-  }(Component$i);
+  }(Component$j);
 
-  Component$i.registerComponent('TextTrackDisplay', TextTrackDisplay);
+  Component$j.registerComponent('TextTrackDisplay', TextTrackDisplay);
 
-  var Component$j = videojs.getComponent('Component');
+  var Component$k = videojs.getComponent('Component');
   var ModalDialog = videojs.getComponent('ModalDialog');
   var LOCAL_STORAGE_KEY = 'vjs-text-track-settings';
   var COLOR_BLACK = ['#000', 'Black'];
@@ -6299,9 +6431,9 @@
     return TextTrackSettings;
   }(ModalDialog);
 
-  Component$j.registerComponent('TextTrackSettings', TextTrackSettings);
+  Component$k.registerComponent('TextTrackSettings', TextTrackSettings);
 
-  var Component$k = videojs.getComponent('Component');
+  var Component$l = videojs.getComponent('Component');
   /**
    * EmpMediaInfoBar Show media-title, media-artwork, media-resolution and media-subtitle
    *
@@ -6579,10 +6711,10 @@
     };
 
     return EmpMediaInfoBar;
-  }(Component$k);
+  }(Component$l);
 
   EmpMediaInfoBar.prototype.controlText_ = 'MediaInfo';
-  Component$k.registerComponent('EmpMediaInfoBar', EmpMediaInfoBar);
+  Component$l.registerComponent('EmpMediaInfoBar', EmpMediaInfoBar);
 
   var Plugin = videojs.getPlugin('plugin');
   /* global
@@ -7224,7 +7356,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.2.127-518';
+  vttThumbnailsPlugin.VERSION = '2.2.127-519';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -8027,7 +8159,7 @@
     return PlaylistPlugin;
   }(Plugin$1);
 
-  PlaylistPlugin.VERSION = '2.2.127-518';
+  PlaylistPlugin.VERSION = '2.2.127-519';
 
   if (videojs.getPlugin('playList')) {
     videojs.log.warn('A plugin named "PlaylistPlugin" already exists.');
@@ -8042,6 +8174,8 @@
   if (window_1.vttjs) {
     window_1.vttjs.restore();
   }
+
+  videojs.setFormatTime(formatTime);
   /**
    * Player class, inherits from videojs Player class.
    *
@@ -8051,7 +8185,6 @@
    * @extends videojs.Player
    * @class Player
    */
-
 
   var Player = /*#__PURE__*/function (_VjsPlayer) {
     _inheritsLoose(Player, _VjsPlayer);
@@ -8110,7 +8243,8 @@
         'absoluteStartTime': tagOptions.absoluteStartTime ? tagOptions.absoluteStartTime : undefined,
         'persistTextTrackSettings': tagOptions.persistTextTrackSettings ? tagOptions.persistTextTrackSettings : showTextTrackSettings,
         'textTrackSettings': tagOptions.textTrackSettings ? tagOptions.textTrackSettings : showTextTrackSettings,
-        'playFrom': tagOptions.playFrom ? tagOptions.playFrom : 'defaultBehaviour'
+        'playFrom': tagOptions.playFrom ? tagOptions.playFrom : 'defaultBehaviour',
+        'minDvrWindow': tagOptions.minDvrWindow ? tagOptions.minDvrWindow : 120
       }, options); // Fix that HTML attribute is lowercase
 
       if (options.sources) {
@@ -8423,6 +8557,7 @@
         muted: this.options_.muted,
         language: this.options_.language,
         maxBitrate: this.options_.maxBitrate,
+        minDvrWindow: this.options_.minDvrWindow,
         timeShiftDisabled: this.options_.timeShiftDisabled,
         useLastViewedOffset: this.options_.useLastViewedOffset,
         startTime: this.options_.startTime,
@@ -8432,6 +8567,7 @@
         liveDelay: this.options_.liveDelay
       };
       assign(techOptions, playOptions);
+      techOptions.source = undefined;
       return techOptions;
     }
     /**
@@ -8468,8 +8604,6 @@
 
         if (program) {
           _this2.removeClass('vjs-live');
-        } else {
-          _this2.addClass('vjs-live');
         }
 
         _this2.trigger(empPlayerEvents.PROGRAM_CHANGED, {
@@ -10171,9 +10305,6 @@
           } else {
             currentTime = currentTime - _start.getTime() / 1000;
           }
-        } else if (!program) {
-          // Don't show progressbar
-          this.duration(Infinity); // log('currentTimeN', this.hasClass('vjs-live'));
         }
 
         if (!this.scrubbing()) {
@@ -10223,21 +10354,8 @@
           var _program2 = this.getProgramDetails();
 
           if (_program2 && seconds !== Infinity) {
-            var start = new Date(_program2.startTime);
-
-            if (entitlement.isStaticCachupAsLive || this.streamType === 'HLS') {
-              var t = entitlement.streamInfo;
-              seconds = seconds - (start.getTime() - t.start.getTime()) / 1000;
-            } else {
-              seconds = seconds - start.getTime() / 1000;
-            }
+            seconds = _program2.duration / 1000;
           }
-
-          if (this.noEPG()) {
-            seconds = Infinity;
-            this.addClass('vjs-live');
-          } // log('set duration', seconds);
-
 
           _VjsPlayer.prototype.duration.call(this, seconds);
 
@@ -10252,11 +10370,6 @@
           if (this.isProgramEvent && program.duration / 1000 > duration) ; else {
             duration = program.duration / 1000;
           }
-        }
-
-        if (this.noEPG()) {
-          duration = Infinity;
-          this.addClass('vjs-live');
         }
 
         this.cache_.duration = duration;
@@ -10361,15 +10474,21 @@
 
         if (nowDate < end) {
           // live
-          duration = this.techGet_('duration');
+          if (!this.tech_ || this.tech_.seekable === undefined || this.seeking()) {
+            log.warn('No tech_.seekable');
+            return program.duration / 1000;
+          }
 
-          if (duration !== Infinity) {
+          var seekrange = this.techGet_('seekable');
+          var seekrangeEnd = seekrange.end(0);
+
+          if (seekrangeEnd !== Infinity) {
             var t = entitlement.streamInfo;
 
             if (this.streamType === 'HLS') {
-              duration = (t.start.getTime() + duration * 1000 - program.start.getTime()) / 1000;
+              duration = (t.start.getTime() + seekrangeEnd * 1000 - program.start.getTime()) / 1000;
             } else {
-              duration = (duration * 1000 - program.start.getTime()) / 1000;
+              duration = (seekrangeEnd * 1000 - program.start.getTime()) / 1000;
             }
           }
         } else {
@@ -10492,7 +10611,7 @@
         var entitlement = extplayer.getEntitlement(this);
         var program = this.getProgramDetails();
 
-        if (program && (entitlement.isStaticCachupAsLive || entitlement.isDynamicCachupAsLive) && entitlement.ffEnabled) {
+        if (program && (entitlement.isStaticCachupAsLive || entitlement.isDynamicCachupAsLive) && entitlement.ffEnabled && entitlement.timeshiftEnabled) {
           this.programService().getNextProgram(function (nextProgram, error) {
             if (error) {
               log.warn('playNextProgram', error);
@@ -10828,7 +10947,7 @@
     }, {
       key: "version",
       get: function get() {
-        return '2.2.127-518';
+        return '2.2.127-519';
       }
       /**
        * Get entitlement
@@ -10919,8 +11038,8 @@
   }; // Override default 'Player' component
 
 
-  var Component$l = videojs.getComponent('Component');
-  Component$l.registerComponent('Player', Player);
+  var Component$m = videojs.getComponent('Component');
+  Component$m.registerComponent('Player', Player);
 
   /**
    * Detects if the current browser has the required technology to play an unencrypted stream provided by EMP.
@@ -14664,7 +14783,7 @@
     return AnalyticsPlugin;
   }(Plugin$2);
 
-  AnalyticsPlugin.VERSION = '2.2.127-518';
+  AnalyticsPlugin.VERSION = '2.2.127-519';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -15525,6 +15644,19 @@
 
         default:
       }
+
+      if (this.streamInfo.live) {
+        var dvrWindowLength = getParameterByName('dvr_window_length', this.mediaLocator);
+        var t = getParameterByName('t', this.mediaLocator);
+
+        if (dvrWindowLength) {
+          this.streamInfo.dvrWindow = dvrWindowLength;
+        }
+
+        if (!t && !dvrWindowLength) {
+          this.streamInfo.isVirtualStream = true;
+        }
+      }
     }
     /**
      * setup StreamInfo
@@ -15549,6 +15681,7 @@
           if (dvrWindowLength) {
             var nowDate = serverTime ? new Date(serverTime) : new Date();
             t = new Date(nowDate.getTime() - dvrWindowLength * 1000).toISOString().replace(/Z/g, '');
+            this.streamInfo.dvrWindow = dvrWindowLength;
           } else if (this.live) {
             var _nowDate = serverTime ? new Date(serverTime) : new Date();
 
@@ -16472,6 +16605,10 @@
 
       if (preEntitlement && preEntitlement.formats) {
         preEntitlement.selectFormat(playRequest);
+
+        if (preEntitlement.channelId || preEntitlement.programId) {
+          this.setStreamReferenceTime_(preEntitlement);
+        }
 
         if (preEntitlement.mediaLocator) {
           callback(preEntitlement, null);
@@ -18090,8 +18227,7 @@
         program: null
       }); // Update progressbar
 
-      this.player.trigger(empPlayerEvents.DURATION_CHANGE);
-      this.player.addClass('vjs-live'); // 2-3 minutes
+      this.player.trigger(empPlayerEvents.DURATION_CHANGE); // 2-3 minutes
 
       var pollingRate = 2 * 60 * 1000 + Math.random() * 60 * 1000;
       this.programChangeCheckTimestamp_ = Date.now() + pollingRate;
@@ -18422,7 +18558,7 @@
     return ProgramService;
   }(Plugin$3);
 
-  ProgramService.VERSION = '2.2.127-518';
+  ProgramService.VERSION = '2.2.127-519';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -18659,7 +18795,7 @@
     return EntitlementExpirationService;
   }(Plugin$4);
 
-  EntitlementExpirationService.VERSION = '2.2.127-518';
+  EntitlementExpirationService.VERSION = '2.2.127-519';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -18938,6 +19074,7 @@
         muted: player.options_.muted,
         language: player.options_.language,
         maxBitrate: player.options_.maxBitrate,
+        minDvrWindow: player.options_.minDvrWindow,
         timeShiftDisabled: player.options_.timeShiftDisabled,
         useLastViewedOffset: player.options_.useLastViewedOffset,
         startTime: player.options_.startTime,
@@ -19238,7 +19375,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.2.127-518';
+  EntitlementMiddleware.VERSION = '2.2.127-519';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -19367,7 +19504,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.2.127-518';
+  empPlayer.VERSION = '2.2.127-519';
   /*
    * Universal Module Definition (UMD)
    *

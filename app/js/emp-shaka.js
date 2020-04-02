@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.2.127-518 
+ * EMP-Player 2.2.127-519 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -1781,13 +1781,14 @@
     ;
 
     _proto.remainingTime = function remainingTime() {
-      var duration = this.duration();
+      var seekrange = this.seekable();
+      var end = seekrange.end(0);
 
-      if (duration === Infinity || duration === 0) {
+      if (end === Infinity || end === 0) {
         return Infinity;
       }
 
-      return duration - this.currentTime();
+      return end - this.currentTime();
     }
     /**
      * supportsEpgProgramChange
@@ -4677,7 +4678,7 @@
     return DownloadService;
   }(Plugin);
 
-  DownloadService.VERSION = '2.2.127-518';
+  DownloadService.VERSION = '2.2.127-519';
 
   if (videojs.getPlugin('DownloadService')) {
     videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -5538,7 +5539,12 @@
         }
 
         var seekRange = this.shakaPlayer_.seekRange();
-        var duration = seekRange.end;
+        var duration = seekRange.end - seekRange.start;
+
+        if (duration <= this.options_.minDvrWindow) {
+          return Infinity;
+        }
+
         return duration;
       }
 
@@ -5715,6 +5721,10 @@
             return;
           }
         }
+      }
+
+      if (!this.timeShiftEnabled()) {
+        return;
       }
 
       var seekRange = this.shakaPlayer_.seekRange();
@@ -6310,7 +6320,7 @@
     ;
 
     _proto.pause = function pause() {
-      if (this.live() && this.options_.timeShiftDisabled) {
+      if (this.live() && !this.timeShiftEnabled()) {
         return;
       }
 
@@ -6516,7 +6526,7 @@
   EmpShaka.prototype.featuresNativeTextTracks = false;
   EmpShaka.prototype.featuresNativeAudioTracks = false;
   Tech$1.withSourceHandlers(EmpShaka);
-  EmpShaka.VERSION = '2.2.127-518'; // Unset source handlers set by Html5 super class.
+  EmpShaka.VERSION = '2.2.127-519'; // Unset source handlers set by Html5 super class.
   // We do not intent to support any sources other then sources allowed by nativeSourceHandler
 
   EmpShaka.sourceHandlers = [];
