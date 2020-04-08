@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.2.127-526 
+ * EMP-Player 2.2.127-527 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -3288,6 +3288,133 @@
   Component$5.registerComponent('PlayProgressBar', PlayProgressBar);
 
   var Component$6 = videojs.getComponent('Component');
+  /**
+   * Shows loading progress
+   *
+   * @extends Component
+   */
+
+  var LoadProgressBar = /*#__PURE__*/function (_Component) {
+    _inheritsLoose(LoadProgressBar, _Component);
+
+    /**
+     * Creates an instance of this class.
+     *
+     * @param {Player} player
+     *        The `Player` that this class should be attached to.
+     *
+     * @param {Object} [options]
+     *        The key/value store of player options.
+     */
+    function LoadProgressBar(player, options) {
+      var _this;
+
+      _this = _Component.call(this, player, options) || this;
+      _this.partEls_ = [];
+
+      _this.on(player, 'progress', _this.update);
+
+      return _this;
+    }
+    /**
+     * Create the `Component`'s DOM element
+     *
+     * @return {Element}
+     *         The element that was created.
+     */
+
+
+    var _proto = LoadProgressBar.prototype;
+
+    _proto.createEl = function createEl$$1() {
+      return _Component.prototype.createEl.call(this, 'div', {
+        className: 'vjs-load-progress',
+        innerHTML: "<span class=\"vjs-control-text\"><span>" + this.localize('Loaded') + "</span>: <span class=\"vjs-control-text-loaded-percentage\">0%</span></span>"
+      });
+    }
+    /**
+     * dispose
+     */
+    ;
+
+    _proto.dispose = function dispose() {
+      this.partEls_ = null;
+
+      _Component.prototype.dispose.call(this);
+    }
+    /**
+     * Update progress bar
+     *
+     * @param {EventTarget~Event} [event]
+     *        The `progress` event that caused this function to run.
+     *
+     * @listens Player#progress
+     */
+    ;
+
+    _proto.update = function update(event) {
+      var liveTracker = this.player_.liveTracker;
+      var buffered = this.player_.buffered();
+      var seekable = this.player_.seekable();
+      var duration = this.player_.duration();
+      var bufferedEnd = this.player_.bufferedEnd();
+      var children = this.partEls_;
+      var controlTextPercentage = this.$('.vjs-control-text-loaded-percentage');
+
+      if (liveTracker && liveTracker.isLive()) {
+        duration = liveTracker.seekableEnd();
+      } else if (this.player_.isLive() && buffered.length && seekable.length) {
+        bufferedEnd = buffered.end(buffered.length - 1);
+        duration = seekable.end(seekable.length - 1);
+      } // get the percent width of a time compared to the total end
+
+
+      var percentify = function percentify(time, end, rounded) {
+        // no NaN
+        var percent = time / end || 0;
+        percent = (percent >= 1 ? 1 : percent) * 100;
+
+        if (rounded) {
+          percent = percent.toFixed(2);
+        }
+
+        return percent + '%';
+      }; // update the width of the progress bar
+
+
+      this.el_.style.width = percentify(bufferedEnd, duration, true); // update the control-text
+
+      textContent(controlTextPercentage, percentify(bufferedEnd, duration, true)); // add child elements to represent the individual buffered time ranges
+
+      for (var i = 0; i < buffered.length; i++) {
+        var start = buffered.start(i);
+        var end = buffered.end(i);
+        var part = children[i];
+
+        if (!part) {
+          part = this.el_.appendChild(createEl());
+          children[i] = part;
+        } // set the percent based on the width of the progress bar (bufferedEnd)
+
+
+        part.style.left = percentify(start, bufferedEnd);
+        part.style.width = percentify(end - start, bufferedEnd, true);
+      } // remove unused buffered range elements
+
+
+      for (var _i = children.length; _i > buffered.length; _i--) {
+        this.el_.removeChild(children[_i - 1]);
+      }
+
+      children.length = buffered.length;
+    };
+
+    return LoadProgressBar;
+  }(Component$6);
+
+  Component$6.registerComponent('LoadProgressBar', LoadProgressBar);
+
+  var Component$7 = videojs.getComponent('Component');
   var Slider = videojs.getComponent('Slider'); // The number of seconds the `step*` functions move the timeline.
 
   var STEP_SECONDS = 5; // The interval at which the bar should update as it progresses.
@@ -3750,7 +3877,7 @@
 
 
   SeekBar.prototype.playerEvent = 'timeupdate';
-  Component$6.registerComponent('SeekBar', SeekBar);
+  Component$7.registerComponent('SeekBar', SeekBar);
 
   /**
    * Returns whether an object is `Promise`-like (i.e. has a `then` method).
@@ -3781,7 +3908,7 @@
   }
 
   var Button$1 = videojs.getComponent('Button');
-  var Component$7 = videojs.getComponent('Component');
+  var Component$8 = videojs.getComponent('Component');
   /**
    * Displays a button to jump back to the beginning of the current asset / program
    *
@@ -3908,10 +4035,10 @@
   }(Button$1);
 
   EmpRestartButton.prototype.controlText_ = 'Restart';
-  Component$7.registerComponent('EmpRestartButton', EmpRestartButton);
+  Component$8.registerComponent('EmpRestartButton', EmpRestartButton);
 
   var Button$2 = videojs.getComponent('Button');
-  var Component$8 = videojs.getComponent('Component');
+  var Component$9 = videojs.getComponent('Component');
   /**
    * Displays a button to jump forward a few seconds
    *
@@ -4019,10 +4146,10 @@
   }(Button$2);
 
   EmpForwardButton.prototype.controlText_ = 'Forward';
-  Component$8.registerComponent('EmpForwardButton', EmpForwardButton);
+  Component$9.registerComponent('EmpForwardButton', EmpForwardButton);
 
   var Button$3 = videojs.getComponent('Button');
-  var Component$9 = videojs.getComponent('Component');
+  var Component$a = videojs.getComponent('Component');
   /**
    * Displays a button to jump back a few seconds
    *
@@ -4130,10 +4257,10 @@
   }(Button$3);
 
   EmpRewindButton.prototype.controlText_ = 'Rewind';
-  Component$9.registerComponent('EmpRewindButton', EmpRewindButton);
+  Component$a.registerComponent('EmpRewindButton', EmpRewindButton);
 
   var Button$4 = videojs.getComponent('Button');
-  var Component$a = videojs.getComponent('Component');
+  var Component$b = videojs.getComponent('Component');
   /**
    * Displays a button to jump back to the beginning of the current asset / program and request a new entitlement
    *
@@ -4179,9 +4306,9 @@
   }(Button$4);
 
   EmpReloadButton.prototype.controlText_ = 'Reload';
-  Component$a.registerComponent('EmpReloadButton', EmpReloadButton);
+  Component$b.registerComponent('EmpReloadButton', EmpReloadButton);
 
-  var Component$b = videojs.getComponent('Component');
+  var Component$c = videojs.getComponent('Component');
   var UPDATE_REFRESH_INTERVAL$1 = !IS_CHROMECAST && !window_1.EMP_DEBUG_CHROMECAST ? 30 : 1000;
   /**
    * Displays the time left or the current time in the video
@@ -4309,13 +4436,13 @@
     };
 
     return EmpTimeDisplay;
-  }(Component$b);
+  }(Component$c);
 
-  Component$b.registerComponent('EmpTimeDisplay', EmpTimeDisplay);
-  Component$b.registerComponent('EmpTimeDisplay2', EmpTimeDisplay);
+  Component$c.registerComponent('EmpTimeDisplay', EmpTimeDisplay);
+  Component$c.registerComponent('EmpTimeDisplay2', EmpTimeDisplay);
 
   var Button$5 = videojs.getComponent('Button');
-  var Component$c = videojs.getComponent('Component');
+  var Component$d = videojs.getComponent('Component');
   /**
    * The button component for stopping playback
    *
@@ -4399,10 +4526,10 @@
 
   EmpStopButton.prototype.kind_ = 'stop';
   EmpStopButton.prototype.controlText_ = 'Stop';
-  Component$c.registerComponent('EmpStopButton', EmpStopButton);
+  Component$d.registerComponent('EmpStopButton', EmpStopButton);
 
   var PlayToggle = videojs.getComponent('PlayToggle');
-  var Component$d = videojs.getComponent('Component');
+  var Component$e = videojs.getComponent('Component');
   /**
    * The button component for the play toggle
    *
@@ -4480,7 +4607,7 @@
 
   EmpPlayToggle.prototype.kind_ = 'playToggle';
   EmpPlayToggle.prototype.controlText_ = 'playToggle';
-  Component$d.registerComponent('EmpPlayToggle', EmpPlayToggle);
+  Component$e.registerComponent('EmpPlayToggle', EmpPlayToggle);
 
   var Button$6 = videojs.getComponent('Button');
   /**
@@ -4593,7 +4720,7 @@
   videojs.registerComponent('AirplayToggle', AirplayToggle);
 
   var Button$7 = videojs.getComponent('Button');
-  var Component$e = videojs.getComponent('Component');
+  var Component$f = videojs.getComponent('Component');
   /**
    * Displays a button to jump forward a few seconds
    *
@@ -4703,10 +4830,10 @@
   }(Button$7);
 
   EmpNextButton.prototype.controlText_ = 'Next';
-  Component$e.registerComponent('EmpNextButton', EmpNextButton);
+  Component$f.registerComponent('EmpNextButton', EmpNextButton);
 
   var Button$8 = videojs.getComponent('Button');
-  var Component$f = videojs.getComponent('Component');
+  var Component$g = videojs.getComponent('Component');
   /**
    * Displays a button to jump back a few seconds
    *
@@ -4807,7 +4934,7 @@
   }(Button$8);
 
   EmpPreviousButton.prototype.controlText_ = 'Previous';
-  Component$f.registerComponent('EmpPreviousButton', EmpPreviousButton);
+  Component$g.registerComponent('EmpPreviousButton', EmpPreviousButton);
 
   var Button$9 = videojs.getComponent('Button');
   /**
@@ -5001,7 +5128,7 @@
   videojs.registerComponent('PipToggle', PipToggle);
 
   var MenuItem$1 = videojs.getComponent('MenuItem');
-  var Component$g = videojs.getComponent('Component');
+  var Component$h = videojs.getComponent('Component');
   /**
    * The specific menu item type for selecting a bitrate
    *
@@ -5061,10 +5188,10 @@
     return PlaylistMenuItem;
   }(MenuItem$1);
 
-  Component$g.registerComponent('PlaylistMenuItem', PlaylistMenuItem);
+  Component$h.registerComponent('PlaylistMenuItem', PlaylistMenuItem);
 
   var MenuButton$1 = videojs.getComponent('MenuButton');
-  var Component$h = videojs.getComponent('Component');
+  var Component$i = videojs.getComponent('Component');
   /**
    * The class for PlaylistButton
    *
@@ -5180,10 +5307,10 @@
   }(MenuButton$1);
 
   PlaylistButton.prototype.controlText_ = 'Playlist';
-  Component$h.registerComponent('PlaylistButton', PlaylistButton);
+  Component$i.registerComponent('PlaylistButton', PlaylistButton);
 
   var ControlBar = videojs.getComponent('ControlBar');
-  var Component$i = videojs.getComponent('Component');
+  var Component$j = videojs.getComponent('Component');
   /**
    * Container of main controls
    *
@@ -5238,7 +5365,7 @@
     }
   }; // loadProgressBar > seekBar > mouseTimeDisplay uses a reference to 'controlbar' so we need to override the name for compatibility with our own controlbar
 
-  Component$i.registerComponent('ControlBar', EmpControlBar);
+  Component$j.registerComponent('ControlBar', EmpControlBar);
 
   /**
    * @file time-ranges.js
@@ -5352,7 +5479,7 @@
     }
   }
 
-  var Component$j = videojs.getComponent('Component');
+  var Component$k = videojs.getComponent('Component');
   var darkGray = '#222';
   var lightGray = '#ccc';
   var fontMap = {
@@ -5886,11 +6013,11 @@
     };
 
     return TextTrackDisplay;
-  }(Component$j);
+  }(Component$k);
 
-  Component$j.registerComponent('TextTrackDisplay', TextTrackDisplay);
+  Component$k.registerComponent('TextTrackDisplay', TextTrackDisplay);
 
-  var Component$k = videojs.getComponent('Component');
+  var Component$l = videojs.getComponent('Component');
   var ModalDialog = videojs.getComponent('ModalDialog');
   var LOCAL_STORAGE_KEY = 'vjs-text-track-settings';
   var COLOR_BLACK = ['#000', 'Black'];
@@ -6431,9 +6558,9 @@
     return TextTrackSettings;
   }(ModalDialog);
 
-  Component$k.registerComponent('TextTrackSettings', TextTrackSettings);
+  Component$l.registerComponent('TextTrackSettings', TextTrackSettings);
 
-  var Component$l = videojs.getComponent('Component');
+  var Component$m = videojs.getComponent('Component');
   /**
    * EmpMediaInfoBar Show media-title, media-artwork, media-resolution and media-subtitle
    *
@@ -6711,10 +6838,10 @@
     };
 
     return EmpMediaInfoBar;
-  }(Component$l);
+  }(Component$m);
 
   EmpMediaInfoBar.prototype.controlText_ = 'MediaInfo';
-  Component$l.registerComponent('EmpMediaInfoBar', EmpMediaInfoBar);
+  Component$m.registerComponent('EmpMediaInfoBar', EmpMediaInfoBar);
 
   var Plugin = videojs.getPlugin('plugin');
   /* global
@@ -7356,7 +7483,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.2.127-526';
+  vttThumbnailsPlugin.VERSION = '2.2.127-527';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -8159,7 +8286,7 @@
     return PlaylistPlugin;
   }(Plugin$1);
 
-  PlaylistPlugin.VERSION = '2.2.127-526';
+  PlaylistPlugin.VERSION = '2.2.127-527';
 
   if (videojs.getPlugin('playList')) {
     videojs.log.warn('A plugin named "PlaylistPlugin" already exists.');
@@ -10963,7 +11090,7 @@
     }, {
       key: "version",
       get: function get() {
-        return '2.2.127-526';
+        return '2.2.127-527';
       }
       /**
        * Get entitlement
@@ -11054,8 +11181,8 @@
   }; // Override default 'Player' component
 
 
-  var Component$m = videojs.getComponent('Component');
-  Component$m.registerComponent('Player', Player);
+  var Component$n = videojs.getComponent('Component');
+  Component$n.registerComponent('Player', Player);
 
   /**
    * Detects if the current browser has the required technology to play an unencrypted stream provided by EMP.
@@ -14799,7 +14926,7 @@
     return AnalyticsPlugin;
   }(Plugin$2);
 
-  AnalyticsPlugin.VERSION = '2.2.127-526';
+  AnalyticsPlugin.VERSION = '2.2.127-527';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -18574,7 +18701,7 @@
     return ProgramService;
   }(Plugin$3);
 
-  ProgramService.VERSION = '2.2.127-526';
+  ProgramService.VERSION = '2.2.127-527';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -18811,7 +18938,7 @@
     return EntitlementExpirationService;
   }(Plugin$4);
 
-  EntitlementExpirationService.VERSION = '2.2.127-526';
+  EntitlementExpirationService.VERSION = '2.2.127-527';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -19391,7 +19518,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.2.127-526';
+  EntitlementMiddleware.VERSION = '2.2.127-527';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -19520,7 +19647,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.2.127-526';
+  empPlayer.VERSION = '2.2.127-527';
   /*
    * Universal Module Definition (UMD)
    *
