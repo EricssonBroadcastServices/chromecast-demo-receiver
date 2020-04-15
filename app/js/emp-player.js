@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.1.111-455 
+ * EMP-Player 2.2.127-528 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -48,7 +48,7 @@
     return _setPrototypeOf(o, p);
   }
 
-  function isNativeReflectConstruct() {
+  function _isNativeReflectConstruct() {
     if (typeof Reflect === "undefined" || !Reflect.construct) return false;
     if (Reflect.construct.sham) return false;
     if (typeof Proxy === "function") return true;
@@ -62,7 +62,7 @@
   }
 
   function _construct(Parent, args, Class) {
-    if (isNativeReflectConstruct()) {
+    if (_isNativeReflectConstruct()) {
       _construct = Reflect.construct;
     } else {
       _construct = function _construct(Parent, args, Class) {
@@ -133,11 +133,44 @@
     return strings;
   }
 
-  var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
-
-  function commonjsRequire () {
-  	throw new Error('Dynamic requires are not currently supported by rollup-plugin-commonjs');
+  function _unsupportedIterableToArray(o, minLen) {
+    if (!o) return;
+    if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+    var n = Object.prototype.toString.call(o).slice(8, -1);
+    if (n === "Object" && o.constructor) n = o.constructor.name;
+    if (n === "Map" || n === "Set") return Array.from(n);
+    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
   }
+
+  function _arrayLikeToArray(arr, len) {
+    if (len == null || len > arr.length) len = arr.length;
+
+    for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+
+    return arr2;
+  }
+
+  function _createForOfIteratorHelperLoose(o) {
+    var i = 0;
+
+    if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {
+      if (Array.isArray(o) || (o = _unsupportedIterableToArray(o))) return function () {
+        if (i >= o.length) return {
+          done: true
+        };
+        return {
+          done: false,
+          value: o[i++]
+        };
+      };
+      throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+    }
+
+    i = o[Symbol.iterator]();
+    return i.next.bind(i);
+  }
+
+  var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
   function unwrapExports (x) {
   	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
@@ -635,6 +668,11 @@
 
     this.CHROMECAST_STOPPED = 'chromecaststopped';
     /**
+    * Fired when chromecast has join a session
+    */
+
+    this.CHROMECAST_JOIN = 'chromecastjoin';
+    /**
      * Fired when playback is stopped
      */
 
@@ -689,6 +727,11 @@
     */
 
     this.PLAYLIST_CHANGE = 'playlistchange';
+    /**
+    * Fired when Chromecast Que change
+    */
+
+    this.CC_QUE_CHANGE = 'ccquechange';
   };
 
   var empPlayerEvents = new EmpPlayerEvents();
@@ -992,6 +1035,64 @@
     var re = new RegExp(/^.*\//);
     return re.exec(url)[0];
   }
+  /**
+   * Select the image to display for the asset
+   *
+   * @param {Array} images image objects
+   * @param {string} imageType image type in backend
+   * @return {image} image object
+   */
+
+  function imageSelector(images, imageType) {
+    var image; // select image 0 as default the select LANDSCAPE image
+
+    if (images && images.length > 0) {
+      image = images[0];
+
+      for (var i = 0; i < images.length; i++) {
+        if (images[i].url && images[i].orientation === 'LANDSCAPE') {
+          image = images[i];
+          break;
+        }
+      }
+    } else {
+      return;
+    } // select image with imageType
+
+
+    for (var _i = 0; _i < images.length; _i++) {
+      if (images[_i].url && images[_i].type === imageType) {
+        return images[_i];
+      }
+    } // scale bad image
+
+
+    if (image) {
+      switch (imageType) {
+        case 'chromecast':
+          if (image.width !== 155 && image.url.indexOf('?') === -1) {
+            image = assign({}, image);
+            image.width = 155;
+            image.height = 100;
+            image.url = image.url + '?w=155';
+          }
+
+          break;
+
+        case 'thumbnail':
+          if (image.width !== 50 && image.url.indexOf('?') === -1) {
+            image = assign({}, image);
+            image.width = 50;
+            image.height = 50;
+            image.url = image.url + '?w=50';
+          }
+
+          break;
+      }
+    }
+
+    return image;
+  }
 
   /**
   * EmpPlayerErrorCodes - Holds all available error codes
@@ -1016,9 +1117,7 @@
    * @extends Error
   */
 
-  var EmpPlayerError =
-  /*#__PURE__*/
-  function (_Error) {
+  var EmpPlayerError = /*#__PURE__*/function (_Error) {
     _inheritsLoose(EmpPlayerError, _Error);
 
     /**
@@ -1071,7 +1170,7 @@
     }]);
 
     return EmpPlayerError;
-  }(_wrapNativeSuper(Error));
+  }( /*#__PURE__*/_wrapNativeSuper(Error));
 
   var logToBrowserConsole = false;
 
@@ -1286,9 +1385,7 @@
    * @class BitrateMenuItem
    */
 
-  var BitrateMenuItem =
-  /*#__PURE__*/
-  function (_MenuItem) {
+  var BitrateMenuItem = /*#__PURE__*/function (_MenuItem) {
     _inheritsLoose(BitrateMenuItem, _MenuItem);
 
     /**
@@ -1366,9 +1463,7 @@
    * @class BitrateButton
    */
 
-  var BitrateButton =
-  /*#__PURE__*/
-  function (_MenuButton) {
+  var BitrateButton = /*#__PURE__*/function (_MenuButton) {
     _inheritsLoose(BitrateButton, _MenuButton);
 
     /**
@@ -1548,6 +1643,39 @@
     return data;
   }
   /**
+   * Throws an error if the passed string has whitespace. This is used by
+   * class methods to be relatively consistent with the classList API.
+   *
+   * @param {string} str
+   *         The string to check for whitespace.
+   *
+   * @throws {Error}
+   *         Throws an error if there is whitespace in the string.
+   *
+   */
+
+
+  function throwIfWhitespace(str) {
+    if (/\s/.test(str)) {
+      throw new Error('class has illegal whitespace characters');
+    }
+  }
+  /**
+   * Produce a regular expression for matching a className within an elements className.
+   *
+   * @param {string} className
+   *         The className to generate the RegExp for.
+   *
+   * @return {RegExp}
+   *         The RegExp that will check for a specific `className` in an elements
+   *         className.
+   */
+
+
+  function classRegExp(className) {
+    return new RegExp('(^|\\s)' + className + '($|\\s)');
+  }
+  /**
    * Whether the current DOM interface appears to be real.
    *
    * @return {boolean} DOM interface appears to be real.
@@ -1655,6 +1783,63 @@
     }
 
     return el;
+  }
+  /**
+   * Check if an element has a CSS class
+   *
+   * @param {Element} element
+   *        Element to check
+   *
+   * @param {string} classToCheck
+   *        Class name to check for
+   *
+   * @return {boolean}
+   *         - True if the element had the class
+   *         - False otherwise.
+   *
+   * @throws {Error}
+   *         Throws an error if `classToCheck` has white space.
+   */
+
+  function hasClass(element, classToCheck) {
+    if (!element) {
+      return false;
+    }
+
+    throwIfWhitespace(classToCheck);
+
+    if (element.classList) {
+      return element.classList.contains(classToCheck);
+    }
+
+    return classRegExp(classToCheck).test(element.className);
+  }
+  /**
+   * Add a CSS class name to an element
+   *
+   * @param {Element} element
+   *        Element to add class name to.
+   *
+   * @param {string} classToAdd
+   *        Class name to add.
+   *
+   * @return {Element}
+   *         The dom element with the added class name.
+   */
+
+  function addClass(element, classToAdd) {
+    if (!element) {
+      return;
+    }
+
+    if (element.classList) {
+      element.classList.add(classToAdd); // Don't need to `throwIfWhitespace` here because `hasElClass` will do it
+      // in the case of classList not being supported.
+    } else if (!hasClass(element, classToAdd)) {
+      element.className = (element.className + ' ' + classToAdd).trim();
+    }
+
+    return element;
   }
   /**
    * Identical to the native `getBoundingClientRect` function, but ensures that
@@ -1937,9 +2122,7 @@
 
       if (player.techName_ === 'EmpCast') {
         player.cache_.sources = [player.cache_.source];
-      } // TODO: Maybe break something
-      //  player.cache_.sources = [player.cache_.source];
-
+      }
     },
     getAbsoluteTime: function getAbsoluteTime(player) {
       if (!player.tech_ || player.tech_.getAbsoluteTime === undefined) {
@@ -1998,7 +2181,11 @@
         if (player.tech_ && player.tech_.liveDelay !== undefined) {
           liveDelay = player.tech_.liveDelay();
         } else {
-          liveDelay = (this.getServerTime(player) - this.getSeekTimerange(player).end) / 1000;
+          var entitlement = this.getEntitlement(player); // We can't calculate liveDelay without a referenceTime for HLS
+
+          if (entitlement || player.streamType !== 'HLS') {
+            liveDelay = (this.getServerTime(player) - this.getSeekTimerange(player).end) / 1000;
+          }
         }
       }
 
@@ -2134,13 +2321,19 @@
     },
     remainingTime: function remainingTime(player) {
       if (!player.tech_ || player.tech_.remainingTime === undefined) {
-        var duration = player.duration();
+        if (!player.tech_ || player.tech_.seekable === undefined || player.seeking()) {
+          log.warn('No tech_.seekable');
+          return 0;
+        }
 
-        if (duration === Infinity || duration === 0) {
+        var seekable = player.techGet_('seekable');
+        var end = seekable.end(0);
+
+        if (end === Infinity || end === 0) {
           return Infinity;
         }
 
-        return duration - player.currentTime();
+        return end - player.currentTime();
       }
 
       return player.techGet_('remainingTime');
@@ -2232,17 +2425,24 @@
 
       if (player.tech_.gotoLive) {
         player.techCall_('gotoLive');
-      } else if (entitlement && entitlement.isDynamicCachupAsLive) {
-        this.setAbsoluteTime(player, new Date(player.getServerTime()));
-      } else if (entitlement && entitlement.isStaticCachupAsLive) {
+      } else if (entitlement && !entitlement.timeshiftEnabled) {
         var asset = this.currentAsset(player);
 
         if (asset && asset.channelId) {
           player.startPlayback(null, asset.channelId, null);
         }
+      } else if (entitlement && entitlement.isDynamicCachupAsLive) {
+        this.setAbsoluteTime(player, new Date(player.getServerTime()));
+      } else if (entitlement && entitlement.isStaticCachupAsLive) {
+        var _asset = this.currentAsset(player);
+
+        if (_asset && _asset.channelId) {
+          player.startPlayback(null, _asset.channelId, null);
+        }
       } else if (this.isLive(player)) {
-        var duration = player.duration();
-        player.currentTime(duration);
+        var seekrange = player.seekable();
+        var end = seekrange.end(0);
+        player.currentTime(end);
       } else {
         log.warn('Not suppoted for VOD');
       }
@@ -2444,9 +2644,7 @@
    * @extends Button
    */
 
-  var EmpLiveDisplay =
-  /*#__PURE__*/
-  function (_Button) {
+  var EmpLiveDisplay = /*#__PURE__*/function (_Button) {
     _inheritsLoose(EmpLiveDisplay, _Button);
 
     /**
@@ -2609,6 +2807,12 @@
       // '-' is false for all relational operators (e.g. <, >=) so this setting
       // will add the minimum number of fields specified by the guide
       h = m = s = '-';
+    } // only show 24 hours time if unixtime
+
+
+    if (h > 1000) {
+      var d = new Date(h * 3600 * 1000);
+      h = d.getHours();
     } // Check if we need to show hours
 
 
@@ -2631,9 +2835,7 @@
    * @class EmpMarker
    */
 
-  var EmpMarker =
-  /*#__PURE__*/
-  function (_Component) {
+  var EmpMarker = /*#__PURE__*/function (_Component) {
     _inheritsLoose(EmpMarker, _Component);
 
     /**
@@ -2749,9 +2951,7 @@
    * @extends MouseTimeDisplay
    */
 
-  var EmpMouseTimeDisplay =
-  /*#__PURE__*/
-  function (_MouseTimeDisplay) {
+  var EmpMouseTimeDisplay = /*#__PURE__*/function (_MouseTimeDisplay) {
     _inheritsLoose(EmpMouseTimeDisplay, _MouseTimeDisplay);
 
     /**
@@ -2792,7 +2992,18 @@
         var content = formatTime(seekBarPoint * duration, duration);
         _this.el_.style.left = seekBarRect.width * seekBarPoint + "px";
 
-        _this.getChild('timeTooltip').update(seekBarRect, seekBarPoint, content);
+        var timeTooltip = _this.getChild('timeTooltip');
+
+        if (!timeTooltip) {
+          return;
+        }
+
+        if (_this.player_.noEPG() && _this.player_.isLive()) {
+          var startTimeLive = _this.player_.startTimeLive() / 1000;
+          content = formatTime(startTimeLive + seekBarPoint * duration, duration);
+        }
+
+        timeTooltip.update(seekBarRect, seekBarPoint, content);
       });
     };
 
@@ -2852,9 +3063,11 @@
   }(); // Old Android is defined as Version older than 2.3, and requiring a webkit version of the android browser
 
   var IS_OLD_ANDROID = IS_ANDROID && /webkit/i.test(USER_AGENT) && ANDROID_VERSION < 2.3;
+  var IS_WINDOWS = /Win/i.test(window_1.navigator.platform);
   var IS_FIREFOX = /Firefox/i.test(USER_AGENT);
   var IS_EDGE = /Edge/i.test(USER_AGENT);
-  var IS_CHROME = !IS_EDGE && /Chrome/i.test(USER_AGENT);
+  var IS_CHROMIUM_EDGE = /Edg/i.test(USER_AGENT) && !IS_EDGE;
+  var IS_CHROME = !IS_CHROMIUM_EDGE && !IS_EDGE && /Chrome/i.test(USER_AGENT);
   var CHROME_VERSION = function () {
     var match = USER_AGENT.match(/Chrome\/(\d+)/);
 
@@ -2879,7 +3092,7 @@
   var IS_TIZEN = /Tizen/i.test(USER_AGENT);
   var IS_WEBOS = /webOS/i.test(USER_AGENT) || /Web0S/i.test(USER_AGENT) || /WebOS/i.test(USER_AGENT) || /NetCast/i.test(USER_AGENT);
   var IS_SMARTTV = /SmartTV/i.test(USER_AGENT) || IS_WEBOS || IS_TIZEN;
-  var IS_SAFARI = /Safari/i.test(USER_AGENT) && !IS_CHROME && !IS_ANDROID && !IS_EDGE;
+  var IS_SAFARI = /Safari/i.test(USER_AGENT) && !IS_CHROME && !IS_ANDROID && !IS_EDGE && !IS_CHROMIUM_EDGE;
   var IS_IE_OR_EDGE = IS_EDGE || IE_VERSION !== null;
   var TOUCH_ENABLED = isReal() && ('ontouchstart' in window_1 || window_1.DocumentTouch && window_1.document instanceof window_1.DocumentTouch);
   var BACKGROUND_SIZE_SUPPORTED = isReal() && 'backgroundSize' in window_1.document.createElement('video').style;
@@ -2903,10 +3116,15 @@
     }
 
     if (M[1] === 'Chrome') {
-      tem = ua.match(/\b(OPR|Edge)\/([0-9.]+)/);
+      tem = ua.match(/\b(OPR|Edge|Edg)\/([0-9.]+)/);
 
       if (tem !== null) {
         var app = tem.slice(1).toString().split(',');
+
+        if (app[0] === 'Edg') {
+          app[0] = 'ChromiumEdge';
+        }
+
         return {
           name: app[0].replace('OPR', 'Opera'),
           version: app[1]
@@ -2949,7 +3167,254 @@
     return 0;
   }
 
+  var USER_AGENT$1 = window_1.navigator && window_1.navigator.userAgent || '';
+  /**
+   * It it running on Universal Windows Platform (UWP) Windows Store App or xBox
+   */
+
+  var IS_UWP = /MSAppHost/i.test(USER_AGENT$1) || /Xbox/i.test(USER_AGENT$1) || /XboxOne/i.test(USER_AGENT$1) || window_1.DEBUG_UWP;
+  /**
+   * Key Code Mapping for GamePad
+   */
+
+  var KeyCodeMapGamePad = {
+    left: [// LeftArrow
+    37, // GamepadLeftThumbstickLeft
+    214, // GamepadDPadLeft
+    205, // NavigationLeft
+    140],
+    right: [// RightArrow
+    39, // GamepadLeftThumbstickRight
+    213, // GamepadDPadRight
+    206, // NavigationRight
+    141],
+    up: [// UpArrow
+    38, // GamepadLeftThumbstickUp
+    211, // GamepadDPadUp
+    203, // NavigationUp
+    138],
+    down: [// UpArrow
+    40, // GamepadLeftThumbstickDown
+    212, // GamepadDPadDown
+    204, // NavigationDown
+    139],
+    accept: [// Enter
+    13, // NavigationAccept
+    142, // GamepadA
+    195],
+    "return": [// Backspace
+    8, // NavigationCancel
+    143, // GamepadB
+    196]
+  };
+
   var Component$5 = videojs.getComponent('Component');
+  /**
+   * Used by {@link SeekBar} to display media playback progress as part of the
+   * {@link ProgressControl}.
+   *
+   * @extends Component
+   */
+
+  var PlayProgressBar = /*#__PURE__*/function (_Component) {
+    _inheritsLoose(PlayProgressBar, _Component);
+
+    function PlayProgressBar() {
+      return _Component.apply(this, arguments) || this;
+    }
+
+    var _proto = PlayProgressBar.prototype;
+
+    /**
+     * Create the the DOM element for this class.
+     *
+     * @return {Element}
+     *         The element that was created.
+     */
+    _proto.createEl = function createEl() {
+      return _Component.prototype.createEl.call(this, 'div', {
+        className: 'vjs-play-progress vjs-slider-bar'
+      }, {
+        'aria-hidden': 'true'
+      });
+    }
+    /**
+     * Enqueues updates to its own DOM as well as the DOM of its
+     * {@link TimeTooltip} child.
+     *
+     * @param {Object} seekBarRect
+     *        The `ClientRect` for the {@link SeekBar} element.
+     *
+     * @param {number} seekBarPoint
+     *        A number from 0 to 1, representing a horizontal reference point
+     *        from the left edge of the {@link SeekBar}
+     */
+    ;
+
+    _proto.update = function update(seekBarRect, seekBarPoint) {
+      var timeTooltip = this.getChild('timeTooltip');
+
+      if (!timeTooltip) {
+        return;
+      }
+
+      var time = this.player_.scrubbing() ? this.player_.getCache().currentTime : this.player_.currentTime();
+
+      if (this.player_.noEPG() && this.player_.isLive()) {
+        time = time + this.player_.startTimeLive() / 1000;
+      }
+
+      timeTooltip.updateTime(seekBarRect, seekBarPoint, time);
+    };
+
+    return PlayProgressBar;
+  }(Component$5);
+  /**
+   * Default options for {@link PlayProgressBar}.
+   *
+   * @type {Object}
+   * @private
+   */
+
+
+  PlayProgressBar.prototype.options_ = {
+    children: []
+  }; // Time tooltips should not be added to a player on mobile devices
+
+  if (!IS_IOS && !IS_ANDROID) {
+    PlayProgressBar.prototype.options_.children.push('timeTooltip');
+  }
+
+  Component$5.registerComponent('PlayProgressBar', PlayProgressBar);
+
+  var Component$6 = videojs.getComponent('Component');
+  /**
+   * Shows loading progress
+   *
+   * @extends Component
+   */
+
+  var LoadProgressBar = /*#__PURE__*/function (_Component) {
+    _inheritsLoose(LoadProgressBar, _Component);
+
+    /**
+     * Creates an instance of this class.
+     *
+     * @param {Player} player
+     *        The `Player` that this class should be attached to.
+     *
+     * @param {Object} [options]
+     *        The key/value store of player options.
+     */
+    function LoadProgressBar(player, options) {
+      var _this;
+
+      _this = _Component.call(this, player, options) || this;
+      _this.partEls_ = [];
+
+      _this.on(player, 'progress', _this.update);
+
+      return _this;
+    }
+    /**
+     * Create the `Component`'s DOM element
+     *
+     * @return {Element}
+     *         The element that was created.
+     */
+
+
+    var _proto = LoadProgressBar.prototype;
+
+    _proto.createEl = function createEl$$1() {
+      return _Component.prototype.createEl.call(this, 'div', {
+        className: 'vjs-load-progress',
+        innerHTML: "<span class=\"vjs-control-text\"><span>" + this.localize('Loaded') + "</span>: <span class=\"vjs-control-text-loaded-percentage\">0%</span></span>"
+      });
+    }
+    /**
+     * dispose
+     */
+    ;
+
+    _proto.dispose = function dispose() {
+      this.partEls_ = null;
+
+      _Component.prototype.dispose.call(this);
+    }
+    /**
+     * Update progress bar
+     *
+     * @param {EventTarget~Event} [event]
+     *        The `progress` event that caused this function to run.
+     *
+     * @listens Player#progress
+     */
+    ;
+
+    _proto.update = function update(event) {
+      var liveTracker = this.player_.liveTracker;
+      var buffered = this.player_.buffered();
+      var seekable = this.player_.seekable();
+      var duration = this.player_.duration();
+      var bufferedEnd = this.player_.bufferedEnd();
+      var children = this.partEls_;
+      var controlTextPercentage = this.$('.vjs-control-text-loaded-percentage');
+
+      if (liveTracker && liveTracker.isLive()) {
+        duration = liveTracker.seekableEnd();
+      } else if (this.player_.isLive() && buffered.length && seekable.length) {
+        bufferedEnd = buffered.end(buffered.length - 1);
+        duration = seekable.end(seekable.length - 1);
+      } // get the percent width of a time compared to the total end
+
+
+      var percentify = function percentify(time, end, rounded) {
+        // no NaN
+        var percent = time / end || 0;
+        percent = (percent >= 1 ? 1 : percent) * 100;
+
+        if (rounded) {
+          percent = percent.toFixed(2);
+        }
+
+        return percent + '%';
+      }; // update the width of the progress bar
+
+
+      this.el_.style.width = percentify(bufferedEnd, duration, true); // update the control-text
+
+      textContent(controlTextPercentage, percentify(bufferedEnd, duration, true)); // add child elements to represent the individual buffered time ranges
+
+      for (var i = 0; i < buffered.length; i++) {
+        var start = buffered.start(i);
+        var end = buffered.end(i);
+        var part = children[i];
+
+        if (!part) {
+          part = this.el_.appendChild(createEl());
+          children[i] = part;
+        } // set the percent based on the width of the progress bar (bufferedEnd)
+
+
+        part.style.left = percentify(start, bufferedEnd);
+        part.style.width = percentify(end - start, bufferedEnd, true);
+      } // remove unused buffered range elements
+
+
+      for (var _i = children.length; _i > buffered.length; _i--) {
+        this.el_.removeChild(children[_i - 1]);
+      }
+
+      children.length = buffered.length;
+    };
+
+    return LoadProgressBar;
+  }(Component$6);
+
+  Component$6.registerComponent('LoadProgressBar', LoadProgressBar);
+
+  var Component$7 = videojs.getComponent('Component');
   var Slider = videojs.getComponent('Slider'); // The number of seconds the `step*` functions move the timeline.
 
   var STEP_SECONDS = 5; // The interval at which the bar should update as it progresses.
@@ -2962,9 +3427,7 @@
    * @extends Slider
    */
 
-  var SeekBar =
-  /*#__PURE__*/
-  function (_Slider) {
+  var SeekBar = /*#__PURE__*/function (_Slider) {
     _inheritsLoose(SeekBar, _Slider);
 
     /**
@@ -3032,36 +3495,14 @@
     var _proto = SeekBar.prototype;
 
     _proto.updateMarkers = function updateMarkers(event, data) {
-      for (var _iterator = this.markers, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-        var _ref;
-
-        if (_isArray) {
-          if (_i >= _iterator.length) break;
-          _ref = _iterator[_i++];
-        } else {
-          _i = _iterator.next();
-          if (_i.done) break;
-          _ref = _i.value;
-        }
-
-        var _marker = _ref;
+      for (var _iterator = _createForOfIteratorHelperLoose(this.markers), _step; !(_step = _iterator()).done;) {
+        var _marker = _step.value;
         this.removeChild(_marker);
       }
 
       if (data && data.timeline) {
-        for (var _iterator2 = data.timeline.getAllElements(), _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
-          var _ref2;
-
-          if (_isArray2) {
-            if (_i2 >= _iterator2.length) break;
-            _ref2 = _iterator2[_i2++];
-          } else {
-            _i2 = _iterator2.next();
-            if (_i2.done) break;
-            _ref2 = _i2.value;
-          }
-
-          var element = _ref2;
+        for (var _iterator2 = _createForOfIteratorHelperLoose(data.timeline.getAllElements()), _step2; !(_step2 = _iterator2()).done;) {
+          var element = _step2.value;
 
           if (element.type === 'advert') {
             var marker = new EmpMarker(this.player_, {
@@ -3171,19 +3612,8 @@
     _proto.handleEnded = function handleEnded(event) {
       this.update_(this.player_.duration(), 1);
 
-      for (var _iterator3 = this.markers, _isArray3 = Array.isArray(_iterator3), _i3 = 0, _iterator3 = _isArray3 ? _iterator3 : _iterator3[Symbol.iterator]();;) {
-        var _ref3;
-
-        if (_isArray3) {
-          if (_i3 >= _iterator3.length) break;
-          _ref3 = _iterator3[_i3++];
-        } else {
-          _i3 = _iterator3.next();
-          if (_i3.done) break;
-          _ref3 = _i3.value;
-        }
-
-        var marker = _ref3;
+      for (var _iterator3 = _createForOfIteratorHelperLoose(this.markers), _step3; !(_step3 = _iterator3()).done;) {
+        var marker = _step3.value;
         this.removeChild(marker);
       }
     }
@@ -3196,7 +3626,14 @@
     ;
 
     _proto.getPercent = function getPercent() {
-      var percent = this.getCurrentTime_() / this.player_.duration();
+      var seekrange = this.player_.seekable();
+      var start = 0;
+
+      if (seekrange.length > 0) {
+        start = seekrange.start(0);
+      }
+
+      var percent = (this.getCurrentTime_() - start) / this.player_.duration();
       return percent >= 1 ? 1 : percent;
     }
     /**
@@ -3231,7 +3668,14 @@
         newTime = newTime - 0.1;
       }
 
-      this.setCurrentTime(newTime);
+      var seekrange = this.player_.seekable();
+      var start = 0;
+
+      if (seekrange.length > 0) {
+        start = seekrange.start(0);
+      }
+
+      this.setCurrentTime(newTime + start);
     }
     /**
      * setCurrentTime
@@ -3390,7 +3834,14 @@
     ;
 
     _proto.handleKeyPress = function handleKeyPress(event) {
-      // Support Space (32) or Enter (13) key operation to fire a click event
+      // Handle UMP Apps KeyPress
+      if (IS_UWP && KeyCodeMapGamePad.accept.indexOf(event.which) !== -1) {
+        event.preventDefault();
+        this.handleAction(event);
+        return;
+      } // Support Space (32) or Enter (13) key operation to fire a click event
+
+
       if (event.which === 32 || event.which === 13) {
         event.preventDefault();
         this.handleAction(event);
@@ -3426,7 +3877,7 @@
 
 
   SeekBar.prototype.playerEvent = 'timeupdate';
-  Component$5.registerComponent('SeekBar', SeekBar);
+  Component$7.registerComponent('SeekBar', SeekBar);
 
   /**
    * Returns whether an object is `Promise`-like (i.e. has a `then` method).
@@ -3457,16 +3908,14 @@
   }
 
   var Button$1 = videojs.getComponent('Button');
-  var Component$6 = videojs.getComponent('Component');
+  var Component$8 = videojs.getComponent('Component');
   /**
    * Displays a button to jump back to the beginning of the current asset / program
    *
    * @extends Button
    */
 
-  var EmpRestartButton =
-  /*#__PURE__*/
-  function (_Button) {
+  var EmpRestartButton = /*#__PURE__*/function (_Button) {
     _inheritsLoose(EmpRestartButton, _Button);
 
     /**
@@ -3495,7 +3944,40 @@
         _this.shouldRestart_ = true;
       });
 
+      player.on(empPlayerEvents.PROGRAM_CHANGED, function () {
+        return _this.updateEnabled();
+      });
+      player.on(empPlayerEvents.DURATION_CHANGE, function () {
+        return _this.updateEnabled();
+      });
+
+      _this.updateEnabled();
+
       return _this;
+    }
+    /**
+     * Get Entitlement
+     *
+     * @return {Entitlement} Entitlement
+     * @private
+     */
+
+
+    var _proto = EmpRestartButton.prototype;
+
+    /**
+     * updateEnabled
+     *
+     */
+    _proto.updateEnabled = function updateEnabled() {
+      if (this.entitlement && !this.entitlement.rwEnabled || !this.player().timeShiftEnabled()) {
+        this.disable();
+        this.controlText('Restart restricted');
+      } else {
+        this.enable();
+        this.show();
+        this.controlText('Restart');
+      }
     }
     /**
      * Builds the default DOM class name.
@@ -3504,9 +3986,7 @@
      *         The DOM class name for this object.
      * @private
      */
-
-
-    var _proto = EmpRestartButton.prototype;
+    ;
 
     _proto.buildCSSClass = function buildCSSClass() {
       return "emp-restart-control " + _Button.prototype.buildCSSClass.call(this);
@@ -3531,37 +4011,41 @@
     _proto.handleClick = function handleClick() {
       if (this.shouldRestart_ === true) {
         this.player_.restart();
-        return;
-      }
+      } else {
+        this.player_.scrubbing(true);
+        var videoWasPlaying = !this.player_.paused();
+        this.player_.pause();
+        this.player_.currentTime(0.1);
+        this.player_.scrubbing(false);
 
-      this.player_.scrubbing(true);
-      var videoWasPlaying = !this.player_.paused();
-      this.player_.pause();
-      this.player_.currentTime(0);
-      this.player_.scrubbing(false);
-
-      if (videoWasPlaying) {
-        silencePromise(this.player_.play());
+        if (videoWasPlaying) {
+          silencePromise(this.player_.play());
+        }
       }
     };
+
+    _createClass(EmpRestartButton, [{
+      key: "entitlement",
+      get: function get() {
+        return extplayer.getEntitlement(this.player());
+      }
+    }]);
 
     return EmpRestartButton;
   }(Button$1);
 
   EmpRestartButton.prototype.controlText_ = 'Restart';
-  Component$6.registerComponent('EmpRestartButton', EmpRestartButton);
+  Component$8.registerComponent('EmpRestartButton', EmpRestartButton);
 
   var Button$2 = videojs.getComponent('Button');
-  var Component$7 = videojs.getComponent('Component');
+  var Component$9 = videojs.getComponent('Component');
   /**
    * Displays a button to jump forward a few seconds
    *
    * @extends Button
    */
 
-  var EmpForwardButton =
-  /*#__PURE__*/
-  function (_Button) {
+  var EmpForwardButton = /*#__PURE__*/function (_Button) {
     _inheritsLoose(EmpForwardButton, _Button);
 
     /**
@@ -3582,10 +4066,10 @@
       _this.controlText("Forward " + options.seconds + "s");
 
       player.on(empPlayerEvents.TIMESHIFT_CHANGE, function () {
-        return _this.onTimeshift();
+        return _this.updateEnabled();
       });
-      player.on(empPlayerEvents.PROGRAM_CHANGED, function (event, data) {
-        return _this.updateEnabled(data && data.program);
+      player.on(empPlayerEvents.PROGRAM_CHANGED, function () {
+        return _this.updateEnabled();
       });
       player.on(empPlayerEvents.DURATION_CHANGE, function () {
         return _this.updateEnabled();
@@ -3608,9 +4092,8 @@
     /**
      * updateEnabled
      *
-     * @param {Object} program The program
      */
-    _proto.updateEnabled = function updateEnabled(program) {
+    _proto.updateEnabled = function updateEnabled() {
       if (this.entitlement && !this.entitlement.ffEnabled || !this.player().timeShiftEnabled()) {
         this.disable();
         this.controlText('Forward restricted');
@@ -3618,22 +4101,6 @@
         this.enable();
         this.show();
         this.controlText("Forward " + this.options_.seconds + "s");
-      }
-    }
-    /**
-     * Handle onTimeshift event
-     */
-    ;
-
-    _proto.onTimeshift = function onTimeshift() {
-      if (!this.player()) {
-        return;
-      }
-
-      if (!this.player().timeShiftEnabled()) {
-        this.hide();
-      } else {
-        this.show();
       }
     }
     /**
@@ -3679,19 +4146,17 @@
   }(Button$2);
 
   EmpForwardButton.prototype.controlText_ = 'Forward';
-  Component$7.registerComponent('EmpForwardButton', EmpForwardButton);
+  Component$9.registerComponent('EmpForwardButton', EmpForwardButton);
 
   var Button$3 = videojs.getComponent('Button');
-  var Component$8 = videojs.getComponent('Component');
+  var Component$a = videojs.getComponent('Component');
   /**
    * Displays a button to jump back a few seconds
    *
    * @extends Button
    */
 
-  var EmpRewindButton =
-  /*#__PURE__*/
-  function (_Button) {
+  var EmpRewindButton = /*#__PURE__*/function (_Button) {
     _inheritsLoose(EmpRewindButton, _Button);
 
     /**
@@ -3712,10 +4177,10 @@
       _this.controlText("Rewind " + options.seconds + "s");
 
       player.on(empPlayerEvents.TIMESHIFT_CHANGE, function () {
-        return _this.onTimeshift();
+        return _this.updateEnabled();
       });
-      player.on(empPlayerEvents.PROGRAM_CHANGED, function (event, data) {
-        return _this.updateEnabled(data && data.program);
+      player.on(empPlayerEvents.PROGRAM_CHANGED, function () {
+        return _this.updateEnabled();
       });
       player.on(empPlayerEvents.DURATION_CHANGE, function () {
         return _this.updateEnabled();
@@ -3738,9 +4203,8 @@
     /**
      * updateEnabled
      *
-     * @param {Object} program
      */
-    _proto.updateEnabled = function updateEnabled(program) {
+    _proto.updateEnabled = function updateEnabled() {
       if (this.entitlement && !this.entitlement.rwEnabled || !this.player().timeShiftEnabled()) {
         this.disable();
         this.controlText('Rewind restricted');
@@ -3748,22 +4212,6 @@
         this.enable();
         this.show();
         this.controlText("Rewind " + this.options_.seconds + "s");
-      }
-    }
-    /**
-     * Handle onTimeshift event
-     */
-    ;
-
-    _proto.onTimeshift = function onTimeshift() {
-      if (!this.player()) {
-        return;
-      }
-
-      if (!this.player().timeShiftEnabled()) {
-        this.hide();
-      } else {
-        this.show();
       }
     }
     /**
@@ -3809,19 +4257,17 @@
   }(Button$3);
 
   EmpRewindButton.prototype.controlText_ = 'Rewind';
-  Component$8.registerComponent('EmpRewindButton', EmpRewindButton);
+  Component$a.registerComponent('EmpRewindButton', EmpRewindButton);
 
   var Button$4 = videojs.getComponent('Button');
-  var Component$9 = videojs.getComponent('Component');
+  var Component$b = videojs.getComponent('Component');
   /**
    * Displays a button to jump back to the beginning of the current asset / program and request a new entitlement
    *
    * @extends Button
    */
 
-  var EmpReloadButton =
-  /*#__PURE__*/
-  function (_Button) {
+  var EmpReloadButton = /*#__PURE__*/function (_Button) {
     _inheritsLoose(EmpReloadButton, _Button);
 
     /**
@@ -3860,9 +4306,9 @@
   }(Button$4);
 
   EmpReloadButton.prototype.controlText_ = 'Reload';
-  Component$9.registerComponent('EmpReloadButton', EmpReloadButton);
+  Component$b.registerComponent('EmpReloadButton', EmpReloadButton);
 
-  var Component$a = videojs.getComponent('Component');
+  var Component$c = videojs.getComponent('Component');
   var UPDATE_REFRESH_INTERVAL$1 = !IS_CHROMECAST && !window_1.EMP_DEBUG_CHROMECAST ? 30 : 1000;
   /**
    * Displays the time left or the current time in the video
@@ -3870,9 +4316,7 @@
    * @extends Component
    */
 
-  var EmpTimeDisplay =
-  /*#__PURE__*/
-  function (_Component) {
+  var EmpTimeDisplay = /*#__PURE__*/function (_Component) {
     _inheritsLoose(EmpTimeDisplay, _Component);
 
     /**
@@ -3946,6 +4390,11 @@
       if (this.mode_ === 'currentTime') {
         var time = this.player_.scrubbing() ? this.player_.getCache().currentTime : this.player_.currentTime();
         var localizedText = this.localize('Current Time');
+
+        if (this.player_.noEPG() && this.player_.isLive()) {
+          time = time + this.player_.startTimeLive() / 1000;
+        }
+
         var formattedTime = formatTime(time, this.player_.duration());
 
         if (formattedTime !== this.formattedTime_) {
@@ -3987,22 +4436,20 @@
     };
 
     return EmpTimeDisplay;
-  }(Component$a);
+  }(Component$c);
 
-  Component$a.registerComponent('EmpTimeDisplay', EmpTimeDisplay);
-  Component$a.registerComponent('EmpTimeDisplay2', EmpTimeDisplay);
+  Component$c.registerComponent('EmpTimeDisplay', EmpTimeDisplay);
+  Component$c.registerComponent('EmpTimeDisplay2', EmpTimeDisplay);
 
   var Button$5 = videojs.getComponent('Button');
-  var Component$b = videojs.getComponent('Component');
+  var Component$d = videojs.getComponent('Component');
   /**
    * The button component for stopping playback
    *
    * @extends EmpStopButton
    */
 
-  var EmpStopButton =
-  /*#__PURE__*/
-  function (_Button) {
+  var EmpStopButton = /*#__PURE__*/function (_Button) {
     _inheritsLoose(EmpStopButton, _Button);
 
     /**
@@ -4078,20 +4525,18 @@
   }(Button$5);
 
   EmpStopButton.prototype.kind_ = 'stop';
-  EmpStopButton.prototype.controlText_ = 'stop';
-  Component$b.registerComponent('EmpStopButton', EmpStopButton);
+  EmpStopButton.prototype.controlText_ = 'Stop';
+  Component$d.registerComponent('EmpStopButton', EmpStopButton);
 
   var PlayToggle = videojs.getComponent('PlayToggle');
-  var Component$c = videojs.getComponent('Component');
+  var Component$e = videojs.getComponent('Component');
   /**
    * The button component for the play toggle
    *
    * @extends EmpPlayToggle
    */
 
-  var EmpPlayToggle =
-  /*#__PURE__*/
-  function (_PlayToggle) {
+  var EmpPlayToggle = /*#__PURE__*/function (_PlayToggle) {
     _inheritsLoose(EmpPlayToggle, _PlayToggle);
 
     /**
@@ -4162,7 +4607,7 @@
 
   EmpPlayToggle.prototype.kind_ = 'playToggle';
   EmpPlayToggle.prototype.controlText_ = 'playToggle';
-  Component$c.registerComponent('EmpPlayToggle', EmpPlayToggle);
+  Component$e.registerComponent('EmpPlayToggle', EmpPlayToggle);
 
   var Button$6 = videojs.getComponent('Button');
   /**
@@ -4172,9 +4617,7 @@
    * @extends Button
   */
 
-  var AirplayToggle =
-  /*#__PURE__*/
-  function (_Button) {
+  var AirplayToggle = /*#__PURE__*/function (_Button) {
     _inheritsLoose(AirplayToggle, _Button);
 
     /**
@@ -4277,16 +4720,14 @@
   videojs.registerComponent('AirplayToggle', AirplayToggle);
 
   var Button$7 = videojs.getComponent('Button');
-  var Component$d = videojs.getComponent('Component');
+  var Component$f = videojs.getComponent('Component');
   /**
    * Displays a button to jump forward a few seconds
    *
    * @extends Button
    */
 
-  var EmpNextButton =
-  /*#__PURE__*/
-  function (_Button) {
+  var EmpNextButton = /*#__PURE__*/function (_Button) {
     _inheritsLoose(EmpNextButton, _Button);
 
     /**
@@ -4389,19 +4830,17 @@
   }(Button$7);
 
   EmpNextButton.prototype.controlText_ = 'Next';
-  Component$d.registerComponent('EmpNextButton', EmpNextButton);
+  Component$f.registerComponent('EmpNextButton', EmpNextButton);
 
   var Button$8 = videojs.getComponent('Button');
-  var Component$e = videojs.getComponent('Component');
+  var Component$g = videojs.getComponent('Component');
   /**
    * Displays a button to jump back a few seconds
    *
    * @extends Button
    */
 
-  var EmpPreviousButton =
-  /*#__PURE__*/
-  function (_Button) {
+  var EmpPreviousButton = /*#__PURE__*/function (_Button) {
     _inheritsLoose(EmpPreviousButton, _Button);
 
     /**
@@ -4495,7 +4934,7 @@
   }(Button$8);
 
   EmpPreviousButton.prototype.controlText_ = 'Previous';
-  Component$e.registerComponent('EmpPreviousButton', EmpPreviousButton);
+  Component$g.registerComponent('EmpPreviousButton', EmpPreviousButton);
 
   var Button$9 = videojs.getComponent('Button');
   /**
@@ -4505,9 +4944,7 @@
    * @extends Button
   */
 
-  var PipToggle =
-  /*#__PURE__*/
-  function (_Button) {
+  var PipToggle = /*#__PURE__*/function (_Button) {
     _inheritsLoose(PipToggle, _Button);
 
     /**
@@ -4691,7 +5128,7 @@
   videojs.registerComponent('PipToggle', PipToggle);
 
   var MenuItem$1 = videojs.getComponent('MenuItem');
-  var Component$f = videojs.getComponent('Component');
+  var Component$h = videojs.getComponent('Component');
   /**
    * The specific menu item type for selecting a bitrate
    *
@@ -4701,9 +5138,7 @@
    * @class PlaylistMenuItem
    */
 
-  var PlaylistMenuItem =
-  /*#__PURE__*/
-  function (_MenuItem) {
+  var PlaylistMenuItem = /*#__PURE__*/function (_MenuItem) {
     _inheritsLoose(PlaylistMenuItem, _MenuItem);
 
     /**
@@ -4753,10 +5188,10 @@
     return PlaylistMenuItem;
   }(MenuItem$1);
 
-  Component$f.registerComponent('PlaylistMenuItem', PlaylistMenuItem);
+  Component$h.registerComponent('PlaylistMenuItem', PlaylistMenuItem);
 
   var MenuButton$1 = videojs.getComponent('MenuButton');
-  var Component$g = videojs.getComponent('Component');
+  var Component$i = videojs.getComponent('Component');
   /**
    * The class for PlaylistButton
    *
@@ -4764,9 +5199,7 @@
    * @class PlaylistButton
    */
 
-  var PlaylistButton =
-  /*#__PURE__*/
-  function (_MenuButton) {
+  var PlaylistButton = /*#__PURE__*/function (_MenuButton) {
     _inheritsLoose(PlaylistButton, _MenuButton);
 
     /**
@@ -4874,10 +5307,10 @@
   }(MenuButton$1);
 
   PlaylistButton.prototype.controlText_ = 'Playlist';
-  Component$g.registerComponent('PlaylistButton', PlaylistButton);
+  Component$i.registerComponent('PlaylistButton', PlaylistButton);
 
   var ControlBar = videojs.getComponent('ControlBar');
-  var Component$h = videojs.getComponent('Component');
+  var Component$j = videojs.getComponent('Component');
   /**
    * Container of main controls
    *
@@ -4885,9 +5318,7 @@
    * @class ControlBar
    */
 
-  var EmpControlBar =
-  /*#__PURE__*/
-  function (_ControlBar) {
+  var EmpControlBar = /*#__PURE__*/function (_ControlBar) {
     _inheritsLoose(EmpControlBar, _ControlBar);
 
     function EmpControlBar() {
@@ -4934,7 +5365,7 @@
     }
   }; // loadProgressBar > seekBar > mouseTimeDisplay uses a reference to 'controlbar' so we need to override the name for compatibility with our own controlbar
 
-  Component$h.registerComponent('ControlBar', EmpControlBar);
+  Component$j.registerComponent('ControlBar', EmpControlBar);
 
   /**
    * @file time-ranges.js
@@ -5048,7 +5479,7 @@
     }
   }
 
-  var Component$i = videojs.getComponent('Component');
+  var Component$k = videojs.getComponent('Component');
   var darkGray = '#222';
   var lightGray = '#ccc';
   var fontMap = {
@@ -5117,9 +5548,7 @@
    */
 
 
-  var TextTrackDisplay =
-  /*#__PURE__*/
-  function (_Component) {
+  var TextTrackDisplay = /*#__PURE__*/function (_Component) {
     _inheritsLoose(TextTrackDisplay, _Component);
 
     /**
@@ -5584,11 +6013,11 @@
     };
 
     return TextTrackDisplay;
-  }(Component$i);
+  }(Component$k);
 
-  Component$i.registerComponent('TextTrackDisplay', TextTrackDisplay);
+  Component$k.registerComponent('TextTrackDisplay', TextTrackDisplay);
 
-  var Component$j = videojs.getComponent('Component');
+  var Component$l = videojs.getComponent('Component');
   var ModalDialog = videojs.getComponent('ModalDialog');
   var LOCAL_STORAGE_KEY = 'vjs-text-track-settings';
   var COLOR_BLACK = ['#000', 'Black'];
@@ -5760,9 +6189,7 @@
    */
 
 
-  var TextTrackSettings =
-  /*#__PURE__*/
-  function (_ModalDialog) {
+  var TextTrackSettings = /*#__PURE__*/function (_ModalDialog) {
     _inheritsLoose(TextTrackSettings, _ModalDialog);
 
     /**
@@ -6131,9 +6558,9 @@
     return TextTrackSettings;
   }(ModalDialog);
 
-  Component$j.registerComponent('TextTrackSettings', TextTrackSettings);
+  Component$l.registerComponent('TextTrackSettings', TextTrackSettings);
 
-  var Component$k = videojs.getComponent('Component');
+  var Component$m = videojs.getComponent('Component');
   /**
    * EmpMediaInfoBar Show media-title, media-artwork, media-resolution and media-subtitle
    *
@@ -6143,9 +6570,7 @@
    * @class EmpMediaInfoBar
    */
 
-  var EmpMediaInfoBar =
-  /*#__PURE__*/
-  function (_Component) {
+  var EmpMediaInfoBar = /*#__PURE__*/function (_Component) {
     _inheritsLoose(EmpMediaInfoBar, _Component);
 
     /**
@@ -6287,30 +6712,6 @@
       return el;
     }
     /**
-     * Select the image to display for the asset
-     *
-     * @param {Array} images image objects
-     * @param {string} imageType image type in backend
-     * @return {image} image object
-     */
-    ;
-
-    _proto.imageSelector = function imageSelector(images, imageType) {
-      var image;
-
-      if (images.length > 0) {
-        image = images[0];
-      }
-
-      for (var i = 0; i < images.length; i++) {
-        if (images[i].url && images[i].type === imageType) {
-          return images[i];
-        }
-      }
-
-      return image;
-    }
-    /**
      * updateMediaInformation
      *
      * @param {Object} assetMetadata
@@ -6359,7 +6760,7 @@
       }
 
       if (mediaArtworkEl && assetMetadata.images && assetMetadata.images.length > 0) {
-        var image = this.imageSelector(assetMetadata.images, 'chromecast');
+        var image = imageSelector(assetMetadata.images, 'chromecast');
         mediaArtworkEl.style.backgroundImage = 'url("' + image.url + '")';
         mediaArtworkEl.style.display = 'block';
       } else if (mediaArtworkEl) {
@@ -6367,16 +6768,13 @@
         mediaArtworkEl.style.backgroundImage = 'none';
       }
 
-      if (mediaLogoEl && assetMetadata.channelInfo) {
-        var channelLogo = this.imageSelector(assetMetadata.channelInfo.images, 'thumbnail');
-
-        if (channelLogo && channelLogo.url) {
-          mediaLogoEl.style.backgroundImage = 'url("' + channelLogo.url + '")';
-          mediaLogoEl.style.display = 'block';
-        } else {
-          mediaLogoEl.style.display = 'none';
-          mediaLogoEl.style.backgroundImage = 'none';
-        }
+      if (mediaLogoEl && assetMetadata.channelInfo && assetMetadata.channelInfo.images.length > 0) {
+        var channelLogo = imageSelector(assetMetadata.channelInfo.images, 'thumbnail');
+        mediaLogoEl.style.backgroundImage = 'url("' + channelLogo.url + '")';
+        mediaLogoEl.style.display = 'block';
+      } else if (mediaLogoEl) {
+        mediaLogoEl.style.display = 'none';
+        mediaLogoEl.style.backgroundImage = 'none';
       } // Show the control and mediainfo bar
 
 
@@ -6440,10 +6838,10 @@
     };
 
     return EmpMediaInfoBar;
-  }(Component$k);
+  }(Component$m);
 
   EmpMediaInfoBar.prototype.controlText_ = 'MediaInfo';
-  Component$k.registerComponent('EmpMediaInfoBar', EmpMediaInfoBar);
+  Component$m.registerComponent('EmpMediaInfoBar', EmpMediaInfoBar);
 
   var Plugin = videojs.getPlugin('plugin');
   /* global
@@ -6461,9 +6859,7 @@
    * @class CastPlugin
    */
 
-  var vttThumbnailsPlugin =
-  /*#__PURE__*/
-  function (_Plugin) {
+  var vttThumbnailsPlugin = /*#__PURE__*/function (_Plugin) {
     _inheritsLoose(vttThumbnailsPlugin, _Plugin);
 
     /**
@@ -6487,10 +6883,9 @@
       };
       _this.enabled_ = true;
       _this.registeredEvents = {};
-      _this.scale = 1;
-      player.ready(function () {
-        player.addClass('vjs-vtt-thumbnails');
-      });
+      _this.scale = 1; // player.ready(() => {
+      //  player.addClass('vjs-vtt-thumbnails');
+      // });
 
       _this.on(player, [empPlayerEvents.FIRST_PLAY], function () {
         _this.resetPlugin();
@@ -6601,7 +6996,13 @@
       this.getVttFile(url).then(function (data) {
         _this2.vttData = _this2.processVtt(data);
 
-        _this2.setupThumbnailElement();
+        if (_this2.vttData.length > 0) {
+          _this2.setupThumbnailElement();
+        } else {
+          log('Empty vttThumbnail file.');
+        }
+      })["catch"](function () {
+        log('No vttThumbnail file.');
       });
     }
     /**
@@ -6631,7 +7032,8 @@
       return new Promise(function (resolve, reject) {
         var req = new XMLHttpRequest();
         req.data = {
-          resolve: resolve
+          resolve: resolve,
+          reject: reject
         };
         req.addEventListener('load', _this3.vttFileLoaded);
         req.open('GET', url);
@@ -6644,7 +7046,11 @@
     ;
 
     _proto.vttFileLoaded = function vttFileLoaded() {
-      this.data.resolve(this.responseText);
+      if (this.status >= 200 && this.status < 300) {
+        this.data.resolve(this.responseText);
+      } else {
+        this.data.reject();
+      }
     }
     /**
      * setupThumbnailElement
@@ -6656,6 +7062,10 @@
     _proto.setupThumbnailElement = function setupThumbnailElement(data) {
       var _this4 = this;
 
+      if (!this.player || this.player.isDisposed()) {
+        return;
+      }
+
       var mouseDisplay = this.player.$('.vjs-mouse-display');
       this.progressBar = this.player.$('.vjs-progress-control');
       var thumbHolder = document_1.createElement('div');
@@ -6664,7 +7074,7 @@
       this.thumbnailHolder = thumbHolder;
 
       if (mouseDisplay) {
-        mouseDisplay.classList.add('vjs-hidden');
+        addClass(mouseDisplay, 'vjs-hidden');
       }
 
       this.registeredEvents.progressBarMouseEnter = function () {
@@ -7073,7 +7483,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.1.111-455';
+  vttThumbnailsPlugin.VERSION = '2.2.127-528';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -7389,9 +7799,7 @@
    * @class PlaylistPlugin
    */
 
-  var PlaylistPlugin =
-  /*#__PURE__*/
-  function (_Plugin) {
+  var PlaylistPlugin = /*#__PURE__*/function (_Plugin) {
     _inheritsLoose(PlaylistPlugin, _Plugin);
 
     /**
@@ -7424,6 +7832,10 @@
         _this.onEndedBind = _this.onEnded.bind(_assertThisInitialized(_this));
 
         _this.player.on(empPlayerEvents.ENDED, _this.onEndedBind);
+
+        _this.onChromecastQueChangeBind = _this.onChromecastQueChange.bind(_assertThisInitialized(_this));
+
+        _this.player.on(empPlayerEvents.CC_QUE_CHANGE, _this.onChromecastQueChangeBind);
       }
 
       return _this;
@@ -7438,10 +7850,35 @@
     var _proto = PlaylistPlugin.prototype;
 
     /**
+     * onChromecastQueChange
+     *
+     * @param {Object} event
+     * @param {Object} data
+     * @private
+     */
+    _proto.onChromecastQueChange = function onChromecastQueChange(event, data) {
+      log('PlaylistPlugin:onChromecastQueChange', data);
+
+      if (data && data.sources) {
+        this.sources_ = data.sources;
+        this.player.options_.playlist = true;
+        this.triggerChange_();
+      } else if (data && data.contentId) {
+        this.selectSource_({
+          assetId: data.contentId
+        });
+      } else {
+        this.clear();
+        this.player.options_.playlist = false;
+      }
+    }
+    /**
     * Handle Ended
     *
     * @private
     */
+    ;
+
     _proto.onEnded = function onEnded() {
       if (!this.autoSequence) {
         log('playlist: ended', this.autoSequence);
@@ -7503,10 +7940,18 @@
     ;
 
     _proto.clear = function clear() {
-      if (this.sources_ > 0) {
+      if (this.sources_ && this.sources_.length > 0) {
         this.sources_ = [];
         this.triggerChange_();
       }
+    }
+    /**
+     * replay current src
+     */
+    ;
+
+    _proto.replay = function replay() {
+      this.src(this.src());
     }
     /**
     * dispose PlaylistPlugin
@@ -7519,6 +7964,7 @@
       this.player.off(empPlayerEvents.ASSET_CHANGED, this.assetChangedBind);
       this.player.off(empPlayerEvents.PROGRAM_CHANGED, this.programChangedBind);
       this.player.off(empPlayerEvents.ENDED, this.onEndedBind);
+      this.player.off(empPlayerEvents.CC_QUE_CHANGE, this.onChromecastQueChangeBind);
       this.sources_ = [];
       this.component_ = null;
 
@@ -7620,18 +8066,35 @@
       });
       this.sources_ = sources;
 
-      for (var i = 0; i < this.sources_.length; i++) {
-        if (this.sources_[i].selected || this.sources_[i].selected === '') {
-          this.sources_[i].selected = true;
-          this.index = i;
-          this.triggerChange_();
-          return;
-        }
-      }
+      if (this.player.techName_ === 'EmpCast') {
+        for (var i = 0; i < this.sources_.length; i++) {
+          if (this.sources_[i].selected || this.sources_[i].selected === '') {
+            this.sources_[i].selected = true;
+            this.triggerChange_();
+            this.player.src(this.sources_);
+            return;
+          }
+        } // none selected, select first item.
 
-      this.sources_[this.sources_.length - 1].selected = true;
-      this.player.src(this.sources);
-      this.triggerChange_();
+
+        this.sources_[0].selected = true;
+        this.triggerChange_();
+        this.player.src(this.sources_);
+      } else {
+        for (var _i = 0; _i < this.sources_.length; _i++) {
+          if (this.sources_[_i].selected || this.sources_[_i].selected === '') {
+            this.sources_[_i].selected = true;
+            this.index = _i;
+            this.triggerChange_();
+            return;
+          }
+        } // none selected, select first item.
+
+
+        this.sources_[0].selected = true;
+        this.index = 0;
+        this.triggerChange_();
+      }
     }
     /**
      * Play next source
@@ -7731,13 +8194,13 @@
           }
         }
       } else {
-        for (var _i = 0; _i < this.sources_.length; _i++) {
-          var itemAsset = parseSrc(this.sources_[_i].src);
+        for (var _i2 = 0; _i2 < this.sources_.length; _i2++) {
+          var itemAsset = parseSrc(this.sources_[_i2].src);
           var asset = parseSrc(source.src);
 
           if (!itemAsset) {
             itemAsset = {
-              assetId: this.sources_[_i].src
+              assetId: this.sources_[_i2].src
             };
           }
 
@@ -7748,7 +8211,7 @@
           }
 
           if (asset && itemAsset && itemAsset.assetId === asset.assetId) {
-            this.index = _i;
+            this.index = _i2;
             return true;
           }
         }
@@ -7792,7 +8255,12 @@
 
         if (value > -1 && this.sources_.length > value) {
           this.setSelectedIndex_(value);
-          this.player.src(this.sources.slice(value));
+
+          if (this.player.techName_ !== 'EmpCast') {
+            this.player.src(this.sources.slice(value));
+          } else {
+            this.player.tech_.jumpToItem(value);
+          }
         } else {
           log.warn('playlist: index out of bounds', value);
         }
@@ -7818,7 +8286,7 @@
     return PlaylistPlugin;
   }(Plugin$1);
 
-  PlaylistPlugin.VERSION = '2.1.111-455';
+  PlaylistPlugin.VERSION = '2.2.127-528';
 
   if (videojs.getPlugin('playList')) {
     videojs.log.warn('A plugin named "PlaylistPlugin" already exists.');
@@ -7833,6 +8301,8 @@
   if (window_1.vttjs) {
     window_1.vttjs.restore();
   }
+
+  videojs.setFormatTime(formatTime);
   /**
    * Player class, inherits from videojs Player class.
    *
@@ -7843,10 +8313,7 @@
    * @class Player
    */
 
-
-  var Player =
-  /*#__PURE__*/
-  function (_VjsPlayer) {
+  var Player = /*#__PURE__*/function (_VjsPlayer) {
     _inheritsLoose(Player, _VjsPlayer);
 
     /**
@@ -7903,7 +8370,8 @@
         'absoluteStartTime': tagOptions.absoluteStartTime ? tagOptions.absoluteStartTime : undefined,
         'persistTextTrackSettings': tagOptions.persistTextTrackSettings ? tagOptions.persistTextTrackSettings : showTextTrackSettings,
         'textTrackSettings': tagOptions.textTrackSettings ? tagOptions.textTrackSettings : showTextTrackSettings,
-        'playFrom': tagOptions.playFrom ? tagOptions.playFrom : 'defaultBehaviour'
+        'playFrom': tagOptions.playFrom ? tagOptions.playFrom : 'defaultBehaviour',
+        'minDvrWindow': tagOptions.minDvrWindow ? tagOptions.minDvrWindow : 120
       }, options); // Fix that HTML attribute is lowercase
 
       if (options.sources) {
@@ -8012,12 +8480,30 @@
       });
 
       _this.on(empPlayerEvents.LOADED_DATA, function () {
-        _this.addClass('vjs-has-started');
+        _this.addClass('vjs-has-loaded-data');
+
+        if (_this.autoplay()) {
+          _this.addClass('vjs-has-started');
+        }
 
         _this.ended_ = false;
 
+        if (_this.paused()) {
+          _this.removeClass('vjs-playing');
+
+          _this.addClass('vjs-paused');
+        }
+
         if (_this.paused() && _this.autoplay()) {
-          _this.trigger(empPlayerEvents.LOAD_START);
+          // this.trigger(EmpPlayerEvents.LOAD_START);
+          // Bug fix trigger play after player stopped
+          // Will call load_start
+          _this.handleTechLoadStart_();
+
+          if (_this.autoplay() === true && _this.paused()) {
+            // Fix for Chromecast and when autoplay is true
+            _this.manualAutoplay_('any');
+          }
         } // Don't set referenceTime
         // if (this.programService) {
         //  var entitlement = this.programService().entitlement();
@@ -8029,7 +8515,18 @@
       });
 
       _this.on(empPlayerEvents.REPLAY, function () {
-        if (_this.cache_ && _this.cache_.source && _this.cache_.source.yospaceUrl) {
+        if (!_this.options_.autoplay) {
+          // User-action to restart, enforce autoplay
+          _this.options_.autoplay = true;
+
+          _this.one('play', function () {
+            _this.options_.autoplay = false;
+          });
+        }
+
+        if (_this.playList && _this.playList().length > 0) {
+          _this.playList().replay();
+        } else if (_this.cache_ && _this.cache_.source && _this.cache_.source.yospaceUrl) {
           _this.src({
             src: _this.cache_.source.yospaceUrl,
             type: 'application/yospace'
@@ -8037,16 +8534,16 @@
         } else if (_this.cache_ && _this.cache_.source && _this.cache_.source.streamInfo) {
           var asset = _this.currentAsset();
 
-          if (_this.playList && !_this.playList().currentSource({
+          _this.src({
             type: 'video/emp',
-            src: asset.assetId
-          })) {
-            _this.src({
-              type: 'video/emp',
-              src: JSON.stringify(asset)
-            });
-          }
+            src: JSON.stringify(asset)
+          });
         } else if (_this.cache_ && _this.cache_.source) {
+          // User-action to restart, enforce autoplay
+          if (_this.cache_.source.options && !_this.cache_.source.options.autoplay) {
+            _this.cache_.source.options.autoplay = true;
+          }
+
           _this.src(_this.cache_.source);
         }
       });
@@ -8187,6 +8684,7 @@
         muted: this.options_.muted,
         language: this.options_.language,
         maxBitrate: this.options_.maxBitrate,
+        minDvrWindow: this.options_.minDvrWindow,
         timeShiftDisabled: this.options_.timeShiftDisabled,
         useLastViewedOffset: this.options_.useLastViewedOffset,
         startTime: this.options_.startTime,
@@ -8196,6 +8694,7 @@
         liveDelay: this.options_.liveDelay
       };
       assign(techOptions, playOptions);
+      techOptions.source = undefined;
       return techOptions;
     }
     /**
@@ -8232,8 +8731,6 @@
 
         if (program) {
           _this2.removeClass('vjs-live');
-        } else {
-          _this2.addClass('vjs-live');
         }
 
         _this2.trigger(empPlayerEvents.PROGRAM_CHANGED, {
@@ -8510,8 +9007,7 @@
 
       if (this.hasStarted()) {
         this.options_.autoplay = IS_CHROMECAST ? true : 'any';
-      } // this.autoplay(this.options_.autoplay);
-
+      }
 
       this.options_.absoluteStartTime = this.previousAbsoluteStartTime_;
 
@@ -8572,9 +9068,8 @@
       }
 
       if (this.hasStarted()) {
-        this.options_.autoplay = IS_CHROMECAST ? true : 'any'; // this.options_.autoplay = true;
-      } // this.autoplay(this.options_.autoplay);
-
+        this.options_.autoplay = IS_CHROMECAST ? true : 'any';
+      }
 
       var asset = extplayer.currentAsset(this);
 
@@ -8952,6 +9447,10 @@
       } else {
         this.options_.playlist = this.options_.noPlaylist ? undefined : true;
         this.options_.noPlaylist = undefined;
+      }
+
+      if (IS_CHROMECAST && this.options_.hasMediaQueue) {
+        this.options_.playlist = true;
       } // filter out invalid sources and turn our source into
       // an array of source objects
 
@@ -9012,6 +9511,8 @@
 
       this.cache_.currentTime = 0;
       this.cache_.duration = NaN;
+      this.removeClass('vjs-live');
+      this.removeClass('vjs-liveui');
       this.error(null); // Keep current program to it start play new
 
       if (sources[0].type !== 'video/emp') {
@@ -9074,6 +9575,7 @@
 
       this.clearResetAndReloadTimer_();
       this.hasStarted(false);
+      this.removeClass('vjs-has-loaded-data');
       this.options_.source = undefined;
       Object.keys(Tech.techs_).forEach(function (techName) {
         var techOpt = _this5.options_[techName.toLowerCase()];
@@ -9114,7 +9616,6 @@
         log('startResetAndReloadTimer');
 
         if (this.options_.resetAndReloadLive !== false) {
-          // Disable resetAndReloadLive
           var time = 120;
 
           if (this.options_.resetAndReloadLive) {
@@ -9122,18 +9623,19 @@
             time = this.options_.resetAndReloadLive > 1 ? this.options_.resetAndReloadLive : 1;
           } else if (IS_CHROMECAST) {
             // reset and reload CC every 2 hour
-            time = 120;
-          } else {
+            time = 60 * 2;
+          } else if (this.isLive()) {
             // reset and reload Web every 6 hour
-            time = 120 * 3;
+            time = 60 * 6;
+          } else {
+            // reset and reload Web every 24 hour
+            time = 60 * 24;
           }
 
           this.resetAndReloadTimer_ = this.setTimeout(function () {
             _this6.clearResetAndReloadTimer_();
 
-            if (_this6.isLive() && _this6.streamType === 'DASH') {
-              _this6.resetAndRestartFormPlayhead();
-            }
+            _this6.resetAndRestartFormPlayhead();
           }, time * 1000 * 60);
         }
       }
@@ -9148,15 +9650,39 @@
     _proto.initialSeekToAbsoluteStartTime_ = function initialSeekToAbsoluteStartTime_() {
       var entitlement = extplayer.getEntitlement(this); // dash and hls live streams have different stream startTime and different currentTime
       // absoluteStartTime is slower, use startTime in the most cases
+      // fix bug with ended live events, static stream with streamInfo.live
+
+      if (entitlement && entitlement.streamInfo.event && entitlement.streamInfo.live && !this.isLive()) {
+        entitlement.live = false;
+        entitlement.streamInfo.live = false;
+        entitlement.streamInfo["static"] = true;
+        entitlement.isDynamicCachupAsLive = false;
+        entitlement.isStaticCachupAsLive = true;
+      } // fix bug with wrong endtime for events baseDuration less than streamInfo.endTime
+
+
+      if (entitlement && entitlement.streamInfo.event && entitlement.streamInfo["static"] && this.baseDuration() !== Infinity && this.baseDuration() > 0 && this.baseDuration() * 1000 + entitlement.streamInfo.startTime < entitlement.streamInfo.endTime) {
+        entitlement.streamInfo.endTime = this.baseDuration() * 1000 + entitlement.streamInfo.startTime;
+        entitlement.streamInfo.end = new Date(entitlement.streamInfo.endTime);
+        entitlement.lastViewedOffset = 0;
+        entitlement.lastViewedTime = 0;
+        entitlement.liveTime = 0;
+      }
 
       if (this.options_.absoluteStartTime && this.timeShiftEnabled()) {
         this.setAbsoluteTime(new Date(this.options_.absoluteStartTime));
         this.previousAbsoluteStartTime_ = this.options_.absoluteStartTime;
         this.options_.absoluteStartTime = undefined;
-      } else if (this.options_.useLastViewedOffset && entitlement && !this.isLive() && this.streamType === 'DASH' && entitlement.lastViewedOffset) {
-        // Seek to lastViewedOffset, can't use startTime with Shaka if stream not dashed
-        this.currentTime(entitlement.lastViewedOffset / 1000);
-      }
+      } // Old code stream is always dashed in new pip
+      //  else
+      //  if (this.options_.useLastViewedOffset && entitlement &&
+      //  !this.isLive() && this.streamType === 'DASH' &&
+      //  entitlement.lastViewedOffset && (entitlement.lastViewedOffset / 1000) < (this.baseDuration() - 30)) {
+      //  // Don't use lastViewedOffset 30 sec from end
+      //  // Seek to lastViewedOffset, can't use startTime with Shaka if stream not dashed
+      //  this.currentTime(entitlement.lastViewedOffset / 1000);
+      // }
+
     }
     /**
      * Set Max Bitrate
@@ -9768,6 +10294,49 @@
       return null;
     }
     /**
+     * Get MediaInfo
+     *
+     * @return {Object} MediaInfo (title, subtitle, images, channel-title,  channel-images)
+     */
+    ;
+
+    _proto.getMediaInfo = function getMediaInfo() {
+      var assetMetadata;
+      var program = this.getProgramDetails();
+
+      if (program && program.programId) {
+        assetMetadata = this.programService().extractAssetMetadata(program.asset);
+        assetMetadata.thumbnailsImage = imageSelector(assetMetadata.images, 'chromecast');
+        assetMetadata.channelInfo = program.channelInfo;
+
+        if (program.channelInfo) {
+          assetMetadata.channelInfo.thumbnailImage = imageSelector(program.channelInfo.images, 'thumbnail');
+        }
+      } else {
+        var asset = this.getAssetDetails();
+        assetMetadata = this.programService().extractAssetMetadata(asset);
+        assetMetadata.thumbnailImage = imageSelector(assetMetadata.images, 'chromecast');
+      }
+
+      if ((!assetMetadata || !assetMetadata.title) && this.options().mediaInfo && this.options().mediaInfo.title) {
+        var mediaInfo = this.options().mediaInfo;
+        assetMetadata = {
+          title: mediaInfo.title,
+          subtitle: mediaInfo.subtitle,
+          images: mediaInfo.artworkUrl ? [{
+            url: mediaInfo.artworkUrl
+          }] : [],
+          channelInfo: {
+            images: mediaInfo.logoUrl ? [{
+              url: mediaInfo.logoUrl
+            }] : []
+          }
+        };
+      }
+
+      return assetMetadata;
+    }
+    /**
     * Get a unix time (ms) `TimeRange` object for seekable range.
     *
     * @return {TimeRange} The time range object.
@@ -9865,9 +10434,6 @@
           } else {
             currentTime = currentTime - _start.getTime() / 1000;
           }
-        } else if (!program) {
-          // Don't show progressbar
-          this.duration(Infinity); // log('currentTimeN', this.hasClass('vjs-live'));
         }
 
         if (!this.scrubbing()) {
@@ -9917,21 +10483,8 @@
           var _program2 = this.getProgramDetails();
 
           if (_program2 && seconds !== Infinity) {
-            var start = new Date(_program2.startTime);
-
-            if (entitlement.isStaticCachupAsLive || this.streamType === 'HLS') {
-              var t = entitlement.streamInfo;
-              seconds = seconds - (start.getTime() - t.start.getTime()) / 1000;
-            } else {
-              seconds = seconds - start.getTime() / 1000;
-            }
+            seconds = _program2.duration / 1000;
           }
-
-          if (this.noEPG()) {
-            seconds = Infinity;
-            this.addClass('vjs-live');
-          } // log('set duration', seconds);
-
 
           _VjsPlayer.prototype.duration.call(this, seconds);
 
@@ -9943,15 +10496,26 @@
         var program = this.getProgramDetails();
 
         if (program && duration !== Infinity) {
-          duration = program.duration / 1000;
+          if (this.isProgramEvent && program.duration / 1000 > duration) ; else {
+            duration = program.duration / 1000;
+          }
         }
 
-        if (this.noEPG()) {
-          duration = Infinity;
-          this.addClass('vjs-live');
+        if (duration !== this.cache_.duration) {
+          this.cache_.duration = duration;
+
+          if (duration === Infinity) {
+            this.addClass('vjs-live');
+
+            if (this.options_.liveui && this.player_.liveTracker) {
+              this.addClass('vjs-liveui');
+            }
+          } else {
+            this.removeClass('vjs-live');
+            this.removeClass('vjs-liveui');
+          }
         }
 
-        this.cache_.duration = duration;
         return duration;
       }
 
@@ -10053,15 +10617,21 @@
 
         if (nowDate < end) {
           // live
-          duration = this.techGet_('duration');
+          if (!this.tech_ || this.tech_.seekable === undefined || this.seeking()) {
+            log.warn('No tech_.seekable');
+            return program.duration / 1000;
+          }
 
-          if (duration !== Infinity) {
+          var seekrange = this.techGet_('seekable');
+          var seekrangeEnd = seekrange.end(0);
+
+          if (seekrangeEnd !== Infinity) {
             var t = entitlement.streamInfo;
 
             if (this.streamType === 'HLS') {
-              duration = (t.start.getTime() + duration * 1000 - program.start.getTime()) / 1000;
+              duration = (t.start.getTime() + seekrangeEnd * 1000 - program.start.getTime()) / 1000;
             } else {
-              duration = (duration * 1000 - program.start.getTime()) / 1000;
+              duration = (seekrangeEnd * 1000 - program.start.getTime()) / 1000;
             }
           }
         } else {
@@ -10184,7 +10754,7 @@
         var entitlement = extplayer.getEntitlement(this);
         var program = this.getProgramDetails();
 
-        if (program && (entitlement.isStaticCachupAsLive || entitlement.isDynamicCachupAsLive) && entitlement.ffEnabled) {
+        if (program && (entitlement.isStaticCachupAsLive || entitlement.isDynamicCachupAsLive) && entitlement.ffEnabled && entitlement.timeshiftEnabled) {
           this.programService().getNextProgram(function (nextProgram, error) {
             if (error) {
               log.warn('playNextProgram', error);
@@ -10289,8 +10859,7 @@
           // log('playheadMoving off', true);
           _this10.prePlayheadTime_ = 0;
 
-          _this10.removeClass('vjs-waiting'); // edgeIELoadingBugWorkaround_(); Add if need
-
+          _this10.removeClass('vjs-waiting');
 
           if (_this10.paused()) {
             _this10.trigger(empPlayerEvents.PAUSE);
@@ -10302,20 +10871,6 @@
         }
       });
     }
-    /*
-    //Temporary bug fix to overcome shaka bug in IE/Edge where the loading spinner never disapears after seek occurs.
-    edgeIELoadingBugWorkaround_() {
-      this.on(EmpPlayerEvents.SEEKED, () => {
-        var loadings = document.getElementsByClassName('vjs-waiting');
-        [].forEach.call(loadings, function (loadingEl) {
-          if (loadingEl && loadingEl.classList) {
-            loadingEl.classList.remove('vjs-waiting');
-          }
-        });
-      });
-    }
-    */
-
     /**
     * Check if playhead is moving
      *
@@ -10419,14 +10974,23 @@
       return this.sourceChanging_;
     }
     /**
-     * Check if player is casting to Chromecast
+     * Check if player is connected to Chromecast
      *
      * @return {boolean}  true if casting
      */
     ;
 
     _proto.isCasting = function isCasting() {
-      return this.techName_ === 'EmpCast';
+      if (this.techName_ === 'EmpCast') {
+        var chromecastSender = this.castPlugin().get('ChromecastSender');
+
+        if (chromecastSender) {
+          var castSession = chromecastSender.castSession();
+          return castSession && castSession.status === 'connected';
+        }
+      }
+
+      return false;
     }
     /**
      * Check if tream is only Audio
@@ -10504,6 +11068,18 @@
       // update the tech `src` cache
 
       this.cache_.src = src;
+    }
+    /**
+     * Reset Control Bar's UI by calling sub-methods that reset
+     * all of Control Bar's components
+     */
+    ;
+
+    _proto.resetControlBarUI_ = function resetControlBarUI_() {// This give us problem when switch tech, take back CC session.
+      // We don't need to reset the ControlBarUI it's not visible.
+      // this.resetProgressBar_();
+      // this.resetPlaybackRate_();
+      // this.resetVolumeBar_();
     };
 
     _createClass(Player, [{
@@ -10514,7 +11090,7 @@
     }, {
       key: "version",
       get: function get() {
-        return '2.1.111-455';
+        return '2.2.127-528';
       }
       /**
        * Get entitlement
@@ -10605,8 +11181,8 @@
   }; // Override default 'Player' component
 
 
-  var Component$l = videojs.getComponent('Component');
-  Component$l.registerComponent('Player', Player);
+  var Component$n = videojs.getComponent('Component');
+  Component$n.registerComponent('Player', Player);
 
   /**
    * Detects if the current browser has the required technology to play an unencrypted stream provided by EMP.
@@ -10739,9 +11315,7 @@
    * @class EMPAnalyticsConnector
    */
 
-  var EMPAnalyticsConnector =
-  /*#__PURE__*/
-  function () {
+  var EMPAnalyticsConnector = /*#__PURE__*/function () {
     /**
      * constructor
      *
@@ -11125,7 +11699,7 @@
           };
 
           if (options && options.autoplay) {
-            params.autoplay = options.autoplay;
+            params.autoplay = true;
           }
 
           if (_this8.entitlement() && _this8.entitlement().requestId) {
@@ -11247,11 +11821,11 @@
     _proto.duration = function duration() {
       if (this.entitlement() && (this.entitlement().isStaticCachupAsLive || this.entitlement().isDynamicCachupAsLive)) {
         if (this.player_.getProgramDetails && this.player_.getProgramDetails()) {
-          return this.player_.getProgramDetails().duration / 1000;
+          return Math.round(this.player_.getProgramDetails().duration / 1000);
         }
       }
 
-      return extplayer.duration(this.player_);
+      return Math.round(extplayer.duration(this.player_));
     }
     /**
      * techVersion
@@ -11704,12 +12278,2472 @@
     return EMPAnalyticsConnector;
   }();
 
-  var empAnalytics_min = createCommonjsModule(function (module, exports) {
-  !function(a){module.exports=a();}(function(){return function b(a,c,d){function e(g,h){if(!c[g]){if(!a[g]){var i="function"==typeof commonjsRequire&&commonjsRequire;if(!h&&i)return i(g,!0);if(f)return f(g,!0);var j=new Error("Cannot find module '"+g+"'");throw j.code="MODULE_NOT_FOUND",j}var k=c[g]={exports:{}};a[g][0].call(k.exports,function(b){var c=a[g][1][b];return e(c?c:b)},k,k.exports,b,a,c,d);}return c[g].exports}for(var f="function"==typeof commonjsRequire&&commonjsRequire,g=0;g<d.length;g++)e(d[g]);return e}({1:[function(a,b,c){(function(a){var c;c="undefined"!=typeof window?window:"undefined"!=typeof a?a:"undefined"!=typeof self?self:{},b.exports=c;}).call(this,"undefined"!=typeof commonjsGlobal?commonjsGlobal:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{});},{}],2:[function(b,c,d){!function(e,f){"object"==typeof d&&"undefined"!=typeof c?f(d,b("worker-timers-broker")):f(e.workerTimers={},e.workerTimersBroker);}(this,function(a,b){var c='!function(r){var n={};function o(e){if(n[e])return n[e].exports;var t=n[e]={i:e,l:!1,exports:{}};return r[e].call(t.exports,t,t.exports,o),t.l=!0,t.exports}o.m=r,o.c=n,o.d=function(e,t,r){o.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:r})},o.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},o.t=function(t,e){if(1&e&&(t=o(t)),8&e)return t;if(4&e&&"object"==typeof t&&t&&t.__esModule)return t;var r=Object.create(null);if(o.r(r),Object.defineProperty(r,"default",{enumerable:!0,value:t}),2&e&&"string"!=typeof t)for(var n in t)o.d(r,n,function(e){return t[e]}.bind(null,n));return r},o.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return o.d(t,"a",t),t},o.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},o.p="",o(o.s=0)}([function(e,t,r){"use strict";r.r(t);r(1)},function(e,t,r){!function(){"use strict";var w=new Map,T=new Map,b=function(e,t){var r,n;if("performance"in self){var o=performance.now(),i=Math.max(0,o-t);r=o,n=e-i}else r=Date.now(),n=e;var a=r+n;return{expected:a,remainingDelay:n}},M=function e(t,r,n,o){var i="performance"in self?performance.now():Date.now();n<i?postMessage({id:null,method:"call",params:{timerId:r,timerType:o}}):t.set(r,setTimeout(e,n-i,t,r,n,o))};addEventListener("message",function(e){var t,r,n,o,i,a,u,s,c=e.data;try{if("clear"===c.method){var l=c.id,d=c.params,f=d.timerId,p=d.timerType;if("interval"===p)!function(e){var t=w.get(e);if(void 0===t)throw new Error(\'There is no interval scheduled with the given id "\'.concat(e,\'".\'));clearTimeout(t),w.delete(e)}(f),postMessage({error:null,id:l});else{if("timeout"!==p)throw new Error(\'The given type "\'.concat(p,\'" is not supported\'));!function(e){var t=T.get(e);if(void 0===t)throw new Error(\'There is no timeout scheduled with the given id "\'.concat(e,\'".\'));clearTimeout(t),T.delete(e)}(f),postMessage({error:null,id:l})}}else{if("set"!==c.method)throw new Error(\'The given method "\'.concat(c.method,\'" is not supported\'));var m=c.params,v=m.delay,h=m.now,g=m.timerId,y=m.timerType;if("interval"===y)i=g,a=b(v,h),u=a.expected,s=a.remainingDelay,w.set(i,setTimeout(M,s,w,i,u,"interval"));else{if("timeout"!==y)throw new Error(\'The given type "\'.concat(y,\'" is not supported\'));t=g,r=b(v,h),n=r.expected,o=r.remainingDelay,T.set(t,setTimeout(M,o,T,t,n,"timeout"))}}}catch(e){postMessage({error:{message:e.message},id:c.id,result:null})}})}()}]);',d=new Blob([c],{type:"application/javascript; charset=utf-8"}),e=URL.createObjectURL(d),f=b.load(e),g=f.clearInterval,h=f.clearTimeout,i=f.setInterval,j=f.setTimeout;URL.revokeObjectURL(e),a.clearInterval=g,a.clearTimeout=h,a.setInterval=i,a.setTimeout=j,Object.defineProperty(a,"__esModule",{value:!0});});},{"worker-timers-broker":3}],3:[function(b,c,d){!function(e,f){"object"==typeof d&&"undefined"!=typeof c?f(d,b("fast-unique-numbers")):f(e.workerTimersBroker={},e.fastUniqueNumbers);}(this,function(a,b){var c=function(a){return void 0!==a.method&&"call"===a.method},d=function(a){return null===a.error&&"number"==typeof a.id},e=function(a){var e=new Map,f=new Map,g=new Map,h=new Worker(a);h.addEventListener("message",function(a){var b=a.data;if(c(b)){var h=b.params,i=h.timerId,j=h.timerType;if("interval"===j){var k=e.get(i);if("number"==typeof k){var l=g.get(k);if(void 0===l||l.timerId!==i||l.timerType!==j)throw new Error("The timer is in an undefined state.")}else{if("undefined"==typeof k)throw new Error("The timer is in an undefined state.");k();}}else if("timeout"===j){var m=f.get(i);if("number"==typeof m){var n=g.get(m);if(void 0===n||n.timerId!==i||n.timerType!==j)throw new Error("The timer is in an undefined state.")}else{if("undefined"==typeof m)throw new Error("The timer is in an undefined state.");m(),f["delete"](i);}}}else{if(!d(b)){var o=b.error.message;throw new Error(o)}var p=b.id,q=g.get(p);if(void 0===q)throw new Error("The timer is in an undefined state.");var r=q.timerId,s=q.timerType;g["delete"](p),"interval"===s?e["delete"](r):f["delete"](r);}});var i=function(a){var c=b.generateUniqueNumber(g);g.set(c,{timerId:a,timerType:"interval"}),e.set(a,c),h.postMessage({id:c,method:"clear",params:{timerId:a,timerType:"interval"}});},j=function(a){var c=b.generateUniqueNumber(g);g.set(c,{timerId:a,timerType:"timeout"}),f.set(a,c),h.postMessage({id:c,method:"clear",params:{timerId:a,timerType:"timeout"}});},k=function(a,c){var d=b.generateUniqueNumber(e);return e.set(d,function(){a(),"function"==typeof e.get(d)&&h.postMessage({id:null,method:"set",params:{delay:c,now:performance.now(),timerId:d,timerType:"interval"}});}),h.postMessage({id:null,method:"set",params:{delay:c,now:performance.now(),timerId:d,timerType:"interval"}}),d},l=function(a,c){var d=b.generateUniqueNumber(f);return f.set(d,a),h.postMessage({id:null,method:"set",params:{delay:c,now:performance.now(),timerId:d,timerType:"timeout"}}),d};return {clearInterval:i,clearTimeout:j,setInterval:k,setTimeout:l}};a.load=e,Object.defineProperty(a,"__esModule",{value:!0});});},{"fast-unique-numbers":4}],4:[function(b,c,d){!function(b,e){"object"==typeof d&&"undefined"!=typeof c?e(d):e(b.fastUniqueNumbers={});}(this,function(a){var b=new WeakMap,c=Number.MAX_SAFE_INTEGER||9007199254740991,d=function(a,c){return b.set(a,c),c},e=function(a){var e=b.get(a),f=void 0===e?a.size:e>2147483648?0:e+1;if(!a.has(f))return d(a,f);if(a.size<1073741824){for(;a.has(f);)f=Math.floor(2147483648*Math.random());return d(a,f)}if(a.size>c)throw new Error("Congratulations, you created a collection of unique numbers which uses all available integers!");for(;a.has(f);)f=Math.floor(Math.random()*c);return d(a,f)},f=function(a){var b=e(a);return a.add(b),b};a.addUniqueNumber=f,a.generateUniqueNumber=e,Object.defineProperty(a,"__esModule",{value:!0});});},{}],5:[function(a,b,c){function d(a){if(a&&a.__esModule)return a;var b={};if(null!=a)for(var c in a)Object.prototype.hasOwnProperty.call(a,c)&&(b[c]=a[c]);return b["default"]=a,b}function e(a){return a&&a.__esModule?a:{"default":a}}function f(a,b){if(!(a instanceof b))throw new TypeError("Cannot call a class as a function")}c.__esModule=!0;var g=function(){function a(a,b){for(var c=0;c<b.length;c++){var d=b[c];d.enumerable=d.enumerable||!1,d.configurable=!0,"value"in d&&(d.writable=!0),Object.defineProperty(a,d.key,d);}}return function(b,c,d){return c&&a(b.prototype,c),d&&a(b,d),b}}(),h=a("global/window"),i=e(h),j=a("./platform"),k=e(j),l=a("worker-timers"),m=d(l),n=function(){function a(b,c,d,e,g){var h=arguments.length<=5||void 0===arguments[5]?{}:arguments[5],i=arguments.length<=6||void 0===arguments[6]?{}:arguments[6];f(this,a),this.CYCLE_TIME=1e3,this.EVENT_PURGE_TIME_DEFAULT=3*this.CYCLE_TIME,this.TIME_WITHOUT_BEAT_DEFAULT=60*this.CYCLE_TIME,this.SERVER_URL_DEFAULT="",this.CUSTOMER_DEFAULT="",this.BUSINESS_UNIT_DEFAULT="",this.INCLUDE_DEVICE_METRICS_DEFAULT=!0,this.SESSION_TOKEN_DEFAULT="",this.SESSION_ID_DEFAULT="",this.DEBUG_DEFAULT=!1,this.MAX_RETRIES=20,this.DEVICE_CLOCK_CHECK_THRESHOLD=3e5,this.eventsSkeleton=this.initEventSkeleton(),this.customer_=c,this.businessUnit_=d,this.sessionToken_=e,this.serverURL_=b,this.includeDeviceMetrics_=!1,this.userId_=g,this.deviceInfoData_=h,this.props_=i||{},this.pendingRequest_=!1;}return a.prototype.init=function(){var a=this;this.cycleTimer&&("undefined"!=typeof Worker&&this.props_.disableWebWorkers!==!0?m.clearInterval(this.cycleTimer):clearInterval(this.cycleTimer)),"undefined"!=typeof Worker&&this.props_.disableWebWorkers!==!0?this.cycleTimer=m.setInterval(function(){return a.cycle()},this.CYCLE_TIME):this.cycleTimer=setInterval(function(){return a.cycle()},this.CYCLE_TIME),this.communicationCurrentTime=0,this.lastCommunicationTime=0,this.eventPool={};},a.prototype.clear=function(){this.eventPool={};},a.prototype.ok=function(a){var b=this.eventPool[a];return !!b&&(b.forbidden===!1&&b.retries<this.MAX_RETRIES)},a.prototype.created=function(a){var b=arguments.length<=1||void 0===arguments[1]?{}:arguments[1],c={type:"Created"};this.addEventToPool(a,c,b);},a.prototype.play=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"PlayerReady",currentTime:b};this.deviceAppInfo&&(c.deviceAppInfo=this.deviceAppInfo),this.addEventToPool(a,d,c);},a.prototype.playing=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"Started",currentTime:b};if(this.customAttributes){var e=Object.keys(this.customAttributes);e.length&&e.length>0&&(c.attributes=this.customAttributes);}this.addEventToPool(a,d,c),this.changeSessionState(a,"PLAYING");},a.prototype.paused=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"Paused",currentTime:b};this.addEventToPool(a,d,c,!0);},a.prototype.seek=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"ScrubbedTo",currentTime:b};this.addEventToPool(a,d,c,!0);},a.prototype.programChanged=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"ProgramChanged",currentTime:b};this.addEventToPool(a,d,c,!0);},a.prototype.startCasting=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"StartCasting",currentTime:b};this.addEventToPool(a,d,c,!0),this.changeSessionState(a,"FINISHED");},a.prototype.stopCasting=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"StopCasting",currentTime:b};this.addEventToPool(a,d,c,!0),this.changeSessionState(a,"FINISHED");},a.prototype.setCurrentTime=function(a,b){this.eventPool[a]&&(this.eventPool[a].currentTime=b);},a.prototype.handshake=function(a){var b=arguments.length<=1||void 0===arguments[1]?{}:arguments[1],c={type:"HandshakeStarted"};this.addEventToPool(a,c,b);},a.prototype.resume=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"Resumed",currentTime:b};this.addEventToPool(a,d,c,!0);},a.prototype.bitrateChanged=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"BitrateChanged",currentTime:b};this.addEventToPool(a,d,c,!0);},a.prototype.drmSessionUpdate=function(a){var b=arguments.length<=1||void 0===arguments[1]?{}:arguments[1],c={type:"DRM"};this.addEventToPool(a,c,b,!0);},a.prototype.endOfStream=function(a){var b=arguments.length<=1||void 0===arguments[1]?{}:arguments[1],c={type:"Completed"};this.addEventToPool(a,c,b,!0),this.changeSessionState(a,"FINISHED");},a.prototype.error=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"Error",currentTime:b};this.addEventToPool(a,d,c),this.changeSessionState(a,"FINISHED");},a.prototype.dispose=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d=this.eventPool[a];if(d&&"FINISHED"!==d.currentState){var e={type:"Aborted"};b&&(e.currentTime=b),this.addEventToPool(a,e,c,!0),this.changeSessionState(a,"FINISHED");}},a.prototype.waiting=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"BufferingStarted",currentTime:b};this.addEventToPool(a,d,c);},a.prototype.waitingEnded=function(a,b){var c=arguments.length<=2||void 0===arguments[2]?{}:arguments[2],d={type:"BufferingEnded",currentTime:b};this.addEventToPool(a,d,c);},a.prototype.getSessionState=function(a){return this.eventPool[a]?this.eventPool[a].currentState||"IDLE":"IDLE"},a.prototype.dispatchNow=function(){var a=arguments.length<=0||void 0===arguments[0]||arguments[0];this.cycle(a,!0);},a.prototype.exitOngoingSession=function(a){var b=this,c=Object.keys(this.eventPool);c.map(function(c){b.eventPool[c]&&b.dispose(c,a);});},a.prototype.setCustomAttribute=function(a,b){this.customAttributes||this.resetAnalyticsCustomAttributes(),this.customAttributes[a]=b;},a.prototype.clearCustomAttributes=function(){this.customAttributes={};},a.prototype.removeSession=function(a){var b=!(arguments.length<=1||void 0===arguments[1])&&arguments[1];if(b===!0)delete this.eventPool[a];else{var c=this.eventPool[a];c&&(c.currentState="REMOVED");}},a.prototype.hasDataToSend=function(){for(var a=Object.keys(this.eventPool),b=0;b<a.length;++b)if(this.eventPool[a[b]].events.length>0)return !0;return !1},a.prototype.sendData=function(){var a=this,b=arguments.length<=0||void 0===arguments[0]||arguments[0],c=!(arguments.length<=1||void 0===arguments[1])&&arguments[1];if(!this.pendingRequest_){var d=!1;this.pendingRequest_=!0;var e=void 0;e="undefined"!=typeof Worker&&this.props_.disableWebWorkers!==!0?m.setTimeout(function(){a.pendingRequest_=!1,e=void 0;},2*this.EVENT_PURGE_TIME_DEFAULT):setTimeout(function(){a.pendingRequest_=!1,e=void 0;},2*this.EVENT_PURGE_TIME_DEFAULT);var f=Object.keys(this.eventPool);f.map(function(f){var g=a.eventPool[f];if(g){if(!f)return g.events=[],void a.removeSession(f,!0);if("PLAYING"===g.currentState&&0===g.events.length&&c&&g.events.push({EventType:"Playback.Heartbeat",Timestamp:(new Date).getTime(),OffsetTime:Math.floor(1e3*g.currentTime)}),"IDLE"!==g.currentState&&"REMOVED"!==g.currentState){if(0===g.events.length)return void("FINISHED"===g.currentState&&a.removeSession(f));var h={DispatchTime:(new Date).getTime(),Customer:a.customer_,BusinessUnit:a.businessUnit_,Payload:g.events,SessionId:f,ClockOffset:g.clockOffset};if(a.debugLog("Sending analytics - sessionId: "+f+" and params: ",h),g.retries>a.MAX_RETRIES||g.forbidden===!0)return void(g.events=[]);Math.abs(a.communicationCurrentDate-a.lastCommunicationDate)>a.DEVICE_CLOCK_CHECK_THRESHOLD&&a.initRequest(f).then(function(){}),d=!0,a.sendRequest(b,h,function(b,c){if(e)try{"undefined"!=typeof Worker&&a.props_.disableWebWorkers!==!0?(m.clearTimeout(e),e=void 0):(clearTimeout(e),e=void 0);}catch(d){}a.pendingRequest_=!1;var h=b&&b.httpCode?b.httpCode:200;if("undefined"!=typeof c||200!==h)401===h&&(g.forbidden=!0),a.debugLog("Error sending request to backend",c),c||g.retries++;else{g.events=[],g.retries=0;var i=new Date;a.afterSendData_&&a.afterSendData_(i,g.lastRequestDate),g.lastRequestDate=i,"FINISHED"===g.currentState&&a.removeSession(f);}});}}}),d||(this.pendingRequest_=!1);}},a.prototype.cycle=function(){var a=arguments.length<=0||void 0===arguments[0]||arguments[0],b=!(arguments.length<=1||void 0===arguments[1])&&arguments[1];this.communicationCurrentDate=new Date,this.communicationCurrentTime+=this.CYCLE_TIME,this.hasDataToSend()?(b||this.lastCommunicationTime+this.EVENT_PURGE_TIME_DEFAULT<this.communicationCurrentTime)&&(this.sendData(a),this.lastCommunicationTime=this.communicationCurrentTime,this.lastCommunicationDate=this.communicationCurrentDate):(b||this.lastCommunicationTime+this.TIME_WITHOUT_BEAT_DEFAULT<this.communicationCurrentTime)&&(this.sendData(a,!0),this.lastCommunicationTime=this.communicationCurrentTime,this.lastCommunicationDate=this.communicationCurrentDate);},a.prototype.sendRequest=function(a,b,c){var d=new XMLHttpRequest;d.open("POST",this.serverURL_+"/eventsink/send",!0),d.setRequestHeader("Content-type","application/json"),d.setRequestHeader("Authorization","Bearer "+this.sessionToken_),d.onload=function(){var a=JSON.parse(this.responseText);c(a);},d.onerror=function(a){c(null,a);},d.send(JSON.stringify(b));},a.prototype.initRequest=function(a){var b=this;return new Promise(function(c,d){var e=(new Date).getTime(),f=new XMLHttpRequest;f.open("POST",b.serverURL_+"/eventsink/init",!0),f.setRequestHeader("Content-type","application/json"),f.setRequestHeader("Authorization","Bearer "+b.sessionToken_),f.onload=function(){var d=(new Date).getTime(),g=JSON.parse(f.responseText);if(b.determineClockOffset(a,g,e,d),g&&g.settings){g.settings;g.settings.includeDeviceMetrics&&(b.includeDeviceMetrics_=!!g.settings.includeDeviceMetrics);}c();},f.onerror=function(a){b.debugLog("Unable to init. Aborting."),d(a);};var g={Customer:b.customer_,BusinessUnit:b.businessUnit_,SessionId:a};f.send(JSON.stringify(g));})},a.prototype.debugLog=function(a,b){b=b||"",this.debug_;},a.prototype.addDeviceInfoEvent=function(a){var b=this.eventPool[a];if(this.includeDeviceMetrics_&&b&&b.events&&b.events.length){var c={Timestamp:(new Date).getTime(),EventType:"Device.Info",DeviceModel:this.deviceInfoData_.deviceModel||"Desktop",UserAgent:this.deviceInfoData_.userAgent||i["default"].navigator.userAgent,Height:this.deviceInfoData_.screenHeight||i["default"].screen.height,Width:this.deviceInfoData_.screenWidth||i["default"].screen.width,Model:this.deviceInfoData_.model||i["default"].navigator.appName,Name:this.deviceInfoData_.deviceName||i["default"].navigator.product,OS:this.deviceInfoData_.deviceOS||k["default"].os.family,OSVersion:this.deviceInfoData_.deviceOSVersion||k["default"].os.version,Type:this.deviceInfoData_.type||"WEB"};(this.deviceInfoData_.deviceManufacturer||k["default"].manufacturer)&&(c.Manufacturer=this.deviceInfoData_.deviceManufacturer||k["default"].manufacturer),this.deviceInfoData_.deviceId&&(c.DeviceId=this.deviceInfoData_.deviceId),b.events.push(c);}},a.prototype.determineClockOffset=function(a,b,c,d){var e=this.eventPool[a];e&&(e.clockOffset=Math.floor((d-b.repliedTime+c-b.receivedTime)/2));},a.prototype.createPool=function(a){var b=this;return new Promise(function(c,d){b.eventPool[a]={currentState:"IDLE",currentTime:0,clockOffset:0,events:[],retries:0,forbidden:!1},b.initRequest(a).then(function(){b.addDeviceInfoEvent(a),c();})["catch"](function(a){d(a);});})},a.prototype.addEventToPool=function(a,b,c){var d=this,e=!(arguments.length<=3||void 0===arguments[3])&&arguments[3];if(!e||!this.eventPool[a]||"FINISHED"!==this.eventPool[a].currentState&&"REMOVED"!==this.eventPool[a].currentState){var f;this.eventPool[a]||(f=this.createPool(a)),f?f.then(function(){d.internalAddEventToPool(a,b,c);}):this.internalAddEventToPool(a,b,c);}},a.prototype.internalAddEventToPool=function(a,b,c){var d=this.eventsSkeleton[b.type];if(!d)return void this.debugLog("Unknown playback event: ",b);var e={Timestamp:(new Date).getTime(),EventType:"Playback."+d.event};d.includeOffset&&(e.OffsetTime=Math.floor(1e3*b.currentTime)),d.attributes&&"function"==typeof d.attributes&&(e=this.objectAssign(e,d.attributes(c))),this.eventPool[a].events.push(e),this.debugLog("added "+d.event+" to queue");},a.prototype.changeSessionState=function(a,b){var c,d=this;this.eventPool[a]||(c=this.createPool(a)),c?c.then(function(){d.eventPool[a].currentState=b;}):this.eventPool[a].currentState=b;},a.prototype.initEventSkeleton=function(){var b={};return b.Completed={event:"Completed",autoListener:!1},b.PlayerReady={event:"PlayerReady",autoListener:!1,attributes:function(b){var c={Technology:b.techName,PlayerVersion:b.version};return b.techVersion&&(c.TechVersion=b.techVersion),c.AnalyticsVersion=a.VERSION,b.deviceAppInfo&&(c.DeviceAppInfo=b.deviceAppInfo),b.playMode&&(c.PlayMode=b.playMode),c}},b.Resumed={event:"Resumed",autoListener:!1,includeOffset:!0},b.BufferingStarted={event:"BufferingStarted",includeOffset:!0},b.BufferingEnded={event:"BufferingEnded",includeOffset:!0},b.ScrubbedTo={event:"ScrubbedTo",includeOffset:!0},b.Created={event:"Created",attributes:function(a){var b={};return "undefined"!=typeof a.autoplay&&(b.AutoPlay=a.autoplay),a.techName&&(b.Technology=a.techName),a.player&&(b.Player=a.player),a.version&&(b.Version=a.version),a.requestId&&(b.RequestId=a.requestId),a.techVersion&&(b.TechVersion=a.techVersion),a.deviceAppInfo&&(b.DeviceAppInfo=a.deviceAppInfo),a.playMode&&(b.PlayMode=a.playMode),b}},b.StartCasting={event:"StartCasting",includeOffset:!0},b.StopCasting={event:"StopCasting",includeOffset:!0},b.Paused={event:"Paused",includeOffset:!0},b.BitrateChanged={event:"BitrateChanged",includeOffset:!0,attributes:function(a){return {Bitrate:a.bitrate}}},b.DRM={event:"DRM",includeOffset:!1,attributes:function c(a){var c={};return a.message&&(c.Message=a.message),a.code&&(c.Code=a.code),a.info&&(c.Info=a.info),c}},b.Error={event:"Error",includeOffset:!0,attributes:function d(a){var d={};return a.errorCode&&(d.Code=a.errorCode),a.errorMessage?d.Message=a.errorMessage:d.Message="Unknown Error",a.errorInfo&&(d.Info=a.errorInfo),a.errorDetails&&(d.Details=a.errorDetails),d}},b.HandshakeStarted={event:"HandshakeStarted",autoListener:!1,attributes:function e(a){if(!a.assetId)return {};var e={AssetId:a.assetId};return a.programId&&(e.ProgramId=a.programId),e}},b.ProgramChanged={event:"ProgramChanged",includeOffset:!0,autoListener:!1,attributes:function(a){return a.programId?{ProgramId:a.programId}:{}}},b.Aborted={event:"Aborted",autoListener:!1,includeOffset:!0},b.Started={event:"Started",autoListener:!1,includeOffset:!0,attributes:function f(a){var f={};return a.bitrate&&(f.Bitrate=a.bitrate),a.duration&&(f.VideoLength=1e3*a.duration),a.mediaLocator&&(f.MediaLocator=a.mediaLocator),a.attributes&&(f.Attributes=a.attributes),a.referenceTime&&(f.ReferenceTime=a.referenceTime),a.playMode&&(f.PlayMode=a.playMode),f}},b},a.prototype.objectAssign=function(a,b){for(var c,d,e=1;e<arguments.length;++e){d=arguments[e];for(c in d)Object.prototype.hasOwnProperty.call(d,c)&&(a[c]=d[c]);}return a},g(a,[{key:"debug",get:function(){return this.debug_},set:function(a){this.debug_=a;}},{key:"deviceAppInfo",get:function(){return this.deviceInfoData_?this.deviceInfoData_.deviceAppInfo:null}}]),a}();n.VERSION="2.1.103-9",c["default"]=n,b.exports=c["default"];},{"./platform":6,"global/window":1,"worker-timers":2}],6:[function(b,c,d){(function(b){(function(){function e(a){return a=String(a),a.charAt(0).toUpperCase()+a.slice(1)}function f(a,b,c){var d={"10.0":"10",6.4:"10 Technical Preview",6.3:"8.1",6.2:"8",6.1:"7 / Server 2008 R2","6.0":"Vista / Server 2008",5.2:"XP 64-bit / Server 2003",5.1:"XP",5.01:"2000 SP1","5.0":"2000","4.0":"NT","4.90":"ME"};return b&&c&&/^Win/i.test(a)&&!/^Windows Phone /i.test(a)&&(d=d[/[\d.]+$/.exec(a)])&&(a="Windows "+d),a=String(a),b&&c&&(a=a.replace(RegExp(b,"i"),c)),a=h(a.replace(/ ce$/i," CE").replace(/\bhpw/i,"web").replace(/\bMacintosh\b/,"Mac OS").replace(/_PowerPC\b/i," OS").replace(/\b(OS X) [^ \d]+/i,"$1").replace(/\bMac (OS X)\b/,"$1").replace(/\/(\d)/," $1").replace(/_/g,".").replace(/(?: BePC|[ .]*fc[ \d.]+)$/i,"").replace(/\bx86\.64\b/gi,"x86_64").replace(/\b(Windows Phone) OS\b/,"$1").replace(/\b(Chrome OS \w+) [\d.]+\b/,"$1").split(" on ")[0])}function g(a,b){var c=-1,d=a?a.length:0;if("number"==typeof d&&d>-1&&d<=v)for(;++c<d;)b(a[c],c,a);else i(a,b);}function h(a){return a=n(a),/^(?:webOS|i(?:OS|P))/.test(a)?a:e(a)}function i(a,b){for(var c in a)z.call(a,c)&&b(a[c],c,a);}function j(a){return null==a?e(a):A.call(a).slice(8,-1)}function k(a,b){var c=null!=a?typeof a[b]:"number";return !(/^(?:boolean|number|string|undefined)$/.test(c)||"object"==c&&!a[b])}function l(a){return String(a).replace(/([ -])(?!$)/g,"$1?")}function m(a,b){var c=null;return g(a,function(d,e){c=b(c,d,e,a);}),c}function n(a){return String(a).replace(/^ +| +$/g,"")}function o(a){function b(b){return m(b,function(b,c){return b||RegExp("\\b"+(c.pattern||l(c))+"\\b","i").exec(a)&&(c.label||c)})}function c(b){return m(b,function(b,c,d){return b||(c[X]||c[/^[a-z]+(?: +[a-z]+\b)*/i.exec(X)]||RegExp("\\b"+l(d)+"(?:\\b|\\w*\\d)","i").exec(a))&&d})}function d(b){return m(b,function(b,c){return b||RegExp("\\b"+(c.pattern||l(c))+"\\b","i").exec(a)&&(c.label||c)})}function e(b){return m(b,function(b,c){var d=c.pattern||l(c);return !b&&(b=RegExp("\\b"+d+"(?:/[\\d.]+|[ \\w.]*)","i").exec(a))&&(b=f(b,d,c.label||c)),b})}function g(b){return m(b,function(b,c){var d=c.pattern||l(c);return !b&&(b=RegExp("\\b"+d+" *\\d+[.\\w_]*","i").exec(a)||RegExp("\\b"+d+"(?:; *(?:[a-z]+[_-])?[a-z]+\\d+|[^ ();-]*)","i").exec(a))&&((b=String(c.label&&!RegExp(d,"i").test(c.label)?c.label:b).split("/"))[1]&&!/[\d.]+/.test(b[0])&&(b[0]+=" "+b[1]),c=c.label||c,b=h(b[0].replace(RegExp(d,"i"),c).replace(RegExp("; *(?:"+c+"[_-])?","i")," ").replace(RegExp("("+c+")[-_.]?(\\w)","i"),"$1 $2"))),b})}function p(b){return m(b,function(b,c){return b||(RegExp(c+"(?:-[\\d.]+/|(?: for [\\w-]+)?[ /-])([\\d.]+[^ ();/_-]*)","i").exec(a)||0)[1]||null})}function s(){return this.description||""}var t=q,u=a&&"object"==typeof a&&"String"!=j(a);u&&(t=a,a=null);var v=t.navigator||{},y=v.userAgent||"";a||(a=y);var z,B,C=u||x==r,D=u?!!v.likeChrome:/\bChrome\b/.test(a)&&!/internal|\n/i.test(A.toString()),E="Object",F=u?E:"ScriptBridgingProxyObject",G=u?E:"Environment",H=u&&t.java?"JavaPackage":j(t.java),I=u?E:"RuntimeObject",J=/\bJava/.test(H)&&t.java,K=J&&j(t.environment)==G,L=J?"a":"α",M=J?"b":"β",N=t.document||{},O=t.operamini||t.opera,P=w.test(P=u&&O?O["[[Class]]"]:j(O))?P:O=null,Q=a,R=[],S=null,T=a==y,U=T&&O&&"function"==typeof O.version&&O.version(),V=b([{label:"EdgeHTML",pattern:"Edge"},"Trident",{label:"WebKit",pattern:"AppleWebKit"},"iCab","Presto","NetFront","Tasman","KHTML","Gecko"]),W=d(["Adobe AIR","Arora","Avant Browser","Breach","Camino","Epiphany","Fennec","Flock","Galeon","GreenBrowser","iCab","Iceweasel","K-Meleon","Konqueror","Lunascape","Maxthon",{label:"Microsoft Edge",pattern:"Edge"},"Midori","Nook Browser","PaleMoon","PhantomJS","Raven","Rekonq","RockMelt","SeaMonkey",{label:"Silk",pattern:"(?:Cloud9|Silk-Accelerated)"},"Sleipnir","SlimBrowser",{label:"SRWare Iron",pattern:"Iron"},"Sunrise","Swiftfox","WebPositive","Opera Mini",{label:"Opera Mini",pattern:"OPiOS"},"Opera",{label:"Opera",pattern:"OPR"},"Chrome",{label:"Chrome Mobile",pattern:"(?:CriOS|CrMo)"},{label:"Firefox",pattern:"(?:Firefox|Minefield)"},{label:"Firefox Mobile",pattern:"FxiOS"},{label:"IE",pattern:"IEMobile"},{label:"IE",pattern:"MSIE"},"Safari"]),X=g([{label:"BlackBerry",pattern:"BB10"},"BlackBerry",{label:"Galaxy S",pattern:"GT-I9000"},{label:"Galaxy S2",pattern:"GT-I9100"},{label:"Galaxy S3",pattern:"GT-I9300"},{label:"Galaxy S4",pattern:"GT-I9500"},"Google TV","Lumia","iPad","iPod","iPhone","Kindle",{label:"Kindle Fire",pattern:"(?:Cloud9|Silk-Accelerated)"},"Nexus","Nook","PlayBook","PlayStation 3","PlayStation 4","PlayStation Vita","TouchPad","Transformer",{label:"Wii U",pattern:"WiiU"},"Wii","Xbox One",{label:"Xbox 360",pattern:"Xbox"},"Xoom"]),Y=c({Apple:{iPad:1,iPhone:1,iPod:1},Amazon:{Kindle:1,"Kindle Fire":1},Asus:{Transformer:1},"Barnes & Noble":{Nook:1},BlackBerry:{PlayBook:1},Google:{"Google TV":1,Nexus:1},HP:{TouchPad:1},HTC:{},LG:{},Microsoft:{Xbox:1,"Xbox One":1},Motorola:{Xoom:1},Nintendo:{"Wii U":1,Wii:1},Nokia:{Lumia:1},Samsung:{"Galaxy S":1,"Galaxy S2":1,"Galaxy S3":1,"Galaxy S4":1},Sony:{"PlayStation 4":1,"PlayStation 3":1,"PlayStation Vita":1}}),Z=e(["Windows Phone ","Android","CentOS",{label:"Chrome OS",pattern:"CrOS"},"Debian","Fedora","FreeBSD","Gentoo","Haiku","Kubuntu","Linux Mint","OpenBSD","Red Hat","SuSE","Ubuntu","Xubuntu","Cygwin","Symbian OS","hpwOS","webOS ","webOS","Tablet OS","Linux","Mac OS X","Macintosh","Mac","Windows 98;","Windows "]);if(V&&(V=[V]),Y&&!X&&(X=g([Y])),(z=/\bGoogle TV\b/.exec(X))&&(X=z[0]),/\bSimulator\b/i.test(a)&&(X=(X?X+" ":"")+"Simulator"),"Opera Mini"==W&&/\bOPiOS\b/.test(a)&&R.push("running in Turbo/Uncompressed mode"),/^iP/.test(X)?(W||(W="Safari"),Z="iOS"+((z=/ OS ([\d_]+)/i.exec(a))?" "+z[1].replace(/_/g,"."):"")):"Konqueror"!=W||/buntu/i.test(Z)?Y&&"Google"!=Y&&(/Chrome/.test(W)&&!/\bMobile Safari\b/i.test(a)||/\bVita\b/.test(X))?(W="Android Browser",Z=/\bAndroid\b/.test(Z)?Z:"Android"):"Silk"==W?(/\bMobi/i.test(a)||(Z="Android",R.unshift("desktop mode")),/Accelerated *= *true/i.test(a)&&R.unshift("accelerated")):"PaleMoon"==W&&(z=/\bFirefox\/([\d.]+)\b/.exec(a))?R.push("identifying as Firefox "+z[1]):"Firefox"==W&&(z=/\b(Mobile|Tablet|TV)\b/i.exec(a))?(Z||(Z="Firefox OS"),X||(X=z[1])):W&&!(z=!/\bMinefield\b/i.test(a)&&/\b(?:Firefox|Safari)\b/.exec(W))||(W&&!X&&/[\/,]|^[^(]+?\)/.test(a.slice(a.indexOf(z+"/")+8))&&(W=null),(z=X||Y||Z)&&(X||Y||/\b(?:Android|Symbian OS|Tablet OS|webOS)\b/.test(Z))&&(W=/[a-z]+(?: Hat)?/i.exec(/\bAndroid\b/.test(Z)?Z:z)+" Browser")):Z="Kubuntu",U||(U=p(["(?:Cloud9|CriOS|CrMo|Edge|FxiOS|IEMobile|Iron|Opera ?Mini|OPiOS|OPR|Raven|Silk(?!/[\\d.]+$))","Version",l(W),"(?:Firefox|Minefield|NetFront)"])),(z="iCab"==V&&parseFloat(U)>3&&"WebKit"||/\bOpera\b/.test(W)&&(/\bOPR\b/.test(a)?"Blink":"Presto")||/\b(?:Midori|Nook|Safari)\b/i.test(a)&&!/^(?:Trident|EdgeHTML)$/.test(V)&&"WebKit"||!V&&/\bMSIE\b/i.test(a)&&("Mac OS"==Z?"Tasman":"Trident")||"WebKit"==V&&/\bPlayStation\b(?! Vita\b)/i.test(W)&&"NetFront")&&(V=[z]),"IE"==W&&(z=(/; *(?:XBLWP|ZuneWP)(\d+)/i.exec(a)||0)[1])?(W+=" Mobile",Z="Windows Phone "+(/\+$/.test(z)?z:z+".x"),R.unshift("desktop mode")):/\bWPDesktop\b/i.test(a)?(W="IE Mobile",Z="Windows Phone 8.x",R.unshift("desktop mode"),U||(U=(/\brv:([\d.]+)/.exec(a)||0)[1])):"IE"!=W&&"Trident"==V&&(z=/\brv:([\d.]+)/.exec(a))&&(W&&R.push("identifying as "+W+(U?" "+U:"")),W="IE",U=z[1]),T){if(k(t,"global"))if(J&&(z=J.lang.System,Q=z.getProperty("os.arch"),Z=Z||z.getProperty("os.name")+" "+z.getProperty("os.version")),C&&k(t,"system")&&(z=[t.system])[0]){Z||(Z=z[0].os||null);try{z[1]=t.require("ringo/engine").version,U=z[1].join("."),W="RingoJS";}catch($){z[0].global.system==t.system&&(W="Narwhal");}}else"object"==typeof t.process&&(z=t.process)?(W="Node.js",Q=z.arch,Z=z.platform,U=/[\d.]+/.exec(z.version)[0]):K&&(W="Rhino");else j(z=t.runtime)==F?(W="Adobe AIR",Z=z.flash.system.Capabilities.os):j(z=t.phantom)==I?(W="PhantomJS",U=(z=z.version||null)&&z.major+"."+z.minor+"."+z.patch):"number"==typeof N.documentMode&&(z=/\bTrident\/(\d+)/i.exec(a))&&(U=[U,N.documentMode],(z=+z[1]+4)!=U[1]&&(R.push("IE "+U[1]+" mode"),V&&(V[1]=""),U[1]=z),U="IE"==W?String(U[1].toFixed(1)):U[0]);Z=Z&&h(Z);}U&&(z=/(?:[ab]|dp|pre|[ab]\d+pre)(?:\d+\+?)?$/i.exec(U)||/(?:alpha|beta)(?: ?\d)?/i.exec(a+";"+(T&&v.appMinorVersion))||/\bMinefield\b/i.test(a)&&"a")&&(S=/b/i.test(z)?"beta":"alpha",U=U.replace(RegExp(z+"\\+?$"),"")+("beta"==S?M:L)+(/\d+\+?/.exec(z)||"")),"Fennec"==W||"Firefox"==W&&/\b(?:Android|Firefox OS)\b/.test(Z)?W="Firefox Mobile":"Maxthon"==W&&U?U=U.replace(/\.[\d.]+/,".x"):/\bXbox\b/i.test(X)?(Z=null,"Xbox 360"==X&&/\bIEMobile\b/.test(a)&&R.unshift("mobile mode")):!/^(?:Chrome|IE|Opera)$/.test(W)&&(!W||X||/Browser|Mobi/.test(W))||"Windows CE"!=Z&&!/Mobi/i.test(a)?"IE"==W&&T&&null===t.external?R.unshift("platform preview"):(/\bBlackBerry\b/.test(X)||/\bBB10\b/.test(a))&&(z=(RegExp(X.replace(/ +/g," *")+"/([.\\d]+)","i").exec(a)||0)[1]||U)?(z=[z,/BB10/.test(a)],Z=(z[1]?(X=null,Y="BlackBerry"):"Device Software")+" "+z[0],U=null):this!=i&&"Wii"!=X&&(T&&O||/Opera/.test(W)&&/\b(?:MSIE|Firefox)\b/i.test(a)||"Firefox"==W&&/\bOS X (?:\d+\.){2,}/.test(Z)||"IE"==W&&(Z&&!/^Win/.test(Z)&&U>5.5||/\bWindows XP\b/.test(Z)&&U>8||8==U&&!/\bTrident\b/.test(a)))&&!w.test(z=o.call(i,a.replace(w,"")+";"))&&z.name&&(z="ing as "+z.name+((z=z.version)?" "+z:""),
-  w.test(W)?(/\bIE\b/.test(z)&&"Mac OS"==Z&&(Z=null),z="identify"+z):(z="mask"+z,W=P?h(P.replace(/([a-z])([A-Z])/g,"$1 $2")):"Opera",/\bIE\b/.test(z)&&(Z=null),T||(U=null)),V=["Presto"],R.push(z)):W+=" Mobile",(z=(/\bAppleWebKit\/([\d.]+\+?)/i.exec(a)||0)[1])&&(z=[parseFloat(z.replace(/\.(\d)$/,".0$1")),z],"Safari"==W&&"+"==z[1].slice(-1)?(W="WebKit Nightly",S="alpha",U=z[1].slice(0,-1)):U!=z[1]&&U!=(z[2]=(/\bSafari\/([\d.]+\+?)/i.exec(a)||0)[1])||(U=null),z[1]=(/\bChrome\/([\d.]+)/i.exec(a)||0)[1],537.36==z[0]&&537.36==z[2]&&parseFloat(z[1])>=28&&"WebKit"==V&&(V=["Blink"]),T&&(D||z[1])?(V&&(V[1]="like Chrome"),z=z[1]||(z=z[0],z<530?1:z<532?2:z<532.05?3:z<533?4:z<534.03?5:z<534.07?6:z<534.1?7:z<534.13?8:z<534.16?9:z<534.24?10:z<534.3?11:z<535.01?12:z<535.02?"13+":z<535.07?15:z<535.11?16:z<535.19?17:z<536.05?18:z<536.1?19:z<537.01?20:z<537.11?"21+":z<537.13?23:z<537.18?24:z<537.24?25:z<537.36?26:"Blink"!=V?"27":"28")):(V&&(V[1]="like Safari"),z=z[0],z=z<400?1:z<500?2:z<526?3:z<533?4:z<534?"4+":z<535?5:z<537?6:z<538?7:z<601?8:"8"),V&&(V[1]+=" "+(z+="number"==typeof z?".x":/[.+]/.test(z)?"":"+")),"Safari"==W&&(!U||parseInt(U)>45)&&(U=z)),"Opera"==W&&(z=/\bzbov|zvav$/.exec(Z))?(W+=" ",R.unshift("desktop mode"),"zvav"==z?(W+="Mini",U=null):W+="Mobile",Z=Z.replace(RegExp(" *"+z+"$"),"")):"Safari"==W&&/\bChrome\b/.exec(V&&V[1])&&(R.unshift("desktop mode"),W="Chrome Mobile",U=null,/\bOS X\b/.test(Z)?(Y="Apple",Z="iOS 4.3+"):Z=null),U&&0==U.indexOf(z=/[\d.]+$/.exec(Z))&&a.indexOf("/"+z+"-")>-1&&(Z=n(Z.replace(z,""))),V&&!/\b(?:Avant|Nook)\b/.test(W)&&(/Browser|Lunascape|Maxthon/.test(W)||"Safari"!=W&&/^iOS/.test(Z)&&/\bSafari\b/.test(V[1])||/^(?:Adobe|Arora|Breach|Midori|Opera|Phantom|Rekonq|Rock|Sleipnir|Web)/.test(W)&&V[1])&&(z=V[V.length-1])&&R.push(z),R.length&&(R=["("+R.join("; ")+")"]),Y&&X&&X.indexOf(Y)<0&&R.push("on "+Y),X&&R.push((/^on /.test(R[R.length-1])?"":"on ")+X),Z&&(z=/ ([\d.+]+)$/.exec(Z)||(B=/^[a-z]+ ([\d.+]+) \//i.exec(Z)),Z={architecture:32,family:z&&!B?Z.replace(z[0],""):Z,version:z?z[1]:null,toString:function(){var a=this.version;return this.family+(a&&!B?" "+a:"")+(64==this.architecture?" 64-bit":"")}}),(z=/\b(?:AMD|IA|Win|WOW|x86_|x)64\b/i.exec(Q))&&!/\bi686\b/i.test(Q)&&(Z&&(Z.architecture=64,Z.family=Z.family.replace(RegExp(" *"+z),"")),W&&(/\bWOW64\b/i.test(a)||T&&/\w(?:86|32)$/.test(v.cpuClass||v.platform)&&!/\bWin64; x64\b/i.test(a))&&R.unshift("32-bit")),a||(a=null);var _={};return _.description=a,_.layout=V&&V[0],_.manufacturer=Y,_.name=W,_.prerelease=S,_.product=X,_.ua=a,_.version=W&&U,_.os=Z||{architecture:null,family:null,version:null,toString:function(){return "null"}},_.parse=o,_.toString=s,_.version&&R.unshift(U),_.name&&R.unshift(W),Z&&W&&(Z!=String(Z).split(" ")[0]||Z!=W.split(" ")[0]&&!X)&&R.push(X?"("+Z+")":"on "+Z),R.length&&(_.description=R.join(" ")),_}var p={"function":!0,object:!0},q=p[typeof window]&&window||this,r=q,s=p[typeof d]&&d,t=p[typeof c]&&c&&!c.nodeType&&c,u=s&&t&&"object"==typeof b&&b;!u||u.global!==u&&u.window!==u&&u.self!==u||(q=u);var v=Math.pow(2,53)-1,w=/\bOpera/,x=this,y=Object.prototype,z=y.hasOwnProperty,A=y.toString;s&&t?i(o(),function(a,b){s[b]=a;}):q.platform=o();}).call(void 0);}).call(this,"undefined"!=typeof commonjsGlobal?commonjsGlobal:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{});},{}]},{},[5])(5)});
+  var empAnalytics_browser_cjs = createCommonjsModule(function (module) {
+  function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+
+  var window$1 = _interopDefault(window_1);
+
+  var commonjsGlobal$$1 = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof commonjsGlobal !== 'undefined' ? commonjsGlobal : typeof self !== 'undefined' ? self : {};
+
+  function createCommonjsModule$$1(fn, module) {
+  	return module = { exports: {} }, fn(module, module.exports), module.exports;
+  }
+
+  var platform = createCommonjsModule$$1(function (module, exports) {
+  (function() {
+
+    /** Used to determine if values are of the language type `Object`. */
+    var objectTypes = {
+      'function': true,
+      'object': true
+    };
+
+    /** Used as a reference to the global object. */
+    var root = (objectTypes[typeof window] && window) || this;
+
+    /** Detect free variable `exports`. */
+    var freeExports = exports;
+
+    /** Detect free variable `module`. */
+    var freeModule = module && !module.nodeType && module;
+
+    /** Detect free variable `global` from Node.js or Browserified code and use it as `root`. */
+    var freeGlobal = freeExports && freeModule && typeof commonjsGlobal$$1 == 'object' && commonjsGlobal$$1;
+    if (freeGlobal && (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal || freeGlobal.self === freeGlobal)) {
+      root = freeGlobal;
+    }
+
+    /**
+     * Used as the maximum length of an array-like object.
+     * See the [ES6 spec](http://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength)
+     * for more details.
+     */
+    var maxSafeInteger = Math.pow(2, 53) - 1;
+
+    /** Regular expression to detect Opera. */
+    var reOpera = /\bOpera/;
+
+    /** Used for native method references. */
+    var objectProto = Object.prototype;
+
+    /** Used to check for own properties of an object. */
+    var hasOwnProperty = objectProto.hasOwnProperty;
+
+    /** Used to resolve the internal `[[Class]]` of values. */
+    var toString = objectProto.toString;
+
+    /*--------------------------------------------------------------------------*/
+
+    /**
+     * Capitalizes a string value.
+     *
+     * @private
+     * @param {string} string The string to capitalize.
+     * @returns {string} The capitalized string.
+     */
+    function capitalize(string) {
+      string = String(string);
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    /**
+     * A utility function to clean up the OS name.
+     *
+     * @private
+     * @param {string} os The OS name to clean up.
+     * @param {string} [pattern] A `RegExp` pattern matching the OS name.
+     * @param {string} [label] A label for the OS.
+     */
+    function cleanupOS(os, pattern, label) {
+      // Platform tokens are defined at:
+      // http://msdn.microsoft.com/en-us/library/ms537503(VS.85).aspx
+      // http://web.archive.org/web/20081122053950/http://msdn.microsoft.com/en-us/library/ms537503(VS.85).aspx
+      var data = {
+        '10.0': '10',
+        '6.4':  '10 Technical Preview',
+        '6.3':  '8.1',
+        '6.2':  '8',
+        '6.1':  'Server 2008 R2 / 7',
+        '6.0':  'Server 2008 / Vista',
+        '5.2':  'Server 2003 / XP 64-bit',
+        '5.1':  'XP',
+        '5.01': '2000 SP1',
+        '5.0':  '2000',
+        '4.0':  'NT',
+        '4.90': 'ME'
+      };
+      // Detect Windows version from platform tokens.
+      if (pattern && label && /^Win/i.test(os) && !/^Windows Phone /i.test(os) &&
+          (data = data[/[\d.]+$/.exec(os)])) {
+        os = 'Windows ' + data;
+      }
+      // Correct character case and cleanup string.
+      os = String(os);
+
+      if (pattern && label) {
+        os = os.replace(RegExp(pattern, 'i'), label);
+      }
+
+      os = format(
+        os.replace(/ ce$/i, ' CE')
+          .replace(/\bhpw/i, 'web')
+          .replace(/\bMacintosh\b/, 'Mac OS')
+          .replace(/_PowerPC\b/i, ' OS')
+          .replace(/\b(OS X) [^ \d]+/i, '$1')
+          .replace(/\bMac (OS X)\b/, '$1')
+          .replace(/\/(\d)/, ' $1')
+          .replace(/_/g, '.')
+          .replace(/(?: BePC|[ .]*fc[ \d.]+)$/i, '')
+          .replace(/\bx86\.64\b/gi, 'x86_64')
+          .replace(/\b(Windows Phone) OS\b/, '$1')
+          .replace(/\b(Chrome OS \w+) [\d.]+\b/, '$1')
+          .split(' on ')[0]
+      );
+
+      return os;
+    }
+
+    /**
+     * An iteration utility for arrays and objects.
+     *
+     * @private
+     * @param {Array|Object} object The object to iterate over.
+     * @param {Function} callback The function called per iteration.
+     */
+    function each(object, callback) {
+      var index = -1,
+          length = object ? object.length : 0;
+
+      if (typeof length == 'number' && length > -1 && length <= maxSafeInteger) {
+        while (++index < length) {
+          callback(object[index], index, object);
+        }
+      } else {
+        forOwn(object, callback);
+      }
+    }
+
+    /**
+     * Trim and conditionally capitalize string values.
+     *
+     * @private
+     * @param {string} string The string to format.
+     * @returns {string} The formatted string.
+     */
+    function format(string) {
+      string = trim(string);
+      return /^(?:webOS|i(?:OS|P))/.test(string)
+        ? string
+        : capitalize(string);
+    }
+
+    /**
+     * Iterates over an object's own properties, executing the `callback` for each.
+     *
+     * @private
+     * @param {Object} object The object to iterate over.
+     * @param {Function} callback The function executed per own property.
+     */
+    function forOwn(object, callback) {
+      for (var key in object) {
+        if (hasOwnProperty.call(object, key)) {
+          callback(object[key], key, object);
+        }
+      }
+    }
+
+    /**
+     * Gets the internal `[[Class]]` of a value.
+     *
+     * @private
+     * @param {*} value The value.
+     * @returns {string} The `[[Class]]`.
+     */
+    function getClassOf(value) {
+      return value == null
+        ? capitalize(value)
+        : toString.call(value).slice(8, -1);
+    }
+
+    /**
+     * Host objects can return type values that are different from their actual
+     * data type. The objects we are concerned with usually return non-primitive
+     * types of "object", "function", or "unknown".
+     *
+     * @private
+     * @param {*} object The owner of the property.
+     * @param {string} property The property to check.
+     * @returns {boolean} Returns `true` if the property value is a non-primitive, else `false`.
+     */
+    function isHostType(object, property) {
+      var type = object != null ? typeof object[property] : 'number';
+      return !/^(?:boolean|number|string|undefined)$/.test(type) &&
+        (type == 'object' ? !!object[property] : true);
+    }
+
+    /**
+     * Prepares a string for use in a `RegExp` by making hyphens and spaces optional.
+     *
+     * @private
+     * @param {string} string The string to qualify.
+     * @returns {string} The qualified string.
+     */
+    function qualify(string) {
+      return String(string).replace(/([ -])(?!$)/g, '$1?');
+    }
+
+    /**
+     * A bare-bones `Array#reduce` like utility function.
+     *
+     * @private
+     * @param {Array} array The array to iterate over.
+     * @param {Function} callback The function called per iteration.
+     * @returns {*} The accumulated result.
+     */
+    function reduce(array, callback) {
+      var accumulator = null;
+      each(array, function(value, index) {
+        accumulator = callback(accumulator, value, index, array);
+      });
+      return accumulator;
+    }
+
+    /**
+     * Removes leading and trailing whitespace from a string.
+     *
+     * @private
+     * @param {string} string The string to trim.
+     * @returns {string} The trimmed string.
+     */
+    function trim(string) {
+      return String(string).replace(/^ +| +$/g, '');
+    }
+
+    /*--------------------------------------------------------------------------*/
+
+    /**
+     * Creates a new platform object.
+     *
+     * @memberOf platform
+     * @param {Object|string} [ua=navigator.userAgent] The user agent string or
+     *  context object.
+     * @returns {Object} A platform object.
+     */
+    function parse(ua) {
+
+      /** The environment context object. */
+      var context = root;
+
+      /** Used to flag when a custom context is provided. */
+      var isCustomContext = ua && typeof ua == 'object' && getClassOf(ua) != 'String';
+
+      // Juggle arguments.
+      if (isCustomContext) {
+        context = ua;
+        ua = null;
+      }
+
+      /** Browser navigator object. */
+      var nav = context.navigator || {};
+
+      /** Browser user agent string. */
+      var userAgent = nav.userAgent || '';
+
+      ua || (ua = userAgent);
+
+      /** Used to detect if browser is like Chrome. */
+      var likeChrome = isCustomContext
+        ? !!nav.likeChrome
+        : /\bChrome\b/.test(ua) && !/internal|\n/i.test(toString.toString());
+
+      /** Internal `[[Class]]` value shortcuts. */
+      var objectClass = 'Object',
+          airRuntimeClass = isCustomContext ? objectClass : 'ScriptBridgingProxyObject',
+          enviroClass = isCustomContext ? objectClass : 'Environment',
+          javaClass = (isCustomContext && context.java) ? 'JavaPackage' : getClassOf(context.java),
+          phantomClass = isCustomContext ? objectClass : 'RuntimeObject';
+
+      /** Detect Java environments. */
+      var java = /\bJava/.test(javaClass) && context.java;
+
+      /** Detect Rhino. */
+      var rhino = java && getClassOf(context.environment) == enviroClass;
+
+      /** A character to represent alpha. */
+      var alpha = java ? 'a' : '\u03b1';
+
+      /** A character to represent beta. */
+      var beta = java ? 'b' : '\u03b2';
+
+      /** Browser document object. */
+      var doc = context.document || {};
+
+      /**
+       * Detect Opera browser (Presto-based).
+       * http://www.howtocreate.co.uk/operaStuff/operaObject.html
+       * http://dev.opera.com/articles/view/opera-mini-web-content-authoring-guidelines/#operamini
+       */
+      var opera = context.operamini || context.opera;
+
+      /** Opera `[[Class]]`. */
+      var operaClass = reOpera.test(operaClass = (isCustomContext && opera) ? opera['[[Class]]'] : getClassOf(opera))
+        ? operaClass
+        : (opera = null);
+
+      /*------------------------------------------------------------------------*/
+
+      /** Temporary variable used over the script's lifetime. */
+      var data;
+
+      /** The CPU architecture. */
+      var arch = ua;
+
+      /** Platform description array. */
+      var description = [];
+
+      /** Platform alpha/beta indicator. */
+      var prerelease = null;
+
+      /** A flag to indicate that environment features should be used to resolve the platform. */
+      var useFeatures = ua == userAgent;
+
+      /** The browser/environment version. */
+      var version = useFeatures && opera && typeof opera.version == 'function' && opera.version();
+
+      /** A flag to indicate if the OS ends with "/ Version" */
+      var isSpecialCasedOS;
+
+      /* Detectable layout engines (order is important). */
+      var layout = getLayout([
+        { 'label': 'EdgeHTML', 'pattern': 'Edge' },
+        'Trident',
+        { 'label': 'WebKit', 'pattern': 'AppleWebKit' },
+        'iCab',
+        'Presto',
+        'NetFront',
+        'Tasman',
+        'KHTML',
+        'Gecko'
+      ]);
+
+      /* Detectable browser names (order is important). */
+      var name = getName([
+        'Adobe AIR',
+        'Arora',
+        'Avant Browser',
+        'Breach',
+        'Camino',
+        'Electron',
+        'Epiphany',
+        'Fennec',
+        'Flock',
+        'Galeon',
+        'GreenBrowser',
+        'iCab',
+        'Iceweasel',
+        'K-Meleon',
+        'Konqueror',
+        'Lunascape',
+        'Maxthon',
+        { 'label': 'Microsoft Edge', 'pattern': 'Edge' },
+        'Midori',
+        'Nook Browser',
+        'PaleMoon',
+        'PhantomJS',
+        'Raven',
+        'Rekonq',
+        'RockMelt',
+        { 'label': 'Samsung Internet', 'pattern': 'SamsungBrowser' },
+        'SeaMonkey',
+        { 'label': 'Silk', 'pattern': '(?:Cloud9|Silk-Accelerated)' },
+        'Sleipnir',
+        'SlimBrowser',
+        { 'label': 'SRWare Iron', 'pattern': 'Iron' },
+        'Sunrise',
+        'Swiftfox',
+        'Waterfox',
+        'WebPositive',
+        'Opera Mini',
+        { 'label': 'Opera Mini', 'pattern': 'OPiOS' },
+        'Opera',
+        { 'label': 'Opera', 'pattern': 'OPR' },
+        'Chrome',
+        { 'label': 'Chrome Mobile', 'pattern': '(?:CriOS|CrMo)' },
+        { 'label': 'Firefox', 'pattern': '(?:Firefox|Minefield)' },
+        { 'label': 'Firefox for iOS', 'pattern': 'FxiOS' },
+        { 'label': 'IE', 'pattern': 'IEMobile' },
+        { 'label': 'IE', 'pattern': 'MSIE' },
+        'Safari'
+      ]);
+
+      /* Detectable products (order is important). */
+      var product = getProduct([
+        { 'label': 'BlackBerry', 'pattern': 'BB10' },
+        'BlackBerry',
+        { 'label': 'Galaxy S', 'pattern': 'GT-I9000' },
+        { 'label': 'Galaxy S2', 'pattern': 'GT-I9100' },
+        { 'label': 'Galaxy S3', 'pattern': 'GT-I9300' },
+        { 'label': 'Galaxy S4', 'pattern': 'GT-I9500' },
+        { 'label': 'Galaxy S5', 'pattern': 'SM-G900' },
+        { 'label': 'Galaxy S6', 'pattern': 'SM-G920' },
+        { 'label': 'Galaxy S6 Edge', 'pattern': 'SM-G925' },
+        { 'label': 'Galaxy S7', 'pattern': 'SM-G930' },
+        { 'label': 'Galaxy S7 Edge', 'pattern': 'SM-G935' },
+        'Google TV',
+        'Lumia',
+        'iPad',
+        'iPod',
+        'iPhone',
+        'Kindle',
+        { 'label': 'Kindle Fire', 'pattern': '(?:Cloud9|Silk-Accelerated)' },
+        'Nexus',
+        'Nook',
+        'PlayBook',
+        'PlayStation Vita',
+        'PlayStation',
+        'TouchPad',
+        'Transformer',
+        { 'label': 'Wii U', 'pattern': 'WiiU' },
+        'Wii',
+        'Xbox One',
+        { 'label': 'Xbox 360', 'pattern': 'Xbox' },
+        'Xoom'
+      ]);
+
+      /* Detectable manufacturers. */
+      var manufacturer = getManufacturer({
+        'Apple': { 'iPad': 1, 'iPhone': 1, 'iPod': 1 },
+        'Archos': {},
+        'Amazon': { 'Kindle': 1, 'Kindle Fire': 1 },
+        'Asus': { 'Transformer': 1 },
+        'Barnes & Noble': { 'Nook': 1 },
+        'BlackBerry': { 'PlayBook': 1 },
+        'Google': { 'Google TV': 1, 'Nexus': 1 },
+        'HP': { 'TouchPad': 1 },
+        'HTC': {},
+        'LG': {},
+        'Microsoft': { 'Xbox': 1, 'Xbox One': 1 },
+        'Motorola': { 'Xoom': 1 },
+        'Nintendo': { 'Wii U': 1,  'Wii': 1 },
+        'Nokia': { 'Lumia': 1 },
+        'Samsung': { 'Galaxy S': 1, 'Galaxy S2': 1, 'Galaxy S3': 1, 'Galaxy S4': 1 },
+        'Sony': { 'PlayStation': 1, 'PlayStation Vita': 1 }
+      });
+
+      /* Detectable operating systems (order is important). */
+      var os = getOS([
+        'Windows Phone',
+        'Android',
+        'CentOS',
+        { 'label': 'Chrome OS', 'pattern': 'CrOS' },
+        'Debian',
+        'Fedora',
+        'FreeBSD',
+        'Gentoo',
+        'Haiku',
+        'Kubuntu',
+        'Linux Mint',
+        'OpenBSD',
+        'Red Hat',
+        'SuSE',
+        'Ubuntu',
+        'Xubuntu',
+        'Cygwin',
+        'Symbian OS',
+        'hpwOS',
+        'webOS ',
+        'webOS',
+        'Tablet OS',
+        'Tizen',
+        'Linux',
+        'Mac OS X',
+        'Macintosh',
+        'Mac',
+        'Windows 98;',
+        'Windows '
+      ]);
+
+      /*------------------------------------------------------------------------*/
+
+      /**
+       * Picks the layout engine from an array of guesses.
+       *
+       * @private
+       * @param {Array} guesses An array of guesses.
+       * @returns {null|string} The detected layout engine.
+       */
+      function getLayout(guesses) {
+        return reduce(guesses, function(result, guess) {
+          return result || RegExp('\\b' + (
+            guess.pattern || qualify(guess)
+          ) + '\\b', 'i').exec(ua) && (guess.label || guess);
+        });
+      }
+
+      /**
+       * Picks the manufacturer from an array of guesses.
+       *
+       * @private
+       * @param {Array} guesses An object of guesses.
+       * @returns {null|string} The detected manufacturer.
+       */
+      function getManufacturer(guesses) {
+        return reduce(guesses, function(result, value, key) {
+          // Lookup the manufacturer by product or scan the UA for the manufacturer.
+          return result || (
+            value[product] ||
+            value[/^[a-z]+(?: +[a-z]+\b)*/i.exec(product)] ||
+            RegExp('\\b' + qualify(key) + '(?:\\b|\\w*\\d)', 'i').exec(ua)
+          ) && key;
+        });
+      }
+
+      /**
+       * Picks the browser name from an array of guesses.
+       *
+       * @private
+       * @param {Array} guesses An array of guesses.
+       * @returns {null|string} The detected browser name.
+       */
+      function getName(guesses) {
+        return reduce(guesses, function(result, guess) {
+          return result || RegExp('\\b' + (
+            guess.pattern || qualify(guess)
+          ) + '\\b', 'i').exec(ua) && (guess.label || guess);
+        });
+      }
+
+      /**
+       * Picks the OS name from an array of guesses.
+       *
+       * @private
+       * @param {Array} guesses An array of guesses.
+       * @returns {null|string} The detected OS name.
+       */
+      function getOS(guesses) {
+        return reduce(guesses, function(result, guess) {
+          var pattern = guess.pattern || qualify(guess);
+          if (!result && (result =
+                RegExp('\\b' + pattern + '(?:/[\\d.]+|[ \\w.]*)', 'i').exec(ua)
+              )) {
+            result = cleanupOS(result, pattern, guess.label || guess);
+          }
+          return result;
+        });
+      }
+
+      /**
+       * Picks the product name from an array of guesses.
+       *
+       * @private
+       * @param {Array} guesses An array of guesses.
+       * @returns {null|string} The detected product name.
+       */
+      function getProduct(guesses) {
+        return reduce(guesses, function(result, guess) {
+          var pattern = guess.pattern || qualify(guess);
+          if (!result && (result =
+                RegExp('\\b' + pattern + ' *\\d+[.\\w_]*', 'i').exec(ua) ||
+                RegExp('\\b' + pattern + ' *\\w+-[\\w]*', 'i').exec(ua) ||
+                RegExp('\\b' + pattern + '(?:; *(?:[a-z]+[_-])?[a-z]+\\d+|[^ ();-]*)', 'i').exec(ua)
+              )) {
+            // Split by forward slash and append product version if needed.
+            if ((result = String((guess.label && !RegExp(pattern, 'i').test(guess.label)) ? guess.label : result).split('/'))[1] && !/[\d.]+/.test(result[0])) {
+              result[0] += ' ' + result[1];
+            }
+            // Correct character case and cleanup string.
+            guess = guess.label || guess;
+            result = format(result[0]
+              .replace(RegExp(pattern, 'i'), guess)
+              .replace(RegExp('; *(?:' + guess + '[_-])?', 'i'), ' ')
+              .replace(RegExp('(' + guess + ')[-_.]?(\\w)', 'i'), '$1 $2'));
+          }
+          return result;
+        });
+      }
+
+      /**
+       * Resolves the version using an array of UA patterns.
+       *
+       * @private
+       * @param {Array} patterns An array of UA patterns.
+       * @returns {null|string} The detected version.
+       */
+      function getVersion(patterns) {
+        return reduce(patterns, function(result, pattern) {
+          return result || (RegExp(pattern +
+            '(?:-[\\d.]+/|(?: for [\\w-]+)?[ /-])([\\d.]+[^ ();/_-]*)', 'i').exec(ua) || 0)[1] || null;
+        });
+      }
+
+      /**
+       * Returns `platform.description` when the platform object is coerced to a string.
+       *
+       * @name toString
+       * @memberOf platform
+       * @returns {string} Returns `platform.description` if available, else an empty string.
+       */
+      function toStringPlatform() {
+        return this.description || '';
+      }
+
+      /*------------------------------------------------------------------------*/
+
+      // Convert layout to an array so we can add extra details.
+      layout && (layout = [layout]);
+
+      // Detect product names that contain their manufacturer's name.
+      if (manufacturer && !product) {
+        product = getProduct([manufacturer]);
+      }
+      // Clean up Google TV.
+      if ((data = /\bGoogle TV\b/.exec(product))) {
+        product = data[0];
+      }
+      // Detect simulators.
+      if (/\bSimulator\b/i.test(ua)) {
+        product = (product ? product + ' ' : '') + 'Simulator';
+      }
+      // Detect Opera Mini 8+ running in Turbo/Uncompressed mode on iOS.
+      if (name == 'Opera Mini' && /\bOPiOS\b/.test(ua)) {
+        description.push('running in Turbo/Uncompressed mode');
+      }
+      // Detect IE Mobile 11.
+      if (name == 'IE' && /\blike iPhone OS\b/.test(ua)) {
+        data = parse(ua.replace(/like iPhone OS/, ''));
+        manufacturer = data.manufacturer;
+        product = data.product;
+      }
+      // Detect iOS.
+      else if (/^iP/.test(product)) {
+        name || (name = 'Safari');
+        os = 'iOS' + ((data = / OS ([\d_]+)/i.exec(ua))
+          ? ' ' + data[1].replace(/_/g, '.')
+          : '');
+      }
+      // Detect Kubuntu.
+      else if (name == 'Konqueror' && !/buntu/i.test(os)) {
+        os = 'Kubuntu';
+      }
+      // Detect Android browsers.
+      else if ((manufacturer && manufacturer != 'Google' &&
+          ((/Chrome/.test(name) && !/\bMobile Safari\b/i.test(ua)) || /\bVita\b/.test(product))) ||
+          (/\bAndroid\b/.test(os) && /^Chrome/.test(name) && /\bVersion\//i.test(ua))) {
+        name = 'Android Browser';
+        os = /\bAndroid\b/.test(os) ? os : 'Android';
+      }
+      // Detect Silk desktop/accelerated modes.
+      else if (name == 'Silk') {
+        if (!/\bMobi/i.test(ua)) {
+          os = 'Android';
+          description.unshift('desktop mode');
+        }
+        if (/Accelerated *= *true/i.test(ua)) {
+          description.unshift('accelerated');
+        }
+      }
+      // Detect PaleMoon identifying as Firefox.
+      else if (name == 'PaleMoon' && (data = /\bFirefox\/([\d.]+)\b/.exec(ua))) {
+        description.push('identifying as Firefox ' + data[1]);
+      }
+      // Detect Firefox OS and products running Firefox.
+      else if (name == 'Firefox' && (data = /\b(Mobile|Tablet|TV)\b/i.exec(ua))) {
+        os || (os = 'Firefox OS');
+        product || (product = data[1]);
+      }
+      // Detect false positives for Firefox/Safari.
+      else if (!name || (data = !/\bMinefield\b/i.test(ua) && /\b(?:Firefox|Safari)\b/.exec(name))) {
+        // Escape the `/` for Firefox 1.
+        if (name && !product && /[\/,]|^[^(]+?\)/.test(ua.slice(ua.indexOf(data + '/') + 8))) {
+          // Clear name of false positives.
+          name = null;
+        }
+        // Reassign a generic name.
+        if ((data = product || manufacturer || os) &&
+            (product || manufacturer || /\b(?:Android|Symbian OS|Tablet OS|webOS)\b/.test(os))) {
+          name = /[a-z]+(?: Hat)?/i.exec(/\bAndroid\b/.test(os) ? os : data) + ' Browser';
+        }
+      }
+      // Add Chrome version to description for Electron.
+      else if (name == 'Electron' && (data = (/\bChrome\/([\d.]+)\b/.exec(ua) || 0)[1])) {
+        description.push('Chromium ' + data);
+      }
+      // Detect non-Opera (Presto-based) versions (order is important).
+      if (!version) {
+        version = getVersion([
+          '(?:Cloud9|CriOS|CrMo|Edge|FxiOS|IEMobile|Iron|Opera ?Mini|OPiOS|OPR|Raven|SamsungBrowser|Silk(?!/[\\d.]+$))',
+          'Version',
+          qualify(name),
+          '(?:Firefox|Minefield|NetFront)'
+        ]);
+      }
+      // Detect stubborn layout engines.
+      if ((data =
+            layout == 'iCab' && parseFloat(version) > 3 && 'WebKit' ||
+            /\bOpera\b/.test(name) && (/\bOPR\b/.test(ua) ? 'Blink' : 'Presto') ||
+            /\b(?:Midori|Nook|Safari)\b/i.test(ua) && !/^(?:Trident|EdgeHTML)$/.test(layout) && 'WebKit' ||
+            !layout && /\bMSIE\b/i.test(ua) && (os == 'Mac OS' ? 'Tasman' : 'Trident') ||
+            layout == 'WebKit' && /\bPlayStation\b(?! Vita\b)/i.test(name) && 'NetFront'
+          )) {
+        layout = [data];
+      }
+      // Detect Windows Phone 7 desktop mode.
+      if (name == 'IE' && (data = (/; *(?:XBLWP|ZuneWP)(\d+)/i.exec(ua) || 0)[1])) {
+        name += ' Mobile';
+        os = 'Windows Phone ' + (/\+$/.test(data) ? data : data + '.x');
+        description.unshift('desktop mode');
+      }
+      // Detect Windows Phone 8.x desktop mode.
+      else if (/\bWPDesktop\b/i.test(ua)) {
+        name = 'IE Mobile';
+        os = 'Windows Phone 8.x';
+        description.unshift('desktop mode');
+        version || (version = (/\brv:([\d.]+)/.exec(ua) || 0)[1]);
+      }
+      // Detect IE 11 identifying as other browsers.
+      else if (name != 'IE' && layout == 'Trident' && (data = /\brv:([\d.]+)/.exec(ua))) {
+        if (name) {
+          description.push('identifying as ' + name + (version ? ' ' + version : ''));
+        }
+        name = 'IE';
+        version = data[1];
+      }
+      // Leverage environment features.
+      if (useFeatures) {
+        // Detect server-side environments.
+        // Rhino has a global function while others have a global object.
+        if (isHostType(context, 'global')) {
+          if (java) {
+            data = java.lang.System;
+            arch = data.getProperty('os.arch');
+            os = os || data.getProperty('os.name') + ' ' + data.getProperty('os.version');
+          }
+          if (rhino) {
+            try {
+              version = context.require('ringo/engine').version.join('.');
+              name = 'RingoJS';
+            } catch(e) {
+              if ((data = context.system) && data.global.system == context.system) {
+                name = 'Narwhal';
+                os || (os = data[0].os || null);
+              }
+            }
+            if (!name) {
+              name = 'Rhino';
+            }
+          }
+          else if (
+            typeof context.process == 'object' && !context.true &&
+            (data = context.process)
+          ) {
+            if (typeof data.versions == 'object') {
+              if (typeof data.versions.electron == 'string') {
+                description.push('Node ' + data.versions.node);
+                name = 'Electron';
+                version = data.versions.electron;
+              } else if (typeof data.versions.nw == 'string') {
+                description.push('Chromium ' + version, 'Node ' + data.versions.node);
+                name = 'NW.js';
+                version = data.versions.nw;
+              }
+            }
+            if (!name) {
+              name = 'Node.js';
+              arch = data.arch;
+              os = data.platform;
+              version = /[\d.]+/.exec(data.version);
+              version = version ? version[0] : null;
+            }
+          }
+        }
+        // Detect Adobe AIR.
+        else if (getClassOf((data = context.runtime)) == airRuntimeClass) {
+          name = 'Adobe AIR';
+          os = data.flash.system.Capabilities.os;
+        }
+        // Detect PhantomJS.
+        else if (getClassOf((data = context.phantom)) == phantomClass) {
+          name = 'PhantomJS';
+          version = (data = data.version || null) && (data.major + '.' + data.minor + '.' + data.patch);
+        }
+        // Detect IE compatibility modes.
+        else if (typeof doc.documentMode == 'number' && (data = /\bTrident\/(\d+)/i.exec(ua))) {
+          // We're in compatibility mode when the Trident version + 4 doesn't
+          // equal the document mode.
+          version = [version, doc.documentMode];
+          if ((data = +data[1] + 4) != version[1]) {
+            description.push('IE ' + version[1] + ' mode');
+            layout && (layout[1] = '');
+            version[1] = data;
+          }
+          version = name == 'IE' ? String(version[1].toFixed(1)) : version[0];
+        }
+        // Detect IE 11 masking as other browsers.
+        else if (typeof doc.documentMode == 'number' && /^(?:Chrome|Firefox)\b/.test(name)) {
+          description.push('masking as ' + name + ' ' + version);
+          name = 'IE';
+          version = '11.0';
+          layout = ['Trident'];
+          os = 'Windows';
+        }
+        os = os && format(os);
+      }
+      // Detect prerelease phases.
+      if (version && (data =
+            /(?:[ab]|dp|pre|[ab]\d+pre)(?:\d+\+?)?$/i.exec(version) ||
+            /(?:alpha|beta)(?: ?\d)?/i.exec(ua + ';' + (useFeatures && nav.appMinorVersion)) ||
+            /\bMinefield\b/i.test(ua) && 'a'
+          )) {
+        prerelease = /b/i.test(data) ? 'beta' : 'alpha';
+        version = version.replace(RegExp(data + '\\+?$'), '') +
+          (prerelease == 'beta' ? beta : alpha) + (/\d+\+?/.exec(data) || '');
+      }
+      // Detect Firefox Mobile.
+      if (name == 'Fennec' || name == 'Firefox' && /\b(?:Android|Firefox OS)\b/.test(os)) {
+        name = 'Firefox Mobile';
+      }
+      // Obscure Maxthon's unreliable version.
+      else if (name == 'Maxthon' && version) {
+        version = version.replace(/\.[\d.]+/, '.x');
+      }
+      // Detect Xbox 360 and Xbox One.
+      else if (/\bXbox\b/i.test(product)) {
+        if (product == 'Xbox 360') {
+          os = null;
+        }
+        if (product == 'Xbox 360' && /\bIEMobile\b/.test(ua)) {
+          description.unshift('mobile mode');
+        }
+      }
+      // Add mobile postfix.
+      else if ((/^(?:Chrome|IE|Opera)$/.test(name) || name && !product && !/Browser|Mobi/.test(name)) &&
+          (os == 'Windows CE' || /Mobi/i.test(ua))) {
+        name += ' Mobile';
+      }
+      // Detect IE platform preview.
+      else if (name == 'IE' && useFeatures) {
+        try {
+          if (context.external === null) {
+            description.unshift('platform preview');
+          }
+        } catch(e) {
+          description.unshift('embedded');
+        }
+      }
+      // Detect BlackBerry OS version.
+      // http://docs.blackberry.com/en/developers/deliverables/18169/HTTP_headers_sent_by_BB_Browser_1234911_11.jsp
+      else if ((/\bBlackBerry\b/.test(product) || /\bBB10\b/.test(ua)) && (data =
+            (RegExp(product.replace(/ +/g, ' *') + '/([.\\d]+)', 'i').exec(ua) || 0)[1] ||
+            version
+          )) {
+        data = [data, /BB10/.test(ua)];
+        os = (data[1] ? (product = null, manufacturer = 'BlackBerry') : 'Device Software') + ' ' + data[0];
+        version = null;
+      }
+      // Detect Opera identifying/masking itself as another browser.
+      // http://www.opera.com/support/kb/view/843/
+      else if (this != forOwn && product != 'Wii' && (
+            (useFeatures && opera) ||
+            (/Opera/.test(name) && /\b(?:MSIE|Firefox)\b/i.test(ua)) ||
+            (name == 'Firefox' && /\bOS X (?:\d+\.){2,}/.test(os)) ||
+            (name == 'IE' && (
+              (os && !/^Win/.test(os) && version > 5.5) ||
+              /\bWindows XP\b/.test(os) && version > 8 ||
+              version == 8 && !/\bTrident\b/.test(ua)
+            ))
+          ) && !reOpera.test((data = parse.call(forOwn, ua.replace(reOpera, '') + ';'))) && data.name) {
+        // When "identifying", the UA contains both Opera and the other browser's name.
+        data = 'ing as ' + data.name + ((data = data.version) ? ' ' + data : '');
+        if (reOpera.test(name)) {
+          if (/\bIE\b/.test(data) && os == 'Mac OS') {
+            os = null;
+          }
+          data = 'identify' + data;
+        }
+        // When "masking", the UA contains only the other browser's name.
+        else {
+          data = 'mask' + data;
+          if (operaClass) {
+            name = format(operaClass.replace(/([a-z])([A-Z])/g, '$1 $2'));
+          } else {
+            name = 'Opera';
+          }
+          if (/\bIE\b/.test(data)) {
+            os = null;
+          }
+          if (!useFeatures) {
+            version = null;
+          }
+        }
+        layout = ['Presto'];
+        description.push(data);
+      }
+      // Detect WebKit Nightly and approximate Chrome/Safari versions.
+      if ((data = (/\bAppleWebKit\/([\d.]+\+?)/i.exec(ua) || 0)[1])) {
+        // Correct build number for numeric comparison.
+        // (e.g. "532.5" becomes "532.05")
+        data = [parseFloat(data.replace(/\.(\d)$/, '.0$1')), data];
+        // Nightly builds are postfixed with a "+".
+        if (name == 'Safari' && data[1].slice(-1) == '+') {
+          name = 'WebKit Nightly';
+          prerelease = 'alpha';
+          version = data[1].slice(0, -1);
+        }
+        // Clear incorrect browser versions.
+        else if (version == data[1] ||
+            version == (data[2] = (/\bSafari\/([\d.]+\+?)/i.exec(ua) || 0)[1])) {
+          version = null;
+        }
+        // Use the full Chrome version when available.
+        data[1] = (/\bChrome\/([\d.]+)/i.exec(ua) || 0)[1];
+        // Detect Blink layout engine.
+        if (data[0] == 537.36 && data[2] == 537.36 && parseFloat(data[1]) >= 28 && layout == 'WebKit') {
+          layout = ['Blink'];
+        }
+        // Detect JavaScriptCore.
+        // http://stackoverflow.com/questions/6768474/how-can-i-detect-which-javascript-engine-v8-or-jsc-is-used-at-runtime-in-androi
+        if (!useFeatures || (!likeChrome && !data[1])) {
+          layout && (layout[1] = 'like Safari');
+          data = (data = data[0], data < 400 ? 1 : data < 500 ? 2 : data < 526 ? 3 : data < 533 ? 4 : data < 534 ? '4+' : data < 535 ? 5 : data < 537 ? 6 : data < 538 ? 7 : data < 601 ? 8 : '8');
+        } else {
+          layout && (layout[1] = 'like Chrome');
+          data = data[1] || (data = data[0], data < 530 ? 1 : data < 532 ? 2 : data < 532.05 ? 3 : data < 533 ? 4 : data < 534.03 ? 5 : data < 534.07 ? 6 : data < 534.10 ? 7 : data < 534.13 ? 8 : data < 534.16 ? 9 : data < 534.24 ? 10 : data < 534.30 ? 11 : data < 535.01 ? 12 : data < 535.02 ? '13+' : data < 535.07 ? 15 : data < 535.11 ? 16 : data < 535.19 ? 17 : data < 536.05 ? 18 : data < 536.10 ? 19 : data < 537.01 ? 20 : data < 537.11 ? '21+' : data < 537.13 ? 23 : data < 537.18 ? 24 : data < 537.24 ? 25 : data < 537.36 ? 26 : layout != 'Blink' ? '27' : '28');
+        }
+        // Add the postfix of ".x" or "+" for approximate versions.
+        layout && (layout[1] += ' ' + (data += typeof data == 'number' ? '.x' : /[.+]/.test(data) ? '' : '+'));
+        // Obscure version for some Safari 1-2 releases.
+        if (name == 'Safari' && (!version || parseInt(version) > 45)) {
+          version = data;
+        }
+      }
+      // Detect Opera desktop modes.
+      if (name == 'Opera' &&  (data = /\bzbov|zvav$/.exec(os))) {
+        name += ' ';
+        description.unshift('desktop mode');
+        if (data == 'zvav') {
+          name += 'Mini';
+          version = null;
+        } else {
+          name += 'Mobile';
+        }
+        os = os.replace(RegExp(' *' + data + '$'), '');
+      }
+      // Detect Chrome desktop mode.
+      else if (name == 'Safari' && /\bChrome\b/.exec(layout && layout[1])) {
+        description.unshift('desktop mode');
+        name = 'Chrome Mobile';
+        version = null;
+
+        if (/\bOS X\b/.test(os)) {
+          manufacturer = 'Apple';
+          os = 'iOS 4.3+';
+        } else {
+          os = null;
+        }
+      }
+      // Strip incorrect OS versions.
+      if (version && version.indexOf((data = /[\d.]+$/.exec(os))) == 0 &&
+          ua.indexOf('/' + data + '-') > -1) {
+        os = trim(os.replace(data, ''));
+      }
+      // Add layout engine.
+      if (layout && !/\b(?:Avant|Nook)\b/.test(name) && (
+          /Browser|Lunascape|Maxthon/.test(name) ||
+          name != 'Safari' && /^iOS/.test(os) && /\bSafari\b/.test(layout[1]) ||
+          /^(?:Adobe|Arora|Breach|Midori|Opera|Phantom|Rekonq|Rock|Samsung Internet|Sleipnir|Web)/.test(name) && layout[1])) {
+        // Don't add layout details to description if they are falsey.
+        (data = layout[layout.length - 1]) && description.push(data);
+      }
+      // Combine contextual information.
+      if (description.length) {
+        description = ['(' + description.join('; ') + ')'];
+      }
+      // Append manufacturer to description.
+      if (manufacturer && product && product.indexOf(manufacturer) < 0) {
+        description.push('on ' + manufacturer);
+      }
+      // Append product to description.
+      if (product) {
+        description.push((/^on /.test(description[description.length - 1]) ? '' : 'on ') + product);
+      }
+      // Parse the OS into an object.
+      if (os) {
+        data = / ([\d.+]+)$/.exec(os);
+        isSpecialCasedOS = data && os.charAt(os.length - data[0].length - 1) == '/';
+        os = {
+          'architecture': 32,
+          'family': (data && !isSpecialCasedOS) ? os.replace(data[0], '') : os,
+          'version': data ? data[1] : null,
+          'toString': function() {
+            var version = this.version;
+            return this.family + ((version && !isSpecialCasedOS) ? ' ' + version : '') + (this.architecture == 64 ? ' 64-bit' : '');
+          }
+        };
+      }
+      // Add browser/OS architecture.
+      if ((data = /\b(?:AMD|IA|Win|WOW|x86_|x)64\b/i.exec(arch)) && !/\bi686\b/i.test(arch)) {
+        if (os) {
+          os.architecture = 64;
+          os.family = os.family.replace(RegExp(' *' + data), '');
+        }
+        if (
+            name && (/\bWOW64\b/i.test(ua) ||
+            (useFeatures && /\w(?:86|32)$/.test(nav.cpuClass || nav.platform) && !/\bWin64; x64\b/i.test(ua)))
+        ) {
+          description.unshift('32-bit');
+        }
+      }
+      // Chrome 39 and above on OS X is always 64-bit.
+      else if (
+          os && /^OS X/.test(os.family) &&
+          name == 'Chrome' && parseFloat(version) >= 39
+      ) {
+        os.architecture = 64;
+      }
+
+      ua || (ua = null);
+
+      /*------------------------------------------------------------------------*/
+
+      /**
+       * The platform object.
+       *
+       * @name platform
+       * @type Object
+       */
+      var platform = {};
+
+      /**
+       * The platform description.
+       *
+       * @memberOf platform
+       * @type string|null
+       */
+      platform.description = ua;
+
+      /**
+       * The name of the browser's layout engine.
+       *
+       * The list of common layout engines include:
+       * "Blink", "EdgeHTML", "Gecko", "Trident" and "WebKit"
+       *
+       * @memberOf platform
+       * @type string|null
+       */
+      platform.layout = layout && layout[0];
+
+      /**
+       * The name of the product's manufacturer.
+       *
+       * The list of manufacturers include:
+       * "Apple", "Archos", "Amazon", "Asus", "Barnes & Noble", "BlackBerry",
+       * "Google", "HP", "HTC", "LG", "Microsoft", "Motorola", "Nintendo",
+       * "Nokia", "Samsung" and "Sony"
+       *
+       * @memberOf platform
+       * @type string|null
+       */
+      platform.manufacturer = manufacturer;
+
+      /**
+       * The name of the browser/environment.
+       *
+       * The list of common browser names include:
+       * "Chrome", "Electron", "Firefox", "Firefox for iOS", "IE",
+       * "Microsoft Edge", "PhantomJS", "Safari", "SeaMonkey", "Silk",
+       * "Opera Mini" and "Opera"
+       *
+       * Mobile versions of some browsers have "Mobile" appended to their name:
+       * eg. "Chrome Mobile", "Firefox Mobile", "IE Mobile" and "Opera Mobile"
+       *
+       * @memberOf platform
+       * @type string|null
+       */
+      platform.name = name;
+
+      /**
+       * The alpha/beta release indicator.
+       *
+       * @memberOf platform
+       * @type string|null
+       */
+      platform.prerelease = prerelease;
+
+      /**
+       * The name of the product hosting the browser.
+       *
+       * The list of common products include:
+       *
+       * "BlackBerry", "Galaxy S4", "Lumia", "iPad", "iPod", "iPhone", "Kindle",
+       * "Kindle Fire", "Nexus", "Nook", "PlayBook", "TouchPad" and "Transformer"
+       *
+       * @memberOf platform
+       * @type string|null
+       */
+      platform.product = product;
+
+      /**
+       * The browser's user agent string.
+       *
+       * @memberOf platform
+       * @type string|null
+       */
+      platform.ua = ua;
+
+      /**
+       * The browser/environment version.
+       *
+       * @memberOf platform
+       * @type string|null
+       */
+      platform.version = name && version;
+
+      /**
+       * The name of the operating system.
+       *
+       * @memberOf platform
+       * @type Object
+       */
+      platform.os = os || {
+
+        /**
+         * The CPU architecture the OS is built for.
+         *
+         * @memberOf platform.os
+         * @type number|null
+         */
+        'architecture': null,
+
+        /**
+         * The family of the OS.
+         *
+         * Common values include:
+         * "Windows", "Windows Server 2008 R2 / 7", "Windows Server 2008 / Vista",
+         * "Windows XP", "OS X", "Ubuntu", "Debian", "Fedora", "Red Hat", "SuSE",
+         * "Android", "iOS" and "Windows Phone"
+         *
+         * @memberOf platform.os
+         * @type string|null
+         */
+        'family': null,
+
+        /**
+         * The version of the OS.
+         *
+         * @memberOf platform.os
+         * @type string|null
+         */
+        'version': null,
+
+        /**
+         * Returns the OS string.
+         *
+         * @memberOf platform.os
+         * @returns {string} The OS string.
+         */
+        'toString': function() { return 'null'; }
+      };
+
+      platform.parse = parse;
+      platform.toString = toStringPlatform;
+
+      if (platform.version) {
+        description.unshift(version);
+      }
+      if (platform.name) {
+        description.unshift(name);
+      }
+      if (os && name && !(os == String(os).split(' ')[0] && (os == name.split(' ')[0] || product))) {
+        description.push(product ? '(' + os + ')' : 'on ' + os);
+      }
+      if (description.length) {
+        platform.description = description.join(' ');
+      }
+      return platform;
+    }
+
+    /*--------------------------------------------------------------------------*/
+
+    // Export platform.
+    var platform = parse();
+
+    // Some AMD build optimizers, like r.js, check for condition patterns like the following:
+    if (freeExports && freeModule) {
+      // Export for CommonJS support.
+      forOwn(platform, function(value, key) {
+        freeExports[key] = value;
+      });
+    }
+    else {
+      // Export to the global object.
+      root.platform = platform;
+    }
+  }.call(commonjsGlobal$$1));
   });
 
-  var empAnalyticsTmp = unwrapExports(empAnalytics_min);
+  var LAST_NUMBER_WEAK_MAP = new WeakMap();
+  /*
+   * The value of the constant Number.MAX_SAFE_INTEGER equals (2 ** 53 - 1) but it
+   * is fairly new.
+   */
+  var MAX_SAFE_INTEGER = Number.MAX_SAFE_INTEGER || 9007199254740991;
+  var cache = function (collection, nextNumber) {
+      LAST_NUMBER_WEAK_MAP.set(collection, nextNumber);
+      return nextNumber;
+  };
+  var generateUniqueNumber = function (collection) {
+      var lastNumber = LAST_NUMBER_WEAK_MAP.get(collection);
+      /*
+       * Let's try the cheapest algorithm first. It might fail to produce a new
+       * number, but it is so cheap that it is okay to take the risk. Just
+       * increase the last number by one or reset it to 0 if we reached the upper
+       * bound of SMIs (which stands for small integers). When the last number is
+       * unknown it is assumed that the collection contains zero based consecutive
+       * numbers.
+       */
+      var nextNumber = (lastNumber === undefined) ?
+          collection.size :
+          (lastNumber > 2147483648) ?
+              0 :
+              lastNumber + 1;
+      if (!collection.has(nextNumber)) {
+          return cache(collection, nextNumber);
+      }
+      /*
+       * If there are less than half of 2 ** 31 numbers stored in the collection,
+       * the chance to generate a new random number in the range from 0 to 2 ** 31
+       * is at least 50%. It's benifitial to use only SMIs because they perform
+       * much better in any environment based on V8.
+       */
+      if (collection.size < 1073741824) {
+          while (collection.has(nextNumber)) {
+              nextNumber = Math.floor(Math.random() * 2147483648);
+          }
+          return cache(collection, nextNumber);
+      }
+      // Quickly check if there is a theoretical chance to generate a new number.
+      if (collection.size > MAX_SAFE_INTEGER) {
+          throw new Error('Congratulations, you created a collection of unique numbers which uses all available integers!');
+      }
+      // Otherwise use the full scale of safely usable integers.
+      while (collection.has(nextNumber)) {
+          nextNumber = Math.floor(Math.random() * MAX_SAFE_INTEGER);
+      }
+      return cache(collection, nextNumber);
+  };
+
+  var isCallNotification = function (message) {
+      return (message.method !== undefined && message.method === 'call');
+  };
+
+  var isClearResponse = function (message) {
+      return (message.error === null && typeof message.id === 'number');
+  };
+
+  var load = function (url) {
+      var scheduledIntervalFunctions = new Map();
+      var scheduledTimeoutFunctions = new Map();
+      var unrespondedRequests = new Map();
+      var worker = new Worker(url);
+      worker.addEventListener('message', function (_a) {
+          var data = _a.data;
+          if (isCallNotification(data)) {
+              var _b = data.params, timerId = _b.timerId, timerType = _b.timerType;
+              if (timerType === 'interval') {
+                  var idOrFunc = scheduledIntervalFunctions.get(timerId);
+                  if (typeof idOrFunc === 'number') {
+                      var timerIdAndTimerType = unrespondedRequests.get(idOrFunc);
+                      if (timerIdAndTimerType === undefined
+                          || timerIdAndTimerType.timerId !== timerId
+                          || timerIdAndTimerType.timerType !== timerType) {
+                          throw new Error('The timer is in an undefined state.');
+                      }
+                  }
+                  else if (typeof idOrFunc !== 'undefined') {
+                      idOrFunc();
+                  }
+                  else {
+                      throw new Error('The timer is in an undefined state.');
+                  }
+              }
+              else if (timerType === 'timeout') {
+                  var idOrFunc = scheduledTimeoutFunctions.get(timerId);
+                  if (typeof idOrFunc === 'number') {
+                      var timerIdAndTimerType = unrespondedRequests.get(idOrFunc);
+                      if (timerIdAndTimerType === undefined
+                          || timerIdAndTimerType.timerId !== timerId
+                          || timerIdAndTimerType.timerType !== timerType) {
+                          throw new Error('The timer is in an undefined state.');
+                      }
+                  }
+                  else if (typeof idOrFunc !== 'undefined') {
+                      idOrFunc();
+                      // A timeout can be savely deleted because it is only called once.
+                      scheduledTimeoutFunctions.delete(timerId);
+                  }
+                  else {
+                      throw new Error('The timer is in an undefined state.');
+                  }
+              }
+          }
+          else if (isClearResponse(data)) {
+              var id = data.id;
+              var timerIdAndTimerType = unrespondedRequests.get(id);
+              if (timerIdAndTimerType === undefined) {
+                  throw new Error('The timer is in an undefined state.');
+              }
+              else {
+                  var timerId = timerIdAndTimerType.timerId, timerType = timerIdAndTimerType.timerType;
+                  unrespondedRequests.delete(id);
+                  if (timerType === 'interval') {
+                      scheduledIntervalFunctions.delete(timerId);
+                  }
+                  else {
+                      scheduledTimeoutFunctions.delete(timerId);
+                  }
+              }
+          }
+          else {
+              var message = data.error.message;
+              throw new Error(message);
+          }
+      });
+      var clearInterval = function (timerId) {
+          var id = generateUniqueNumber(unrespondedRequests);
+          unrespondedRequests.set(id, { timerId: timerId, timerType: 'interval' });
+          scheduledIntervalFunctions.set(timerId, id);
+          worker.postMessage({
+              id: id,
+              method: 'clear',
+              params: { timerId: timerId, timerType: 'interval' }
+          });
+      };
+      var clearTimeout = function (timerId) {
+          var id = generateUniqueNumber(unrespondedRequests);
+          unrespondedRequests.set(id, { timerId: timerId, timerType: 'timeout' });
+          scheduledTimeoutFunctions.set(timerId, id);
+          worker.postMessage({
+              id: id,
+              method: 'clear',
+              params: { timerId: timerId, timerType: 'timeout' }
+          });
+      };
+      var setInterval = function (func, delay) {
+          var timerId = generateUniqueNumber(scheduledIntervalFunctions);
+          scheduledIntervalFunctions.set(timerId, function () {
+              func();
+              // Doublecheck if the interval should still be rescheduled because it could have been cleared inside of func().
+              if (typeof scheduledIntervalFunctions.get(timerId) === 'function') {
+                  worker.postMessage({
+                      id: null,
+                      method: 'set',
+                      params: {
+                          delay: delay,
+                          now: performance.now(),
+                          timerId: timerId,
+                          timerType: 'interval'
+                      }
+                  });
+              }
+          });
+          worker.postMessage({
+              id: null,
+              method: 'set',
+              params: {
+                  delay: delay,
+                  now: performance.now(),
+                  timerId: timerId,
+                  timerType: 'interval'
+              }
+          });
+          return timerId;
+      };
+      var setTimeout = function (func, delay) {
+          var timerId = generateUniqueNumber(scheduledTimeoutFunctions);
+          scheduledTimeoutFunctions.set(timerId, func);
+          worker.postMessage({
+              id: null,
+              method: 'set',
+              params: {
+                  delay: delay,
+                  now: performance.now(),
+                  timerId: timerId,
+                  timerType: 'timeout'
+              }
+          });
+          return timerId;
+      };
+      return {
+          clearInterval: clearInterval,
+          clearTimeout: clearTimeout,
+          setInterval: setInterval,
+          setTimeout: setTimeout
+      };
+  };
+
+  // tslint:disable-next-line:max-line-length
+  var worker = "!function(e){var t={};function r(n){if(t[n])return t[n].exports;var o=t[n]={i:n,l:!1,exports:{}};return e[n].call(o.exports,o,o.exports,r),o.l=!0,o.exports}r.m=e,r.c=t,r.d=function(e,t,n){r.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:n})},r.r=function(e){\"undefined\"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:\"Module\"}),Object.defineProperty(e,\"__esModule\",{value:!0})},r.t=function(e,t){if(1&t&&(e=r(e)),8&t)return e;if(4&t&&\"object\"==typeof e&&e&&e.__esModule)return e;var n=Object.create(null);if(r.r(n),Object.defineProperty(n,\"default\",{enumerable:!0,value:e}),2&t&&\"string\"!=typeof e)for(var o in e)r.d(n,o,function(t){return e[t]}.bind(null,o));return n},r.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return r.d(t,\"a\",t),t},r.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},r.p=\"\",r(r.s=0)}([function(e,t,r){\"use strict\";r.r(t);const n=new Map,o=new Map,i=(e,t)=>{let r,n;if(\"performance\"in self){const o=performance.now();r=o,n=e-Math.max(0,o-t)}else r=Date.now(),n=e;return{expected:r+n,remainingDelay:n}},s=(e,t,r,n)=>{const o=\"performance\"in self?performance.now():Date.now();o>r?postMessage({id:null,method:\"call\",params:{timerId:t,timerType:n}}):e.set(t,setTimeout(s,r-o,e,t,r,n))};addEventListener(\"message\",({data:e})=>{try{if(\"clear\"===e.method){const t=e.id,r=e.params,i=r.timerId,s=r.timerType;if(\"interval\"===s)(e=>{const t=n.get(e);if(void 0===t)throw new Error('There is no interval scheduled with the given id \"'.concat(e,'\".'));clearTimeout(t),n.delete(e)})(i),postMessage({error:null,id:t});else{if(\"timeout\"!==s)throw new Error('The given type \"'.concat(s,'\" is not supported'));(e=>{const t=o.get(e);if(void 0===t)throw new Error('There is no timeout scheduled with the given id \"'.concat(e,'\".'));clearTimeout(t),o.delete(e)})(i),postMessage({error:null,id:t})}}else{if(\"set\"!==e.method)throw new Error('The given method \"'.concat(e.method,'\" is not supported'));{const t=e.params,r=t.delay,a=t.now,c=t.timerId,l=t.timerType;if(\"interval\"===l)((e,t,r)=>{const o=i(e,r),a=o.expected,c=o.remainingDelay;n.set(t,setTimeout(s,c,n,t,a,\"interval\"))})(r,c,a);else{if(\"timeout\"!==l)throw new Error('The given type \"'.concat(l,'\" is not supported'));((e,t,r)=>{const n=i(e,r),a=n.expected,c=n.remainingDelay;o.set(t,setTimeout(s,c,o,t,a,\"timeout\"))})(r,c,a)}}}}catch(t){postMessage({error:{message:t.message},id:e.id,result:null})}})}]);";
+
+  var blob = new Blob([worker], { type: 'application/javascript; charset=utf-8' });
+  var url = URL.createObjectURL(blob);
+  var workerTimers = load(url);
+  var clearInterval$1 = workerTimers.clearInterval;
+  var clearTimeout$1 = workerTimers.clearTimeout;
+  var setInterval$1 = workerTimers.setInterval;
+  var setTimeout$1 = workerTimers.setTimeout;
+  URL.revokeObjectURL(url);
+
+  /* global XMLHttpRequest: true */
+  var EMPAnalytics = function EMPAnalytics (serverURL, customer, businessUnit, sessionToken, userId, deviceInfoData, props) {
+    if ( deviceInfoData === void 0 ) deviceInfoData = {};
+    if ( props === void 0 ) props = {};
+
+    this.CYCLE_TIME = 1000;
+    this.EVENT_PURGE_TIME_DEFAULT = 3 * this.CYCLE_TIME;
+    this.TIME_WITHOUT_BEAT_DEFAULT = 60 * this.CYCLE_TIME;
+    this.SERVER_URL_DEFAULT = '';
+    this.CUSTOMER_DEFAULT = '';
+    this.BUSINESS_UNIT_DEFAULT = '';
+    this.INCLUDE_DEVICE_METRICS_DEFAULT = true;
+    this.SESSION_TOKEN_DEFAULT = '';
+    this.SESSION_ID_DEFAULT = '';
+    this.DEBUG_DEFAULT = false;
+    this.MAX_RETRIES = 20;
+    this.DEVICE_CLOCK_CHECK_THRESHOLD = 5 * 60 * 1000; // 5 minutes
+    this.eventsSkeleton = this.initEventSkeleton();
+    this.customer_ = customer;
+    this.businessUnit_ = businessUnit;
+    this.sessionToken_ = sessionToken;
+    this.serverURL_ = serverURL;
+    this.includeDeviceMetrics_ = false;
+    this.userId_ = userId;
+    this.deviceInfoData_ = deviceInfoData;
+    this.props_ = props || {};
+    this.pendingRequest_ = false;
+  };
+
+  var prototypeAccessors = { debug: { configurable: true },deviceAppInfo: { configurable: true } };
+
+  // ----------------------------------------------------------------------- //
+  // ---------------------------Public Methods-------------------------- //
+  // ----------------------------------------------------------------------- //
+  /**
+   * Initializes analytics engine
+   *
+   */
+  EMPAnalytics.prototype.init = function init () {
+      var this$1 = this;
+
+    if (this.cycleTimer) {
+      if (typeof (Worker) !== 'undefined' && this.props_.disableWebWorkers !== true) {
+        clearInterval$1(this.cycleTimer);
+      } else {
+        clearInterval(this.cycleTimer);
+      }
+    }
+    if (typeof (Worker) !== 'undefined' && this.props_.disableWebWorkers !== true) {
+      this.cycleTimer = setInterval$1(function () { return this$1.cycle(); }, this.CYCLE_TIME);
+    } else {
+      this.cycleTimer = setInterval(function () { return this$1.cycle(); }, this.CYCLE_TIME);
+    }
+    this.communicationCurrentTime = 0;
+    this.lastCommunicationTime = 0;
+    this.eventPool = {};
+  };
+
+  /**
+   * Clears pending analytics events
+   *
+   */
+  EMPAnalytics.prototype.clear = function clear () {
+    this.eventPool = {};
+  };
+
+  /**
+   * Getter for current debug state
+   *
+   */
+  prototypeAccessors.debug.get = function () {
+    return this.debug_
+  };
+
+  /**
+   * Sets the debug state
+   *
+   */
+  prototypeAccessors.debug.set = function (debug) {
+    this.debug_ = debug;
+  };
+
+  /**
+   * Checks if analytics are being properly processed for a given session
+   *
+   */
+  EMPAnalytics.prototype.ok = function ok (sessionId) {
+    var sessionPool = this.eventPool[sessionId];
+    if (!sessionPool) {
+      return false
+    }
+    return sessionPool.forbidden === false && sessionPool.retries < this.MAX_RETRIES
+  };
+
+  /**
+   * Method for when a playback is created
+   *
+   */
+  EMPAnalytics.prototype.created = function created (sessionId, params) {
+      if ( params === void 0 ) params = {};
+
+    var evntReady = {
+      type: 'Created'
+    };
+    this.addEventToPool(sessionId, evntReady, params);
+  };
+
+  /**
+   * Method for when play command is triggered
+   *
+   */
+  EMPAnalytics.prototype.play = function play (sessionId, startTime, params) {
+      if ( params === void 0 ) params = {};
+
+    var evntReady = {
+      type: 'PlayerReady',
+      currentTime: startTime
+    };
+    if (this.deviceAppInfo) {
+      params.deviceAppInfo = this.deviceAppInfo;
+    }
+    this.addEventToPool(sessionId, evntReady, params);
+  };
+
+  /**
+   * Method for when player starts actually playing the media
+   *
+   */
+  EMPAnalytics.prototype.playing = function playing (sessionId, currentTime, params) {
+      if ( params === void 0 ) params = {};
+
+    var evntStarted = {
+      type: 'Started',
+      currentTime: currentTime
+    };
+    if (this.customAttributes) {
+      var customKeys = Object.keys(this.customAttributes);
+      if (customKeys.length && customKeys.length > 0) {
+        params.attributes = this.customAttributes;
+      }
+    }
+    this.addEventToPool(sessionId, evntStarted, params);
+    this.changeSessionState(sessionId, 'PLAYING');
+  };
+
+  /**
+   * Method for when player is paused
+   *
+   */
+  EMPAnalytics.prototype.paused = function paused (sessionId, currentTime, params) {
+      if ( params === void 0 ) params = {};
+
+    var evntPaused = {
+      type: 'Paused',
+      currentTime: currentTime
+    };
+    this.addEventToPool(sessionId, evntPaused, params, true);
+  };
+
+  /**
+   * Method for when player seeks
+   *
+   */
+  EMPAnalytics.prototype.seek = function seek (sessionId, seekTime, params) {
+      if ( params === void 0 ) params = {};
+
+    var evntSeek = {
+      type: 'ScrubbedTo',
+      currentTime: seekTime
+    };
+    this.addEventToPool(sessionId, evntSeek, params, true);
+  };
+
+  /**
+   * Method for when playback changes program
+   *
+   */
+  EMPAnalytics.prototype.programChanged = function programChanged (sessionId, playheadTime, params) {
+      if ( params === void 0 ) params = {};
+
+    var evnt = {
+      type: 'ProgramChanged',
+      currentTime: playheadTime
+    };
+    this.addEventToPool(sessionId, evnt, params, true);
+  };
+
+  /**
+   * Method for when player starts casting
+   *
+   */
+  EMPAnalytics.prototype.startCasting = function startCasting (sessionId, nowTime, params) {
+      if ( params === void 0 ) params = {};
+
+    var evntStartCast = {
+      type: 'StartCasting',
+      currentTime: nowTime
+    };
+    this.addEventToPool(sessionId, evntStartCast, params, true);
+    this.changeSessionState(sessionId, 'FINISHED');
+  };
+
+  /**
+   * Method for when player stops casting
+   *
+   */
+  EMPAnalytics.prototype.stopCasting = function stopCasting (sessionId, nowTime, params) {
+      if ( params === void 0 ) params = {};
+
+    var evntStopCast = {
+      type: 'StopCasting',
+      currentTime: nowTime
+    };
+    this.addEventToPool(sessionId, evntStopCast, params, true);
+    this.changeSessionState(sessionId, 'FINISHED');
+  };
+
+  /**
+   * Method to set current time
+   *
+   */
+  EMPAnalytics.prototype.setCurrentTime = function setCurrentTime (sessionId, nowTime) {
+    if (this.eventPool[sessionId]) {
+      this.eventPool[sessionId].currentTime = nowTime;
+    }
+  };
+
+  /**
+   * Method for when a new asset is loaded
+   *
+   */
+  EMPAnalytics.prototype.handshake = function handshake (sessionId, params) {
+      if ( params === void 0 ) params = {};
+
+    var evntHandshake = {
+      type: 'HandshakeStarted'
+    };
+    this.addEventToPool(sessionId, evntHandshake, params);
+  };
+
+  /**
+   * Method for when playback is resumed
+   *
+   */
+  EMPAnalytics.prototype.resume = function resume (sessionId, startTime, params) {
+      if ( params === void 0 ) params = {};
+
+    var evntResume = {
+      type: 'Resumed',
+      currentTime: startTime
+    };
+    this.addEventToPool(sessionId, evntResume, params, true);
+  };
+
+  /**
+   * Method for when bitrate changes
+   *
+   */
+  EMPAnalytics.prototype.bitrateChanged = function bitrateChanged (sessionId, nowTime, params) {
+      if ( params === void 0 ) params = {};
+
+    var evntBitrate = {
+      type: 'BitrateChanged',
+      currentTime: nowTime
+    };
+    this.addEventToPool(sessionId, evntBitrate, params, true);
+  };
+
+  /**
+  * Method for when DRM Session Update
+  *
+  */
+  EMPAnalytics.prototype.drmSessionUpdate = function drmSessionUpdate (sessionId, params) {
+      if ( params === void 0 ) params = {};
+
+    var evntBitrate = {
+      type: 'DRM'
+    };
+    this.addEventToPool(sessionId, evntBitrate, params, true);
+  };
+
+  /**
+   * Method used when playback reaches the end
+   *
+   */
+  EMPAnalytics.prototype.endOfStream = function endOfStream (sessionId, params) {
+      if ( params === void 0 ) params = {};
+
+    var evntReady = {
+      type: 'Completed'
+    };
+    this.addEventToPool(sessionId, evntReady, params, true);
+    this.changeSessionState(sessionId, 'FINISHED');
+  };
+
+  /**
+   * Method used an error occurs
+   *
+   */
+  EMPAnalytics.prototype.error = function error (sessionId, nowTime, params) {
+      if ( params === void 0 ) params = {};
+
+    var evntError = {
+      type: 'Error',
+      currentTime: nowTime
+    };
+    this.addEventToPool(sessionId, evntError, params);
+    this.changeSessionState(sessionId, 'FINISHED');
+  };
+
+  /**
+   * Method used when playback exits/stops
+   *
+   */
+  EMPAnalytics.prototype.dispose = function dispose (sessionId, nowTime, params) {
+      if ( params === void 0 ) params = {};
+
+    var sessionPool = this.eventPool[sessionId];
+    if (sessionPool && sessionPool.currentState !== 'FINISHED') {
+      var evntExit = {
+        type: 'Aborted'
+      };
+      if (nowTime) {
+        evntExit.currentTime = nowTime;
+      }
+      this.addEventToPool(sessionId, evntExit, params, true);
+      this.changeSessionState(sessionId, 'FINISHED');
+    }
+  };
+
+  /**
+   * Method used when playback enters a waiting state
+   *
+   */
+  EMPAnalytics.prototype.waiting = function waiting (sessionId, nowTime, params) {
+      if ( params === void 0 ) params = {};
+
+    var evntBuffering = {
+      type: 'BufferingStarted',
+      currentTime: nowTime
+    };
+    this.addEventToPool(sessionId, evntBuffering, params);
+  };
+
+  /**
+   * Method used when playback leaves a waiting state
+   *
+   */
+  EMPAnalytics.prototype.waitingEnded = function waitingEnded (sessionId, nowTime, params) {
+      if ( params === void 0 ) params = {};
+
+    var evntBuffering = {
+      type: 'BufferingEnded',
+      currentTime: nowTime
+    };
+    this.addEventToPool(sessionId, evntBuffering, params);
+  };
+
+  /**
+   * Get session current state
+   *
+   */
+  EMPAnalytics.prototype.getSessionState = function getSessionState (sessionId) {
+    if (!this.eventPool[sessionId]) {
+      return 'IDLE'
+    }
+    return this.eventPool[sessionId].currentState || 'IDLE'
+  };
+
+  /**
+   * Immediately dispatches pending events waiting in the analytics event pool
+   *
+   */
+  EMPAnalytics.prototype.dispatchNow = function dispatchNow (asyncCall) {
+      if ( asyncCall === void 0 ) asyncCall = true;
+
+    this.cycle(asyncCall, true);
+  };
+
+  /**
+   * Method used to dispose current ongoing session
+   *
+   */
+  EMPAnalytics.prototype.exitOngoingSession = function exitOngoingSession (nowTime) {
+      var this$1 = this;
+
+    var sessionIds = Object.keys(this.eventPool);
+    sessionIds.map(function (sessionId) {
+      if (this$1.eventPool[sessionId]) {
+        this$1.dispose(sessionId, nowTime);
+      }
+    });
+  };
+
+  /**
+   * Sets analytics custom attributes
+   *
+   * @param {String}    key Attribute name
+   * @param {String=}   value Attribute value
+  */
+  EMPAnalytics.prototype.setCustomAttribute = function setCustomAttribute (key, value) {
+    if (!this.customAttributes) {
+      this.resetAnalyticsCustomAttributes();
+    }
+    this.customAttributes[key] = value;
+  };
+
+  /**
+   * Resets analytics custom attributes
+   *
+  */
+  EMPAnalytics.prototype.clearCustomAttributes = function clearCustomAttributes () {
+    this.customAttributes = {};
+  };
+
+  // ----------------------------------------------------------------------- //
+  // --------------------------Private Methods-------------------------- //
+  // ----------------------------------------------------------------------- //
+  /**
+   * Removes session from the event pool
+   *
+   */
+  EMPAnalytics.prototype.removeSession = function removeSession (sessionId, removeFromMemory) {
+      if ( removeFromMemory === void 0 ) removeFromMemory = false;
+
+    if (removeFromMemory === true) {
+      delete this.eventPool[sessionId];
+    } else {
+      var sessionPool = this.eventPool[sessionId];
+      if (sessionPool) {
+        sessionPool.currentState = 'REMOVED';
+      }
+    }
+  };
+
+  /**
+   * Checks if there are pending events to send to the backend
+   *
+   */
+  EMPAnalytics.prototype.hasDataToSend = function hasDataToSend () {
+    var keys = Object.keys(this.eventPool);
+    for (var i = 0; i < keys.length; ++i) {
+      if (this.eventPool[keys[i]].events.length > 0) {
+        return true
+      }
+    }
+    return false
+  };
+
+  /**
+   * Sends events to the backend
+   *
+   */
+  EMPAnalytics.prototype.sendData = function sendData (asyncCall, canHeartBeat) {
+      var this$1 = this;
+      if ( asyncCall === void 0 ) asyncCall = true;
+      if ( canHeartBeat === void 0 ) canHeartBeat = false;
+
+    if (this.pendingRequest_) {
+      return
+    }
+    var wasRequestMade = false;
+    this.pendingRequest_ = true;
+    var timeoutRef;
+    if (typeof (Worker) !== 'undefined' && this.props_.disableWebWorkers !== true) {
+      timeoutRef = setTimeout$1(function () {
+        this$1.pendingRequest_ = false;
+        timeoutRef = undefined;
+      }, this.EVENT_PURGE_TIME_DEFAULT * 2);
+    } else {
+      timeoutRef = setTimeout(function () {
+        this$1.pendingRequest_ = false;
+        timeoutRef = undefined;
+      }, this.EVENT_PURGE_TIME_DEFAULT * 2);
+    }
+    var sessionIds = Object.keys(this.eventPool);
+    sessionIds.map(function (sessionId) {
+      var sessionPool = this$1.eventPool[sessionId];
+      if (!sessionPool) {
+        return
+      }
+      if (!sessionId) {
+        sessionPool.events = [];
+        this$1.removeSession(sessionId, true);
+        return
+      }
+      if (sessionPool.currentState === 'PLAYING' &&
+        sessionPool.events.length === 0 &&
+        canHeartBeat) {
+        sessionPool.events.push({
+          EventType: 'Playback.Heartbeat',
+          Timestamp: new Date().getTime(),
+          OffsetTime: Math.floor(sessionPool.currentTime * 1000)
+        });
+      }
+      if (sessionPool.currentState !== 'IDLE' && sessionPool.currentState !== 'REMOVED') {
+        if (sessionPool.events.length === 0) {
+          if (sessionPool.currentState === 'FINISHED') {
+            this$1.removeSession(sessionId);
+          }
+          return
+        }
+        var params = {
+          DispatchTime: new Date().getTime(),
+          Customer: this$1.customer_,
+          BusinessUnit: this$1.businessUnit_,
+          Payload: sessionPool.events,
+          SessionId: sessionId,
+          ClockOffset: sessionPool.clockOffset
+        };
+
+        this$1.debugLog('Sending analytics - sessionId: ' + sessionId + ' and params: ', params);
+
+        if (sessionPool.retries > this$1.MAX_RETRIES || sessionPool.forbidden === true) {
+          sessionPool.events = [];
+          return
+        }
+        if (Math.abs(this$1.communicationCurrentDate - this$1.lastCommunicationDate) > this$1.DEVICE_CLOCK_CHECK_THRESHOLD) {
+          this$1.initRequest(sessionId).then(function () { });
+        }
+
+        wasRequestMade = true;
+        this$1.sendRequest(asyncCall, params, function (response, error) {
+          if (timeoutRef) {
+            try {
+              if (typeof (Worker) !== 'undefined' && this$1.props_.disableWebWorkers !== true) {
+                clearTimeout$1(timeoutRef);
+                timeoutRef = undefined;
+              } else {
+                clearTimeout(timeoutRef);
+                timeoutRef = undefined;
+              }
+            } catch (exError) { }
+          }
+          this$1.pendingRequest_ = false;
+          var httpCode = response && response.httpCode ? response.httpCode : 200;
+          if (typeof error !== 'undefined' || httpCode !== 200) {
+            if (httpCode === 401) {
+              sessionPool.forbidden = true;
+            }
+            this$1.debugLog('Error sending request to backend', error);
+            if (!error) {
+              sessionPool.retries++;
+            }
+          } else {
+            sessionPool.events = [];
+            sessionPool.retries = 0;
+            var newRequestDate = new Date();
+
+            if (this$1.afterSendData_) {
+              this$1.afterSendData_(newRequestDate, sessionPool.lastRequestDate);
+            }
+            sessionPool.lastRequestDate = newRequestDate;
+            if (sessionPool.currentState === 'FINISHED') {
+              this$1.removeSession(sessionId);
+            }
+          }
+        });
+      }
+    });
+    if (!wasRequestMade) {
+      this.pendingRequest_ = false;
+    }
+  };
+
+  /**
+   * Cyclic method
+   * method called every second
+   */
+  EMPAnalytics.prototype.cycle = function cycle (asyncCall, ignoreTiming) {
+      if ( asyncCall === void 0 ) asyncCall = true;
+      if ( ignoreTiming === void 0 ) ignoreTiming = false;
+
+    this.communicationCurrentDate = new Date();
+    this.communicationCurrentTime += this.CYCLE_TIME;
+    if (this.hasDataToSend()) {
+      if (ignoreTiming || this.lastCommunicationTime + this.EVENT_PURGE_TIME_DEFAULT < this.communicationCurrentTime) {
+        this.sendData(asyncCall);
+        this.lastCommunicationTime = this.communicationCurrentTime;
+        this.lastCommunicationDate = this.communicationCurrentDate;
+      }
+    } else {
+      if (ignoreTiming || this.lastCommunicationTime + this.TIME_WITHOUT_BEAT_DEFAULT < this.communicationCurrentTime) {
+        this.sendData(asyncCall, true);
+        this.lastCommunicationTime = this.communicationCurrentTime;
+        this.lastCommunicationDate = this.communicationCurrentDate;
+      }
+    }
+  };
+
+  /**
+   * HTTP request
+   * sends actual request
+   */
+  EMPAnalytics.prototype.sendRequest = function sendRequest (asyncCall, params, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', this.serverURL_ + '/eventsink/send', true);
+    xhr.setRequestHeader('Content-type', 'application/json');
+    xhr.setRequestHeader('Authorization', 'Bearer ' + this.sessionToken_);
+
+    xhr.onload = function () {
+      var responseJSON = JSON.parse(this.responseText);
+      callback(responseJSON);
+    };
+
+    xhr.onerror = function (error) {
+      callback(null, error);
+    };
+    xhr.send(JSON.stringify(params));
+  };
+
+  /**
+   * Sends the init request to the backend
+   *
+   */
+  EMPAnalytics.prototype.initRequest = function initRequest (sessionId) {
+      var this$1 = this;
+
+    return new Promise(function (resolve, reject) {
+      var initTime = new Date().getTime();
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', this$1.serverURL_ + '/eventsink/init', true);
+      xhr.setRequestHeader('Content-type', 'application/json');
+      xhr.setRequestHeader('Authorization', 'Bearer ' + this$1.sessionToken_);
+
+      xhr.onload = function () {
+        var currentTime = new Date().getTime();
+        var response = JSON.parse(xhr.responseText);
+        this$1.determineClockOffset(sessionId, response, initTime, currentTime);
+        if (response && response.settings) {
+          if (response.settings.includeDeviceMetrics) {
+            this$1.includeDeviceMetrics_ = !!response.settings.includeDeviceMetrics;
+          }
+        }
+        resolve();
+      };
+
+      xhr.onerror = function (error) {
+        // Possibly retry up to three times before quitting
+        this$1.debugLog('Unable to init. Aborting.');
+        reject(error);
+      };
+
+      var params = {
+        Customer: this$1.customer_,
+        BusinessUnit: this$1.businessUnit_,
+        SessionId: sessionId
+      };
+
+      xhr.send(JSON.stringify(params));
+    })
+  };
+
+  /**
+   * Log messages to console if debug is enabled
+   * @param {String} message
+   * @param {Object} data
+   */
+  EMPAnalytics.prototype.debugLog = function debugLog (message, data) {
+    data = data || '';
+    if (this.debug_) {
+      console.log('Analytics: ' + message, data);
+    }
+  };
+
+  /**
+   * Appends deviceInfo event to the current session event pool
+   *
+   */
+  EMPAnalytics.prototype.addDeviceInfoEvent = function addDeviceInfoEvent (sessionId) {
+    var evnt = this.eventPool[sessionId];
+    if (this.includeDeviceMetrics_ && evnt && evnt.events && evnt.events.length) {
+      var deviceInfoEvent = {
+        Timestamp: new Date().getTime(),
+        EventType: 'Device.Info',
+        DeviceModel: this.deviceInfoData_.deviceModel || 'Desktop',
+        UserAgent: this.deviceInfoData_.userAgent || (window$1.navigator ? window$1.navigator.userAgent : ''),
+        Height: this.deviceInfoData_.screenHeight || (window$1.screen ? window$1.screen.height : 0),
+        Width: this.deviceInfoData_.screenWidth || (window$1.screen ? window$1.screen.width : 0),
+        Model: this.deviceInfoData_.model || (window$1.navigator ? window$1.navigator.appName : ''),
+        Name: this.deviceInfoData_.deviceName || (window$1.navigator ? window$1.navigator.product : ''),
+        OS: this.deviceInfoData_.deviceOS || platform.os.family,
+        OSVersion: this.deviceInfoData_.deviceOSVersion || platform.os.version,
+        Type: this.deviceInfoData_.type || 'WEB'
+      };
+      if (this.deviceInfoData_.deviceManufacturer || platform.manufacturer) {
+        deviceInfoEvent.Manufacturer = this.deviceInfoData_.deviceManufacturer || platform.manufacturer;
+      }
+      if (this.deviceInfoData_.deviceId) {
+        deviceInfoEvent.DeviceId = this.deviceInfoData_.deviceId;
+      }
+      evnt.events.push(deviceInfoEvent);
+    }
+  };
+
+  /**
+   * Determine clock offset from a HTTP response
+   *
+   * @param response
+   *
+   * @returns {number}
+   */
+  EMPAnalytics.prototype.determineClockOffset = function determineClockOffset (sessionId, response, initTime, completeTime) {
+    var evnt = this.eventPool[sessionId];
+    if (!evnt) {
+      return
+    }
+    evnt.clockOffset = Math.floor((completeTime - response.repliedTime + initTime - response.receivedTime) / 2);
+  };
+
+  /**
+   * Creates an event pool for a specific session
+   *
+   */
+  EMPAnalytics.prototype.createPool = function createPool (sessionId) {
+      var this$1 = this;
+
+    return new Promise(function (resolve, reject) {
+      this$1.eventPool[sessionId] = {
+        currentState: 'IDLE',
+        currentTime: 0,
+        clockOffset: 0,
+        events: [],
+        retries: 0,
+        forbidden: false
+      };
+      this$1.initRequest(sessionId).then(function () {
+        this$1.addDeviceInfoEvent(sessionId);
+        resolve();
+      }).catch(function (error) {
+        reject(error);
+      });
+    })
+  };
+
+  /**
+   * Appends generic event to session event pool
+   *
+   */
+  EMPAnalytics.prototype.addEventToPool = function addEventToPool (sessionId, playbackEvent, params, discardIfFinished) {
+      var this$1 = this;
+      if ( discardIfFinished === void 0 ) discardIfFinished = false;
+
+    if (discardIfFinished && this.eventPool[sessionId]) {
+      if (this.eventPool[sessionId].currentState === 'FINISHED' || this.eventPool[sessionId].currentState === 'REMOVED') {
+        return
+      }
+    }
+    var promise1;
+    if (!this.eventPool[sessionId]) {
+      promise1 = this.createPool(sessionId);
+    }
+    if (promise1) {
+      promise1.then(function () {
+        this$1.internalAddEventToPool(sessionId, playbackEvent, params);
+      });
+    } else {
+      this.internalAddEventToPool(sessionId, playbackEvent, params);
+    }
+  };
+
+  /**
+   * internalAddEventToPool
+   *
+   * @param sessionId
+   * @param playbackEvent
+   * @param params
+   *
+   * @private
+   */
+  EMPAnalytics.prototype.internalAddEventToPool = function internalAddEventToPool (sessionId, playbackEvent, params) {
+    var event = this.eventsSkeleton[playbackEvent.type];
+    if (!event) {
+      this.debugLog('Unknown playback event: ', playbackEvent);
+      return
+    }
+
+    var heartbeatEvent = {
+      Timestamp: new Date().getTime(),
+      EventType: 'Playback.' + event.event
+    };
+    if (event.includeOffset) {
+      heartbeatEvent.OffsetTime = Math.floor(playbackEvent.currentTime * 1000);
+    }
+
+    if (event.attributes && typeof event.attributes === 'function') {
+      heartbeatEvent = this.objectAssign(heartbeatEvent, event.attributes(params));
+    }
+
+    this.eventPool[sessionId].events.push(heartbeatEvent);
+
+    this.debugLog('added ' + event.event + ' to queue');
+  };
+
+  /**
+   * Changes current session state
+   *
+   */
+  EMPAnalytics.prototype.changeSessionState = function changeSessionState (sessionId, newState) {
+      var this$1 = this;
+
+    var promise1;
+    if (!this.eventPool[sessionId]) {
+      promise1 = this.createPool(sessionId);
+    }
+    if (promise1) {
+      promise1.then(function () {
+        this$1.eventPool[sessionId].currentState = newState;
+      });
+    } else {
+      this.eventPool[sessionId].currentState = newState;
+    }
+  };
+
+  /**
+   * getter that gets deviceAppInfo
+   *
+   */
+  prototypeAccessors.deviceAppInfo.get = function () {
+    if (!this.deviceInfoData_) {
+      return null
+    }
+    return this.deviceInfoData_.deviceAppInfo
+  };
+
+  /**
+   * Init event skeleton
+   *
+   */
+  EMPAnalytics.prototype.initEventSkeleton = function initEventSkeleton () {
+    var eventMap = {};
+    eventMap.Completed = {
+      event: 'Completed',
+      autoListener: false
+    };
+    eventMap.PlayerReady = {
+      event: 'PlayerReady',
+      autoListener: false,
+      attributes: function (params) {
+        var attrs = {
+          Technology: params.techName,
+          PlayerVersion: params.version
+        };
+        if (params.techVersion) {
+          attrs.TechVersion = params.techVersion;
+        }
+        attrs.AnalyticsVersion = EMPAnalytics.VERSION;
+        if (params.deviceAppInfo) {
+          attrs.DeviceAppInfo = params.deviceAppInfo;
+        }
+        if (params.playMode) {
+          attrs.PlayMode = params.playMode;
+        }
+        return attrs
+      }
+    };
+    eventMap.Resumed = {
+      event: 'Resumed',
+      autoListener: false,
+      includeOffset: true
+    };
+    eventMap.BufferingStarted = {
+      event: 'BufferingStarted',
+      includeOffset: true
+    };
+    eventMap.BufferingEnded = {
+      event: 'BufferingEnded',
+      includeOffset: true
+    };
+    eventMap.ScrubbedTo = {
+      event: 'ScrubbedTo',
+      includeOffset: true
+    };
+    eventMap.Created = {
+      event: 'Created',
+      attributes: function (params) {
+        var attrs = {};
+        if (typeof params.autoplay !== 'undefined') {
+          attrs.AutoPlay = params.autoplay;
+        }
+        if (params.techName) {
+          attrs.Technology = params.techName;
+        }
+        if (params.player) {
+          attrs.Player = params.player;
+        }
+        if (params.version) {
+          attrs.Version = params.version;
+        }
+        if (params.requestId) {
+          attrs.RequestId = params.requestId;
+        }
+        if (params.techVersion) {
+          attrs.TechVersion = params.techVersion;
+        }
+        if (params.deviceAppInfo) {
+          attrs.DeviceAppInfo = params.deviceAppInfo;
+        }
+        if (params.playMode) {
+          attrs.PlayMode = params.playMode;
+        }
+        return attrs
+      }
+    };
+    eventMap.StartCasting = {
+      event: 'StartCasting',
+      includeOffset: true
+    };
+    eventMap.StopCasting = {
+      event: 'StopCasting',
+      includeOffset: true
+    };
+    eventMap.Paused = {
+      event: 'Paused',
+      includeOffset: true
+    };
+    eventMap.BitrateChanged = {
+      event: 'BitrateChanged',
+      includeOffset: true,
+      attributes: function (params) {
+        return {
+          Bitrate: params.bitrate
+        }
+      }
+    };
+    eventMap.DRM = {
+      event: 'DRM',
+      includeOffset: false,
+      attributes: function (params) {
+        var attributes = {};
+        if (params.message) {
+          attributes.Message = params.message;
+        }
+        if (params.code) {
+          attributes.Code = params.code;
+        }
+        if (params.info) {
+          attributes.Info = params.info;
+        }
+        return attributes
+      }
+    };
+    eventMap.Error = {
+      event: 'Error',
+      includeOffset: true,
+      attributes: function (params) {
+        var attributes = {};
+        if (params.errorCode) {
+          attributes.Code = params.errorCode;
+        }
+        if (params.errorMessage) {
+          attributes.Message = params.errorMessage;
+        } else {
+          attributes.Message = 'Unknown Error';
+        }
+        if (params.errorInfo) {
+          attributes.Info = params.errorInfo;
+        }
+        if (params.errorDetails) {
+          attributes.Details = params.errorDetails;
+        }
+        return attributes
+      }
+    };
+    eventMap.HandshakeStarted = {
+      event: 'HandshakeStarted',
+      autoListener: false,
+      attributes: function (params) {
+        if (!params.assetId) {
+          return {}
+        }
+        var attributes = {
+          AssetId: params.assetId
+        };
+        if (params.programId) {
+          attributes.ProgramId = params.programId;
+        }
+        return attributes
+      }
+    };
+    eventMap.ProgramChanged = {
+      event: 'ProgramChanged',
+      includeOffset: true,
+      autoListener: false,
+      attributes: function (params) {
+        if (params.programId) {
+          return { ProgramId: params.programId }
+        }
+        return {}
+      }
+    };
+    eventMap.Aborted = {
+      event: 'Aborted',
+      autoListener: false,
+      includeOffset: true
+    };
+    eventMap.Started = {
+      event: 'Started',
+      autoListener: false,
+      includeOffset: true,
+      attributes: function (params) {
+        var attributes = {};
+        if (params.bitrate) {
+          attributes.Bitrate = params.bitrate;
+        }
+        if (params.duration) {
+          attributes.VideoLength = params.duration * 1000;
+        }
+        if (params.mediaLocator) {
+          attributes.MediaLocator = params.mediaLocator;
+        }
+        if (params.attributes) {
+          attributes.Attributes = params.attributes;
+        }
+        if (params.referenceTime) {
+          attributes.ReferenceTime = params.referenceTime;
+        }
+        if (params.playMode) {
+          attributes.PlayMode = params.playMode;
+        }
+        return attributes
+      }
+    };
+    return eventMap
+  };
+
+  EMPAnalytics.prototype.objectAssign = function objectAssign (target, source) {
+      var arguments$1 = arguments;
+
+    for (var index = 1, key, src; index < arguments.length; ++index) {
+      src = arguments$1[index];
+      for (key in src) {
+        if (Object.prototype.hasOwnProperty.call(src, key)) {
+          target[key] = src[key];
+        }
+      }
+    }
+    return target
+  };
+
+  Object.defineProperties( EMPAnalytics.prototype, prototypeAccessors );
+
+  EMPAnalytics.VERSION = '2.1.119-25';
+
+  // This is hacky but makes it work with both Rollup and Jest
+  var empAnalytics = EMPAnalytics.default || EMPAnalytics;
+
+  module.exports = empAnalytics;
+  });
+
+  var empAnalyticsTmp = unwrapExports(empAnalytics_browser_cjs);
 
   var EMPAnalytics = window_1.empAnalytics ? window_1.empAnalytics : empAnalyticsTmp;
   var Plugin$2 = videojs.getPlugin('plugin');
@@ -11721,9 +14755,7 @@
    * @class AnalyticsPlugin
    */
 
-  var AnalyticsPlugin =
-  /*#__PURE__*/
-  function (_Plugin) {
+  var AnalyticsPlugin = /*#__PURE__*/function (_Plugin) {
     _inheritsLoose(AnalyticsPlugin, _Plugin);
 
     /**
@@ -11894,7 +14926,7 @@
     return AnalyticsPlugin;
   }(Plugin$2);
 
-  AnalyticsPlugin.VERSION = '2.1.111-455';
+  AnalyticsPlugin.VERSION = '2.2.127-528';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -11966,9 +14998,7 @@
     * @param {Object=} error Object or string describing error
     */
 
-  var EntitlementError =
-  /*#__PURE__*/
-  function (_ExtendableError) {
+  var EntitlementError = /*#__PURE__*/function (_ExtendableError) {
     _inheritsLoose(EntitlementError, _ExtendableError);
 
     /**
@@ -12046,9 +15076,7 @@
    * @class EntitlementEngine
    */
 
-  var EntitlementEngine =
-  /*#__PURE__*/
-  function () {
+  var EntitlementEngine = /*#__PURE__*/function () {
     /**
      * Create EntitlementEngine
      *
@@ -12406,9 +15434,7 @@
    * @param {Object}  [options] - Object of option names and values
    */
 
-  var Entitlement =
-  /*#__PURE__*/
-  function () {
+  var Entitlement = /*#__PURE__*/function () {
     /**
      * Creat Entitlement
      */
@@ -12452,6 +15478,7 @@
       this.protection = undefined;
       this.certificateServer = undefined;
       this.keySystems = undefined;
+      this.liveDelay = undefined;
     }
     /**
      * common Initiate
@@ -12507,7 +15534,7 @@
       this.mediaLocator = options.mediaLocator || '';
 
       if (this.mediaLocator) {
-        if (window_1.location.hostname === 'localhost' || IS_SMARTTV) {
+        if (window_1.location.hostname === 'localhost' || IS_SMARTTV || window_1.location.hostname.indexOf('192.168.') === 0) {
           this.src = this.mediaLocator;
         } else {
           // change to Protocol-relative URL
@@ -12582,6 +15609,8 @@
         this.liveTime = bookmarks.liveTime || null;
       }
 
+      this.durationInMs = options.durationInMs || 0;
+
       if (options.streamInfo) {
         var streamInfo = options.streamInfo; // Use streamInfo in code
 
@@ -12633,7 +15662,7 @@
       this.mediaLocator = format.mediaLocator || '';
 
       if (this.mediaLocator) {
-        if (window_1.location.hostname === 'localhost' || IS_SMARTTV) {
+        if (window_1.location.hostname === 'localhost' || IS_SMARTTV || window_1.location.hostname.indexOf('192.168.') === 0) {
           this.src = this.mediaLocator;
         } else {
           // change to Protocol-relative URL
@@ -12677,6 +15706,10 @@
             var format = formats[0];
             this.setupMediaLocator(format);
 
+            if (format.liveDelay) {
+              this.liveDelay = format.liveDelay / 1000;
+            }
+
             if (format.drm) {
               this.keySystems = format.drm;
 
@@ -12701,6 +15734,10 @@
           if (formats.length > 0) {
             var _format = formats[0];
             this.setupMediaLocator(_format);
+
+            if (_format.liveDelay) {
+              this.liveDelay = _format.liveDelay / 1000;
+            }
 
             if (_format.drm) {
               this.keySystems = _format.drm;
@@ -12727,6 +15764,10 @@
             var _format2 = formats[0];
             this.setupMediaLocator(_format2);
 
+            if (_format2.liveDelay) {
+              this.liveDelay = _format2.liveDelay / 1000;
+            }
+
             if (_format2.drm && _format2.drm['com.apple.fps']) {
               this.protection = {};
               this.protection.certificateUrl = _format2.drm['com.apple.fps'].certificateUrl || '';
@@ -12745,6 +15786,19 @@
           break;
 
         default:
+      }
+
+      if (this.streamInfo.live) {
+        var dvrWindowLength = getParameterByName('dvr_window_length', this.mediaLocator);
+        var t = getParameterByName('t', this.mediaLocator);
+
+        if (dvrWindowLength) {
+          this.streamInfo.dvrWindow = dvrWindowLength;
+        }
+
+        if (!t && !dvrWindowLength) {
+          this.streamInfo.isVirtualStream = true;
+        }
       }
     }
     /**
@@ -12770,6 +15824,7 @@
           if (dvrWindowLength) {
             var nowDate = serverTime ? new Date(serverTime) : new Date();
             t = new Date(nowDate.getTime() - dvrWindowLength * 1000).toISOString().replace(/Z/g, '');
+            this.streamInfo.dvrWindow = dvrWindowLength;
           } else if (this.live) {
             var _nowDate = serverTime ? new Date(serverTime) : new Date();
 
@@ -12833,1371 +15888,10 @@
         fn === window.prompt))
   }
 
-  /* eslint no-invalid-this: 1 */
-
-  var ERROR_MESSAGE = 'Function.prototype.bind called on incompatible ';
-  var slice = Array.prototype.slice;
-  var toStr = Object.prototype.toString;
-  var funcType = '[object Function]';
-
-  var implementation = function bind(that) {
-      var target = this;
-      if (typeof target !== 'function' || toStr.call(target) !== funcType) {
-          throw new TypeError(ERROR_MESSAGE + target);
-      }
-      var args = slice.call(arguments, 1);
-
-      var bound;
-      var binder = function () {
-          if (this instanceof bound) {
-              var result = target.apply(
-                  this,
-                  args.concat(slice.call(arguments))
-              );
-              if (Object(result) === result) {
-                  return result;
-              }
-              return this;
-          } else {
-              return target.apply(
-                  that,
-                  args.concat(slice.call(arguments))
-              );
-          }
-      };
-
-      var boundLength = Math.max(0, target.length - args.length);
-      var boundArgs = [];
-      for (var i = 0; i < boundLength; i++) {
-          boundArgs.push('$' + i);
-      }
-
-      bound = Function('binder', 'return function (' + boundArgs.join(',') + '){ return binder.apply(this,arguments); }')(binder);
-
-      if (target.prototype) {
-          var Empty = function Empty() {};
-          Empty.prototype = target.prototype;
-          bound.prototype = new Empty();
-          Empty.prototype = null;
-      }
-
-      return bound;
-  };
-
-  var functionBind = Function.prototype.bind || implementation;
-
-  var toStr$1 = Object.prototype.toString;
-
-  var isArguments = function isArguments(value) {
-  	var str = toStr$1.call(value);
-  	var isArgs = str === '[object Arguments]';
-  	if (!isArgs) {
-  		isArgs = str !== '[object Array]' &&
-  			value !== null &&
-  			typeof value === 'object' &&
-  			typeof value.length === 'number' &&
-  			value.length >= 0 &&
-  			toStr$1.call(value.callee) === '[object Function]';
-  	}
-  	return isArgs;
-  };
-
-  var keysShim;
-  if (!Object.keys) {
-  	// modified from https://github.com/es-shims/es5-shim
-  	var has = Object.prototype.hasOwnProperty;
-  	var toStr$2 = Object.prototype.toString;
-  	var isArgs = isArguments; // eslint-disable-line global-require
-  	var isEnumerable = Object.prototype.propertyIsEnumerable;
-  	var hasDontEnumBug = !isEnumerable.call({ toString: null }, 'toString');
-  	var hasProtoEnumBug = isEnumerable.call(function () {}, 'prototype');
-  	var dontEnums = [
-  		'toString',
-  		'toLocaleString',
-  		'valueOf',
-  		'hasOwnProperty',
-  		'isPrototypeOf',
-  		'propertyIsEnumerable',
-  		'constructor'
-  	];
-  	var equalsConstructorPrototype = function (o) {
-  		var ctor = o.constructor;
-  		return ctor && ctor.prototype === o;
-  	};
-  	var excludedKeys = {
-  		$applicationCache: true,
-  		$console: true,
-  		$external: true,
-  		$frame: true,
-  		$frameElement: true,
-  		$frames: true,
-  		$innerHeight: true,
-  		$innerWidth: true,
-  		$onmozfullscreenchange: true,
-  		$onmozfullscreenerror: true,
-  		$outerHeight: true,
-  		$outerWidth: true,
-  		$pageXOffset: true,
-  		$pageYOffset: true,
-  		$parent: true,
-  		$scrollLeft: true,
-  		$scrollTop: true,
-  		$scrollX: true,
-  		$scrollY: true,
-  		$self: true,
-  		$webkitIndexedDB: true,
-  		$webkitStorageInfo: true,
-  		$window: true
-  	};
-  	var hasAutomationEqualityBug = (function () {
-  		/* global window */
-  		if (typeof window === 'undefined') { return false; }
-  		for (var k in window) {
-  			try {
-  				if (!excludedKeys['$' + k] && has.call(window, k) && window[k] !== null && typeof window[k] === 'object') {
-  					try {
-  						equalsConstructorPrototype(window[k]);
-  					} catch (e) {
-  						return true;
-  					}
-  				}
-  			} catch (e) {
-  				return true;
-  			}
-  		}
-  		return false;
-  	}());
-  	var equalsConstructorPrototypeIfNotBuggy = function (o) {
-  		/* global window */
-  		if (typeof window === 'undefined' || !hasAutomationEqualityBug) {
-  			return equalsConstructorPrototype(o);
-  		}
-  		try {
-  			return equalsConstructorPrototype(o);
-  		} catch (e) {
-  			return false;
-  		}
-  	};
-
-  	keysShim = function keys(object) {
-  		var isObject = object !== null && typeof object === 'object';
-  		var isFunction = toStr$2.call(object) === '[object Function]';
-  		var isArguments$$1 = isArgs(object);
-  		var isString = isObject && toStr$2.call(object) === '[object String]';
-  		var theKeys = [];
-
-  		if (!isObject && !isFunction && !isArguments$$1) {
-  			throw new TypeError('Object.keys called on a non-object');
-  		}
-
-  		var skipProto = hasProtoEnumBug && isFunction;
-  		if (isString && object.length > 0 && !has.call(object, 0)) {
-  			for (var i = 0; i < object.length; ++i) {
-  				theKeys.push(String(i));
-  			}
-  		}
-
-  		if (isArguments$$1 && object.length > 0) {
-  			for (var j = 0; j < object.length; ++j) {
-  				theKeys.push(String(j));
-  			}
-  		} else {
-  			for (var name in object) {
-  				if (!(skipProto && name === 'prototype') && has.call(object, name)) {
-  					theKeys.push(String(name));
-  				}
-  			}
-  		}
-
-  		if (hasDontEnumBug) {
-  			var skipConstructor = equalsConstructorPrototypeIfNotBuggy(object);
-
-  			for (var k = 0; k < dontEnums.length; ++k) {
-  				if (!(skipConstructor && dontEnums[k] === 'constructor') && has.call(object, dontEnums[k])) {
-  					theKeys.push(dontEnums[k]);
-  				}
-  			}
-  		}
-  		return theKeys;
-  	};
+  var trim = function(string) {
+    return string.replace(/^\s+|\s+$/g, '');
   }
-  var implementation$1 = keysShim;
-
-  var slice$1 = Array.prototype.slice;
-
-
-  var origKeys = Object.keys;
-  var keysShim$1 = origKeys ? function keys(o) { return origKeys(o); } : implementation$1;
-
-  var originalKeys = Object.keys;
-
-  keysShim$1.shim = function shimObjectKeys() {
-  	if (Object.keys) {
-  		var keysWorksWithArguments = (function () {
-  			// Safari 5.0 bug
-  			var args = Object.keys(arguments);
-  			return args && args.length === arguments.length;
-  		}(1, 2));
-  		if (!keysWorksWithArguments) {
-  			Object.keys = function keys(object) { // eslint-disable-line func-name-matching
-  				if (isArguments(object)) {
-  					return originalKeys(slice$1.call(object));
-  				}
-  				return originalKeys(object);
-  			};
-  		}
-  	} else {
-  		Object.keys = keysShim$1;
-  	}
-  	return Object.keys || keysShim$1;
-  };
-
-  var objectKeys = keysShim$1;
-
-  var hasSymbols = typeof Symbol === 'function' && typeof Symbol('foo') === 'symbol';
-
-  var toStr$3 = Object.prototype.toString;
-  var concat = Array.prototype.concat;
-  var origDefineProperty = Object.defineProperty;
-
-  var isFunction$1 = function (fn) {
-  	return typeof fn === 'function' && toStr$3.call(fn) === '[object Function]';
-  };
-
-  var arePropertyDescriptorsSupported = function () {
-  	var obj = {};
-  	try {
-  		origDefineProperty(obj, 'x', { enumerable: false, value: obj });
-  		// eslint-disable-next-line no-unused-vars, no-restricted-syntax
-  		for (var _ in obj) { // jscs:ignore disallowUnusedVariables
-  			return false;
-  		}
-  		return obj.x === obj;
-  	} catch (e) { /* this is IE 8. */
-  		return false;
-  	}
-  };
-  var supportsDescriptors = origDefineProperty && arePropertyDescriptorsSupported();
-
-  var defineProperty = function (object, name, value, predicate) {
-  	if (name in object && (!isFunction$1(predicate) || !predicate())) {
-  		return;
-  	}
-  	if (supportsDescriptors) {
-  		origDefineProperty(object, name, {
-  			configurable: true,
-  			enumerable: false,
-  			value: value,
-  			writable: true
-  		});
-  	} else {
-  		object[name] = value;
-  	}
-  };
-
-  var defineProperties = function (object, map) {
-  	var predicates = arguments.length > 2 ? arguments[2] : {};
-  	var props = objectKeys(map);
-  	if (hasSymbols) {
-  		props = concat.call(props, Object.getOwnPropertySymbols(map));
-  	}
-  	for (var i = 0; i < props.length; i += 1) {
-  		defineProperty(object, props[i], map[props[i]], predicates[props[i]]);
-  	}
-  };
-
-  defineProperties.supportsDescriptors = !!supportsDescriptors;
-
-  var defineProperties_1 = defineProperties;
-
-  /* eslint complexity: [2, 17], max-statements: [2, 33] */
-  var shams = function hasSymbols() {
-  	if (typeof Symbol !== 'function' || typeof Object.getOwnPropertySymbols !== 'function') { return false; }
-  	if (typeof Symbol.iterator === 'symbol') { return true; }
-
-  	var obj = {};
-  	var sym = Symbol('test');
-  	var symObj = Object(sym);
-  	if (typeof sym === 'string') { return false; }
-
-  	if (Object.prototype.toString.call(sym) !== '[object Symbol]') { return false; }
-  	if (Object.prototype.toString.call(symObj) !== '[object Symbol]') { return false; }
-
-  	// temp disabled per https://github.com/ljharb/object.assign/issues/17
-  	// if (sym instanceof Symbol) { return false; }
-  	// temp disabled per https://github.com/WebReflection/get-own-property-symbols/issues/4
-  	// if (!(symObj instanceof Symbol)) { return false; }
-
-  	// if (typeof Symbol.prototype.toString !== 'function') { return false; }
-  	// if (String(sym) !== Symbol.prototype.toString.call(sym)) { return false; }
-
-  	var symVal = 42;
-  	obj[sym] = symVal;
-  	for (sym in obj) { return false; } // eslint-disable-line no-restricted-syntax
-  	if (typeof Object.keys === 'function' && Object.keys(obj).length !== 0) { return false; }
-
-  	if (typeof Object.getOwnPropertyNames === 'function' && Object.getOwnPropertyNames(obj).length !== 0) { return false; }
-
-  	var syms = Object.getOwnPropertySymbols(obj);
-  	if (syms.length !== 1 || syms[0] !== sym) { return false; }
-
-  	if (!Object.prototype.propertyIsEnumerable.call(obj, sym)) { return false; }
-
-  	if (typeof Object.getOwnPropertyDescriptor === 'function') {
-  		var descriptor = Object.getOwnPropertyDescriptor(obj, sym);
-  		if (descriptor.value !== symVal || descriptor.enumerable !== true) { return false; }
-  	}
-
-  	return true;
-  };
-
-  var origSymbol = commonjsGlobal.Symbol;
-
-
-  var hasSymbols$1 = function hasNativeSymbols() {
-  	if (typeof origSymbol !== 'function') { return false; }
-  	if (typeof Symbol !== 'function') { return false; }
-  	if (typeof origSymbol('foo') !== 'symbol') { return false; }
-  	if (typeof Symbol('bar') !== 'symbol') { return false; }
-
-  	return shams();
-  };
-
-  /* globals
-  	Atomics,
-  	SharedArrayBuffer,
-  */
-
-  var undefined$1; // eslint-disable-line no-shadow-restricted-names
-
-  var $TypeError = TypeError;
-
-  var ThrowTypeError = Object.getOwnPropertyDescriptor
-  	? (function () { return Object.getOwnPropertyDescriptor(arguments, 'callee').get; }())
-  	: function () { throw new $TypeError(); };
-
-  var hasSymbols$2 = hasSymbols$1();
-
-  var getProto = Object.getPrototypeOf || function (x) { return x.__proto__; }; // eslint-disable-line no-proto
-  var generatorFunction = undefined$1;
-  var asyncFunction = undefined$1;
-  var asyncGenFunction = undefined$1;
-
-  var TypedArray = typeof Uint8Array === 'undefined' ? undefined$1 : getProto(Uint8Array);
-
-  var INTRINSICS = {
-  	'$ %Array%': Array,
-  	'$ %ArrayBuffer%': typeof ArrayBuffer === 'undefined' ? undefined$1 : ArrayBuffer,
-  	'$ %ArrayBufferPrototype%': typeof ArrayBuffer === 'undefined' ? undefined$1 : ArrayBuffer.prototype,
-  	'$ %ArrayIteratorPrototype%': hasSymbols$2 ? getProto([][Symbol.iterator]()) : undefined$1,
-  	'$ %ArrayPrototype%': Array.prototype,
-  	'$ %ArrayProto_entries%': Array.prototype.entries,
-  	'$ %ArrayProto_forEach%': Array.prototype.forEach,
-  	'$ %ArrayProto_keys%': Array.prototype.keys,
-  	'$ %ArrayProto_values%': Array.prototype.values,
-  	'$ %AsyncFromSyncIteratorPrototype%': undefined$1,
-  	'$ %AsyncFunction%': asyncFunction,
-  	'$ %AsyncFunctionPrototype%': undefined$1,
-  	'$ %AsyncGenerator%': undefined$1,
-  	'$ %AsyncGeneratorFunction%': asyncGenFunction,
-  	'$ %AsyncGeneratorPrototype%': undefined$1,
-  	'$ %AsyncIteratorPrototype%': undefined$1,
-  	'$ %Atomics%': typeof Atomics === 'undefined' ? undefined$1 : Atomics,
-  	'$ %Boolean%': Boolean,
-  	'$ %BooleanPrototype%': Boolean.prototype,
-  	'$ %DataView%': typeof DataView === 'undefined' ? undefined$1 : DataView,
-  	'$ %DataViewPrototype%': typeof DataView === 'undefined' ? undefined$1 : DataView.prototype,
-  	'$ %Date%': Date,
-  	'$ %DatePrototype%': Date.prototype,
-  	'$ %decodeURI%': decodeURI,
-  	'$ %decodeURIComponent%': decodeURIComponent,
-  	'$ %encodeURI%': encodeURI,
-  	'$ %encodeURIComponent%': encodeURIComponent,
-  	'$ %Error%': Error,
-  	'$ %ErrorPrototype%': Error.prototype,
-  	'$ %eval%': eval, // eslint-disable-line no-eval
-  	'$ %EvalError%': EvalError,
-  	'$ %EvalErrorPrototype%': EvalError.prototype,
-  	'$ %Float32Array%': typeof Float32Array === 'undefined' ? undefined$1 : Float32Array,
-  	'$ %Float32ArrayPrototype%': typeof Float32Array === 'undefined' ? undefined$1 : Float32Array.prototype,
-  	'$ %Float64Array%': typeof Float64Array === 'undefined' ? undefined$1 : Float64Array,
-  	'$ %Float64ArrayPrototype%': typeof Float64Array === 'undefined' ? undefined$1 : Float64Array.prototype,
-  	'$ %Function%': Function,
-  	'$ %FunctionPrototype%': Function.prototype,
-  	'$ %Generator%': undefined$1,
-  	'$ %GeneratorFunction%': generatorFunction,
-  	'$ %GeneratorPrototype%': undefined$1,
-  	'$ %Int8Array%': typeof Int8Array === 'undefined' ? undefined$1 : Int8Array,
-  	'$ %Int8ArrayPrototype%': typeof Int8Array === 'undefined' ? undefined$1 : Int8Array.prototype,
-  	'$ %Int16Array%': typeof Int16Array === 'undefined' ? undefined$1 : Int16Array,
-  	'$ %Int16ArrayPrototype%': typeof Int16Array === 'undefined' ? undefined$1 : Int8Array.prototype,
-  	'$ %Int32Array%': typeof Int32Array === 'undefined' ? undefined$1 : Int32Array,
-  	'$ %Int32ArrayPrototype%': typeof Int32Array === 'undefined' ? undefined$1 : Int32Array.prototype,
-  	'$ %isFinite%': isFinite,
-  	'$ %isNaN%': isNaN,
-  	'$ %IteratorPrototype%': hasSymbols$2 ? getProto(getProto([][Symbol.iterator]())) : undefined$1,
-  	'$ %JSON%': JSON,
-  	'$ %JSONParse%': JSON.parse,
-  	'$ %Map%': typeof Map === 'undefined' ? undefined$1 : Map,
-  	'$ %MapIteratorPrototype%': typeof Map === 'undefined' || !hasSymbols$2 ? undefined$1 : getProto(new Map()[Symbol.iterator]()),
-  	'$ %MapPrototype%': typeof Map === 'undefined' ? undefined$1 : Map.prototype,
-  	'$ %Math%': Math,
-  	'$ %Number%': Number,
-  	'$ %NumberPrototype%': Number.prototype,
-  	'$ %Object%': Object,
-  	'$ %ObjectPrototype%': Object.prototype,
-  	'$ %ObjProto_toString%': Object.prototype.toString,
-  	'$ %ObjProto_valueOf%': Object.prototype.valueOf,
-  	'$ %parseFloat%': parseFloat,
-  	'$ %parseInt%': parseInt,
-  	'$ %Promise%': typeof Promise === 'undefined' ? undefined$1 : Promise,
-  	'$ %PromisePrototype%': typeof Promise === 'undefined' ? undefined$1 : Promise.prototype,
-  	'$ %PromiseProto_then%': typeof Promise === 'undefined' ? undefined$1 : Promise.prototype.then,
-  	'$ %Promise_all%': typeof Promise === 'undefined' ? undefined$1 : Promise.all,
-  	'$ %Promise_reject%': typeof Promise === 'undefined' ? undefined$1 : Promise.reject,
-  	'$ %Promise_resolve%': typeof Promise === 'undefined' ? undefined$1 : Promise.resolve,
-  	'$ %Proxy%': typeof Proxy === 'undefined' ? undefined$1 : Proxy,
-  	'$ %RangeError%': RangeError,
-  	'$ %RangeErrorPrototype%': RangeError.prototype,
-  	'$ %ReferenceError%': ReferenceError,
-  	'$ %ReferenceErrorPrototype%': ReferenceError.prototype,
-  	'$ %Reflect%': typeof Reflect === 'undefined' ? undefined$1 : Reflect,
-  	'$ %RegExp%': RegExp,
-  	'$ %RegExpPrototype%': RegExp.prototype,
-  	'$ %Set%': typeof Set === 'undefined' ? undefined$1 : Set,
-  	'$ %SetIteratorPrototype%': typeof Set === 'undefined' || !hasSymbols$2 ? undefined$1 : getProto(new Set()[Symbol.iterator]()),
-  	'$ %SetPrototype%': typeof Set === 'undefined' ? undefined$1 : Set.prototype,
-  	'$ %SharedArrayBuffer%': typeof SharedArrayBuffer === 'undefined' ? undefined$1 : SharedArrayBuffer,
-  	'$ %SharedArrayBufferPrototype%': typeof SharedArrayBuffer === 'undefined' ? undefined$1 : SharedArrayBuffer.prototype,
-  	'$ %String%': String,
-  	'$ %StringIteratorPrototype%': hasSymbols$2 ? getProto(''[Symbol.iterator]()) : undefined$1,
-  	'$ %StringPrototype%': String.prototype,
-  	'$ %Symbol%': hasSymbols$2 ? Symbol : undefined$1,
-  	'$ %SymbolPrototype%': hasSymbols$2 ? Symbol.prototype : undefined$1,
-  	'$ %SyntaxError%': SyntaxError,
-  	'$ %SyntaxErrorPrototype%': SyntaxError.prototype,
-  	'$ %ThrowTypeError%': ThrowTypeError,
-  	'$ %TypedArray%': TypedArray,
-  	'$ %TypedArrayPrototype%': TypedArray ? TypedArray.prototype : undefined$1,
-  	'$ %TypeError%': $TypeError,
-  	'$ %TypeErrorPrototype%': $TypeError.prototype,
-  	'$ %Uint8Array%': typeof Uint8Array === 'undefined' ? undefined$1 : Uint8Array,
-  	'$ %Uint8ArrayPrototype%': typeof Uint8Array === 'undefined' ? undefined$1 : Uint8Array.prototype,
-  	'$ %Uint8ClampedArray%': typeof Uint8ClampedArray === 'undefined' ? undefined$1 : Uint8ClampedArray,
-  	'$ %Uint8ClampedArrayPrototype%': typeof Uint8ClampedArray === 'undefined' ? undefined$1 : Uint8ClampedArray.prototype,
-  	'$ %Uint16Array%': typeof Uint16Array === 'undefined' ? undefined$1 : Uint16Array,
-  	'$ %Uint16ArrayPrototype%': typeof Uint16Array === 'undefined' ? undefined$1 : Uint16Array.prototype,
-  	'$ %Uint32Array%': typeof Uint32Array === 'undefined' ? undefined$1 : Uint32Array,
-  	'$ %Uint32ArrayPrototype%': typeof Uint32Array === 'undefined' ? undefined$1 : Uint32Array.prototype,
-  	'$ %URIError%': URIError,
-  	'$ %URIErrorPrototype%': URIError.prototype,
-  	'$ %WeakMap%': typeof WeakMap === 'undefined' ? undefined$1 : WeakMap,
-  	'$ %WeakMapPrototype%': typeof WeakMap === 'undefined' ? undefined$1 : WeakMap.prototype,
-  	'$ %WeakSet%': typeof WeakSet === 'undefined' ? undefined$1 : WeakSet,
-  	'$ %WeakSetPrototype%': typeof WeakSet === 'undefined' ? undefined$1 : WeakSet.prototype
-  };
-
-
-  var $replace = functionBind.call(Function.call, String.prototype.replace);
-
-  /* adapted from https://github.com/lodash/lodash/blob/4.17.15/dist/lodash.js#L6735-L6744 */
-  var rePropName = /[^%.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|%$))/g;
-  var reEscapeChar = /\\(\\)?/g; /** Used to match backslashes in property paths. */
-  var stringToPath = function stringToPath(string) {
-  	var result = [];
-  	$replace(string, rePropName, function (match, number, quote, subString) {
-  		result[result.length] = quote ? $replace(subString, reEscapeChar, '$1') : (number || match);
-  	});
-  	return result;
-  };
-  /* end adaptation */
-
-  var getBaseIntrinsic = function getBaseIntrinsic(name, allowMissing) {
-  	var key = '$ ' + name;
-  	if (!(key in INTRINSICS)) {
-  		throw new SyntaxError('intrinsic ' + name + ' does not exist!');
-  	}
-
-  	// istanbul ignore if // hopefully this is impossible to test :-)
-  	if (typeof INTRINSICS[key] === 'undefined' && !allowMissing) {
-  		throw new $TypeError('intrinsic ' + name + ' exists, but is not available. Please file an issue!');
-  	}
-
-  	return INTRINSICS[key];
-  };
-
-  var GetIntrinsic = function GetIntrinsic(name, allowMissing) {
-  	if (arguments.length > 1 && typeof allowMissing !== 'boolean') {
-  		throw new TypeError('"allowMissing" argument must be a boolean');
-  	}
-
-  	var parts = stringToPath(name);
-
-  	if (parts.length === 0) {
-  		return getBaseIntrinsic(name, allowMissing);
-  	}
-
-  	var value = getBaseIntrinsic('%' + parts[0] + '%', allowMissing);
-  	for (var i = 1; i < parts.length; i += 1) {
-  		if (value != null) {
-  			value = value[parts[i]];
-  		}
-  	}
-  	return value;
-  };
-
-  var src = functionBind.call(Function.call, Object.prototype.hasOwnProperty);
-
-  var $TypeError$1 = GetIntrinsic('%TypeError%');
-  var $SyntaxError = GetIntrinsic('%SyntaxError%');
-
-
-
-  var predicates = {
-  	// https://ecma-international.org/ecma-262/6.0/#sec-property-descriptor-specification-type
-  	'Property Descriptor': function isPropertyDescriptor(ES, Desc) {
-  		if (ES.Type(Desc) !== 'Object') {
-  			return false;
-  		}
-  		var allowed = {
-  			'[[Configurable]]': true,
-  			'[[Enumerable]]': true,
-  			'[[Get]]': true,
-  			'[[Set]]': true,
-  			'[[Value]]': true,
-  			'[[Writable]]': true
-  		};
-
-  		for (var key in Desc) { // eslint-disable-line
-  			if (src(Desc, key) && !allowed[key]) {
-  				return false;
-  			}
-  		}
-
-  		var isData = src(Desc, '[[Value]]');
-  		var IsAccessor = src(Desc, '[[Get]]') || src(Desc, '[[Set]]');
-  		if (isData && IsAccessor) {
-  			throw new $TypeError$1('Property Descriptors may not be both accessor and data descriptors');
-  		}
-  		return true;
-  	}
-  };
-
-  var assertRecord = function assertRecord(ES, recordType, argumentName, value) {
-  	var predicate = predicates[recordType];
-  	if (typeof predicate !== 'function') {
-  		throw new $SyntaxError('unknown record type: ' + recordType);
-  	}
-  	if (!predicate(ES, value)) {
-  		throw new $TypeError$1(argumentName + ' must be a ' + recordType);
-  	}
-  };
-
-  var $TypeError$2 = GetIntrinsic('%TypeError%');
-
-  var isPropertyDescriptor = function IsPropertyDescriptor(ES, Desc) {
-  	if (ES.Type(Desc) !== 'Object') {
-  		return false;
-  	}
-  	var allowed = {
-  		'[[Configurable]]': true,
-  		'[[Enumerable]]': true,
-  		'[[Get]]': true,
-  		'[[Set]]': true,
-  		'[[Value]]': true,
-  		'[[Writable]]': true
-  	};
-
-      for (var key in Desc) { // eslint-disable-line
-  		if (src(Desc, key) && !allowed[key]) {
-  			return false;
-  		}
-  	}
-
-  	if (ES.IsDataDescriptor(Desc) && ES.IsAccessorDescriptor(Desc)) {
-  		throw new $TypeError$2('Property Descriptors may not be both accessor and data descriptors');
-  	}
-  	return true;
-  };
-
-  var _isNaN = Number.isNaN || function isNaN(a) {
-  	return a !== a;
-  };
-
-  var $isNaN = Number.isNaN || function (a) { return a !== a; };
-
-  var _isFinite = Number.isFinite || function (x) { return typeof x === 'number' && !$isNaN(x) && x !== Infinity && x !== -Infinity; };
-
-  var sign = function sign(number) {
-  	return number >= 0 ? 1 : -1;
-  };
-
-  var mod = function mod(number, modulo) {
-  	var remain = number % modulo;
-  	return Math.floor(remain >= 0 ? remain : remain + modulo);
-  };
-
-  var $Function = GetIntrinsic('%Function%');
-  var $apply = $Function.apply;
-  var $call = $Function.call;
-
-  var callBind = function callBind() {
-  	return functionBind.apply($call, arguments);
-  };
-
-  var apply = function applyBind() {
-  	return functionBind.apply($apply, arguments);
-  };
-  callBind.apply = apply;
-
-  var $indexOf = callBind(GetIntrinsic('String.prototype.indexOf'));
-
-  var callBound = function callBoundIntrinsic(name, allowMissing) {
-  	var intrinsic = GetIntrinsic(name, !!allowMissing);
-  	if (typeof intrinsic === 'function' && $indexOf(name, '.prototype.')) {
-  		return callBind(intrinsic);
-  	}
-  	return intrinsic;
-  };
-
-  var $strSlice = callBound('String.prototype.slice');
-
-  var isPrefixOf = function isPrefixOf(prefix, string) {
-  	if (prefix === string) {
-  		return true;
-  	}
-  	if (prefix.length > string.length) {
-  		return false;
-  	}
-  	return $strSlice(string, 0, prefix.length) === prefix;
-  };
-
-  var fnToStr = Function.prototype.toString;
-
-  var constructorRegex = /^\s*class\b/;
-  var isES6ClassFn = function isES6ClassFunction(value) {
-  	try {
-  		var fnStr = fnToStr.call(value);
-  		return constructorRegex.test(fnStr);
-  	} catch (e) {
-  		return false; // not a function
-  	}
-  };
-
-  var tryFunctionObject = function tryFunctionToStr(value) {
-  	try {
-  		if (isES6ClassFn(value)) { return false; }
-  		fnToStr.call(value);
-  		return true;
-  	} catch (e) {
-  		return false;
-  	}
-  };
-  var toStr$4 = Object.prototype.toString;
-  var fnClass = '[object Function]';
-  var genClass = '[object GeneratorFunction]';
-  var hasToStringTag = typeof Symbol === 'function' && typeof Symbol.toStringTag === 'symbol';
-
-  var isCallable = function isCallable(value) {
-  	if (!value) { return false; }
-  	if (typeof value !== 'function' && typeof value !== 'object') { return false; }
-  	if (typeof value === 'function' && !value.prototype) { return true; }
-  	if (hasToStringTag) { return tryFunctionObject(value); }
-  	if (isES6ClassFn(value)) { return false; }
-  	var strClass = toStr$4.call(value);
-  	return strClass === fnClass || strClass === genClass;
-  };
-
-  var isPrimitive = function isPrimitive(value) {
-  	return value === null || (typeof value !== 'function' && typeof value !== 'object');
-  };
-
-  var toStr$5 = Object.prototype.toString;
-
-
-
-
-
-  // http://ecma-international.org/ecma-262/5.1/#sec-8.12.8
-  var ES5internalSlots = {
-  	'[[DefaultValue]]': function (O) {
-  		var actualHint;
-  		if (arguments.length > 1) {
-  			actualHint = arguments[1];
-  		} else {
-  			actualHint = toStr$5.call(O) === '[object Date]' ? String : Number;
-  		}
-
-  		if (actualHint === String || actualHint === Number) {
-  			var methods = actualHint === String ? ['toString', 'valueOf'] : ['valueOf', 'toString'];
-  			var value, i;
-  			for (i = 0; i < methods.length; ++i) {
-  				if (isCallable(O[methods[i]])) {
-  					value = O[methods[i]]();
-  					if (isPrimitive(value)) {
-  						return value;
-  					}
-  				}
-  			}
-  			throw new TypeError('No default value');
-  		}
-  		throw new TypeError('invalid [[DefaultValue]] hint supplied');
-  	}
-  };
-
-  // http://ecma-international.org/ecma-262/5.1/#sec-9.1
-  var es5 = function ToPrimitive(input) {
-  	if (isPrimitive(input)) {
-  		return input;
-  	}
-  	if (arguments.length > 1) {
-  		return ES5internalSlots['[[DefaultValue]]'](input, arguments[1]);
-  	}
-  	return ES5internalSlots['[[DefaultValue]]'](input);
-  };
-
-  var $Object = GetIntrinsic('%Object%');
-  var $EvalError = GetIntrinsic('%EvalError%');
-  var $TypeError$3 = GetIntrinsic('%TypeError%');
-  var $String = GetIntrinsic('%String%');
-  var $Date = GetIntrinsic('%Date%');
-  var $Number = GetIntrinsic('%Number%');
-  var $floor = GetIntrinsic('%Math.floor%');
-  var $DateUTC = GetIntrinsic('%Date.UTC%');
-  var $abs = GetIntrinsic('%Math.abs%');
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  var $getUTCFullYear = callBound('Date.prototype.getUTCFullYear');
-
-  var HoursPerDay = 24;
-  var MinutesPerHour = 60;
-  var SecondsPerMinute = 60;
-  var msPerSecond = 1e3;
-  var msPerMinute = msPerSecond * SecondsPerMinute;
-  var msPerHour = msPerMinute * MinutesPerHour;
-  var msPerDay = 86400000;
-
-  // https://es5.github.io/#x9
-  var ES5 = {
-  	ToPrimitive: es5,
-
-  	ToBoolean: function ToBoolean(value) {
-  		return !!value;
-  	},
-  	ToNumber: function ToNumber(value) {
-  		return +value; // eslint-disable-line no-implicit-coercion
-  	},
-  	ToInteger: function ToInteger(value) {
-  		var number = this.ToNumber(value);
-  		if (_isNaN(number)) { return 0; }
-  		if (number === 0 || !_isFinite(number)) { return number; }
-  		return sign(number) * Math.floor(Math.abs(number));
-  	},
-  	ToInt32: function ToInt32(x) {
-  		return this.ToNumber(x) >> 0;
-  	},
-  	ToUint32: function ToUint32(x) {
-  		return this.ToNumber(x) >>> 0;
-  	},
-  	ToUint16: function ToUint16(value) {
-  		var number = this.ToNumber(value);
-  		if (_isNaN(number) || number === 0 || !_isFinite(number)) { return 0; }
-  		var posInt = sign(number) * Math.floor(Math.abs(number));
-  		return mod(posInt, 0x10000);
-  	},
-  	ToString: function ToString(value) {
-  		return $String(value);
-  	},
-  	ToObject: function ToObject(value) {
-  		this.CheckObjectCoercible(value);
-  		return $Object(value);
-  	},
-  	CheckObjectCoercible: function CheckObjectCoercible(value, optMessage) {
-  		/* jshint eqnull:true */
-  		if (value == null) {
-  			throw new $TypeError$3(optMessage || 'Cannot call method on ' + value);
-  		}
-  		return value;
-  	},
-  	IsCallable: isCallable,
-  	SameValue: function SameValue(x, y) {
-  		if (x === y) { // 0 === -0, but they are not identical.
-  			if (x === 0) { return 1 / x === 1 / y; }
-  			return true;
-  		}
-  		return _isNaN(x) && _isNaN(y);
-  	},
-
-  	// https://ecma-international.org/ecma-262/5.1/#sec-8
-  	Type: function Type(x) {
-  		if (x === null) {
-  			return 'Null';
-  		}
-  		if (typeof x === 'undefined') {
-  			return 'Undefined';
-  		}
-  		if (typeof x === 'function' || typeof x === 'object') {
-  			return 'Object';
-  		}
-  		if (typeof x === 'number') {
-  			return 'Number';
-  		}
-  		if (typeof x === 'boolean') {
-  			return 'Boolean';
-  		}
-  		if (typeof x === 'string') {
-  			return 'String';
-  		}
-  	},
-
-  	// https://ecma-international.org/ecma-262/6.0/#sec-property-descriptor-specification-type
-  	IsPropertyDescriptor: function IsPropertyDescriptor(Desc) {
-  		return isPropertyDescriptor(this, Desc);
-  	},
-
-  	// https://ecma-international.org/ecma-262/5.1/#sec-8.10.1
-  	IsAccessorDescriptor: function IsAccessorDescriptor(Desc) {
-  		if (typeof Desc === 'undefined') {
-  			return false;
-  		}
-
-  		assertRecord(this, 'Property Descriptor', 'Desc', Desc);
-
-  		if (!src(Desc, '[[Get]]') && !src(Desc, '[[Set]]')) {
-  			return false;
-  		}
-
-  		return true;
-  	},
-
-  	// https://ecma-international.org/ecma-262/5.1/#sec-8.10.2
-  	IsDataDescriptor: function IsDataDescriptor(Desc) {
-  		if (typeof Desc === 'undefined') {
-  			return false;
-  		}
-
-  		assertRecord(this, 'Property Descriptor', 'Desc', Desc);
-
-  		if (!src(Desc, '[[Value]]') && !src(Desc, '[[Writable]]')) {
-  			return false;
-  		}
-
-  		return true;
-  	},
-
-  	// https://ecma-international.org/ecma-262/5.1/#sec-8.10.3
-  	IsGenericDescriptor: function IsGenericDescriptor(Desc) {
-  		if (typeof Desc === 'undefined') {
-  			return false;
-  		}
-
-  		assertRecord(this, 'Property Descriptor', 'Desc', Desc);
-
-  		if (!this.IsAccessorDescriptor(Desc) && !this.IsDataDescriptor(Desc)) {
-  			return true;
-  		}
-
-  		return false;
-  	},
-
-  	// https://ecma-international.org/ecma-262/5.1/#sec-8.10.4
-  	FromPropertyDescriptor: function FromPropertyDescriptor(Desc) {
-  		if (typeof Desc === 'undefined') {
-  			return Desc;
-  		}
-
-  		assertRecord(this, 'Property Descriptor', 'Desc', Desc);
-
-  		if (this.IsDataDescriptor(Desc)) {
-  			return {
-  				value: Desc['[[Value]]'],
-  				writable: !!Desc['[[Writable]]'],
-  				enumerable: !!Desc['[[Enumerable]]'],
-  				configurable: !!Desc['[[Configurable]]']
-  			};
-  		} else if (this.IsAccessorDescriptor(Desc)) {
-  			return {
-  				get: Desc['[[Get]]'],
-  				set: Desc['[[Set]]'],
-  				enumerable: !!Desc['[[Enumerable]]'],
-  				configurable: !!Desc['[[Configurable]]']
-  			};
-  		} else {
-  			throw new $TypeError$3('FromPropertyDescriptor must be called with a fully populated Property Descriptor');
-  		}
-  	},
-
-  	// https://ecma-international.org/ecma-262/5.1/#sec-8.10.5
-  	ToPropertyDescriptor: function ToPropertyDescriptor(Obj) {
-  		if (this.Type(Obj) !== 'Object') {
-  			throw new $TypeError$3('ToPropertyDescriptor requires an object');
-  		}
-
-  		var desc = {};
-  		if (src(Obj, 'enumerable')) {
-  			desc['[[Enumerable]]'] = this.ToBoolean(Obj.enumerable);
-  		}
-  		if (src(Obj, 'configurable')) {
-  			desc['[[Configurable]]'] = this.ToBoolean(Obj.configurable);
-  		}
-  		if (src(Obj, 'value')) {
-  			desc['[[Value]]'] = Obj.value;
-  		}
-  		if (src(Obj, 'writable')) {
-  			desc['[[Writable]]'] = this.ToBoolean(Obj.writable);
-  		}
-  		if (src(Obj, 'get')) {
-  			var getter = Obj.get;
-  			if (typeof getter !== 'undefined' && !this.IsCallable(getter)) {
-  				throw new TypeError('getter must be a function');
-  			}
-  			desc['[[Get]]'] = getter;
-  		}
-  		if (src(Obj, 'set')) {
-  			var setter = Obj.set;
-  			if (typeof setter !== 'undefined' && !this.IsCallable(setter)) {
-  				throw new $TypeError$3('setter must be a function');
-  			}
-  			desc['[[Set]]'] = setter;
-  		}
-
-  		if ((src(desc, '[[Get]]') || src(desc, '[[Set]]')) && (src(desc, '[[Value]]') || src(desc, '[[Writable]]'))) {
-  			throw new $TypeError$3('Invalid property descriptor. Cannot both specify accessors and a value or writable attribute');
-  		}
-  		return desc;
-  	},
-
-  	// https://ecma-international.org/ecma-262/5.1/#sec-11.9.3
-  	'Abstract Equality Comparison': function AbstractEqualityComparison(x, y) {
-  		var xType = this.Type(x);
-  		var yType = this.Type(y);
-  		if (xType === yType) {
-  			return x === y; // ES6+ specified this shortcut anyways.
-  		}
-  		if (x == null && y == null) {
-  			return true;
-  		}
-  		if (xType === 'Number' && yType === 'String') {
-  			return this['Abstract Equality Comparison'](x, this.ToNumber(y));
-  		}
-  		if (xType === 'String' && yType === 'Number') {
-  			return this['Abstract Equality Comparison'](this.ToNumber(x), y);
-  		}
-  		if (xType === 'Boolean') {
-  			return this['Abstract Equality Comparison'](this.ToNumber(x), y);
-  		}
-  		if (yType === 'Boolean') {
-  			return this['Abstract Equality Comparison'](x, this.ToNumber(y));
-  		}
-  		if ((xType === 'String' || xType === 'Number') && yType === 'Object') {
-  			return this['Abstract Equality Comparison'](x, this.ToPrimitive(y));
-  		}
-  		if (xType === 'Object' && (yType === 'String' || yType === 'Number')) {
-  			return this['Abstract Equality Comparison'](this.ToPrimitive(x), y);
-  		}
-  		return false;
-  	},
-
-  	// https://ecma-international.org/ecma-262/5.1/#sec-11.9.6
-  	'Strict Equality Comparison': function StrictEqualityComparison(x, y) {
-  		var xType = this.Type(x);
-  		var yType = this.Type(y);
-  		if (xType !== yType) {
-  			return false;
-  		}
-  		if (xType === 'Undefined' || xType === 'Null') {
-  			return true;
-  		}
-  		return x === y; // shortcut for steps 4-7
-  	},
-
-  	// https://ecma-international.org/ecma-262/5.1/#sec-11.8.5
-  	// eslint-disable-next-line max-statements
-  	'Abstract Relational Comparison': function AbstractRelationalComparison(x, y, LeftFirst) {
-  		if (this.Type(LeftFirst) !== 'Boolean') {
-  			throw new $TypeError$3('Assertion failed: LeftFirst argument must be a Boolean');
-  		}
-  		var px;
-  		var py;
-  		if (LeftFirst) {
-  			px = this.ToPrimitive(x, $Number);
-  			py = this.ToPrimitive(y, $Number);
-  		} else {
-  			py = this.ToPrimitive(y, $Number);
-  			px = this.ToPrimitive(x, $Number);
-  		}
-  		var bothStrings = this.Type(px) === 'String' && this.Type(py) === 'String';
-  		if (!bothStrings) {
-  			var nx = this.ToNumber(px);
-  			var ny = this.ToNumber(py);
-  			if (_isNaN(nx) || _isNaN(ny)) {
-  				return undefined;
-  			}
-  			if (_isFinite(nx) && _isFinite(ny) && nx === ny) {
-  				return false;
-  			}
-  			if (nx === 0 && ny === 0) {
-  				return false;
-  			}
-  			if (nx === Infinity) {
-  				return false;
-  			}
-  			if (ny === Infinity) {
-  				return true;
-  			}
-  			if (ny === -Infinity) {
-  				return false;
-  			}
-  			if (nx === -Infinity) {
-  				return true;
-  			}
-  			return nx < ny; // by now, these are both nonzero, finite, and not equal
-  		}
-  		if (isPrefixOf(py, px)) {
-  			return false;
-  		}
-  		if (isPrefixOf(px, py)) {
-  			return true;
-  		}
-  		return px < py; // both strings, neither a prefix of the other. shortcut for steps c-f
-  	},
-
-  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.10
-  	msFromTime: function msFromTime(t) {
-  		return mod(t, msPerSecond);
-  	},
-
-  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.10
-  	SecFromTime: function SecFromTime(t) {
-  		return mod($floor(t / msPerSecond), SecondsPerMinute);
-  	},
-
-  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.10
-  	MinFromTime: function MinFromTime(t) {
-  		return mod($floor(t / msPerMinute), MinutesPerHour);
-  	},
-
-  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.10
-  	HourFromTime: function HourFromTime(t) {
-  		return mod($floor(t / msPerHour), HoursPerDay);
-  	},
-
-  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.2
-  	Day: function Day(t) {
-  		return $floor(t / msPerDay);
-  	},
-
-  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.2
-  	TimeWithinDay: function TimeWithinDay(t) {
-  		return mod(t, msPerDay);
-  	},
-
-  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.3
-  	DayFromYear: function DayFromYear(y) {
-  		return (365 * (y - 1970)) + $floor((y - 1969) / 4) - $floor((y - 1901) / 100) + $floor((y - 1601) / 400);
-  	},
-
-  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.3
-  	TimeFromYear: function TimeFromYear(y) {
-  		return msPerDay * this.DayFromYear(y);
-  	},
-
-  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.3
-  	YearFromTime: function YearFromTime(t) {
-  		// largest y such that this.TimeFromYear(y) <= t
-  		return $getUTCFullYear(new $Date(t));
-  	},
-
-  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.6
-  	WeekDay: function WeekDay(t) {
-  		return mod(this.Day(t) + 4, 7);
-  	},
-
-  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.3
-  	DaysInYear: function DaysInYear(y) {
-  		if (mod(y, 4) !== 0) {
-  			return 365;
-  		}
-  		if (mod(y, 100) !== 0) {
-  			return 366;
-  		}
-  		if (mod(y, 400) !== 0) {
-  			return 365;
-  		}
-  		return 366;
-  	},
-
-  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.3
-  	InLeapYear: function InLeapYear(t) {
-  		var days = this.DaysInYear(this.YearFromTime(t));
-  		if (days === 365) {
-  			return 0;
-  		}
-  		if (days === 366) {
-  			return 1;
-  		}
-  		throw new $EvalError('Assertion failed: there are not 365 or 366 days in a year, got: ' + days);
-  	},
-
-  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.4
-  	DayWithinYear: function DayWithinYear(t) {
-  		return this.Day(t) - this.DayFromYear(this.YearFromTime(t));
-  	},
-
-  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.4
-  	MonthFromTime: function MonthFromTime(t) {
-  		var day = this.DayWithinYear(t);
-  		if (0 <= day && day < 31) {
-  			return 0;
-  		}
-  		var leap = this.InLeapYear(t);
-  		if (31 <= day && day < (59 + leap)) {
-  			return 1;
-  		}
-  		if ((59 + leap) <= day && day < (90 + leap)) {
-  			return 2;
-  		}
-  		if ((90 + leap) <= day && day < (120 + leap)) {
-  			return 3;
-  		}
-  		if ((120 + leap) <= day && day < (151 + leap)) {
-  			return 4;
-  		}
-  		if ((151 + leap) <= day && day < (181 + leap)) {
-  			return 5;
-  		}
-  		if ((181 + leap) <= day && day < (212 + leap)) {
-  			return 6;
-  		}
-  		if ((212 + leap) <= day && day < (243 + leap)) {
-  			return 7;
-  		}
-  		if ((243 + leap) <= day && day < (273 + leap)) {
-  			return 8;
-  		}
-  		if ((273 + leap) <= day && day < (304 + leap)) {
-  			return 9;
-  		}
-  		if ((304 + leap) <= day && day < (334 + leap)) {
-  			return 10;
-  		}
-  		if ((334 + leap) <= day && day < (365 + leap)) {
-  			return 11;
-  		}
-  	},
-
-  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.5
-  	DateFromTime: function DateFromTime(t) {
-  		var m = this.MonthFromTime(t);
-  		var d = this.DayWithinYear(t);
-  		if (m === 0) {
-  			return d + 1;
-  		}
-  		if (m === 1) {
-  			return d - 30;
-  		}
-  		var leap = this.InLeapYear(t);
-  		if (m === 2) {
-  			return d - 58 - leap;
-  		}
-  		if (m === 3) {
-  			return d - 89 - leap;
-  		}
-  		if (m === 4) {
-  			return d - 119 - leap;
-  		}
-  		if (m === 5) {
-  			return d - 150 - leap;
-  		}
-  		if (m === 6) {
-  			return d - 180 - leap;
-  		}
-  		if (m === 7) {
-  			return d - 211 - leap;
-  		}
-  		if (m === 8) {
-  			return d - 242 - leap;
-  		}
-  		if (m === 9) {
-  			return d - 272 - leap;
-  		}
-  		if (m === 10) {
-  			return d - 303 - leap;
-  		}
-  		if (m === 11) {
-  			return d - 333 - leap;
-  		}
-  		throw new $EvalError('Assertion failed: MonthFromTime returned an impossible value: ' + m);
-  	},
-
-  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.12
-  	MakeDay: function MakeDay(year, month, date) {
-  		if (!_isFinite(year) || !_isFinite(month) || !_isFinite(date)) {
-  			return NaN;
-  		}
-  		var y = this.ToInteger(year);
-  		var m = this.ToInteger(month);
-  		var dt = this.ToInteger(date);
-  		var ym = y + $floor(m / 12);
-  		var mn = mod(m, 12);
-  		var t = $DateUTC(ym, mn, 1);
-  		if (this.YearFromTime(t) !== ym || this.MonthFromTime(t) !== mn || this.DateFromTime(t) !== 1) {
-  			return NaN;
-  		}
-  		return this.Day(t) + dt - 1;
-  	},
-
-  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.13
-  	MakeDate: function MakeDate(day, time) {
-  		if (!_isFinite(day) || !_isFinite(time)) {
-  			return NaN;
-  		}
-  		return (day * msPerDay) + time;
-  	},
-
-  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.11
-  	MakeTime: function MakeTime(hour, min, sec, ms) {
-  		if (!_isFinite(hour) || !_isFinite(min) || !_isFinite(sec) || !_isFinite(ms)) {
-  			return NaN;
-  		}
-  		var h = this.ToInteger(hour);
-  		var m = this.ToInteger(min);
-  		var s = this.ToInteger(sec);
-  		var milli = this.ToInteger(ms);
-  		var t = (h * msPerHour) + (m * msPerMinute) + (s * msPerSecond) + milli;
-  		return t;
-  	},
-
-  	// https://ecma-international.org/ecma-262/5.1/#sec-15.9.1.14
-  	TimeClip: function TimeClip(time) {
-  		if (!_isFinite(time) || $abs(time) > 8.64e15) {
-  			return NaN;
-  		}
-  		return $Number(new $Date(this.ToNumber(time)));
-  	},
-
-  	// https://ecma-international.org/ecma-262/5.1/#sec-5.2
-  	modulo: function modulo(x, y) {
-  		return mod(x, y);
-  	}
-  };
-
-  var es5$1 = ES5;
-
-  var replace = functionBind.call(Function.call, String.prototype.replace);
-
-  /* eslint-disable no-control-regex */
-  var leftWhitespace = /^[\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF]+/;
-  var rightWhitespace = /[\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF]+$/;
-  /* eslint-enable no-control-regex */
-
-  var implementation$2 = function trim() {
-  	var S = es5$1.ToString(es5$1.CheckObjectCoercible(this));
-  	return replace(replace(S, leftWhitespace, ''), rightWhitespace, '');
-  };
-
-  var zeroWidthSpace = '\u200b';
-
-  var polyfill = function getPolyfill() {
-  	if (String.prototype.trim && zeroWidthSpace.trim() === zeroWidthSpace) {
-  		return String.prototype.trim;
-  	}
-  	return implementation$2;
-  };
-
-  var shim = function shimStringTrim() {
-  	var polyfill$$1 = polyfill();
-  	defineProperties_1(String.prototype, { trim: polyfill$$1 }, {
-  		trim: function testTrim() {
-  			return String.prototype.trim !== polyfill$$1;
-  		}
-  	});
-  	return polyfill$$1;
-  };
-
-  var boundTrim = functionBind.call(Function.call, polyfill());
-
-  defineProperties_1(boundTrim, {
-  	getPolyfill: polyfill,
-  	implementation: implementation$2,
-  	shim: shim
-  });
-
-  var string_prototype_trim = boundTrim;
-
-  var toStr$6 = Object.prototype.toString;
-  var hasOwnProperty = Object.prototype.hasOwnProperty;
-
-  var forEachArray = function forEachArray(array, iterator, receiver) {
-      for (var i = 0, len = array.length; i < len; i++) {
-          if (hasOwnProperty.call(array, i)) {
-              if (receiver == null) {
-                  iterator(array[i], i, array);
-              } else {
-                  iterator.call(receiver, array[i], i, array);
-              }
-          }
-      }
-  };
-
-  var forEachString = function forEachString(string, iterator, receiver) {
-      for (var i = 0, len = string.length; i < len; i++) {
-          // no such thing as a sparse string.
-          if (receiver == null) {
-              iterator(string.charAt(i), i, string);
-          } else {
-              iterator.call(receiver, string.charAt(i), i, string);
-          }
-      }
-  };
-
-  var forEachObject = function forEachObject(object, iterator, receiver) {
-      for (var k in object) {
-          if (hasOwnProperty.call(object, k)) {
-              if (receiver == null) {
-                  iterator(object[k], k, object);
-              } else {
-                  iterator.call(receiver, object[k], k, object);
-              }
-          }
-      }
-  };
-
-  var forEach = function forEach(list, iterator, thisArg) {
-      if (!isCallable(iterator)) {
-          throw new TypeError('iterator must be a function');
-      }
-
-      var receiver;
-      if (arguments.length >= 3) {
-          receiver = thisArg;
-      }
-
-      if (toStr$6.call(list) === '[object Array]') {
-          forEachArray(list, iterator, receiver);
-      } else if (typeof list === 'string') {
-          forEachString(list, iterator, receiver);
-      } else {
-          forEachObject(list, iterator, receiver);
-      }
-  };
-
-  var forEach_1 = forEach;
-
-  var isArray = function(arg) {
+    , isArray = function(arg) {
         return Object.prototype.toString.call(arg) === '[object Array]';
       };
 
@@ -14207,29 +15901,29 @@
 
     var result = {};
 
-    forEach_1(
-        string_prototype_trim(headers).split('\n')
-      , function (row) {
-          var index = row.indexOf(':')
-            , key = string_prototype_trim(row.slice(0, index)).toLowerCase()
-            , value = string_prototype_trim(row.slice(index + 1));
+    var headersArr = trim(headers).split('\n');
 
-          if (typeof(result[key]) === 'undefined') {
-            result[key] = value;
-          } else if (isArray(result[key])) {
-            result[key].push(value);
-          } else {
-            result[key] = [ result[key], value ];
-          }
-        }
-    );
+    for (var i = 0; i < headersArr.length; i++) {
+      var row = headersArr[i];
+      var index = row.indexOf(':')
+      , key = trim(row.slice(0, index)).toLowerCase()
+      , value = trim(row.slice(index + 1));
+
+      if (typeof(result[key]) === 'undefined') {
+        result[key] = value;
+      } else if (isArray(result[key])) {
+        result[key].push(value);
+      } else {
+        result[key] = [ result[key], value ];
+      }
+    }
 
     return result
   };
 
   var immutable = extend;
 
-  var hasOwnProperty$1 = Object.prototype.hasOwnProperty;
+  var hasOwnProperty = Object.prototype.hasOwnProperty;
 
   function extend() {
       var target = {};
@@ -14238,7 +15932,7 @@
           var source = arguments[i];
 
           for (var key in source) {
-              if (hasOwnProperty$1.call(source, key)) {
+              if (hasOwnProperty.call(source, key)) {
                   target[key] = source[key];
               }
           }
@@ -14251,7 +15945,7 @@
   createXHR.XMLHttpRequest = window_1.XMLHttpRequest || noop$1;
   createXHR.XDomainRequest = "withCredentials" in (new createXHR.XMLHttpRequest()) ? createXHR.XMLHttpRequest : window_1.XDomainRequest;
 
-  forEachArray$1(["get", "put", "post", "patch", "head", "delete"], function(method) {
+  forEachArray(["get", "put", "post", "patch", "head", "delete"], function(method) {
       createXHR[method === "delete" ? "del" : method] = function(uri, options, callback) {
           options = initParams(uri, options, callback);
           options.method = method.toUpperCase();
@@ -14259,7 +15953,7 @@
       };
   });
 
-  function forEachArray$1(array, iterator) {
+  function forEachArray(array, iterator) {
       for (var i = 0; i < array.length; i++) {
           iterator(array[i]);
       }
@@ -14493,9 +16187,7 @@
    * @class EricssonMDN
    */
 
-  var EricssonMDN =
-  /*#__PURE__*/
-  function () {
+  var EricssonMDN = /*#__PURE__*/function () {
     function EricssonMDN() {}
 
     /**
@@ -14550,9 +16242,7 @@
    * @class EricssonExposure
    */
 
-  var EricssonExposure =
-  /*#__PURE__*/
-  function (_EntitlementEngine) {
+  var EricssonExposure = /*#__PURE__*/function (_EntitlementEngine) {
     _inheritsLoose(EricssonExposure, _EntitlementEngine);
 
     /**
@@ -15058,6 +16748,10 @@
 
       if (preEntitlement && preEntitlement.formats) {
         preEntitlement.selectFormat(playRequest);
+
+        if (preEntitlement.channelId || preEntitlement.programId) {
+          this.setStreamReferenceTime_(preEntitlement);
+        }
 
         if (preEntitlement.mediaLocator) {
           callback(preEntitlement, null);
@@ -15848,9 +17542,7 @@
    * @param {Object} options Object of option names and values
    * @class EntitlementRequest
    */
-  var EntitlementRequest =
-  /*#__PURE__*/
-  function () {
+  var EntitlementRequest = /*#__PURE__*/function () {
     /**
      * Create EntitlementRequest
      *
@@ -15936,9 +17628,7 @@
    * @class ProgramService
    */
 
-  var ProgramService =
-  /*#__PURE__*/
-  function (_Plugin) {
+  var ProgramService = /*#__PURE__*/function (_Plugin) {
     _inheritsLoose(ProgramService, _Plugin);
 
     /**
@@ -16150,7 +17840,7 @@
 
       log('checkForProgramChange', event.type); // Not need update a program or real VOD
 
-      if (!this.entitlement().live && !this.entitlement().isStaticCachupAsLive && !this.entitlement().isDynamicCachupAsLive && event.type === empPlayerEvents.SEEKED) {
+      if (!this.entitlement() || !this.entitlement().live && !this.entitlement().isStaticCachupAsLive && !this.entitlement().isDynamicCachupAsLive && event.type === empPlayerEvents.SEEKED) {
         return;
       }
 
@@ -16214,7 +17904,7 @@
 
         if (this.currentProgram) {
           // Load next stream
-          if (this.entitlement().isStaticCachupAsLive && dateTime.getTime() + 2000 >= this.entitlement().streamInfo.end.getTime()) {
+          if (!this.isProgramEvent && this.entitlement().isStaticCachupAsLive && dateTime.getTime() + 2000 >= this.entitlement().streamInfo.end.getTime()) {
             if (this.player.lineUpAsset && dateTime.getTime() + 2000 < this.currentProgram.end.getTime()) {
               log('checkForProgramChange', 'Load next stream', dateTime);
               this.player.lineUpAsset(this.currentProgram.assetId, null, null, dateTime.getTime(), true);
@@ -16680,8 +18370,7 @@
         program: null
       }); // Update progressbar
 
-      this.player.trigger(empPlayerEvents.DURATION_CHANGE);
-      this.player.addClass('vjs-live'); // 2-3 minutes
+      this.player.trigger(empPlayerEvents.DURATION_CHANGE); // 2-3 minutes
 
       var pollingRate = 2 * 60 * 1000 + Math.random() * 60 * 1000;
       this.programChangeCheckTimestamp_ = Date.now() + pollingRate;
@@ -16871,19 +18560,22 @@
       // Used by CC sender and CC Reveiver
       var title = null;
       var subtitle = null;
-      var images = null; // We take first localized
+      var images = null;
+      var assetMetadataLocalized = this.getLocalizedAssetMetadata(assetMetadata);
 
-      if (assetMetadata && assetMetadata.localized && assetMetadata.localized.length > 0) {
-        if (assetMetadata.localized[0].title) {
-          title = assetMetadata.localized[0].title;
+      if (assetMetadataLocalized) {
+        if (assetMetadataLocalized.title) {
+          title = assetMetadataLocalized.title;
         }
 
-        if (assetMetadata.localized[0].shortDescription) {
-          subtitle = assetMetadata.localized[0].shortDescription;
+        if (assetMetadataLocalized.shortDescription) {
+          subtitle = assetMetadataLocalized.shortDescription;
+        } else if (assetMetadataLocalized.description) {
+          subtitle = assetMetadataLocalized.description;
         }
 
-        if (assetMetadata.localized[0].images && assetMetadata.localized[0].images.length > 0 && assetMetadata.localized[0].images[0].url) {
-          images = assetMetadata.localized[0].images;
+        if (assetMetadataLocalized.images && assetMetadataLocalized.images.length > 0 && assetMetadataLocalized.images[0].url) {
+          images = assetMetadataLocalized.images;
         }
       }
 
@@ -16892,6 +18584,37 @@
         subtitle: subtitle ? subtitle : '',
         images: images ? images : []
       };
+    }
+    /**
+    * Get Localized Asset Metadata
+    *
+    * @param {Object} assetMetadata Asset Metadata
+    * @return {Object} Localized Asset Metadata
+    */
+    ;
+
+    _proto.getLocalizedAssetMetadata = function getLocalizedAssetMetadata(assetMetadata) {
+      var localizedAssetMetadata = null;
+
+      if (assetMetadata && assetMetadata.localized && assetMetadata.localized.length > 0) {
+        localizedAssetMetadata = assetMetadata.localized[0];
+        var currentLanguage = this.player.language();
+
+        if (currentLanguage) {
+          for (var i = 0; i < assetMetadata.localized.length; i++) {
+            if (assetMetadata.localized[i].locale === currentLanguage) {
+              log('Use Localized AssetMetadata for', currentLanguage);
+              return assetMetadata.localized[i];
+            }
+          }
+        }
+
+        log('Use default Localized AssetMetadata', assetMetadata.localized[0].locale);
+      } else {
+        log('No AssetMetadata');
+      }
+
+      return localizedAssetMetadata;
     };
 
     _createClass(ProgramService, [{
@@ -16978,7 +18701,7 @@
     return ProgramService;
   }(Plugin$3);
 
-  ProgramService.VERSION = '2.1.111-455';
+  ProgramService.VERSION = '2.2.127-528';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -16998,9 +18721,7 @@
    *
    */
 
-  var EntitlementExpirationService =
-  /*#__PURE__*/
-  function (_Plugin) {
+  var EntitlementExpirationService = /*#__PURE__*/function (_Plugin) {
     _inheritsLoose(EntitlementExpirationService, _Plugin);
 
     /**
@@ -17217,7 +18938,7 @@
     return EntitlementExpirationService;
   }(Plugin$4);
 
-  EntitlementExpirationService.VERSION = '2.1.111-455';
+  EntitlementExpirationService.VERSION = '2.2.127-528';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -17264,6 +18985,9 @@
           done = true;
           callback();
         }
+      },
+      redo: function redo() {
+        index--;
       },
       iteration: function iteration() {
         return index - 1;
@@ -17461,17 +19185,16 @@
             player.options({
               absoluteStartTime: entitlement.liveTime
             });
-          } // old code
+          } // old code don't use lastViewedTime
           // else {
           //  log('lastViewedTime', new Date(entitlement.lastViewedTime), entitlement.lastViewedTime);
           //  player.options({ 'absoluteStartTime': entitlement.lastViewedTime });
           // }
 
         } else if (entitlement.lastViewedOffset) {
-          log('lastViewedOffset', entitlement.lastViewedOffset / 1000);
-
-          if (player.streamType !== 'DASH') {
-            // Is HLS
+          // Don't use lastViewedOffset 30 sec from end
+          if (!entitlement.durationInMs || entitlement.lastViewedOffset < entitlement.durationInMs - 30000) {
+            log('lastViewedOffset', entitlement.lastViewedOffset / 1000);
             player.options({
               startTime: entitlement.lastViewedOffset / 1000
             });
@@ -17497,6 +19220,7 @@
         muted: player.options_.muted,
         language: player.options_.language,
         maxBitrate: player.options_.maxBitrate,
+        minDvrWindow: player.options_.minDvrWindow,
         timeShiftDisabled: player.options_.timeShiftDisabled,
         useLastViewedOffset: player.options_.useLastViewedOffset,
         startTime: player.options_.startTime,
@@ -17522,6 +19246,8 @@
 
     return {
       setSource: function setSource(srcObj, next) {
+        var _this = this;
+
         var options = player.options();
         var srcEntitlement = null;
         var preEntitlement = null;
@@ -17562,7 +19288,8 @@
           exposure.login('', '', function (response) {
             if (response.success) {
               entitlementOptions.sessionToken = response.session.sessionToken;
-              player.trigger(empPlayerEvents.REPLAY);
+
+              _this.setSource(srcObj, next);
             } else {
               log.error('Anonymous login fail', response.message);
 
@@ -17639,9 +19366,20 @@
               if (error) {
                 if (!player.options_.excludeTechs) {
                   player.options_.excludeTechs = [];
+                } // Try with HLS if tech support both hls and dash
+
+
+                if (tech.canPlayHls && playRequest.format !== 'HLS' && (!techOptions || techOptions.streamType !== 'HLS')) {
+                  if (!techOptions) {
+                    options[techs[i][0].toLowerCase()] = {};
+                  }
+
+                  options[techs[i][0].toLowerCase()].streamType = 'HLS';
+                  loop.redo();
+                } else {
+                  player.options_.excludeTechs.push(techs[i][0]);
                 }
 
-                player.options_.excludeTechs.push(techs[i][0]);
                 entitlementRequestError = new EmpPlayerError(error.message + '  ' + JSON.stringify(playRequest) + JSON.stringify(entitlementRequest), error.code, error.stack);
 
                 if (error.fatal) {
@@ -17794,7 +19532,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.1.111-455';
+  EntitlementMiddleware.VERSION = '2.2.127-528';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -17923,7 +19661,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.1.111-455';
+  empPlayer.VERSION = '2.2.127-528';
   /*
    * Universal Module Definition (UMD)
    *

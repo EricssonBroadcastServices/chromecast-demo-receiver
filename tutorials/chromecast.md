@@ -2,17 +2,11 @@
 
 **Custom message namespace:** urn:x-cast:com.ericsson.cast.receiver
 
-**Breaking changes for version 2**
-When casting a channel or a program, the timeline is now relative to the beginning of the program and not the beginning of the stream. This change makes the Chromecast built-in sender controls and Cloud senders to work out-of-the-box, making it easier and faster to develop a sender.
-<br />
-* CurrentTime, Duration and Seek values are based on seconds and are now relative to the beginning of the program and not the beginning of the stream. The behaviour matches what occurs when playing locally.
-* Use **channelId** & **programId** for live and catchup playback. **AssetId** should only be used for VoD.
-* ProgramChanged message broadcasted by the Receiver is now an object containing the program’s full metadata. Before, it was just a string containing the programId. Senders should handle this api change.
-* "refreshcontrols" message is deprecated. Please use "pull" instead.
-* "setabsolutetime" message is deprecated. Please use "playheadtime" instead.
-* DurationChanged has been removed, duration is now a property on the Media object that is sent on media status update.
-  This is necessary to make the senders built-in controls to work.
-* Playback properties like default playback behaviour, startTime, etc.. were adapted so that they match the mobile client’s playback properties structure. To start casting use playbackProperties, described in [Playback method 1](chromecast.md#playback-method-1) below.  
+**Changes for version 2.2 (It's backward compatible with 2.1)**
+* MediaInformation.ContentId  should be set to assetId or if you cast a external stream it should be set to stream url.
+* MediaInformation.contentType should be set to **"video/emp"** or the content type for the external stream "application/dash+xml".
+* MediaInformation.empPayload and MediaInformation.customData.assetId don't need to be set by the sender, they are set by the receiver.
+
 * Slow embedded devices like Chromecast version 1 have problem to start casting with big bundle javascript, link script separately in index.html like this instead:
 ```javascript
  <script type="text/javascript" src="//www.gstatic.com/cast/sdk/libs/receiver/2.0.0/cast_receiver.js"></script>
@@ -23,19 +17,16 @@ When casting a channel or a program, the timeline is now relative to the beginni
  <script type="text/javascript" src="js/emp-receiver-your-app.min.js"></script>
 ```
 
-**New features**
+**Features**
 * Program related progress bar with seamless switching between programs for a channel.
 * Switch program by sending new playheadtime, play next, play previous or goto live messages.
 * AssetChanged event is sent when a new VOD is playing and the message includes the asset object.
 * Support for casting external streams in MPEG-DASH or MP4 format.
-* Line up programs, assets and external streams to be played in sequence.
-* Jump to next lined up video asset.
+* Playlist (CC Media Que) of assets and external streams to be played in sequence.
+* Jump between assets in a Playlist.
 * Change text track style from the senders.
 * Audio and Text kind for multiple tracks in the same language (e.g. Tracks with descriptions and comments for disabled viewers).
-* Media.empPayload and Media.customData don't need to be set by the sender, they are set by the receiver.
 * Entitlement will be returned as an object containing contract restrictions for a specific playback. Contract restrictions are enforced on the receiver but the sender might want to have the info in order to hide or show controls affected.
-
-
 
 
 
@@ -62,25 +53,40 @@ The receiver is compliant with the default Chromecast Receiver API unless otherw
 
 
 ## LoadRequest ##
+* [iOS sender](https://developers.google.com/cast/docs/ios_sender)
+* [Android sender](https://developers.google.com/cast/docs/android_sender)
+* [Chrome sender](https://developers.google.com/cast/docs/chrome_sender)
+
 
 **Loading Media**  
 To load media on the receiver, add data to the customData parameter of the load method. Use [Playback method 1](chromecast.md#playback-method-1) for EMP streams. In order to cast EMP media, the EMP media has to be available in the DASH/CENC format.
 
 Loading media is done using the following methods
 
-GCKRemoteMediaClient:loadMedia (iOS)
+**iOS Sender API v4**
 
-RemoteMediaPlayer.load (android)
+***Deprecated*** GCKRemoteMediaClient:loadMedia 
 
+GCKRemoteMediaClient:loadMediaWithLoadRequestData, add mediaInformation to GCKMediaLoadRequestData 
 
-**contentID**
--  *contentID* should be set to assetId (or programId if you don't have access to it).
--  if you cast only a channelId then contentID should be set to channelId.
--  If you cast a VOD it should be set to assetId.
--  If you cast a external stream it should be set to stream url.  
+**Android Sender API v4**
 
+***Deprecated***  RemoteMediaPlayer.load (android)
 
-**CustomData**
+RemoteMediaClient.load(MediaInfo)
+
+**Chrome Sender API v4**
+
+castSession.loadMedia(loadRequest) add mediaInformation to loadRequest
+
+**mediaInformation.contentID**
+-  *contentID* should be set to assetId.
+-  (If you cast a external stream it should be set to stream url.) 
+
+**mediaInformation.contentType** 
+-  *contentType* should be set to **video/emp** ( or the content type for the external stream application/dash+xml).
+
+**loadRequest.CustomData or mediaInformation.CustomData***
 
 
 ```javascript
@@ -92,9 +98,11 @@ var loadRequest = new window.chrome.cast.media.LoadRequest(mediaInfo);
         sessionToken: 'sessionToken', // Valid API session that has access to the requested media
         exposureApiURL: 'apiUrl'
       },
-      assetId: 'assetId', // identifier of media to cast - only for VOD, null or empty for channel play
-      channelId: 'ChannelId', // identifier of channel to cast
-      programId: 'programId' // optional. The program to watch, otherwise the receiver will load the live program
+      language: 'en' // optional. The language that should be used for mediainfo in control bar. 
+
+      assetId: 'assetId', // deprecated use mediaInformation. identifier of media to cast - only for VOD, null or empty for channel play
+      channelId: 'ChannelId', // deprecated use mediaInformation. identifier of channel to cast
+      programId: 'programId', // deprecated use mediaInformation. The program to watch, otherwise the receiver will load the live program
     }
 ```
 <br />
@@ -111,27 +119,53 @@ The recommended playback method for EMP streams.
 
 ```javascript
 loadRequest.customData = {
-    channelId: [mandatory]
-    programId: [optional]
+    language: [optional],
     playbackProperties {
      playFrom: [mandatory]
      startTime: [optional] // starttime milliseconds since 1970/01/01, used if playFrom is 'startTime',
      startOffset: [optional] // starttime in milliseconds since start of stream
    }
+
+    assetId: [deprecated use mediaInformation]
+    channelId: [deprecated use mediaInformation]
+    programId: [deprecated use mediaInformation],
 }
 ```
 <br />
 
 ### Playback method 2 ###
 This  playback method is for external streams (MPEG-DASH or mp4) and for lists of EMP streams.
+
+[It's preferable to use the Playback PlayList when casting a list of assets/streams.](chromecast.md#Playback-PlayList)
 <br />
+
+**mediaInformation.contentID**
+-  *contentID* should be set to stream Url.
+
+**mediaInformation.contentUrl**
+Same as contentID
+
+**mediaInformation.contentType** 
+-  *contentType* The content type for the external stream application/dash+xml).
+
+**loadRequest.CustomData or mediaInformation.CustomData***
 
 ```javascript
 loadRequest.customData = {
-    sources: [array of source to be played],
-    source: {src: 'url or assetObject', type: 'MIME Type', licenseServer: 'licUrl', playToken: 'Lic Authorization Bearer', options: {videojs playerOptions} }
+    keySystems: listOfkeySystems,
+    licenseServer: 'licUrl',
+    playToken: 'Lic Authorization Bearer',
+    sources: [optional] [array of source to be played],
+    source: [optional] {src: 'url or assetObject', type: 'MIME Type', licenseServer: 'licUrl', playToken: 'Lic Authorization Bearer', options: {videojs playerOptions} }
+}
+
+keySystems: {
+      com.widevine.alpha: {
+          licenseUri: licUrl
+     }
 }
 ```
+
 The source **src** attribute can be a 'stream url' or 'assetId' or assetObject {assetId:'', channelId:'', programId:''}
 <br />
 The source **type** attribute can be any of these
@@ -165,6 +199,45 @@ Use startTime in [Playback method 1](chromecast.md#playback-method-1) for EMP st
 // Setting start time
 var loadRequest = new window.chrome.cast.media.LoadRequest(mediaInfo);
 loadRequest.currentTime = startTime;
+```
+
+<br />
+
+### Playback PlayList ###
+
+* [iOS sender queueing](https://developers.google.com/cast/docs/ios_sender/queueing)
+* [Android sender queueing](https://developers.google.com/cast/docs/android_sender/queueing)
+
+Loading playlist media is done using the following methods
+
+(iOS) GCKRemoteMediaClient:loadMediaWithLoadRequestData, add queueData to GCKMediaLoadRequestData
+
+(android) RemoteMediaClient.queueLoad(MediaQueueItem[], int, int, long, JSONObject) 
+
+(chrome) castSession.queueLoad(queueLoadRequest) add queueData to queueLoadRequest
+
+queueData should contain a list of MediaInformation objects and startIndex (which item the receiver should start play)
+
+There is Google API for:
+* AppendItem
+* InsertItems
+* JumpToItem
+* MoveItemToNewIndex
+* Next
+* Prev
+* RemoveItem
+* ReorderItems
+* SetRepeatMode
+* UpdateItems
+```javascript
+When casting or join a cast session that play a Media Que 
+mediaSession will contain multiple items (mediaSession.items) and 
+
+items.queueData: {
+	repeatMode: "REPEAT_OFF"
+	shuffle: false
+	startIndex: 2
+}
 ```
 
 <br />
@@ -241,10 +314,10 @@ media:{ "contentId":"766355-726896573_enigma", // programId or asssetId for VOD
   "streamType":"BUFFERED",  // StreamType will be BUFFERED even for live streams, to make live streams
                             // working with CC build-in controls, if timeshift is disabled it will be "LIVE" to hide progress bar.
   "contentType":"video/emp",
+  "duration":1697.948, //Important property
   "metadata":{
      "type":1,
      "metadataType":1,
-     "duration":1697.948, //Important property
      "title":"",
      "subtitle":"",
      "images":[{"height":1100,"orientation":"LANDSCAPE","type":"other","url":"","width":1700},
@@ -275,6 +348,20 @@ Access currentTime with Cast Sender API:
 * Web: getEstimatedTime()
 * Android: 	getApproximateStreamPosition()
 * iOS: approximateStreamPosition
+
+<br />
+
+**Media Object** When playing external streams
+```javascript
+media:{"contentId":"https://testvrmedia.streaming.mediaservices.windows.net/f14e611d-59fa-4f3b-8f0b-79946387eefc/html5-player.ism/manifest(format=mpd-time-csf)",
+"streamType":"BUFFERED",
+"contentType":"application/dash+xml",
+"metadata":{"type":1,"metadataType":1},
+"duration":965,
+"empPayload":{"source":{"src":"https://testvrmedia.streaming.mediaservices.windows.net/f14e611d-59fa-4f3b-8f0b-79946387eefc/html5-player.ism/manifest(format=mpd-time-csf)","type":"application/dash+xml","options":{"autoplay":true,"language":"en","maxBitrate":0,"timeShiftDisabled":false,"useLastViewedOffset":false,"startTime":0,"audioLanguage":"und","subtitleLanguage":"None"}}},
+"customData":{"source":{"src":"https://testvrmedia.streaming.mediaservices.windows.net/f14e611d-59fa-4f3b-8f0b-79946387eefc/html5-player.ism/manifest(format=mpd-time-csf)","type":"application/dash+xml","options":{"autoplay":true,"language":"en","maxBitrate":0,"timeShiftDisabled":false,"useLastViewedOffset":false,"startTime":0,"audioLanguage":"und","subtitleLanguage":"None"}}}
+}
+```
 
 <br />
 
@@ -539,7 +626,7 @@ Jump to the beginning of the previous program
 
 ```javascript
 {
-  type: 'playnextprogram'
+  type: 'playpreviousprogram'
   data: {
    end : false [optional] //If true, it will start playback 30 second from the end of the previous program    
   }
@@ -580,6 +667,8 @@ Update the subtile style
 Update lineup programs, assets and external streams to be played in sequence.
 Can also be  accomplished with [Playback method 2](chromecast.md#playback-method-2), See it for source description.
 
+[It's preferable to use the Playback PlayList when casting a list of assets/streams.](chromecast.md#Playback-PlayList)
+
 ```javascript
 {
   type: 'texttrackstyle',
@@ -596,6 +685,7 @@ Can also be  accomplished with [Playback method 2](chromecast.md#playback-method
 
 **loadnextsource**
 Plays the next source in line
+(Not for PlayList (Media Que))
 
 ```javascript
 {

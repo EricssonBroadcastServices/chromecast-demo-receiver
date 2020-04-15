@@ -237,3 +237,61 @@ https://github.com/google/shaka-player/releases
 ### New features
 - **EMP-12825** HTML5 2.0 - Create WLA CC Receiver.
 
+## 2.1.119
+
+### New features
+**EMP-13616** Use the latest EMPAnalytics 2.1.119
+**EMP-13724**  Player should support multiple languages for media info bar
+
+## 2.2.122
+
+### New features
+**EMP-13821** Playlist for Chromecast
+
+## 2.2.123
+
+### New features
+- **EMP-13963** Update Shaka to v2.5.8 Fix problems with Ad's and Multi-period DASH
+
+## 2.2.125
+
+### Bug fixes
+EMP-14057 Problem with ended live events.
+EMP-14060 Start from bookmark with VOD used old technology.
+
+### New features
+- Use imagescaler for media info images.
+- Add getMediaInfo method to player.
+- Update to HTML5 Player 2.2.125
+
+## 2.2.126
+
+### Bug fixes
+- fix problem with VTT Thumbnails class
+- fix events leaks on dispose
+- EMP-14147 Double call to src method when not setting sessionToken with anonymous login
+
+### New features
+- update hls.js to 0.13.2, EmpHLS-MSE
+
+## 2.2.127
+
+### Bug fixes
+EMP-14065 Poster is not showing with more than one tech.
+
+## 2.2.128
+
+### Bug fixes
+EMP-14280 The progress bar grows outside its container.
+
+### New features
+- EMP-14130 Add a timeline for moving DVR Window (dvr_window_length).
+- EMP-14257 Handle Virtual Live Stream.
+- EMP-14271 Configurable threshold for DVR/Live, minDvrWindow
+- EMP-14278 dvr_window_length and minDvrWindow with Chromecast
+- EMP-14279 Casting unencrypted HLS (Virtual Live Streams)
+- Update to HTML5 Player 2.2.128
+
+
+
+

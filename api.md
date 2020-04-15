@@ -107,14 +107,12 @@ Returns the underlying EmpPlayer version 2
 EmpPlayer API: https://www.npmjs.com/package/empplayer2
 
 **Kind**: instance property of [<code>empReceiver</code>](#empReceiver)  
-**Export**:   
 <a name="empReceiver+onMessage"></a>
 
 ### empReceiver.onMessage(event)
 Handle custom message from senders
 
 **Kind**: instance method of [<code>empReceiver</code>](#empReceiver)  
-**Export**:   
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -193,7 +191,6 @@ broadcast custom message to all connected senders.
 It can be dangerous to send message directly from ReceiverApp, but if you know what you're doing it's public.
 
 **Kind**: instance method of [<code>empReceiver</code>](#empReceiver)  
-**Export**:   
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -207,7 +204,6 @@ Sends media status to a specific sender or
 broadcast media status to all connected senders.
 
 **Kind**: instance method of [<code>empReceiver</code>](#empReceiver)  
-**Export**:   
 
 | Param | Type | Description |
 | --- | --- | --- |

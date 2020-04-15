@@ -85,12 +85,13 @@ module.exports = function(grunt) {
           { cwd: 'app/js/', src: ['emp-player.*'], dest: 'dist/js', expand: true, filter: 'isFile' },
           { cwd: 'app/js/', src: ['video.*'], dest: 'dist/js', expand: true, filter: 'isFile' },
           { cwd: 'app/js/', src: ['emp-shaka.*'], dest: 'dist/js', expand: true, filter: 'isFile' },
+          { cwd: 'app/js/', src: ['emp-hls-mse.*'], dest: 'dist/js', expand: true, filter: 'isFile' },
           { cwd: 'build/temp/', src: ['*.*'], dest: 'dist/js', expand: true, filter: 'isFile' }
         ]
       },
       fromNPM: {
         files: [
-          { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/js/', src: ['!emp-receiver*.*', 'emp-player*.*', 'emp-shaka*.*'], dest: 'app/js', expand: true, filter: 'isFile' },
+          { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/js/', src: ['!emp-receiver*.*', 'emp-player*.*', 'emp-shaka*.*', 'emp-hls-mse.*'], dest: 'app/js', expand: true, filter: 'isFile' },
           { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/video-js/', src: ['video*.js'], dest: 'app/js', expand: true, filter: 'isFile' },
           { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/video-js/', src: ['video*.css'], dest: 'app/css', expand: true, filter: 'isFile' },
           { cwd: 'node_modules/emp-chromecast-receiver-2-dev/dist/css/', src: ['*.*'], dest: 'app/css', expand: true, filter: 'isFile' },
