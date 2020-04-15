@@ -101,7 +101,7 @@ body {
   height: 15em;
   opacity: 0.9;
   padding: 4em;
-  background: linear-gradient(to top, black, transparent 72%, transparent 100%); }
+  background: linear-gradient(to top, black, rgba(0, 0, 0, 0) 72%, rgba(0, 0, 0, 0) 100%); }
 
 .video-js .vjs-play-progress:before {
   display: none; }
@@ -137,6 +137,9 @@ body {
   display: inherit; }
 
 .video-js.vjs-live .vjs-current-time {
+  display: none; }
+
+.video-js.vjs-live .vjs-progress-control {
   display: none; }
 
 .receiver[state="launching"] .logo {

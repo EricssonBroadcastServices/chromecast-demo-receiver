@@ -278,3 +278,20 @@ EMP-14060 Start from bookmark with VOD used old technology.
 
 ### Bug fixes
 EMP-14065 Poster is not showing with more than one tech.
+
+## 2.2.128
+
+### Bug fixes
+EMP-14280 The progress bar grows outside its container.
+
+### New features
+- EMP-14130 Add a timeline for moving DVR Window (dvr_window_length).
+- EMP-14257 Handle Virtual Live Stream.
+- EMP-14271 Configurable threshold for DVR/Live, minDvrWindow
+- EMP-14278 dvr_window_length and minDvrWindow with Chromecast
+- EMP-14279 Casting unencrypted HLS (Virtual Live Streams)
+- Update to HTML5 Player 2.2.128
+
+
+
+

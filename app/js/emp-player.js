@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.2.127-527 
+ * EMP-Player 2.2.127-528 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -7483,7 +7483,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.2.127-527';
+  vttThumbnailsPlugin.VERSION = '2.2.127-528';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -8286,7 +8286,7 @@
     return PlaylistPlugin;
   }(Plugin$1);
 
-  PlaylistPlugin.VERSION = '2.2.127-527';
+  PlaylistPlugin.VERSION = '2.2.127-528';
 
   if (videojs.getPlugin('playList')) {
     videojs.log.warn('A plugin named "PlaylistPlugin" already exists.');
@@ -11090,7 +11090,7 @@
     }, {
       key: "version",
       get: function get() {
-        return '2.2.127-527';
+        return '2.2.127-528';
       }
       /**
        * Get entitlement
@@ -14926,7 +14926,7 @@
     return AnalyticsPlugin;
   }(Plugin$2);
 
-  AnalyticsPlugin.VERSION = '2.2.127-527';
+  AnalyticsPlugin.VERSION = '2.2.127-528';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -15534,7 +15534,7 @@
       this.mediaLocator = options.mediaLocator || '';
 
       if (this.mediaLocator) {
-        if (window_1.location.hostname === 'localhost' || IS_SMARTTV) {
+        if (window_1.location.hostname === 'localhost' || IS_SMARTTV || window_1.location.hostname.indexOf('192.168.') === 0) {
           this.src = this.mediaLocator;
         } else {
           // change to Protocol-relative URL
@@ -15662,7 +15662,7 @@
       this.mediaLocator = format.mediaLocator || '';
 
       if (this.mediaLocator) {
-        if (window_1.location.hostname === 'localhost' || IS_SMARTTV) {
+        if (window_1.location.hostname === 'localhost' || IS_SMARTTV || window_1.location.hostname.indexOf('192.168.') === 0) {
           this.src = this.mediaLocator;
         } else {
           // change to Protocol-relative URL
@@ -18701,7 +18701,7 @@
     return ProgramService;
   }(Plugin$3);
 
-  ProgramService.VERSION = '2.2.127-527';
+  ProgramService.VERSION = '2.2.127-528';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -18938,7 +18938,7 @@
     return EntitlementExpirationService;
   }(Plugin$4);
 
-  EntitlementExpirationService.VERSION = '2.2.127-527';
+  EntitlementExpirationService.VERSION = '2.2.127-528';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -18985,6 +18985,9 @@
           done = true;
           callback();
         }
+      },
+      redo: function redo() {
+        index--;
       },
       iteration: function iteration() {
         return index - 1;
@@ -19363,9 +19366,20 @@
               if (error) {
                 if (!player.options_.excludeTechs) {
                   player.options_.excludeTechs = [];
+                } // Try with HLS if tech support both hls and dash
+
+
+                if (tech.canPlayHls && playRequest.format !== 'HLS' && (!techOptions || techOptions.streamType !== 'HLS')) {
+                  if (!techOptions) {
+                    options[techs[i][0].toLowerCase()] = {};
+                  }
+
+                  options[techs[i][0].toLowerCase()].streamType = 'HLS';
+                  loop.redo();
+                } else {
+                  player.options_.excludeTechs.push(techs[i][0]);
                 }
 
-                player.options_.excludeTechs.push(techs[i][0]);
                 entitlementRequestError = new EmpPlayerError(error.message + '  ' + JSON.stringify(playRequest) + JSON.stringify(entitlementRequest), error.code, error.stack);
 
                 if (error.fatal) {
@@ -19518,7 +19532,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.2.127-527';
+  EntitlementMiddleware.VERSION = '2.2.127-528';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -19647,7 +19661,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.2.127-527';
+  empPlayer.VERSION = '2.2.127-528';
   /*
    * Universal Module Definition (UMD)
    *
