@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.2.128-529 
+ * EMP-Player 2.2.128-530 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -7483,7 +7483,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.2.128-529';
+  vttThumbnailsPlugin.VERSION = '2.2.128-530';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -8286,7 +8286,7 @@
     return PlaylistPlugin;
   }(Plugin$1);
 
-  PlaylistPlugin.VERSION = '2.2.128-529';
+  PlaylistPlugin.VERSION = '2.2.128-530';
 
   if (videojs.getPlugin('playList')) {
     videojs.log.warn('A plugin named "PlaylistPlugin" already exists.');
@@ -10533,11 +10533,7 @@
     _proto.seekable = function seekable() {
       var range = _VjsPlayer.prototype.seekable.call(this);
 
-      if (this.techName_ !== 'EmpCast') {
-        return this.getRange_(range);
-      }
-
-      return range;
+      return this.getRange_(range);
     }
     /**
      * Get a program related `TimeRange` object for buffering.
@@ -10549,11 +10545,7 @@
     _proto.buffered = function buffered() {
       var range = _VjsPlayer.prototype.buffered.call(this);
 
-      if (this.techName_ !== 'EmpCast') {
-        return this.getRange_(range);
-      }
-
-      return range;
+      return this.getRange_(range);
     }
     /**
      * getRange_
@@ -10652,7 +10644,7 @@
       var entitlement = extplayer.getEntitlement(this);
       var time = 0;
 
-      if (entitlement && (entitlement.isDynamicCachupAsLive || entitlement.isStaticCachupAsLive) && this.techName_ !== 'EmpCast') {
+      if (entitlement && (entitlement.isDynamicCachupAsLive || entitlement.isStaticCachupAsLive)) {
         var duration = this.duration();
 
         if (duration === Infinity || duration === 0) {
@@ -11090,7 +11082,7 @@
     }, {
       key: "version",
       get: function get() {
-        return '2.2.128-529';
+        return '2.2.128-530';
       }
       /**
        * Get entitlement
@@ -14926,7 +14918,7 @@
     return AnalyticsPlugin;
   }(Plugin$2);
 
-  AnalyticsPlugin.VERSION = '2.2.128-529';
+  AnalyticsPlugin.VERSION = '2.2.128-530';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -18701,7 +18693,7 @@
     return ProgramService;
   }(Plugin$3);
 
-  ProgramService.VERSION = '2.2.128-529';
+  ProgramService.VERSION = '2.2.128-530';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -18938,7 +18930,7 @@
     return EntitlementExpirationService;
   }(Plugin$4);
 
-  EntitlementExpirationService.VERSION = '2.2.128-529';
+  EntitlementExpirationService.VERSION = '2.2.128-530';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -19532,7 +19524,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.2.128-529';
+  EntitlementMiddleware.VERSION = '2.2.128-530';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -19661,7 +19653,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.2.128-529';
+  empPlayer.VERSION = '2.2.128-530';
   /*
    * Universal Module Definition (UMD)
    *
