@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.2.128-531 
+ * EMP-Player 2.2.128-532 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -4679,7 +4679,7 @@
     return DownloadService;
   }(Plugin);
 
-  DownloadService.VERSION = '2.2.128-531';
+  DownloadService.VERSION = '2.2.128-532';
 
   if (videojs.getPlugin('DownloadService')) {
     videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -4876,7 +4876,7 @@
         preferredTextLanguage: textLanguage
       };
       config.abr.enabled = true;
-      config.abr.minBytes = 64e3; // minBandwidth/maxBandwidth bit/sec, from entitlement we get kbit/sec. Not Byte/sec.
+      config.abr.minBytes = 16e3; // minBandwidth/maxBandwidth bit/sec, from entitlement we get kbit/sec. Not Byte/sec.
       // It's Video+Audio bitrate
 
       if (source.minBitrate) {
@@ -6548,7 +6548,7 @@
   EmpShaka.prototype.featuresNativeTextTracks = false;
   EmpShaka.prototype.featuresNativeAudioTracks = false;
   Tech$1.withSourceHandlers(EmpShaka);
-  EmpShaka.VERSION = '2.2.128-531'; // Unset source handlers set by Html5 super class.
+  EmpShaka.VERSION = '2.2.128-532'; // Unset source handlers set by Html5 super class.
   // We do not intent to support any sources other then sources allowed by nativeSourceHandler
 
   EmpShaka.sourceHandlers = [];
