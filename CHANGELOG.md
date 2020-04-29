@@ -292,6 +292,14 @@ EMP-14280 The progress bar grows outside its container.
 - EMP-14279 Casting unencrypted HLS (Virtual Live Streams)
 - Update to HTML5 Player 2.2.128
 
+## 2.2.129
+
+### Bug fixes
+- EMP-13355 HTML5 player don't Send "Player" information to analytics.
+
+### New features
+- Update to HTML5 Player 2.2.129
+
 
 
 
