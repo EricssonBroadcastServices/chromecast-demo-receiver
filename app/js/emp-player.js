@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.2.129-537 
+ * EMP-Player 2.2.130-538 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -138,7 +138,7 @@
     if (typeof o === "string") return _arrayLikeToArray(o, minLen);
     var n = Object.prototype.toString.call(o).slice(8, -1);
     if (n === "Object" && o.constructor) n = o.constructor.name;
-    if (n === "Map" || n === "Set") return Array.from(n);
+    if (n === "Map" || n === "Set") return Array.from(o);
     if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
   }
 
@@ -7483,7 +7483,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.2.129-537';
+  vttThumbnailsPlugin.VERSION = '2.2.130-538';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -8286,7 +8286,7 @@
     return PlaylistPlugin;
   }(Plugin$1);
 
-  PlaylistPlugin.VERSION = '2.2.129-537';
+  PlaylistPlugin.VERSION = '2.2.130-538';
 
   if (videojs.getPlugin('playList')) {
     videojs.log.warn('A plugin named "PlaylistPlugin" already exists.');
@@ -11067,11 +11067,34 @@
      */
     ;
 
-    _proto.resetControlBarUI_ = function resetControlBarUI_() {// This give us problem when switch tech, take back CC session.
-      // We don't need to reset the ControlBarUI it's not visible.
-      // this.resetProgressBar_();
-      // this.resetPlaybackRate_();
-      // this.resetVolumeBar_();
+    _proto.resetControlBarUI_ = function resetControlBarUI_() {} // This give us problem when switch tech, take back CC session.
+    // We don't need to reset the ControlBarUI it's not visible.
+    // this.resetProgressBar_();
+    // this.resetPlaybackRate_();
+    // this.resetVolumeBar_();
+
+    /**
+    * Gets or sets the current playback rate. A playback rate of
+    * 1.0 represents normal speed and 0.5 would indicate half-speed
+    * playback, for instance.
+    *
+    * @see https://html.spec.whatwg.org/multipage/embedded-content.html#dom-media-playbackrate
+    *
+    * @param {number} [rate]
+    *       New playback rate to set.
+    *
+    * @return {number}
+    *         The current playback rate when getting or 1.0
+    */
+    ;
+
+    _proto.playbackRate = function playbackRate(rate) {
+      if (rate !== undefined) {
+        return _VjsPlayer.prototype.playbackRate.call(this, rate);
+      }
+
+      rate = _VjsPlayer.prototype.playbackRate.call(this, rate);
+      return parseFloat(rate.toFixed(2));
     };
 
     _createClass(Player, [{
@@ -11082,7 +11105,7 @@
     }, {
       key: "version",
       get: function get() {
-        return '2.2.129-537';
+        return '2.2.130-538';
       }
       /**
        * Get entitlement
@@ -14919,7 +14942,7 @@
     return AnalyticsPlugin;
   }(Plugin$2);
 
-  AnalyticsPlugin.VERSION = '2.2.129-537';
+  AnalyticsPlugin.VERSION = '2.2.130-538';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -18697,7 +18720,7 @@
     return ProgramService;
   }(Plugin$3);
 
-  ProgramService.VERSION = '2.2.129-537';
+  ProgramService.VERSION = '2.2.130-538';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -18934,7 +18957,7 @@
     return EntitlementExpirationService;
   }(Plugin$4);
 
-  EntitlementExpirationService.VERSION = '2.2.129-537';
+  EntitlementExpirationService.VERSION = '2.2.130-538';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -19528,7 +19551,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.2.129-537';
+  EntitlementMiddleware.VERSION = '2.2.130-538';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -19657,7 +19680,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.2.129-537';
+  empPlayer.VERSION = '2.2.130-538';
   /*
    * Universal Module Definition (UMD)
    *
