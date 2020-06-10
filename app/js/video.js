@@ -16594,11 +16594,14 @@
 
 
     _proto.focus = function focus(item) {
-      if (item === void 0) {
-        item = 0;
+      var children = []; // Only selectable children
+
+      for (var i = 0; i < this.children().length; i++) {
+        if (this.children()[i].selectable) {
+          children.push(this.children()[i]);
+        }
       }
 
-      var children = this.children().slice();
       var haveTitle = children.length && children[0].className && /vjs-menu-title/.test(children[0].className);
 
       if (haveTitle) {
@@ -16606,6 +16609,17 @@
       }
 
       if (children.length > 0) {
+        if (item === undefined) {
+          item = 0; // Find Selected item
+
+          for (var _i = 0; _i < children.length; _i++) {
+            if (children[_i].isSelected_) {
+              item = _i;
+              break;
+            }
+          }
+        }
+
         if (item < 0) {
           item = 0;
         } else if (item >= children.length) {
