@@ -300,6 +300,13 @@ EMP-14280 The progress bar grows outside its container.
 ### New features
 - Update to HTML5 Player 2.2.129
 
+## 2.2.133
+
+### New features
+- Update to HTML5 Player 2.2.133
+
+
+
 
 
 
