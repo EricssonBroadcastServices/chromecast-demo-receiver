@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.2.133-558 
+ * EMP-Player 2.2.133-559 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -1669,6 +1669,11 @@
   var USER_AGENT = window_1.navigator && window_1.navigator.userAgent || '';
   var webkitVersionMap = /AppleWebKit\/([\d.]+)/i.exec(USER_AGENT);
   var appleWebkitVersion = webkitVersionMap ? parseFloat(webkitVersionMap.pop()) : null;
+  /* eslint-disable */
+
+  var testSmartTV = window_1.sessionStorage && String(window_1.sessionStorage.getItem('TEST_SMARTTV') || 'false') == 'true';
+  /* eslint-enable */
+
   /*
    * Device is an iPhone
    *
@@ -1744,7 +1749,7 @@
   }();
   var IS_TIZEN = /Tizen/i.test(USER_AGENT);
   var IS_WEBOS = /webOS/i.test(USER_AGENT) || /Web0S/i.test(USER_AGENT) || /WebOS/i.test(USER_AGENT) || /NetCast/i.test(USER_AGENT);
-  var IS_SMARTTV = /SmartTV/i.test(USER_AGENT) || IS_WEBOS || IS_TIZEN;
+  var IS_SMARTTV = /SmartTV/i.test(USER_AGENT) || IS_WEBOS || IS_TIZEN || testSmartTV;
   var IS_SAFARI = /Safari/i.test(USER_AGENT) && !IS_CHROME && !IS_ANDROID && !IS_EDGE && !IS_CHROMIUM_EDGE;
   var TOUCH_ENABLED = isReal() && ('ontouchstart' in window_1 || window_1.DocumentTouch && window_1.document instanceof window_1.DocumentTouch);
   var BACKGROUND_SIZE_SUPPORTED = isReal() && 'backgroundSize' in window_1.document.createElement('video').style;
@@ -1813,8 +1818,8 @@
      */
     ;
 
-    _proto.base = function base() {} // noop
-
+    _proto.base = function base() {// noop
+    }
     /**
     * Trigger a recoverable error
     * allows the player to fallback to another tech
@@ -4683,7 +4688,7 @@
     return DownloadService;
   }(Plugin);
 
-  DownloadService.VERSION = '2.2.133-558';
+  DownloadService.VERSION = '2.2.133-559';
 
   if (videojs.getPlugin('DownloadService')) {
     videojs.log.warn('A plugin named "DownloadService" already exists.');
@@ -6560,7 +6565,7 @@
   EmpShaka.prototype.featuresNativeTextTracks = false;
   EmpShaka.prototype.featuresNativeAudioTracks = false;
   Tech$1.withSourceHandlers(EmpShaka);
-  EmpShaka.VERSION = '2.2.133-558'; // Unset source handlers set by Html5 super class.
+  EmpShaka.VERSION = '2.2.133-559'; // Unset source handlers set by Html5 super class.
   // We do not intent to support any sources other then sources allowed by nativeSourceHandler
 
   EmpShaka.sourceHandlers = [];
