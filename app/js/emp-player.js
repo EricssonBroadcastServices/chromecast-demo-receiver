@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.2.133-559 
+ * EMP-Player 2.2.134-560 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -7510,7 +7510,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.2.133-559';
+  vttThumbnailsPlugin.VERSION = '2.2.134-560';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -8313,7 +8313,7 @@
     return PlaylistPlugin;
   }(Plugin$1);
 
-  PlaylistPlugin.VERSION = '2.2.133-559';
+  PlaylistPlugin.VERSION = '2.2.134-560';
 
   if (videojs.getPlugin('playList')) {
     videojs.log.warn('A plugin named "PlaylistPlugin" already exists.');
@@ -8595,13 +8595,49 @@
       return _this;
     }
     /**
+    * Retrigger the `ended` event that was triggered by the {@link Tech}.
+    *
+    * @fires Player#ended
+    * @listens Tech#ended
+    * @private
+    */
+
+
+    var _proto = Player.prototype;
+
+    _proto.handleTechEnded_ = function handleTechEnded_() {
+      log('handleTechEnded');
+      var entitlement = extplayer.getEntitlement(this);
+
+      if (!this.isProgramEvent && entitlement && entitlement.isStaticCachupAsLive) {
+        log('Do not end.');
+        return;
+      }
+
+      this.addClass('vjs-ended');
+
+      if (this.options_.loop) {
+        this.currentTime(0);
+        this.play();
+      } else if (!this.paused()) {
+        this.pause();
+      }
+      /**
+       * Fired when the end of the media resource is reached (currentTime == duration)
+       *
+       * @event Player#ended
+       * @type {EventTarget~Event}
+       */
+
+
+      this.trigger('ended');
+    }
+    /**
      * Monkey-Patching text track menu to add CaptionSettingsMenuItem for HLS
      *
      * @private
      */
-
-
-    var _proto = Player.prototype;
+    ;
 
     _proto.monkeyPatchingTextMenu_ = function monkeyPatchingTextMenu_() {
       if (this.controlBar && this.controlBar.subsCapsButton) {
@@ -11155,7 +11191,7 @@
     }, {
       key: "version",
       get: function get() {
-        return '2.2.133-559';
+        return '2.2.134-560';
       }
       /**
        * Get entitlement
@@ -14992,7 +15028,7 @@
     return AnalyticsPlugin;
   }(Plugin$2);
 
-  AnalyticsPlugin.VERSION = '2.2.133-559';
+  AnalyticsPlugin.VERSION = '2.2.134-560';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -18770,7 +18806,7 @@
     return ProgramService;
   }(Plugin$3);
 
-  ProgramService.VERSION = '2.2.133-559';
+  ProgramService.VERSION = '2.2.134-560';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -19007,7 +19043,7 @@
     return EntitlementExpirationService;
   }(Plugin$4);
 
-  EntitlementExpirationService.VERSION = '2.2.133-559';
+  EntitlementExpirationService.VERSION = '2.2.134-560';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -19601,7 +19637,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.2.133-559';
+  EntitlementMiddleware.VERSION = '2.2.134-560';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -19730,7 +19766,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.2.133-559';
+  empPlayer.VERSION = '2.2.134-560';
   /*
    * Universal Module Definition (UMD)
    *

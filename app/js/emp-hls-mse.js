@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.2.133-559 
+ * EMP-Player 2.2.134-560 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -25973,7 +25973,7 @@
         if (seekRange.length > 0) {
           // Clamp to seek range
           time = time > seekRange.start(0) ? time : seekRange.start(0);
-          time = time < seekRange.end(0) ? time : seekRange.end(0);
+          time = time < seekRange.end(0) ? time : seekRange.end(0) - 1;
         }
       } else if (time > this.duration() - 1) {
         time = time - 5;
@@ -26219,7 +26219,7 @@
   EmpHlsMse.prototype.featuresNativeTextTracks = false;
   EmpHlsMse.prototype.featuresNativeAudioTracks = false;
   Tech.withSourceHandlers(EmpHlsMse);
-  EmpHlsMse.VERSION = '2.2.133-559'; // Unset source handlers set by Html5 super class.
+  EmpHlsMse.VERSION = '2.2.134-560'; // Unset source handlers set by Html5 super class.
   // We do not intent to support any sources other then sources allowed by nativeSourceHandler
 
   EmpHlsMse.sourceHandlers = [];
