@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.2.134-560 
+ * EMP-Player 2.2.134-561 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -26219,7 +26219,7 @@
   EmpHlsMse.prototype.featuresNativeTextTracks = false;
   EmpHlsMse.prototype.featuresNativeAudioTracks = false;
   Tech.withSourceHandlers(EmpHlsMse);
-  EmpHlsMse.VERSION = '2.2.134-560'; // Unset source handlers set by Html5 super class.
+  EmpHlsMse.VERSION = '2.2.134-561'; // Unset source handlers set by Html5 super class.
   // We do not intent to support any sources other then sources allowed by nativeSourceHandler
 
   EmpHlsMse.sourceHandlers = [];
