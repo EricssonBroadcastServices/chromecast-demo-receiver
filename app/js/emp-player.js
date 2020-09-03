@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.2.134-562 
+ * EMP-Player 2.2.134-565 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -7510,7 +7510,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.2.134-562';
+  vttThumbnailsPlugin.VERSION = '2.2.134-565';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -8313,7 +8313,7 @@
     return PlaylistPlugin;
   }(Plugin$1);
 
-  PlaylistPlugin.VERSION = '2.2.134-562';
+  PlaylistPlugin.VERSION = '2.2.134-565';
 
   if (videojs.getPlugin('playList')) {
     videojs.log.warn('A plugin named "PlaylistPlugin" already exists.');
@@ -11191,7 +11191,7 @@
     }, {
       key: "version",
       get: function get() {
-        return '2.2.134-562';
+        return '2.2.134-565';
       }
       /**
        * Get entitlement
@@ -15028,7 +15028,7 @@
     return AnalyticsPlugin;
   }(Plugin$2);
 
-  AnalyticsPlugin.VERSION = '2.2.134-562';
+  AnalyticsPlugin.VERSION = '2.2.134-565';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -15732,6 +15732,7 @@
     _proto.updateStreamInfoV2 = function updateStreamInfoV2(streamInfo) {
       this.live = streamInfo.live || false;
       this.streamInfo.live = streamInfo.live || false;
+      this.streamInfo.lowLatency = streamInfo.lowLatency || false;
       this.channelId = streamInfo.channelId || undefined;
       this.programId = streamInfo.programId || undefined;
       this.streamInfo.channelId = streamInfo.channelId || undefined;
@@ -16866,55 +16867,58 @@
           callback(preEntitlement, entitlementError);
         }
       } else {
-        var requestURL = this.options_.exposureApiURL + '/' + 'v2' + '/customer/' + this.customer + '/businessunit/' + this.businessUnit + '/entitlement/' + assetId + '/play';
-        xhr.get(requestURL, {
-          headers: this.requestHeaders
-        }, function (error, response, body) {
-          if (error) {
-            if (error.statusCode === 0) {
-              error.message = _this4.statusMessageZero;
-            }
+        this.getAssetMetadata_(assetId, function (asset) {
+          var requestURL = _this4.options_.exposureApiURL + '/' + 'v2' + '/customer/' + _this4.customer + '/businessunit/' + _this4.businessUnit + '/entitlement/' + assetId + '/play';
+          xhr.get(requestURL, {
+            headers: _this4.requestHeaders
+          }, function (error, response, body) {
+            if (error) {
+              if (error.statusCode === 0) {
+                error.message = _this4.statusMessageZero;
+              }
 
-            callback(null, error);
-            return;
-          } // Check and handles error
-
-
-          error = _this4.checkForError(error, response);
-
-          if (error) {
-            if (error.statusCode === 400 || error.statusCode === 404 && body && body.indexOf('message') === -1 || error.statusCode === 404 && error.message === '404 Not found') {
-              log.warn('Fallback to Entitlement play v1', error.message);
-
-              _this4.getEntitlement(entitlementRequest, playRequest, callback);
-            } else {
               callback(null, error);
+              return;
+            } // Check and handles error
+
+
+            error = _this4.checkForError(error, response);
+
+            if (error) {
+              if (error.statusCode === 400 || error.statusCode === 404 && body && body.indexOf('message') === -1 || error.statusCode === 404 && error.message === '404 Not found') {
+                log.warn('Fallback to Entitlement play v1', error.message);
+
+                _this4.getEntitlement(entitlementRequest, playRequest, callback);
+              } else {
+                callback(null, error);
+              }
+
+              return;
             }
 
-            return;
-          }
+            var options = JSON.parse(body);
+            var entitlement = new Entitlement();
+            options.streamInfo.lowLatency = asset.materialType === "LOW_LATENCY_CHANNEL";
+            entitlement.initiateV2(options);
+            entitlement.selectFormat(playRequest);
+            entitlement.assetId = assetId;
 
-          var options = JSON.parse(body);
-          var entitlement = new Entitlement();
-          entitlement.initiateV2(options);
-          entitlement.selectFormat(playRequest);
-          entitlement.assetId = assetId;
+            if (entitlement.channelId || entitlement.programId) {
+              _this4.setStreamReferenceTime_(entitlement);
+            }
 
-          if (entitlement.channelId || entitlement.programId) {
-            _this4.setStreamReferenceTime_(entitlement);
-          }
+            var requestId = response.headers['x-request-id'];
+            entitlement.requestId = requestId ? requestId : '';
 
-          var requestId = response.headers['x-request-id'];
-          entitlement.requestId = requestId ? requestId : '';
+            if (entitlement.mediaLocator) {
+              callback(entitlement, null);
+            } else {
+              var _entitlementError = new EntitlementError(playRequest.format + ' not avalible');
 
-          if (entitlement.mediaLocator) {
-            callback(entitlement, null);
-          } else {
-            var _entitlementError = new EntitlementError(playRequest.format + ' not avalible');
-
-            _entitlementError.fatal = false;
-            callback(entitlement, _entitlementError);
-          }
+              _entitlementError.fatal = false;
+              callback(entitlement, _entitlementError);
+            }
+          });
         });
       }
     }
@@ -18806,7 +18810,7 @@
     return ProgramService;
   }(Plugin$3);
 
-  ProgramService.VERSION = '2.2.134-562';
+  ProgramService.VERSION = '2.2.134-565';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -19043,7 +19047,7 @@
     return EntitlementExpirationService;
   }(Plugin$4);
 
-  EntitlementExpirationService.VERSION = '2.2.134-562';
+  EntitlementExpirationService.VERSION = '2.2.134-565';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -19497,7 +19501,20 @@
                 preEntitlement = entitlement;
                 loop.next();
               } else {
-                // Set the entitlement to use, and break out of the loop. No need to get other entitlements.
+                if (entitlement.streamInfo.lowLatency === true) {
+                  if (window.dashjs && Tech$1.getTech("EmpDashif")) {
+                    log("lowLatency detected, replace EmpShaka as dash tech");
+                    options.empdashif = options.empdashif || {};
+                    options.empdashif.lowLatencyMode = true;
+                    options.techOrder = options.techOrder.map(function (techName) {
+                      return techName === "EmpShaka" ? "EmpDashif" : techName;
+                    });
+                  } else {
+                    log("lowLatency detected but dashjs not available. Dash streams won't play in lowLatency mode");
+                  }
+                } // Set the entitlement to use, and break out of the loop. No need to get other entitlements.
+
+
                 srcEntitlement = setupEntitlement_(entitlement, techOptions, options);
                 extplayer.currentAsset(player, entitlement.assetId, entitlement.programId, entitlement.channelId);
 
@@ -19637,7 +19654,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.2.134-562';
+  EntitlementMiddleware.VERSION = '2.2.134-565';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -19766,7 +19783,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.2.134-562';
+  empPlayer.VERSION = '2.2.134-565';
   /*
    * Universal Module Definition (UMD)
    *
