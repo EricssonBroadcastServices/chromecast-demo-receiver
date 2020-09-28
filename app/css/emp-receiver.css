@@ -1,15 +1,3 @@
-@keyframes fade-out {
-  from {
-    opacity: 1; }
-  to {
-    opacity: 0; } }
-
-@keyframes fade-out2 {
-  from {
-    opacity: 1; }
-  to {
-    opacity: 0; } }
-
 @keyframes loading-bar {
   from {
     margin-left: -100%; }
@@ -99,7 +87,8 @@ body {
 
 .video-js .vjs-control-bar {
   height: 15em;
-  opacity: 0.9;
+  opacity: 1 !important;
+  transition: opacity 0.5s !important;
   padding: 4em;
   background: linear-gradient(to top, black, rgba(0, 0, 0, 0) 72%, rgba(0, 0, 0, 0) 100%); }
 
@@ -192,14 +181,12 @@ body {
   content: '\f101'; }
 
 .receiver[type="video"][state="playing"] .video-js .vjs-control-bar {
-  animation: fade-out 0.5s 1;
-  animation-fill-mode: forwards;
-  animation-delay: 5s; }
+  transition-delay: 5s !important;
+  opacity: 0 !important; }
 
 .receiver[type="video"][state="playing"] .emp-mediainfo-bar {
-  animation: fade-out 0.5s 1;
-  animation-fill-mode: forwards;
-  animation-delay: 5s; }
+  transition-delay: 5s !important;
+  opacity: 0 !important; }
 
 .receiver[type="video"][state="seeking"] .vjs-play-progress.vjs-slider-bar {
   width: 60% !important;
@@ -229,7 +216,9 @@ body {
   position: absolute;
   overflow: hidden;
   padding: 0 10px;
-  display: none; }
+  display: none;
+  opacity: 1 !important;
+  transition: opacity 0.5s !important; }
 
 .vjs-controls-disabled .emp-mediainfo-bar,
 .vjs-using-native-controls .emp-mediainfo-bar,
