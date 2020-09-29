@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.2.134-565 
+ * EMP-Player 2.2.134-570 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -7510,7 +7510,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.2.134-565';
+  vttThumbnailsPlugin.VERSION = '2.2.134-570';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -8313,7 +8313,7 @@
     return PlaylistPlugin;
   }(Plugin$1);
 
-  PlaylistPlugin.VERSION = '2.2.134-565';
+  PlaylistPlugin.VERSION = '2.2.134-570';
 
   if (videojs.getPlugin('playList')) {
     videojs.log.warn('A plugin named "PlaylistPlugin" already exists.');
@@ -11191,7 +11191,7 @@
     }, {
       key: "version",
       get: function get() {
-        return '2.2.134-565';
+        return '2.2.134-570';
       }
       /**
        * Get entitlement
@@ -15028,7 +15028,7 @@
     return AnalyticsPlugin;
   }(Plugin$2);
 
-  AnalyticsPlugin.VERSION = '2.2.134-565';
+  AnalyticsPlugin.VERSION = '2.2.134-570';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -18810,7 +18810,7 @@
     return ProgramService;
   }(Plugin$3);
 
-  ProgramService.VERSION = '2.2.134-565';
+  ProgramService.VERSION = '2.2.134-570';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -19047,7 +19047,7 @@
     return EntitlementExpirationService;
   }(Plugin$4);
 
-  EntitlementExpirationService.VERSION = '2.2.134-565';
+  EntitlementExpirationService.VERSION = '2.2.134-570';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -19502,7 +19502,7 @@
                 loop.next();
               } else {
                 if (entitlement.streamInfo.lowLatency === true) {
-                  if (window.dashjs && Tech$1.getTech("EmpDashif")) {
+                  if (Tech$1.getTech("EmpDashif")) {
                     log("lowLatency detected, replace EmpShaka as dash tech");
                     options.empdashif = options.empdashif || {};
                     options.empdashif.lowLatencyMode = true;
@@ -19510,7 +19510,7 @@
                       return techName === "EmpShaka" ? "EmpDashif" : techName;
                     });
                   } else {
-                    log("lowLatency detected but dashjs not available. Dash streams won't play in lowLatency mode");
+                    log("lowLatency detected but EmpDashif not available. Dash streams won't play in lowLatency mode");
                   }
                 } // Set the entitlement to use, and break out of the loop. No need to get other entitlements.
 
@@ -19654,7 +19654,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.2.134-565';
+  EntitlementMiddleware.VERSION = '2.2.134-570';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -19783,7 +19783,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.2.134-565';
+  empPlayer.VERSION = '2.2.134-570';
   /*
    * Universal Module Definition (UMD)
    *
