@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.2.140-579 
+ * EMP-Player 2.2.140-580 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -29,7 +29,8 @@
   function _inheritsLoose(subClass, superClass) {
     subClass.prototype = Object.create(superClass.prototype);
     subClass.prototype.constructor = subClass;
-    subClass.__proto__ = superClass;
+
+    _setPrototypeOf(subClass, superClass);
   }
 
   function _getPrototypeOf(o) {
@@ -54,7 +55,7 @@
     if (typeof Proxy === "function") return true;
 
     try {
-      Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
+      Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {}));
       return true;
     } catch (e) {
       return false;
@@ -1638,15 +1639,7 @@
     return el.currentStyle[prop] || '';
   }
 
-  function _templateObject() {
-    var data = _taggedTemplateLiteralLoose(["Setting attributes in the second argument of createEl()\n                has been deprecated. Use the third argument instead.\n                createEl(type, properties, attributes). Attempting to set ", " to ", "."]);
-
-    _templateObject = function _templateObject() {
-      return data;
-    };
-
-    return data;
-  }
+  var _templateObject;
   /**
    * Throws an error if the passed string has whitespace. This is used by
    * class methods to be relatively consistent with the classList API.
@@ -1748,7 +1741,7 @@
       // same object, but that doesn't work so well.
 
       if (propName.indexOf('aria-') !== -1 || propName === 'role' || propName === 'type') {
-        log.warn(tsml(_templateObject(), propName, val));
+        log.warn(tsml(_templateObject || (_templateObject = _taggedTemplateLiteralLoose(["Setting attributes in the second argument of createEl()\n                has been deprecated. Use the third argument instead.\n                createEl(type, properties, attributes). Attempting to set ", " to ", "."])), propName, val));
         el.setAttribute(propName, val); // Handle textContent since it's not supported everywhere and we have a
         // method for it.
       } else if (propName === 'textContent') {
@@ -7513,7 +7506,7 @@
     return vttThumbnailsPlugin;
   }(Plugin);
 
-  vttThumbnailsPlugin.VERSION = '2.2.140-579';
+  vttThumbnailsPlugin.VERSION = '2.2.140-580';
 
   if (videojs.getPlugin('vttThumbnails')) {
     videojs.log.warn('A plugin named "vttThumbnails" already exists.');
@@ -8316,7 +8309,7 @@
     return PlaylistPlugin;
   }(Plugin$1);
 
-  PlaylistPlugin.VERSION = '2.2.140-579';
+  PlaylistPlugin.VERSION = '2.2.140-580';
 
   if (videojs.getPlugin('playList')) {
     videojs.log.warn('A plugin named "PlaylistPlugin" already exists.');
@@ -9677,36 +9670,36 @@
     ;
 
     _proto.startResetAndReloadTimer_ = function startResetAndReloadTimer_() {
-      var _this6 = this;
-
-      if (!IS_CHROMECAST || !this.hasStarted()) {
-        this.clearResetAndReloadTimer_();
-        log('startResetAndReloadTimer');
-
-        if (this.options_.resetAndReloadLive !== false) {
-          var time = 120;
-
-          if (this.options_.resetAndReloadLive) {
-            // Use resetAndReloadLive config
-            time = this.options_.resetAndReloadLive > 1 ? this.options_.resetAndReloadLive : 1;
-          } else if (IS_CHROMECAST) {
-            // reset and reload CC every 2 hour
-            time = 60 * 2;
-          } else if (this.isLive()) {
-            // reset and reload Web every 6 hour
-            time = 60 * 6;
-          } else {
-            // reset and reload Web every 24 hour
-            time = 60 * 24;
-          }
-
-          this.resetAndReloadTimer_ = this.setTimeout(function () {
-            _this6.clearResetAndReloadTimer_();
-
-            _this6.resetAndRestartFormPlayhead();
-          }, time * 1000 * 60);
-        }
-      }
+      /** 
+       * Disabled
+       * 1) It doesn't work, the player crashes
+       * 2) Even if the reset works(with a fix) it starts a new session which is not OK,
+       * 3) We'll replace this entire player shortly so I'm not sure why I'm writing this comment
+       */
+      // if (!IS_CHROMECAST || !this.hasStarted()) {
+      //   this.clearResetAndReloadTimer_();
+      //   log('startResetAndReloadTimer');
+      //   if (this.options_.resetAndReloadLive !== false) {
+      //     let time = 120;
+      //     if (this.options_.resetAndReloadLive) {
+      //       // Use resetAndReloadLive config
+      //       time = this.options_.resetAndReloadLive > 1 ? this.options_.resetAndReloadLive : 1;
+      //     } else if (IS_CHROMECAST) {
+      //       // reset and reload CC every 2 hour
+      //       time = 60 * 2;
+      //     } else if (this.isLive()) {
+      //       // reset and reload Web every 6 hour
+      //       time = 60 * 6;
+      //     } else {
+      //       // reset and reload Web every 24 hour
+      //       time = 60 * 24;
+      //     }
+      //     this.resetAndReloadTimer_ = this.setTimeout(() => {
+      //       this.clearResetAndReloadTimer_();
+      //       this.resetAndRestartFormPlayhead();
+      //     }, time * 1000 * 60);
+      //   }
+      // }
     }
     /**
      * initialSeekToAbsoluteStartTime_
@@ -10783,7 +10776,7 @@
     ;
 
     _proto.playPreviousProgram = function playPreviousProgram(end) {
-      var _this7 = this;
+      var _this6 = this;
 
       if (this.sourceChanging_ || this.isProgramEvent) {
         log('playPreviousProgram ignore, sourceChanging');
@@ -10806,9 +10799,9 @@
             if (error) {
               log.warn('playPreviousProgram', error);
             } else if (end) {
-              _this7.playheadTime(program.end.getTime() - 30000);
+              _this6.playheadTime(program.end.getTime() - 30000);
             } else {
-              _this7.playheadTime(program.start.getTime() + 1000);
+              _this6.playheadTime(program.start.getTime() + 1000);
             }
           });
         } else {
@@ -10822,7 +10815,7 @@
     ;
 
     _proto.playNextProgram = function playNextProgram() {
-      var _this8 = this;
+      var _this7 = this;
 
       if (this.sourceChanging_ || this.isProgramEvent) {
         log('playNextProgram ignore');
@@ -10842,7 +10835,7 @@
             } // Play 1 sec from the end not nextProgram start
 
 
-            _this8.playheadTime(program.end.getTime() + 1000);
+            _this7.playheadTime(program.end.getTime() + 1000);
           });
         } else {
           extplayer.playNextProgram(this);
@@ -10909,17 +10902,17 @@
     ;
 
     _proto.handleTechWaiting_ = function handleTechWaiting_() {
-      var _this9 = this;
+      var _this8 = this;
 
       if (this.hasStarted() && !this.ended() && !this.paused() && !this.hasClass('vjs-waiting')) {
         this.playheadMoving_(function (moving) {
           // log('playheadMoving', moving);
           if (!moving) {
-            _this9.addClass('vjs-waiting');
+            _this8.addClass('vjs-waiting');
 
-            _this9.trigger(empPlayerEvents.WAITING);
+            _this8.trigger(empPlayerEvents.WAITING);
 
-            _this9.removeWaitingClass_();
+            _this8.removeWaitingClass_();
           }
         });
       }
@@ -10932,23 +10925,23 @@
     ;
 
     _proto.removeWaitingClass_ = function removeWaitingClass_() {
-      var _this10 = this;
+      var _this9 = this;
 
       this.one('timeupdate', function () {
         // log('playheadMoving off', this.prePlayheadTime_, this.playheadTime(), this.playheadTime() - this.prePlayheadTime_);
-        if (_this10.playheadTime() - _this10.prePlayheadTime_ > 1 || _this10.playheadTime() - _this10.prePlayheadTime_ < -1) {
+        if (_this9.playheadTime() - _this9.prePlayheadTime_ > 1 || _this9.playheadTime() - _this9.prePlayheadTime_ < -1) {
           // log('playheadMoving off', true);
-          _this10.prePlayheadTime_ = 0;
+          _this9.prePlayheadTime_ = 0;
 
-          _this10.removeClass('vjs-waiting');
+          _this9.removeClass('vjs-waiting');
 
-          if (_this10.paused()) {
-            _this10.trigger(empPlayerEvents.PAUSE);
+          if (_this9.paused()) {
+            _this9.trigger(empPlayerEvents.PAUSE);
           } else {
-            _this10.trigger(empPlayerEvents.PLAYING);
+            _this9.trigger(empPlayerEvents.PLAYING);
           }
         } else {
-          _this10.removeWaitingClass_();
+          _this9.removeWaitingClass_();
         }
       });
     }
@@ -11194,7 +11187,7 @@
     }, {
       key: "version",
       get: function get() {
-        return '2.2.140-579';
+        return '2.2.140-580';
       }
       /**
        * Get entitlement
@@ -15031,7 +15024,7 @@
     return AnalyticsPlugin;
   }(Plugin$2);
 
-  AnalyticsPlugin.VERSION = '2.2.140-579';
+  AnalyticsPlugin.VERSION = '2.2.140-580';
 
   if (videojs.getPlugin('analytics')) {
     videojs.log.warn('A plugin named "analytics" already exists.');
@@ -18813,7 +18806,7 @@
     return ProgramService;
   }(Plugin$3);
 
-  ProgramService.VERSION = '2.2.140-579';
+  ProgramService.VERSION = '2.2.140-580';
 
   if (videojs.getPlugin('programService')) {
     videojs.log.warn('A plugin named "programService" already exists.');
@@ -19050,7 +19043,7 @@
     return EntitlementExpirationService;
   }(Plugin$4);
 
-  EntitlementExpirationService.VERSION = '2.2.140-579';
+  EntitlementExpirationService.VERSION = '2.2.140-580';
 
   if (videojs.getPlugin('entitlementExpirationService')) {
     videojs.log.warn('A plugin named "entitlementExpirationService" already exists.');
@@ -19657,7 +19650,7 @@
   EntitlementMiddleware.getEntitlementEngine = EntitlementEngine.getEntitlementEngine;
   EntitlementMiddleware.registerEntitlementEngine = EntitlementEngine.registerEntitlementEngine;
   EntitlementMiddleware.isEntitlementEngine = EntitlementEngine.isEntitlementEngine;
-  EntitlementMiddleware.VERSION = '2.2.140-579';
+  EntitlementMiddleware.VERSION = '2.2.140-580';
 
   if (videojs.EntitlementMiddleware) {
     videojs.log.warn('EntitlementMiddleware already exists.');
@@ -19786,7 +19779,7 @@
    */
 
   empPlayer.Events = empPlayerEvents;
-  empPlayer.VERSION = '2.2.140-579';
+  empPlayer.VERSION = '2.2.140-580';
   /*
    * Universal Module Definition (UMD)
    *

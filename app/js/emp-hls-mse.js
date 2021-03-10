@@ -1,6 +1,6 @@
 /**
  * @license
- * EMP-Player 2.2.140-579 
+ * EMP-Player 2.2.140-580 
  * Copyright Ericsson, Inc. <https://www.ericsson.com/>
  */
 
@@ -29,7 +29,8 @@
   function _inheritsLoose(subClass, superClass) {
     subClass.prototype = Object.create(superClass.prototype);
     subClass.prototype.constructor = subClass;
-    subClass.__proto__ = superClass;
+
+    _setPrototypeOf(subClass, superClass);
   }
 
   function _getPrototypeOf(o) {
@@ -54,7 +55,7 @@
     if (typeof Proxy === "function") return true;
 
     try {
-      Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
+      Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {}));
       return true;
     } catch (e) {
       return false;
@@ -9284,13 +9285,11 @@
     ID3._decodeFrame = function _decodeFrame(frame) {
       if (frame.type === 'PRIV') {
         return ID3._decodePrivFrame(frame);
-      } else if (frame.type[0] === 'T') {
-        return ID3._decodeTextFrame(frame);
       } else if (frame.type[0] === 'W') {
         return ID3._decodeURLFrame(frame);
       }
 
-      return undefined;
+      return ID3._decodeTextFrame(frame);
     };
 
     ID3._readTimeStamp = function _readTimeStamp(timeStampFrame) {
@@ -24187,7 +24186,7 @@
        * @type {string}
        */
       get: function get() {
-        return "0.14.16";
+        return "0.14.17";
       }
     }, {
       key: "Events",
@@ -26627,7 +26626,7 @@
   EmpHlsMse.prototype.featuresNativeTextTracks = false;
   EmpHlsMse.prototype.featuresNativeAudioTracks = false;
   Tech.withSourceHandlers(EmpHlsMse);
-  EmpHlsMse.VERSION = '2.2.140-579'; // Unset source handlers set by Html5 super class.
+  EmpHlsMse.VERSION = '2.2.140-580'; // Unset source handlers set by Html5 super class.
   // We do not intent to support any sources other then sources allowed by nativeSourceHandler
 
   EmpHlsMse.sourceHandlers = [];
